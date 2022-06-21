@@ -1,0 +1,24 @@
+name: Vector Unit Tests
+
+on:
+  schedule:
+    # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
+    - cron: '0 8 * * *'
+
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  test-vector:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build
+      working-directory: ./Scripts
+      run: |
+        ./test_vector.sh

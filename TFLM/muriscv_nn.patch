@@ -1,0 +1,221 @@
+diff --git a/tensorflow/lite/micro/muriscv_nn/micro_time.cc b/tensorflow/lite/micro/muriscv_nn/micro_time.cc
+new file mode 100644
+index 0000000..38058c2
+--- /dev/null
++++ b/tensorflow/lite/micro/muriscv_nn/micro_time.cc
+@@ -0,0 +1,32 @@
++/*
++ * Copyright (C) 2022 Chair of Electronic Design Automation, TUM
++ *
++ * SPDX-License-Identifier: Apache-2.0
++ *
++ * Licensed under the Apache License, Version 2.0 (the License); you may
++ * not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
++ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#include "tensorflow/lite/micro/micro_time.h"
++
++#include "muriscv_nn_util.h"
++
++namespace tflite {
++
++// Use the time implementation provided by muRISCV-NN. This way, we can measure
++// performance on RISC-V machines. See muriscv_nn_util.h for more infos.
++
++uint32_t ticks_per_second() { return MURISCV_NN_RDTIME_PER_SECOND; }
++
++uint32_t GetCurrentTimeTicks() { return rdtime(); }
++
++}  // namespace tflite
+diff --git a/tensorflow/lite/micro/muriscv_nn/system_setup.cc b/tensorflow/lite/micro/muriscv_nn/system_setup.cc
+new file mode 100644
+index 0000000..0907a0e
+--- /dev/null
++++ b/tensorflow/lite/micro/muriscv_nn/system_setup.cc
+@@ -0,0 +1,31 @@
++/*
++ * Copyright (C) 2022 Chair of Electronic Design Automation, TUM
++ *
++ * SPDX-License-Identifier: Apache-2.0
++ *
++ * Licensed under the Apache License, Version 2.0 (the License); you may
++ * not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
++ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#include "tensorflow/lite/micro/system_setup.h"
++
++#include "tensorflow/lite/micro/micro_error_reporter.h"
++
++namespace tflite {
++
++// There is not much to do here, yet. But this might change at some point in the
++// future. Things like muriscv_nn_enable_vector() or
++// muriscv_nn_set_rounding_mode() could go here, if needed.
++
++void InitializeTarget() { MicroPrintf("InitalizeTarget muRISCV-NN"); }
++
++}  // namespace tflite
+diff --git a/tensorflow/lite/micro/tools/make/Makefile b/tensorflow/lite/micro/tools/make/Makefile
+index 2c16f7f..96f448c 100644
+--- a/tensorflow/lite/micro/tools/make/Makefile
++++ b/tensorflow/lite/micro/tools/make/Makefile
+@@ -127,9 +127,7 @@ endif
+
+ CC_WARNINGS := \
+   -Wsign-compare \
+-  -Wdouble-promotion \
+   -Wshadow \
+-  -Wunused-variable \
+   -Wunused-function \
+   -Wswitch \
+   -Wvla \
+@@ -139,6 +137,17 @@ CC_WARNINGS := \
+   -Wstrict-aliasing \
+   -Wno-unused-parameter
+
++# Because LLVM is more strict than GCC, it throws warnings. Together with
++# Werror makes the code not compilable if we don't adjust things here.
++ifeq ($(TOOLCHAIN), llvm)
++  CC_WARNINGS += \
++    -Wno-unused-but-set-variable
++else
++  CC_WARNINGS += \
++    -Wdouble-promotion \
++    -Wunused-variable
++endif
++
+ COMMON_FLAGS := \
+   -Werror \
+   -fno-unwind-tables \
+@@ -509,7 +518,8 @@ ifneq ($(OPTIMIZED_KERNEL_DIR),)
+     $(error Incorrect OPTIMIZED_KERNEL_DIR: $(RESULT))
+   endif
+
+-  include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
++  # No need for the cmsis_nn external libs makefile when using muRISCV-NN.
++  # include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
+   # Specialize for the optimized kernels
+   MICROLITE_CC_KERNEL_SRCS := $(shell python3 $(MAKEFILE_DIR)/specialize_files.py \
+ 		--base_files "$(MICROLITE_CC_KERNEL_SRCS)" \
+@@ -691,6 +701,12 @@ ifeq ($(TOOLCHAIN), armclang)
+   $(BINDIR)%.bin: $(BINDIR)%
+ 		@mkdir -p $(dir $@)
+ 		$(FROMELF) --bin --output=$@ $<
++# Introduce LLVM option. We want to use the LLVM objcopy when using LLVM compiler.
++else ifeq ($(TOOLCHAIN), llvm)
++  OBJCOPY := $(CP_TOOL)
++  $(BINDIR)%.bin: $(BINDIR)%
++		@mkdir -p $(dir $@)
++		$(OBJCOPY) $< $@ -O binary
+ else
+   OBJCOPY := ${TARGET_TOOLCHAIN_ROOT}$(TARGET_TOOLCHAIN_PREFIX)objcopy
+   $(BINDIR)%.bin: $(BINDIR)%
+diff --git a/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
+new file mode 100644
+index 0000000..4e84064
+--- /dev/null
++++ b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
+@@ -0,0 +1,85 @@
++# Copyright (C) 2021 Chair of Electronic Design Automation, TUM
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++#
++
++MAKEFILE_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
++
++# Path to GCC toolchain
++GCC_TOOLCHAIN_ROOT := $(MAKEFILE_PATH)../../../../../../../../Toolchain/rv32gcv
++GCC_TOOLCHAIN_PREFIX := riscv32-unknown-elf
++
++ifneq (,$(MURISCV_NN_LIBS))
++  ifeq (,$(MURISCV_NN_PATH))
++    $(error MURISCV_NN_LIBS provided but not MURISCV_NN_PATH)
++  endif
++endif
++
++# Path to the muriscv_nn library
++MURISCV_NN_PATH := $(MAKEFILE_PATH)../../../../../../../../../muriscv_nn
++
++ifeq (,$(MURISCV_NN_LIBS))
++  THIRD_PARTY_CC_SRCS += $(call recursive_find,$(MURISCV_NN_PATH)/Source,*.c)
++else
++  MICROLITE_LIBS += $(MURISCV_NN_LIBS)
++endif
++THIRD_PARTY_CC_HDRS += $(call recursive_find,$(MURISCV_NN_PATH)/Include,*.h)
++INCLUDES += \
++  -I$(MURISCV_NN_PATH)/Include
++
++# Flags requied in order to compile with RISC-V toolchains
++PLATFORM_FLAGS := \
++  -DTF_LITE_MCU_DEBUG_LOG \
++  -DTF_LITE_USE_CTIME \
++  -DTF_LITE_USE_GLOBAL_MAX \
++  -DTF_LITE_USE_GLOBAL_MIN \
++  -DTF_LITE_USE_GLOBAL_CMATH_FUNCTIONS
++
++# Enable vector extension if requested
++ifeq ($(USE_VEXT), ON)
++  PLATFORM_FLAGS += \
++    -DUSE_VEXT
++endif
++
++ifeq ($(TOOLCHAIN), gcc)
++
++  TARGET_TOOLCHAIN_ROOT := $(GCC_TOOLCHAIN_ROOT)/bin/
++  TARGET_TOOLCHAIN_PREFIX := $(GCC_TOOLCHAIN_PREFIX)-
++
++  PLATFORM_FLAGS += \
++    -march=$(TARGET_ARCH) \
++    -mabi=ilp32d
++
++else ifeq ($(TOOLCHAIN), llvm)
++
++  CXX_TOOL := clang++-14
++  CC_TOOL := clang-14
++  AR_TOOL := llvm-ar-14
++  CP_TOOL := llvm-objcopy-14
++
++  PLATFORM_FLAGS += \
++  -march=$(TARGET_ARCH) \
++  -mabi=ilp32d \
++  --target=riscv32 \
++  --gcc-toolchain=$(GCC_TOOLCHAIN_ROOT) \
++  --sysroot=$(GCC_TOOLCHAIN_ROOT)/$(GCC_TOOLCHAIN_PREFIX)
++
++  LDFLAGS += -fuse-ld=lld-14
++
++else
++  $(error "TOOLCHAIN=$(TOOLCHAIN) is not supported.")
++endif
++
++# No idea why the C flag variable is called CCFLAGS instead of CFLAGS
++CCFLAGS += $(PLATFORM_FLAGS)
++CXXFLAGS += $(PLATFORM_FLAGS)

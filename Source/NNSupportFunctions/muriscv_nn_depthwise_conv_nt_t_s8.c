@@ -1,0 +1,166 @@
+/*
+ * Copyright (C) 2010-2022 Arm Limited or its affiliates.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the License); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+ */
+
+#if defined(USE_VEXT)
+#include <riscv_vector.h>
+#elif defined(USE_PEXT)
+#include <rvp_intrinsic.h>
+#endif
+
+#include "muriscv_nn_functions.h"
+#include "muriscv_nn_support_functions.h"
+
+/**
+ * @ingroup groupSupport
+ */
+
+/**
+ * @addtogroup NNBasicMath
+ * @{
+ */
+
+/*
+ * Depthwise convolution of rhs matrix with 4 lhs matrices with no padding. Dimensions are the same for lhs and rhs.
+ *
+ * Refer header file for details.
+ *
+ */
+
+q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
+                                        const q7_t *rhs,
+                                        const int32_t input_offset,
+                                        const uint16_t num_ch,
+                                        const int32_t *out_shift,
+                                        const int32_t *out_mult,
+                                        const int32_t out_offset,
+                                        const int32_t activation_min,
+                                        const int32_t activation_max,
+                                        const uint16_t row_x_col,
+                                        const int32_t *const output_bias,
+                                        q7_t *out)
+{
+#if defined(USE_VEXT)
+    const int32_t *bias = output_bias;
+    int32_t num_ch_to_process = num_ch, offset = 0;
+    while (num_ch_to_process > 0)
+    {
+        size_t vl = vsetvl_e32m2(num_ch_to_process);
+        vint32m2_t out_0 = vmv_v_x_i32m2(0, vl);
+        if (bias)
+        {
+            out_0 = vle32_v_i32m2(bias, vl);
+            bias += vl;
+        }
+        vint32m2_t out_1 = out_0;
+        vint32m2_t out_2 = out_0;
+        vint32m2_t out_3 = out_0;
+
+        const int8_t *rhs_0 = rhs + offset;
+        const int8_t *lhs_0 = lhs + offset;
+        const int8_t *lhs_1 = lhs + row_x_col * num_ch + offset;
+        const int8_t *lhs_2 = lhs + (row_x_col * num_ch * 2) + offset;
+        const int8_t *lhs_3 = lhs + (row_x_col * num_ch * 3) + offset;
+        offset += vl;
+
+        vint32m2_t ker_sum = vmv_v_x_i32m2(0, vl);
+
+        for (int i_row_x_col = 0; i_row_x_col < row_x_col; i_row_x_col++)
+        {
+            vint32m2_t ker = vsext_vf4_i32m2(vle8_v_i8mf2(rhs_0, vl), vl);
+            ker_sum = vadd_vv_i32m2(ker_sum, ker, vl);
+
+            vint32m2_t ip_0 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_0, vl), vl);
+            out_0 = vmacc_vv_i32m2(out_0, ip_0, ker, vl);
+
+            vint32m2_t ip_1 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_1, vl), vl);
+            out_1 = vmacc_vv_i32m2(out_1, ip_1, ker, vl);
+
+            vint32m2_t ip_2 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_2, vl), vl);
+            out_2 = vmacc_vv_i32m2(out_2, ip_2, ker, vl);
+
+            vint32m2_t ip_3 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_3, vl), vl);
+            out_3 = vmacc_vv_i32m2(out_3, ip_3, ker, vl);
+
+            rhs_0 += num_ch;
+            lhs_0 += num_ch;
+            lhs_1 += num_ch;
+            lhs_2 += num_ch;
+            lhs_3 += num_ch;
+        }
+
+        ker_sum = vmul_vx_i32m2(ker_sum, input_offset, vl);
+        out_0 = vadd_vv_i32m2(out_0, ker_sum, vl);
+        out_1 = vadd_vv_i32m2(out_1, ker_sum, vl);
+        out_2 = vadd_vv_i32m2(out_2, ker_sum, vl);
+        out_3 = vadd_vv_i32m2(out_3, ker_sum, vl);
+
+        const vint32m2_t mult = vle32_v_i32m2(out_mult, vl);
+        const vint32m2_t shift = vle32_v_i32m2(out_shift, vl);
+        out_mult += vl;
+        out_shift += vl;
+
+        out_0 = muriscv_nn_requantize_vint32m2(out_0, mult, shift, vl);
+        out_0 = vadd_vx_i32m2(out_0, out_offset, vl);
+        out_0 = vmax_vx_i32m2(out_0, activation_min, vl);
+        out_0 = vmin_vx_i32m2(out_0, activation_max, vl);
+        vse8_v_i8mf2(out, vnclip_wx_i8mf2(vnclip_wx_i16m1(out_0, 0, vl), 0, vl), vl);
+
+        out_1 = muriscv_nn_requantize_vint32m2(out_1, mult, shift, vl);
+        out_1 = vadd_vx_i32m2(out_1, out_offset, vl);
+        out_1 = vmax_vx_i32m2(out_1, activation_min, vl);
+        out_1 = vmin_vx_i32m2(out_1, activation_max, vl);
+        vse8_v_i8mf2(out + num_ch, vnclip_wx_i8mf2(vnclip_wx_i16m1(out_1, 0, vl), 0, vl), vl);
+
+        out_2 = muriscv_nn_requantize_vint32m2(out_2, mult, shift, vl);
+        out_2 = vadd_vx_i32m2(out_2, out_offset, vl);
+        out_2 = vmax_vx_i32m2(out_2, activation_min, vl);
+        out_2 = vmin_vx_i32m2(out_2, activation_max, vl);
+        vse8_v_i8mf2(out + 2 * num_ch, vnclip_wx_i8mf2(vnclip_wx_i16m1(out_2, 0, vl), 0, vl), vl);
+
+        out_3 = muriscv_nn_requantize_vint32m2(out_3, mult, shift, vl);
+        out_3 = vadd_vx_i32m2(out_3, out_offset, vl);
+        out_3 = vmax_vx_i32m2(out_3, activation_min, vl);
+        out_3 = vmin_vx_i32m2(out_3, activation_max, vl);
+        vse8_v_i8mf2(out + 3 * num_ch, vnclip_wx_i8mf2(vnclip_wx_i16m1(out_3, 0, vl), 0, vl), vl);
+
+        out += vl;
+        num_ch_to_process -= vl;
+    }
+    return out + 3 * num_ch;;
+#else
+    (void)lhs;
+    (void)rhs;
+    (void)input_offset;
+    (void)num_ch;
+    (void)out_shift;
+    (void)out_mult;
+    (void)out_offset;
+    (void)activation_min;
+    (void)activation_max;
+    (void)row_x_col;
+    (void)output_bias;
+    (void)out;
+    return NULL;
+#endif
+}
+
+/**
+ * @} end of NNBasicMath group
+ */
