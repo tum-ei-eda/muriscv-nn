@@ -19,14 +19,16 @@
  */
 
 #include <muriscv_nn_functions.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unity.h>
 
-#include "../../TestData/test_muriscv_nn_depthwise_conv_s8_opt/test_data.h"
+#include "../../TestData/basic/test_data.h"
+#include "../../TestData/depthwise_2/test_data.h"
+#include "../../TestData/depthwise_eq_in_out_ch/test_data.h"
+#include "../../TestData/stride2pad1/test_data.h"
 #include "../../Utils/validate.h"
 
-#define TOLERANCE 0
+static const uint16_t dilation = 1;
 
 void setUp(void)
 { /* set stuff up here */
@@ -35,8 +37,6 @@ void setUp(void)
 void tearDown(void)
 { /* clean stuff up here */
 }
-
-static const uint16_t dilation = 1;
 
 void basic_muriscv_nn_depthwise_conv_s8_opt(void)
 {
@@ -98,7 +98,7 @@ void basic_muriscv_nn_depthwise_conv_s8_opt(void)
 
     free(ctx.buf);
     TEST_ASSERT_EQUAL(expected, result);
-    TEST_ASSERT_TRUE(validate(output, basic_output_ref, BASIC_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_TRUE(validate(output, basic_output_ref, BASIC_DST_SIZE));
 }
 
 void stride2pad1_muriscv_nn_depthwise_conv_s8_opt(void)
@@ -161,7 +161,7 @@ void stride2pad1_muriscv_nn_depthwise_conv_s8_opt(void)
 
     free(ctx.buf);
     TEST_ASSERT_EQUAL(expected, result);
-    TEST_ASSERT_TRUE(validate(output, stride2pad1_output_ref, STRIDE2PAD1_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_TRUE(validate(output, stride2pad1_output_ref, STRIDE2PAD1_DST_SIZE));
 }
 
 void depthwise_eq_in_out_ch_muriscv_nn_depthwise_conv_s8_opt(void)
@@ -224,7 +224,7 @@ void depthwise_eq_in_out_ch_muriscv_nn_depthwise_conv_s8_opt(void)
 
     free(ctx.buf);
     TEST_ASSERT_EQUAL(expected, result);
-    TEST_ASSERT_TRUE(validate(output, depthwise_eq_in_out_ch_output_ref, DEPTHWISE_EQ_IN_OUT_CH_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_TRUE(validate(output, depthwise_eq_in_out_ch_output_ref, DEPTHWISE_EQ_IN_OUT_CH_DST_SIZE));
 }
 
 int main(void)

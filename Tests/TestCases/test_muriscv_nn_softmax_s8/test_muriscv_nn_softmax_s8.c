@@ -19,14 +19,12 @@
  */
 
 #include <muriscv_nn_functions.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unity.h>
 
-#include "../../TestData/test_muriscv_nn_softmax_s8/test_data.h"
+#include "../../TestData/softmax/test_data.h"
 #include "../../Utils/validate.h"
 
-#define TOLERANCE 0
 #define REPEAT_NUM 2
 
 void setUp(void)
@@ -37,84 +35,53 @@ void tearDown(void)
 { /* clean stuff up here */
 }
 
-void test_muriscv_nn_softmax_1_s8(void)
+void softmax_muriscv_nn_softmax_s8(void)
 {
-    const int32_t num_rows = SOFTMAX_1_NUM_ROWS;
-    const int32_t row_size = SOFTMAX_1_ROW_SIZE;
-    const int32_t mult = SOFTMAX_1_INPUT_MULT;
-    const int32_t shift = SOFTMAX_1_INPUT_LEFT_SHIFT;
-    const int32_t diff_min = SOFTMAX_1_DIFF_MIN;
-    const int8_t *input_data = softmax_1_input;
-    int8_t output[SOFTMAX_1_DST_SIZE];
+    const int32_t num_rows = SOFTMAX_NUM_ROWS;
+    const int32_t row_size = SOFTMAX_ROW_SIZE;
+    const int32_t mult = SOFTMAX_INPUT_MULT;
+    const int32_t shift = SOFTMAX_INPUT_LEFT_SHIFT;
+    const int32_t diff_min = SOFTMAX_DIFF_MIN;
+    const q7_t *input_data = softmax_input;
+    int8_t output[SOFTMAX_DST_SIZE];
 
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_softmax_s8(input_data, num_rows, row_size, mult, shift, diff_min, output);
-        TEST_ASSERT_TRUE(validate(output, softmax_1_output_ref, SOFTMAX_1_DST_SIZE, TOLERANCE));
+        TEST_ASSERT_TRUE(validate(output, softmax_output_ref, SOFTMAX_DST_SIZE));
     }
 }
 
-void test_muriscv_nn_softmax_1_invalid_diff_min_s8(void)
+void softmax_invalid_diff_min_muriscv_nn_softmax_s8(void)
 {
-    const int8_t softmax_expect_invalid_output[] = {-128, -128, -128, -128, -128};
-    const int32_t num_rows = SOFTMAX_1_NUM_ROWS;
-    const int32_t row_size = SOFTMAX_1_ROW_SIZE;
-    const int32_t mult = SOFTMAX_1_INPUT_MULT;
-    const int32_t shift = SOFTMAX_1_INPUT_LEFT_SHIFT;
+    const int32_t num_rows = SOFTMAX_NUM_ROWS;
+    const int32_t row_size = SOFTMAX_ROW_SIZE;
+    const int32_t mult = SOFTMAX_INPUT_MULT;
+    const int32_t shift = SOFTMAX_INPUT_LEFT_SHIFT;
     const int32_t diff_min = 0x7FFFFFFF;
-    const int8_t *input_data = softmax_1_input;
-    int8_t output[SOFTMAX_1_DST_SIZE];
+    const q7_t *input_data = softmax_input;
+    int8_t output[SOFTMAX_DST_SIZE];
+
+    q7_t *softmax_expect_invalid_output = malloc(SOFTMAX_DST_SIZE);
+    for (int i = 0; i < SOFTMAX_DST_SIZE; i++)
+    {
+        softmax_expect_invalid_output[i] = -128;
+    }
 
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_softmax_s8(input_data, num_rows, row_size, mult, shift, diff_min, output);
-        TEST_ASSERT_TRUE(validate(output, softmax_expect_invalid_output, SOFTMAX_1_DST_SIZE, TOLERANCE));
+        TEST_ASSERT_TRUE(validate(output, softmax_expect_invalid_output, SOFTMAX_DST_SIZE));
     }
-}
-
-void test_muriscv_nn_softmax_2_s8(void)
-{
-  const int32_t num_rows = SOFTMAX_2_NUM_ROWS;
-  const int32_t row_size = SOFTMAX_2_ROW_SIZE;
-  const int32_t mult = SOFTMAX_2_INPUT_MULT;
-  const int32_t shift = SOFTMAX_2_INPUT_LEFT_SHIFT;
-  const int32_t diff_min = SOFTMAX_2_DIFF_MIN;
-  const int8_t *input_data = softmax_2_input;
-  int8_t output[SOFTMAX_2_DST_SIZE];
-
-  for (int i = 0; i < REPEAT_NUM; i++)
-  {
-    muriscv_nn_softmax_s8(input_data, num_rows, row_size, mult, shift, diff_min, output);
-    TEST_ASSERT_TRUE(validate(output, softmax_2_output_ref, SOFTMAX_2_DST_SIZE, TOLERANCE));
-  }
-}
-
-void test_muriscv_nn_softmax_2_invalid_diff_min_s8(void)
-{
-    const int8_t softmax_expect_invalid_output[] = {-128, -128, -128, -128, -128, -128, -128, -128, -128, -128};
-    const int32_t num_rows = SOFTMAX_2_NUM_ROWS;
-    const int32_t row_size = SOFTMAX_2_ROW_SIZE;
-    const int32_t mult = SOFTMAX_2_INPUT_MULT;
-    const int32_t shift = SOFTMAX_2_INPUT_LEFT_SHIFT;
-    const int32_t diff_min = 0x7FFFFFFF;
-    const int8_t *input_data = softmax_2_input;
-    int8_t output[SOFTMAX_2_DST_SIZE];
-
-    for (int i = 0; i < REPEAT_NUM; i++)
-    {
-        muriscv_nn_softmax_s8(input_data, num_rows, row_size, mult, shift, diff_min, output);
-        TEST_ASSERT_TRUE(validate(output, softmax_expect_invalid_output, SOFTMAX_2_DST_SIZE, TOLERANCE));
-    }
+    free(softmax_expect_invalid_output);
 }
 
 int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(test_muriscv_nn_softmax_1_s8);
-    RUN_TEST(test_muriscv_nn_softmax_1_invalid_diff_min_s8);
-    RUN_TEST(test_muriscv_nn_softmax_2_s8);
-    RUN_TEST(test_muriscv_nn_softmax_2_invalid_diff_min_s8);
+    RUN_TEST(softmax_muriscv_nn_softmax_s8);
+    RUN_TEST(softmax_invalid_diff_min_muriscv_nn_softmax_s8);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */

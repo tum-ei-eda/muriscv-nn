@@ -19,14 +19,13 @@
  */
 
 #include <muriscv_nn_functions.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unity.h>
 
-#include "../../TestData/test_muriscv_nn_depthwise_conv_s16/test_data.h"
+#include "../../TestData/dw_int16xint8/test_data.h"
+#include "../../TestData/dw_int16xint8_dilation/test_data.h"
+#include "../../TestData/dw_int16xint8_mult4/test_data.h"
 #include "../../Utils/validate.h"
-
-#define TOLERANCE 0
 
 void setUp(void)
 { /* set stuff up here */
@@ -36,45 +35,50 @@ void tearDown(void)
 { /* clean stuff up here */
 }
 
-void test_muriscv_nn_depthwise_conv_0_s16(void)
+void dw_int16xint8_muriscv_nn_depthwise_conv_s16(void)
 {
-    q15_t output[DEPTHWISE_CONV_0_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    q15_t output[DW_INT16XINT8_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_dw_conv_params dw_conv_params;
     muriscv_nn_per_channel_quant_params quant_params;
-    muriscv_nn_dims input_dims = {0};
-    muriscv_nn_dims filter_dims = {0};
-    muriscv_nn_dims bias_dims = {0};
-    muriscv_nn_dims output_dims = {0};
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims bias_dims = {};
+    muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = depthwise_conv_0_biases;
-    const q15_t *input_data = depthwise_conv_0_input;
+    const q63_t *bias_data = dw_int16xint8_biases;
+    const q15_t *input_data = dw_int16xint8_input;
+    const q7_t *kernel_data = dw_int16xint8_weights;
+    const q15_t *output_ref = dw_int16xint8_output_ref;
+    const int32_t output_ref_size = DW_INT16XINT8_DST_SIZE;
 
-    input_dims.n = DEPTHWISE_CONV_0_INPUT_BATCHES;
-    input_dims.w = DEPTHWISE_CONV_0_INPUT_W;
-    input_dims.h = DEPTHWISE_CONV_0_INPUT_H;
-    input_dims.c = DEPTHWISE_CONV_0_IN_CH;
-    filter_dims.w = DEPTHWISE_CONV_0_FILTER_X;
-    filter_dims.h = DEPTHWISE_CONV_0_FILTER_Y;
-    output_dims.w = DEPTHWISE_CONV_0_OUTPUT_W;
-    output_dims.h = DEPTHWISE_CONV_0_OUTPUT_H;
-    output_dims.c = DEPTHWISE_CONV_0_OUT_CH;
+    input_dims.n = DW_INT16XINT8_INPUT_BATCHES;
+    input_dims.w = DW_INT16XINT8_INPUT_W;
+    input_dims.h = DW_INT16XINT8_INPUT_H;
+    input_dims.c = DW_INT16XINT8_IN_CH;
+    filter_dims.w = DW_INT16XINT8_FILTER_X;
+    filter_dims.h = DW_INT16XINT8_FILTER_Y;
+    output_dims.w = DW_INT16XINT8_OUTPUT_W;
+    output_dims.h = DW_INT16XINT8_OUTPUT_H;
+    output_dims.c = DW_INT16XINT8_OUT_CH;
 
-    dw_conv_params.padding.w = DEPTHWISE_CONV_0_PAD_X;
-    dw_conv_params.padding.h = DEPTHWISE_CONV_0_PAD_Y;
-    dw_conv_params.stride.w = DEPTHWISE_CONV_0_STRIDE_X;
-    dw_conv_params.stride.h = DEPTHWISE_CONV_0_STRIDE_Y;
-    dw_conv_params.dilation.w = DEPTHWISE_CONV_0_DILATION_X;
-    dw_conv_params.dilation.h = DEPTHWISE_CONV_0_DILATION_Y;
-    dw_conv_params.ch_mult = DEPTHWISE_CONV_0_CH_MULT;
+    dw_conv_params.padding.w = DW_INT16XINT8_PAD_X;
+    dw_conv_params.padding.h = DW_INT16XINT8_PAD_Y;
+    dw_conv_params.stride.w = DW_INT16XINT8_STRIDE_X;
+    dw_conv_params.stride.h = DW_INT16XINT8_STRIDE_Y;
+    dw_conv_params.dilation.w = DW_INT16XINT8_DILATION_X;
+    dw_conv_params.dilation.h = DW_INT16XINT8_DILATION_Y;
 
-    dw_conv_params.input_offset = DEPTHWISE_CONV_0_INPUT_OFFSET;
-    dw_conv_params.output_offset = DEPTHWISE_CONV_0_OUTPUT_OFFSET;
-    dw_conv_params.activation.min = DEPTHWISE_CONV_0_OUT_ACTIVATION_MIN;
-    dw_conv_params.activation.max = DEPTHWISE_CONV_0_OUT_ACTIVATION_MAX;
-    quant_params.multiplier = (int32_t *)depthwise_conv_0_output_mult;
-    quant_params.shift = (int32_t *)depthwise_conv_0_output_shift;
+    dw_conv_params.ch_mult = DW_INT16XINT8_CH_MULT;
+
+    dw_conv_params.input_offset = DW_INT16XINT8_INPUT_OFFSET;
+    dw_conv_params.output_offset = DW_INT16XINT8_OUTPUT_OFFSET;
+    dw_conv_params.activation.min = DW_INT16XINT8_OUT_ACTIVATION_MIN;
+    dw_conv_params.activation.max = DW_INT16XINT8_OUT_ACTIVATION_MAX;
+    quant_params.multiplier = (int32_t *)dw_int16xint8_output_mult;
+    quant_params.shift = (int32_t *)dw_int16xint8_output_shift;
 
     ctx.buf = NULL;
     ctx.size = 0;
@@ -85,17 +89,16 @@ void test_muriscv_nn_depthwise_conv_0_s16(void)
                                                              &input_dims,
                                                              input_data,
                                                              &filter_dims,
-                                                             depthwise_conv_0_weights,
+                                                             dw_int16xint8_weights,
                                                              &bias_dims,
                                                              bias_data,
                                                              &output_dims,
                                                              output);
-
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-    TEST_ASSERT_TRUE(validate_s16(output, depthwise_conv_0_output_ref, DEPTHWISE_CONV_0_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 
-    const int32_t buf_size =
+    int buf_size =
         muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
 
@@ -105,56 +108,61 @@ void test_muriscv_nn_depthwise_conv_0_s16(void)
                                                    &input_dims,
                                                    input_data,
                                                    &filter_dims,
-                                                   depthwise_conv_0_weights,
+                                                   kernel_data,
                                                    &bias_dims,
                                                    bias_data,
                                                    &output_dims,
                                                    output);
 
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-    TEST_ASSERT_TRUE(validate_s16(output, depthwise_conv_0_output_ref, DEPTHWISE_CONV_0_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 }
 
-void test_muriscv_nn_depthwise_conv_1_s16(void)
+void dw_int16xint8_dilation_muriscv_nn_depthwise_conv_s16(void)
 {
-    q15_t output[DEPTHWISE_CONV_1_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    q15_t output[DW_INT16XINT8_DILATION_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_dw_conv_params dw_conv_params;
     muriscv_nn_per_channel_quant_params quant_params;
-    muriscv_nn_dims input_dims = {0};
-    muriscv_nn_dims filter_dims = {0};
-    muriscv_nn_dims bias_dims = {0};
-    muriscv_nn_dims output_dims = {0};
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims bias_dims = {};
+    muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = depthwise_conv_1_biases;
-    const q15_t *input_data = depthwise_conv_1_input;
+    const q63_t *bias_data = dw_int16xint8_dilation_biases;
+    const q15_t *input_data = dw_int16xint8_dilation_input;
+    const q7_t *kernel_data = dw_int16xint8_dilation_weights;
+    const q15_t *output_ref = dw_int16xint8_dilation_output_ref;
+    const int32_t output_ref_size = DW_INT16XINT8_DILATION_DST_SIZE;
 
-    input_dims.n = DEPTHWISE_CONV_1_INPUT_BATCHES;
-    input_dims.w = DEPTHWISE_CONV_1_INPUT_W;
-    input_dims.h = DEPTHWISE_CONV_1_INPUT_H;
-    input_dims.c = DEPTHWISE_CONV_1_IN_CH;
-    filter_dims.w = DEPTHWISE_CONV_1_FILTER_X;
-    filter_dims.h = DEPTHWISE_CONV_1_FILTER_Y;
-    output_dims.w = DEPTHWISE_CONV_1_OUTPUT_W;
-    output_dims.h = DEPTHWISE_CONV_1_OUTPUT_H;
-    output_dims.c = DEPTHWISE_CONV_1_OUT_CH;
+    input_dims.n = DW_INT16XINT8_DILATION_INPUT_BATCHES;
+    input_dims.w = DW_INT16XINT8_DILATION_INPUT_W;
+    input_dims.h = DW_INT16XINT8_DILATION_INPUT_H;
+    input_dims.c = DW_INT16XINT8_DILATION_IN_CH;
+    filter_dims.w = DW_INT16XINT8_DILATION_FILTER_X;
+    filter_dims.h = DW_INT16XINT8_DILATION_FILTER_Y;
+    output_dims.w = DW_INT16XINT8_DILATION_OUTPUT_W;
+    output_dims.h = DW_INT16XINT8_DILATION_OUTPUT_H;
+    output_dims.c = DW_INT16XINT8_DILATION_OUT_CH;
 
-    dw_conv_params.padding.w = DEPTHWISE_CONV_1_PAD_X;
-    dw_conv_params.padding.h = DEPTHWISE_CONV_1_PAD_Y;
-    dw_conv_params.stride.w = DEPTHWISE_CONV_1_STRIDE_X;
-    dw_conv_params.stride.h = DEPTHWISE_CONV_1_STRIDE_Y;
-    dw_conv_params.dilation.w = DEPTHWISE_CONV_1_DILATION_X;
-    dw_conv_params.dilation.h = DEPTHWISE_CONV_1_DILATION_Y;
-    dw_conv_params.ch_mult = DEPTHWISE_CONV_1_CH_MULT;
+    dw_conv_params.padding.w = DW_INT16XINT8_DILATION_PAD_X;
+    dw_conv_params.padding.h = DW_INT16XINT8_DILATION_PAD_Y;
+    dw_conv_params.stride.w = DW_INT16XINT8_DILATION_STRIDE_X;
+    dw_conv_params.stride.h = DW_INT16XINT8_DILATION_STRIDE_Y;
+    dw_conv_params.dilation.w = DW_INT16XINT8_DILATION_DILATION_X;
+    dw_conv_params.dilation.h = DW_INT16XINT8_DILATION_DILATION_Y;
 
-    dw_conv_params.input_offset = DEPTHWISE_CONV_1_INPUT_OFFSET;
-    dw_conv_params.output_offset = DEPTHWISE_CONV_1_OUTPUT_OFFSET;
-    dw_conv_params.activation.min = DEPTHWISE_CONV_1_OUT_ACTIVATION_MIN;
-    dw_conv_params.activation.max = DEPTHWISE_CONV_1_OUT_ACTIVATION_MAX;
-    quant_params.multiplier = (int32_t *)depthwise_conv_1_output_mult;
-    quant_params.shift = (int32_t *)depthwise_conv_1_output_shift;
+    dw_conv_params.ch_mult = DW_INT16XINT8_DILATION_CH_MULT;
+
+    dw_conv_params.input_offset = DW_INT16XINT8_DILATION_INPUT_OFFSET;
+    dw_conv_params.output_offset = DW_INT16XINT8_DILATION_OUTPUT_OFFSET;
+    dw_conv_params.activation.min = DW_INT16XINT8_DILATION_OUT_ACTIVATION_MIN;
+    dw_conv_params.activation.max = DW_INT16XINT8_DILATION_OUT_ACTIVATION_MAX;
+    quant_params.multiplier = (int32_t *)dw_int16xint8_dilation_output_mult;
+    quant_params.shift = (int32_t *)dw_int16xint8_dilation_output_shift;
 
     ctx.buf = NULL;
     ctx.size = 0;
@@ -165,17 +173,17 @@ void test_muriscv_nn_depthwise_conv_1_s16(void)
                                                              &input_dims,
                                                              input_data,
                                                              &filter_dims,
-                                                             depthwise_conv_1_weights,
+                                                             dw_int16xint8_dilation_weights,
                                                              &bias_dims,
                                                              bias_data,
                                                              &output_dims,
                                                              output);
 
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-    TEST_ASSERT_TRUE(validate_s16(output, depthwise_conv_1_output_ref, DEPTHWISE_CONV_1_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 
-    const int32_t buf_size =
+    int buf_size =
         muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
 
@@ -185,56 +193,61 @@ void test_muriscv_nn_depthwise_conv_1_s16(void)
                                                    &input_dims,
                                                    input_data,
                                                    &filter_dims,
-                                                   depthwise_conv_1_weights,
+                                                   kernel_data,
                                                    &bias_dims,
                                                    bias_data,
                                                    &output_dims,
                                                    output);
 
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-    TEST_ASSERT_TRUE(validate_s16(output, depthwise_conv_1_output_ref, DEPTHWISE_CONV_1_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 }
 
-void test_muriscv_nn_depthwise_conv_2_s16(void)
+void dw_int16xint8_mult4_muriscv_nn_depthwise_conv_s16(void)
 {
-    q15_t output[DEPTHWISE_CONV_2_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    q15_t output[DW_INT16XINT8_MULT4_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_dw_conv_params dw_conv_params;
     muriscv_nn_per_channel_quant_params quant_params;
-    muriscv_nn_dims input_dims = {0};
-    muriscv_nn_dims filter_dims = {0};
-    muriscv_nn_dims bias_dims = {0};
-    muriscv_nn_dims output_dims = {0};
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims bias_dims = {};
+    muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = depthwise_conv_2_biases;
-    const q15_t *input_data = depthwise_conv_2_input;
+    const q63_t *bias_data = dw_int16xint8_mult4_biases;
+    const q15_t *input_data = dw_int16xint8_mult4_input;
+    const q7_t *kernel_data = dw_int16xint8_mult4_weights;
+    const q15_t *output_ref = dw_int16xint8_mult4_output_ref;
+    const int32_t output_ref_size = DW_INT16XINT8_MULT4_DST_SIZE;
 
-    input_dims.n = DEPTHWISE_CONV_2_INPUT_BATCHES;
-    input_dims.w = DEPTHWISE_CONV_2_INPUT_W;
-    input_dims.h = DEPTHWISE_CONV_2_INPUT_H;
-    input_dims.c = DEPTHWISE_CONV_2_IN_CH;
-    filter_dims.w = DEPTHWISE_CONV_2_FILTER_X;
-    filter_dims.h = DEPTHWISE_CONV_2_FILTER_Y;
-    output_dims.w = DEPTHWISE_CONV_2_OUTPUT_W;
-    output_dims.h = DEPTHWISE_CONV_2_OUTPUT_H;
-    output_dims.c = DEPTHWISE_CONV_2_OUT_CH;
+    input_dims.n = DW_INT16XINT8_MULT4_INPUT_BATCHES;
+    input_dims.w = DW_INT16XINT8_MULT4_INPUT_W;
+    input_dims.h = DW_INT16XINT8_MULT4_INPUT_H;
+    input_dims.c = DW_INT16XINT8_MULT4_IN_CH;
+    filter_dims.w = DW_INT16XINT8_MULT4_FILTER_X;
+    filter_dims.h = DW_INT16XINT8_MULT4_FILTER_Y;
+    output_dims.w = DW_INT16XINT8_MULT4_OUTPUT_W;
+    output_dims.h = DW_INT16XINT8_MULT4_OUTPUT_H;
+    output_dims.c = DW_INT16XINT8_MULT4_OUT_CH;
 
-    dw_conv_params.padding.w = DEPTHWISE_CONV_2_PAD_X;
-    dw_conv_params.padding.h = DEPTHWISE_CONV_2_PAD_Y;
-    dw_conv_params.stride.w = DEPTHWISE_CONV_2_STRIDE_X;
-    dw_conv_params.stride.h = DEPTHWISE_CONV_2_STRIDE_Y;
-    dw_conv_params.dilation.w = DEPTHWISE_CONV_2_DILATION_X;
-    dw_conv_params.dilation.h = DEPTHWISE_CONV_2_DILATION_Y;
-    dw_conv_params.ch_mult = DEPTHWISE_CONV_2_CH_MULT;
+    dw_conv_params.padding.w = DW_INT16XINT8_MULT4_PAD_X;
+    dw_conv_params.padding.h = DW_INT16XINT8_MULT4_PAD_Y;
+    dw_conv_params.stride.w = DW_INT16XINT8_MULT4_STRIDE_X;
+    dw_conv_params.stride.h = DW_INT16XINT8_MULT4_STRIDE_Y;
+    dw_conv_params.dilation.w = DW_INT16XINT8_MULT4_DILATION_X;
+    dw_conv_params.dilation.h = DW_INT16XINT8_MULT4_DILATION_Y;
 
-    dw_conv_params.input_offset = DEPTHWISE_CONV_2_INPUT_OFFSET;
-    dw_conv_params.output_offset = DEPTHWISE_CONV_2_OUTPUT_OFFSET;
-    dw_conv_params.activation.min = DEPTHWISE_CONV_2_OUT_ACTIVATION_MIN;
-    dw_conv_params.activation.max = DEPTHWISE_CONV_2_OUT_ACTIVATION_MAX;
-    quant_params.multiplier = (int32_t *)depthwise_conv_2_output_mult;
-    quant_params.shift = (int32_t *)depthwise_conv_2_output_shift;
+    dw_conv_params.ch_mult = DW_INT16XINT8_MULT4_CH_MULT;
+
+    dw_conv_params.input_offset = DW_INT16XINT8_MULT4_INPUT_OFFSET;
+    dw_conv_params.output_offset = DW_INT16XINT8_MULT4_OUTPUT_OFFSET;
+    dw_conv_params.activation.min = DW_INT16XINT8_MULT4_OUT_ACTIVATION_MIN;
+    dw_conv_params.activation.max = DW_INT16XINT8_MULT4_OUT_ACTIVATION_MAX;
+    quant_params.multiplier = (int32_t *)dw_int16xint8_mult4_output_mult;
+    quant_params.shift = (int32_t *)dw_int16xint8_mult4_output_shift;
 
     ctx.buf = NULL;
     ctx.size = 0;
@@ -245,17 +258,17 @@ void test_muriscv_nn_depthwise_conv_2_s16(void)
                                                              &input_dims,
                                                              input_data,
                                                              &filter_dims,
-                                                             depthwise_conv_2_weights,
+                                                             dw_int16xint8_mult4_weights,
                                                              &bias_dims,
                                                              bias_data,
                                                              &output_dims,
                                                              output);
 
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-    TEST_ASSERT_TRUE(validate_s16(output, depthwise_conv_2_output_ref, DEPTHWISE_CONV_2_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 
-    const int32_t buf_size =
+    int buf_size =
         muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
 
@@ -265,24 +278,24 @@ void test_muriscv_nn_depthwise_conv_2_s16(void)
                                                    &input_dims,
                                                    input_data,
                                                    &filter_dims,
-                                                   depthwise_conv_2_weights,
+                                                   kernel_data,
                                                    &bias_dims,
                                                    bias_data,
                                                    &output_dims,
                                                    output);
 
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-    TEST_ASSERT_TRUE(validate_s16(output, depthwise_conv_2_output_ref, DEPTHWISE_CONV_2_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 }
 
 int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(test_muriscv_nn_depthwise_conv_0_s16);
-    RUN_TEST(test_muriscv_nn_depthwise_conv_1_s16);
-    RUN_TEST(test_muriscv_nn_depthwise_conv_2_s16);
+    RUN_TEST(dw_int16xint8_muriscv_nn_depthwise_conv_s16);
+    RUN_TEST(dw_int16xint8_dilation_muriscv_nn_depthwise_conv_s16);
+    RUN_TEST(dw_int16xint8_mult4_muriscv_nn_depthwise_conv_s16);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */

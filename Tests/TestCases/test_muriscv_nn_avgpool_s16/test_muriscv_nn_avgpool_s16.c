@@ -19,14 +19,11 @@
  */
 
 #include <muriscv_nn_functions.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unity.h>
 
-#include "../../TestData/test_muriscv_nn_avgpool_s16/test_data.h"
+#include "../../TestData/avgpooling_int16/test_data.h"
 #include "../../Utils/validate.h"
-
-#define TOLERANCE 0
 
 void setUp(void)
 { /* set stuff up here */
@@ -36,9 +33,10 @@ void tearDown(void)
 { /* clean stuff up here */
 }
 
-void test_muriscv_nn_avgpool_0_s16(void)
+void avgpooling_int16_muriscv_nn_avgpool_s16(void)
 {
-    int16_t output[AVGPOOL_0_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    q15_t output[AVGPOOLING_INT16_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_pool_params pool_params;
@@ -46,42 +44,42 @@ void test_muriscv_nn_avgpool_0_s16(void)
     muriscv_nn_dims filter_dims;
     muriscv_nn_dims output_dims;
 
-    const int16_t *input_data = avgpool_0_input;
+    const q15_t *input_data = avgpooling_int16_input;
 
-    input_dims.n = AVGPOOL_0_INPUT_BATCHES;
-    input_dims.w = AVGPOOL_0_INPUT_W;
-    input_dims.h = AVGPOOL_0_INPUT_H;
-    input_dims.c = AVGPOOL_0_IN_CH;
-    filter_dims.w = AVGPOOL_0_FILTER_X;
-    filter_dims.h = AVGPOOL_0_FILTER_Y;
-    output_dims.w = AVGPOOL_0_OUTPUT_W;
-    output_dims.h = AVGPOOL_0_OUTPUT_H;
-    output_dims.c = AVGPOOL_0_OUT_CH;
+    input_dims.n = AVGPOOLING_INT16_INPUT_BATCHES;
+    input_dims.w = AVGPOOLING_INT16_INPUT_W;
+    input_dims.h = AVGPOOLING_INT16_INPUT_H;
+    input_dims.c = AVGPOOLING_INT16_IN_CH;
+    filter_dims.w = AVGPOOLING_INT16_FILTER_X;
+    filter_dims.h = AVGPOOLING_INT16_FILTER_Y;
+    output_dims.w = AVGPOOLING_INT16_OUTPUT_W;
+    output_dims.h = AVGPOOLING_INT16_OUTPUT_H;
+    output_dims.c = AVGPOOLING_INT16_OUT_CH;
 
-    pool_params.padding.w = AVGPOOL_0_PAD_X;
-    pool_params.padding.h = AVGPOOL_0_PAD_Y;
-    pool_params.stride.w = AVGPOOL_0_STRIDE_X;
-    pool_params.stride.h = AVGPOOL_0_STRIDE_Y;
+    pool_params.padding.w = AVGPOOLING_INT16_PAD_X;
+    pool_params.padding.h = AVGPOOLING_INT16_PAD_Y;
+    pool_params.stride.w = AVGPOOLING_INT16_STRIDE_X;
+    pool_params.stride.h = AVGPOOLING_INT16_STRIDE_Y;
 
-    pool_params.activation.min = AVGPOOL_0_OUT_ACTIVATION_MIN;
-    pool_params.activation.max = AVGPOOL_0_OUT_ACTIVATION_MAX;
+    pool_params.activation.min = AVGPOOLING_INT16_OUT_ACTIVATION_MIN;
+    pool_params.activation.max = AVGPOOLING_INT16_OUT_ACTIVATION_MAX;
 
-    ctx.size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOL_0_OUTPUT_W, AVGPOOL_0_IN_CH);
+    ctx.size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_OUTPUT_W, AVGPOOLING_INT16_IN_CH);
     ctx.buf = malloc(ctx.size);
 
     muriscv_nn_status result =
         muriscv_nn_avgpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-    TEST_ASSERT_TRUE(validate_s16(output, avgpool_0_output_ref, AVGPOOL_0_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output, avgpooling_int16_output_ref, AVGPOOLING_INT16_DST_SIZE));
 }
 
 int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(test_muriscv_nn_avgpool_0_s16);
+    RUN_TEST(avgpooling_int16_muriscv_nn_avgpool_s16);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */

@@ -17,14 +17,10 @@
  */
 
 #include <muriscv_nn_functions.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <unity.h>
 
 #include "../../TestData/test_muriscv_nn_relu_q7/test_data.h"
 #include "../../Utils/validate.h"
-
-#define TOLERANCE 0
 
 void setUp(void)
 { /* set stuff up here */
@@ -40,7 +36,7 @@ void test_muriscv_nn_relu_q7(void)
     muriscv_nn_status result = muriscv_nn_relu_q7(input_data, RELU_SIZE);
 
     TEST_ASSERT_EQUAL(result, MURISCV_NN_SUCCESS);
-    TEST_ASSERT_TRUE(validate(input_data, relu_output_ref, RELU_SIZE, TOLERANCE));
+    TEST_ASSERT_TRUE(validate(input_data, relu_output_ref, RELU_SIZE));
 }
 
 int main(void)

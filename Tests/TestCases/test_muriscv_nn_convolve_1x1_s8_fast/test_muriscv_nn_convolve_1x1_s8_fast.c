@@ -19,14 +19,11 @@
  */
 
 #include <muriscv_nn_functions.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unity.h>
 
-#include "../../TestData/test_muriscv_nn_convolve_1x1_s8_fast/test_data.h"
+#include "../../TestData/kernel1x1/test_data.h"
 #include "../../Utils/validate.h"
-
-#define TOLERANCE 0
 
 void setUp(void)
 { /* set stuff up here */
@@ -38,9 +35,10 @@ void tearDown(void)
 
 // TODO(fabianpedd): Use tests from convolve_s8 here too
 
-void test_muriscv_nn_convolve_1x1_1_s8_fast(void)
+void kernel1x1_muriscv_nn_convolve_1x1_s8_fast(void)
 {
-    q7_t output[CONV_1X1_FAST_1_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    q7_t output[KERNEL1X1_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -50,30 +48,30 @@ void test_muriscv_nn_convolve_1x1_1_s8_fast(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = conv_1x1_fast_biases;
-    const q7_t *input_data = conv_1x1_fast_input;
+    const q31_t *bias_data = kernel1x1_biases;
+    const q7_t *input_data = kernel1x1_input;
 
-    input_dims.n = CONV_1X1_FAST_1_INPUT_BATCHES;
-    input_dims.w = CONV_1X1_FAST_1_INPUT_W;
-    input_dims.h = CONV_1X1_FAST_1_INPUT_H;
-    input_dims.c = CONV_1X1_FAST_1_IN_CH;
-    filter_dims.w = CONV_1X1_FAST_1_FILTER_X;
-    filter_dims.h = CONV_1X1_FAST_1_FILTER_Y;
-    output_dims.w = CONV_1X1_FAST_1_OUTPUT_W;
-    output_dims.h = CONV_1X1_FAST_1_OUTPUT_H;
-    output_dims.c = CONV_1X1_FAST_1_OUT_CH;
+    input_dims.n = KERNEL1X1_INPUT_BATCHES;
+    input_dims.w = KERNEL1X1_INPUT_W;
+    input_dims.h = KERNEL1X1_INPUT_H;
+    input_dims.c = KERNEL1X1_IN_CH;
+    filter_dims.w = KERNEL1X1_FILTER_X;
+    filter_dims.h = KERNEL1X1_FILTER_Y;
+    output_dims.w = KERNEL1X1_OUTPUT_W;
+    output_dims.h = KERNEL1X1_OUTPUT_H;
+    output_dims.c = KERNEL1X1_OUT_CH;
 
-    conv_params.padding.w = CONV_1X1_FAST_1_PAD_X;
-    conv_params.padding.h = CONV_1X1_FAST_1_PAD_Y;
-    conv_params.stride.w = CONV_1X1_FAST_1_STRIDE_X;
-    conv_params.stride.h = CONV_1X1_FAST_1_STRIDE_Y;
+    conv_params.padding.w = KERNEL1X1_PAD_X;
+    conv_params.padding.h = KERNEL1X1_PAD_Y;
+    conv_params.stride.w = KERNEL1X1_STRIDE_X;
+    conv_params.stride.h = KERNEL1X1_STRIDE_Y;
 
-    conv_params.input_offset = CONV_1X1_FAST_1_INPUT_OFFSET;
-    conv_params.output_offset = CONV_1X1_FAST_1_OUTPUT_OFFSET;
-    conv_params.activation.min = CONV_1X1_FAST_1_OUT_ACTIVATION_MIN;
-    conv_params.activation.max = CONV_1X1_FAST_1_OUT_ACTIVATION_MAX;
-    quant_params.multiplier = (int32_t *)conv_1x1_fast_output_mult;
-    quant_params.shift = (int32_t *)conv_1x1_fast_output_shift;
+    conv_params.input_offset = KERNEL1X1_INPUT_OFFSET;
+    conv_params.output_offset = KERNEL1X1_OUTPUT_OFFSET;
+    conv_params.activation.min = KERNEL1X1_OUT_ACTIVATION_MIN;
+    conv_params.activation.max = KERNEL1X1_OUT_ACTIVATION_MAX;
+    quant_params.multiplier = (int32_t *)kernel1x1_output_mult;
+    quant_params.shift = (int32_t *)kernel1x1_output_shift;
 
     const int32_t buf_size = muriscv_nn_convolve_1x1_s8_fast_get_buffer_size(&input_dims);
     ctx.buf = malloc(buf_size);
@@ -85,22 +83,22 @@ void test_muriscv_nn_convolve_1x1_1_s8_fast(void)
                                                                &input_dims,
                                                                input_data,
                                                                &filter_dims,
-                                                               conv_1x1_fast_weights,
+                                                               kernel1x1_weights,
                                                                &bias_dims,
                                                                bias_data,
                                                                &output_dims,
                                                                output);
 
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-    TEST_ASSERT_TRUE(validate(output, conv_1x1_fast_output_ref, CONV_1X1_FAST_1_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate(output, kernel1x1_output_ref, KERNEL1X1_DST_SIZE));
 }
 
 int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(test_muriscv_nn_convolve_1x1_1_s8_fast);
+    RUN_TEST(kernel1x1_muriscv_nn_convolve_1x1_s8_fast);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */

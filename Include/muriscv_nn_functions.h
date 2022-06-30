@@ -267,60 +267,60 @@ muriscv_nn_status muriscv_nn_convolve_s16(const muriscv_nn_context *ctx,
  */
 int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims);
 
-// /**
-//  * @brief Optimized s16 convolution function
-//  * @param[in, out] ctx            Function context that contains the additional buffer if required by the function.
-//                                   muriscv_nn_convolve_fast_s16_get_buffer_size will return the buffer_size if
-//  required
-//  * @param[in]      conv_params    Convolution parameters (e.g. strides, dilations, pads,...).
-//  *                                conv_params->input_offset  : Not used
-//  *                                conv_params->output_offset : Not used
-//  * @param[in]      quant_params   Per-channel quantization info.
-//  *                                It contains the multiplier and shift values to be applied to each output channel
-//  * @param[in]      input_dims     Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
-//  * @param[in]      input_data     Input (activation) data pointer. Data type: int16
-//  * @param[in]      filter_dims    Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK are the
-//  *                                spatial filter dimensions. (filter_dims->w * filter_dims->h * input_dims->c) must
-//  not exceed 512
-//  * @param[in]      filter_data    Filter data pointer. Data type: int8
-//  * @param[in]      bias_dims      Bias tensor dimensions. Format: [C_OUT]
-//  * @param[in]      bias_data      Optional bias data pointer. Data type: int64
-//  * @param[in]      output_dims    Output tensor dimensions. Format: [N, H, W, C_OUT]
-//  * @param[out]     output_data    Output data pointer. Data type: int16
-//
-//  * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
-//  *
-//  * @details
-//  *    1. Supported framework: TensorFlow Lite micro
-//  *    2. q7/q15 is used as data type eventhough it is s8/s16 data. It is done so to be consistent with existing
-//  APIs.
-//  *    3. Additional memory is required for optimization. Refer to argument 'ctx' for details.
-//  *    4. Implementation supports kernel volumes (filter width * filter height * input channels) < 512.
-//  *
-//  */
-// muriscv_nn_status muriscv_nn_convolve_fast_s16(const muriscv_nn_context *ctx,
-//                                                const muriscv_nn_conv_params *conv_params,
-//                                                const muriscv_nn_per_channel_quant_params *quant_params,
-//                                                const muriscv_nn_dims *input_dims,
-//                                                const q15_t *input_data,
-//                                                const muriscv_nn_dims *filter_dims,
-//                                                const q7_t *filter_data,
-//                                                const muriscv_nn_dims *bias_dims,
-//                                                const int64_t *bias_data,
-//                                                const muriscv_nn_dims *output_dims,
-//                                                q15_t *output_data);
-//
-// /**
-//  * @brief Get the required buffer size for fast s16 convolution function
-//  *
-//  * @param[in]       input_dims            Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
-//  * @param[in]       filter_dims           Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK
-//  * are the spatial filter dimensions
-//  * @return          The function returns required buffer size(bytes)
-//  *
-//  */
-// int32_t muriscv_nn_convolve_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims,
-//                                                      const muriscv_nn_dims *filter_dims);
+/**
+ * @brief Optimized s16 convolution function
+ * @param[in, out] ctx            Function context that contains the additional buffer if required by the function.
+                                  muriscv_nn_convolve_fast_s16_get_buffer_size will return the buffer_size if
+ required
+ * @param[in]      conv_params    Convolution parameters (e.g. strides, dilations, pads,...).
+ *                                conv_params->input_offset  : Not used
+ *                                conv_params->output_offset : Not used
+ * @param[in]      quant_params   Per-channel quantization info.
+ *                                It contains the multiplier and shift values to be applied to each output channel
+ * @param[in]      input_dims     Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
+ * @param[in]      input_data     Input (activation) data pointer. Data type: int16
+ * @param[in]      filter_dims    Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK are the
+ *                                spatial filter dimensions. (filter_dims->w * filter_dims->h * input_dims->c) must
+ not exceed 512
+ * @param[in]      filter_data    Filter data pointer. Data type: int8
+ * @param[in]      bias_dims      Bias tensor dimensions. Format: [C_OUT]
+ * @param[in]      bias_data      Optional bias data pointer. Data type: int64
+ * @param[in]      output_dims    Output tensor dimensions. Format: [N, H, W, C_OUT]
+ * @param[out]     output_data    Output data pointer. Data type: int16
+
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite micro
+ *    2. q7/q15 is used as data type eventhough it is s8/s16 data. It is done so to be consistent with existing
+ APIs.
+ *    3. Additional memory is required for optimization. Refer to argument 'ctx' for details.
+ *    4. Implementation supports kernel volumes (filter width * filter height * input channels) < 512.
+ *
+ */
+muriscv_nn_status muriscv_nn_convolve_fast_s16(const muriscv_nn_context *ctx,
+                                               const muriscv_nn_conv_params *conv_params,
+                                               const muriscv_nn_per_channel_quant_params *quant_params,
+                                               const muriscv_nn_dims *input_dims,
+                                               const q15_t *input_data,
+                                               const muriscv_nn_dims *filter_dims,
+                                               const q7_t *filter_data,
+                                               const muriscv_nn_dims *bias_dims,
+                                               const int64_t *bias_data,
+                                               const muriscv_nn_dims *output_dims,
+                                               q15_t *output_data);
+
+/**
+ * @brief Get the required buffer size for fast s16 convolution function
+ *
+ * @param[in]       input_dims            Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
+ * @param[in]       filter_dims           Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK
+ * are the spatial filter dimensions
+ * @return          The function returns required buffer size(bytes)
+ *
+ */
+int32_t muriscv_nn_convolve_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims,
+                                                     const muriscv_nn_dims *filter_dims);
 
 /**
  * @brief Fast s8 version for 1x1 convolution (non-square shape)
@@ -648,49 +648,49 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(const muriscv_nn_d
                                                               const muriscv_nn_dims *filter_dims,
                                                               const muriscv_nn_dims *output_dims);
 
-// /**
-//  * @brief Optimized s16 depthwise convolution function with constraint that in_channel equals out_channel.
-//  *        Refer muriscv_nn_depthwise_conv_s16() for function argument details.
-//  *
-//  * @return     The function returns one of the following
-//  *                <code>MURISCV_NN_ARG_ERROR</code> - ctx-buff == NULL and
-//  *                                                      muriscv_nn_depthwise_conv_fast_s16_get_buffer_size() > 0 or
-//  *                                                      input channel != output channel or
-//  *                                                      ch_mult != 1
-//  *
-//  *                <code>MURISCV_NN_SUCCESS</code> - Successful operation
-//  *
-//  * @details
-//  *    - Supported framework: TensorFlow Lite
-//  *    - The following constrains on the arguments apply
-//  *        -# Number of input channel equals number of output channels or ch_mult equals 1
-//  *    - q7 is used as data type eventhough it is s8 data. It is done so to be consistent with existing APIs.
-//  *    - Reccomended when number of channels is 4 or greater.
-//  *
-//  */
-// muriscv_nn_status muriscv_nn_depthwise_conv_fast_s16(const muriscv_nn_context *ctx,
-//                                                      const muriscv_nn_dw_conv_params *dw_conv_params,
-//                                                      const muriscv_nn_per_channel_quant_params *quant_params,
-//                                                      const muriscv_nn_dims *input_dims,
-//                                                      const q15_t *input_data,
-//                                                      const muriscv_nn_dims *filter_dims,
-//                                                      const q7_t *filter_data,
-//                                                      const muriscv_nn_dims *bias_dims,
-//                                                      const int64_t *bias_data,
-//                                                      const muriscv_nn_dims *output_dims,
-//                                                      q15_t *output_data);
-//
-// /**
-//  * @brief Get the required buffer size for optimized s16 depthwise convolution
-//  * function with constraint that in_channel equals out_channel.
-//  * @param[in]       input_dims     Input (activation) tensor dimensions. Format: [1, H, W, C_IN]
-//  *                                 Batch argument N is not used.
-//  * @param[in]       filter_dims    Filter tensor dimensions. Format: [1, H, W, C_OUT]
-//  * @return          The function returns  required buffer size in bytes
-//  *
-//  */
-// int32_t muriscv_nn_depthwise_conv_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims,
-//                                                            const muriscv_nn_dims *filter_dims);
+/**
+ * @brief Optimized s16 depthwise convolution function with constraint that in_channel equals out_channel.
+ *        Refer muriscv_nn_depthwise_conv_s16() for function argument details.
+ *
+ * @return     The function returns one of the following
+ *                <code>MURISCV_NN_ARG_ERROR</code> - ctx-buff == NULL and
+ *                                                      muriscv_nn_depthwise_conv_fast_s16_get_buffer_size() > 0 or
+ *                                                      input channel != output channel or
+ *                                                      ch_mult != 1
+ *
+ *                <code>MURISCV_NN_SUCCESS</code> - Successful operation
+ *
+ * @details
+ *    - Supported framework: TensorFlow Lite
+ *    - The following constrains on the arguments apply
+ *        -# Number of input channel equals number of output channels or ch_mult equals 1
+ *    - q7 is used as data type eventhough it is s8 data. It is done so to be consistent with existing APIs.
+ *    - Reccomended when number of channels is 4 or greater.
+ *
+ */
+muriscv_nn_status muriscv_nn_depthwise_conv_fast_s16(const muriscv_nn_context *ctx,
+                                                     const muriscv_nn_dw_conv_params *dw_conv_params,
+                                                     const muriscv_nn_per_channel_quant_params *quant_params,
+                                                     const muriscv_nn_dims *input_dims,
+                                                     const q15_t *input_data,
+                                                     const muriscv_nn_dims *filter_dims,
+                                                     const q7_t *filter_data,
+                                                     const muriscv_nn_dims *bias_dims,
+                                                     const int64_t *bias_data,
+                                                     const muriscv_nn_dims *output_dims,
+                                                     q15_t *output_data);
+
+/**
+ * @brief Get the required buffer size for optimized s16 depthwise convolution
+ * function with constraint that in_channel equals out_channel.
+ * @param[in]       input_dims     Input (activation) tensor dimensions. Format: [1, H, W, C_IN]
+ *                                 Batch argument N is not used.
+ * @param[in]       filter_dims    Filter tensor dimensions. Format: [1, H, W, C_OUT]
+ * @return          The function returns  required buffer size in bytes
+ *
+ */
+int32_t muriscv_nn_depthwise_conv_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims,
+                                                           const muriscv_nn_dims *filter_dims);
 
 /**
  * @brief Optimized s8 depthwise convolution function for 3x3 kernel size with some constraints on

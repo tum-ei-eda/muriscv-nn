@@ -20,11 +20,13 @@
 
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_1_x_n_s8.c
                                              ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_1x1_s8_fast.c
+                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_fast_s16.c
                                              ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_s8.c
                                              ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_s16.c
                                              ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_wrapper_s8.c
                                              ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_wrapper_s16.c
                                              ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_3x3_s8.c
+                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_fast_s16.c
                                              ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_s8_opt.c
                                              ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_s8.c
                                              ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_s16.c

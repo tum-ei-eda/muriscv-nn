@@ -19,14 +19,13 @@
  */
 
 #include <muriscv_nn_functions.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <unity.h>
 
-#include "../../TestData/test_muriscv_nn_softmax_s16/test_data.h"
+#include "../../TestData/softmax_s16/test_data.h"
 #include "../../Utils/validate.h"
+#include "../Common/Softmax/exp_lut_data.h"
+#include "../Common/Softmax/one_by_one_lut_data.h"
 
-#define TOLERANCE 0
 #define REPEAT_NUM 2
 
 void setUp(void)
@@ -37,21 +36,21 @@ void tearDown(void)
 { /* clean stuff up here */
 }
 
-void test_muriscv_nn_softmax_1_s16(void)
+void softmax_s16_muriscv_nn_softmax_s16(void)
 {
-    const int32_t num_rows = SOFTMAX_1_NUM_ROWS;
-    const int32_t row_size = SOFTMAX_1_ROW_SIZE;
-    const int32_t mult = SOFTMAX_1_INPUT_MULT;
-    const int32_t shift = SOFTMAX_1_INPUT_LEFT_SHIFT;
+    const int32_t num_rows = SOFTMAX_S16_NUM_ROWS;
+    const int32_t row_size = SOFTMAX_S16_ROW_SIZE;
+    const int32_t mult = SOFTMAX_S16_INPUT_MULT;
+    const int32_t shift = SOFTMAX_S16_INPUT_LEFT_SHIFT;
+    const q15_t *input_data = softmax_s16_input;
     const muriscv_nn_softmax_lut_s16 softmax_params = {.exp_lut = softmax_s16_exp_lut,
                                                        .one_by_one_lut = softmax_s16_one_by_one_lut};
-    const q15_t *input_data = softmax_1_input;
-    int16_t output[SOFTMAX_1_DST_SIZE];
+    int16_t output[SOFTMAX_S16_DST_SIZE];
 
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_softmax_s16(input_data, num_rows, row_size, mult, shift, &softmax_params, output);
-        TEST_ASSERT_TRUE(validate_s16(output, softmax_1_output_ref, SOFTMAX_1_DST_SIZE, TOLERANCE));
+        TEST_ASSERT_TRUE(validate_s16(output, softmax_s16_output_ref, SOFTMAX_S16_DST_SIZE));
     }
 }
 
@@ -59,7 +58,7 @@ int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(test_muriscv_nn_softmax_1_s16);
+    RUN_TEST(softmax_s16_muriscv_nn_softmax_s16);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */

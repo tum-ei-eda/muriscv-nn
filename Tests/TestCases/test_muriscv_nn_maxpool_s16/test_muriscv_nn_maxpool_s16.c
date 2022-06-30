@@ -19,14 +19,13 @@
  */
 
 #include <muriscv_nn_functions.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <unity.h>
 
-#include "../../TestData/test_muriscv_nn_maxpool_s16/test_data.h"
+#include "../../TestData/maxpool_int16/test_data.h"
+#include "../../TestData/maxpool_int16_1/test_data.h"
+#include "../../TestData/maxpool_int16_2/test_data.h"
 #include "../../Utils/validate.h"
 
-#define TOLERANCE 0
 #define REPEAT_NUM 2
 
 void setUp(void)
@@ -37,9 +36,10 @@ void tearDown(void)
 { /* clean stuff up here */
 }
 
-void test_muriscv_nn_maxpool_0_s16(void)
+void maxpool_int16_muriscv_nn_maxpool_s16(void)
 {
-    int16_t output[MAXPOOL_0_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    int16_t output[MAXPOOL_INT16_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_pool_params pool_params;
@@ -47,39 +47,40 @@ void test_muriscv_nn_maxpool_0_s16(void)
     muriscv_nn_dims filter_dims;
     muriscv_nn_dims output_dims;
 
-    const int16_t *input_data = maxpool_0_input;
+    const int16_t *input_data = maxpool_int16_input;
 
-    input_dims.n = MAXPOOL_0_INPUT_BATCHES;
-    input_dims.w = MAXPOOL_0_INPUT_W;
-    input_dims.h = MAXPOOL_0_INPUT_H;
-    input_dims.c = MAXPOOL_0_IN_CH;
-    filter_dims.w = MAXPOOL_0_FILTER_X;
-    filter_dims.h = MAXPOOL_0_FILTER_Y;
-    output_dims.w = MAXPOOL_0_OUTPUT_W;
-    output_dims.h = MAXPOOL_0_OUTPUT_H;
-    output_dims.c = MAXPOOL_0_OUT_CH;
+    input_dims.n = MAXPOOL_INT16_INPUT_BATCHES;
+    input_dims.w = MAXPOOL_INT16_INPUT_W;
+    input_dims.h = MAXPOOL_INT16_INPUT_H;
+    input_dims.c = MAXPOOL_INT16_IN_CH;
+    filter_dims.w = MAXPOOL_INT16_FILTER_X;
+    filter_dims.h = MAXPOOL_INT16_FILTER_Y;
+    output_dims.w = MAXPOOL_INT16_OUTPUT_W;
+    output_dims.h = MAXPOOL_INT16_OUTPUT_H;
+    output_dims.c = MAXPOOL_INT16_OUT_CH;
 
-    pool_params.padding.w = MAXPOOL_0_PAD_X;
-    pool_params.padding.h = MAXPOOL_0_PAD_Y;
-    pool_params.stride.w = MAXPOOL_0_STRIDE_X;
-    pool_params.stride.h = MAXPOOL_0_STRIDE_Y;
+    pool_params.padding.w = MAXPOOL_INT16_PAD_X;
+    pool_params.padding.h = MAXPOOL_INT16_PAD_Y;
+    pool_params.stride.w = MAXPOOL_INT16_STRIDE_X;
+    pool_params.stride.h = MAXPOOL_INT16_STRIDE_Y;
 
-    pool_params.activation.min = MAXPOOL_0_OUT_ACTIVATION_MIN;
-    pool_params.activation.max = MAXPOOL_0_OUT_ACTIVATION_MAX;
+    pool_params.activation.min = MAXPOOL_INT16_OUT_ACTIVATION_MIN;
+    pool_params.activation.max = MAXPOOL_INT16_OUT_ACTIVATION_MAX;
 
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
             muriscv_nn_maxpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
-        TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-        TEST_ASSERT_TRUE(validate_s16(output, maxpool_0_output_ref, MAXPOOL_0_DST_SIZE, TOLERANCE));
+        TEST_ASSERT_EQUAL(expected, result);
+        TEST_ASSERT_TRUE(validate_s16(output, maxpool_int16_output_ref, MAXPOOL_INT16_DST_SIZE));
     }
 }
 
-void test_muriscv_nn_maxpool_1_s16(void)
+void maxpool_int16_1_muriscv_nn_maxpool_s16(void)
 {
-    int16_t output[MAXPOOL_1_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    int16_t output[MAXPOOL_INT16_1_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_pool_params pool_params;
@@ -87,39 +88,40 @@ void test_muriscv_nn_maxpool_1_s16(void)
     muriscv_nn_dims filter_dims;
     muriscv_nn_dims output_dims;
 
-    const int16_t *input_data = maxpool_1_input;
+    const int16_t *input_data = maxpool_int16_1_input;
 
-    input_dims.n = MAXPOOL_1_INPUT_BATCHES;
-    input_dims.w = MAXPOOL_1_INPUT_W;
-    input_dims.h = MAXPOOL_1_INPUT_H;
-    input_dims.c = MAXPOOL_1_IN_CH;
-    filter_dims.w = MAXPOOL_1_FILTER_X;
-    filter_dims.h = MAXPOOL_1_FILTER_Y;
-    output_dims.w = MAXPOOL_1_OUTPUT_W;
-    output_dims.h = MAXPOOL_1_OUTPUT_H;
-    output_dims.c = MAXPOOL_1_OUT_CH;
+    input_dims.n = MAXPOOL_INT16_1_INPUT_BATCHES;
+    input_dims.w = MAXPOOL_INT16_1_INPUT_W;
+    input_dims.h = MAXPOOL_INT16_1_INPUT_H;
+    input_dims.c = MAXPOOL_INT16_1_IN_CH;
+    filter_dims.w = MAXPOOL_INT16_1_FILTER_X;
+    filter_dims.h = MAXPOOL_INT16_1_FILTER_Y;
+    output_dims.w = MAXPOOL_INT16_1_OUTPUT_W;
+    output_dims.h = MAXPOOL_INT16_1_OUTPUT_H;
+    output_dims.c = MAXPOOL_INT16_1_OUT_CH;
 
-    pool_params.padding.w = MAXPOOL_1_PAD_X;
-    pool_params.padding.h = MAXPOOL_1_PAD_Y;
-    pool_params.stride.w = MAXPOOL_1_STRIDE_X;
-    pool_params.stride.h = MAXPOOL_1_STRIDE_Y;
+    pool_params.padding.w = MAXPOOL_INT16_1_PAD_X;
+    pool_params.padding.h = MAXPOOL_INT16_1_PAD_Y;
+    pool_params.stride.w = MAXPOOL_INT16_1_STRIDE_X;
+    pool_params.stride.h = MAXPOOL_INT16_1_STRIDE_Y;
 
-    pool_params.activation.min = MAXPOOL_1_OUT_ACTIVATION_MIN;
-    pool_params.activation.max = MAXPOOL_1_OUT_ACTIVATION_MAX;
+    pool_params.activation.min = MAXPOOL_INT16_1_OUT_ACTIVATION_MIN;
+    pool_params.activation.max = MAXPOOL_INT16_1_OUT_ACTIVATION_MAX;
 
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
             muriscv_nn_maxpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
-        TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-        TEST_ASSERT_TRUE(validate_s16(output, maxpool_1_output_ref, MAXPOOL_1_DST_SIZE, TOLERANCE));
+        TEST_ASSERT_EQUAL(expected, result);
+        TEST_ASSERT_TRUE(validate_s16(output, maxpool_int16_1_output_ref, MAXPOOL_INT16_1_DST_SIZE));
     }
 }
 
-void test_muriscv_nn_maxpool_2_s16(void)
+void maxpool_int16_2_muriscv_nn_maxpool_s16(void)
 {
-    int16_t output[MAXPOOL_2_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    int16_t output[MAXPOOL_INT16_2_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_pool_params pool_params;
@@ -127,33 +129,33 @@ void test_muriscv_nn_maxpool_2_s16(void)
     muriscv_nn_dims filter_dims;
     muriscv_nn_dims output_dims;
 
-    const int16_t *input_data = maxpool_2_input;
+    const int16_t *input_data = maxpool_int16_2_input;
 
-    input_dims.n = MAXPOOL_2_INPUT_BATCHES;
-    input_dims.w = MAXPOOL_2_INPUT_W;
-    input_dims.h = MAXPOOL_2_INPUT_H;
-    input_dims.c = MAXPOOL_2_IN_CH;
-    filter_dims.w = MAXPOOL_2_FILTER_X;
-    filter_dims.h = MAXPOOL_2_FILTER_Y;
-    output_dims.w = MAXPOOL_2_OUTPUT_W;
-    output_dims.h = MAXPOOL_2_OUTPUT_H;
-    output_dims.c = MAXPOOL_2_OUT_CH;
+    input_dims.n = MAXPOOL_INT16_2_INPUT_BATCHES;
+    input_dims.w = MAXPOOL_INT16_2_INPUT_W;
+    input_dims.h = MAXPOOL_INT16_2_INPUT_H;
+    input_dims.c = MAXPOOL_INT16_2_IN_CH;
+    filter_dims.w = MAXPOOL_INT16_2_FILTER_X;
+    filter_dims.h = MAXPOOL_INT16_2_FILTER_Y;
+    output_dims.w = MAXPOOL_INT16_2_OUTPUT_W;
+    output_dims.h = MAXPOOL_INT16_2_OUTPUT_H;
+    output_dims.c = MAXPOOL_INT16_2_OUT_CH;
 
-    pool_params.padding.w = MAXPOOL_2_PAD_X;
-    pool_params.padding.h = MAXPOOL_2_PAD_Y;
-    pool_params.stride.w = MAXPOOL_2_STRIDE_X;
-    pool_params.stride.h = MAXPOOL_2_STRIDE_Y;
+    pool_params.padding.w = MAXPOOL_INT16_2_PAD_X;
+    pool_params.padding.h = MAXPOOL_INT16_2_PAD_Y;
+    pool_params.stride.w = MAXPOOL_INT16_2_STRIDE_X;
+    pool_params.stride.h = MAXPOOL_INT16_2_STRIDE_Y;
 
-    pool_params.activation.min = MAXPOOL_2_OUT_ACTIVATION_MIN;
-    pool_params.activation.max = MAXPOOL_2_OUT_ACTIVATION_MAX;
+    pool_params.activation.min = MAXPOOL_INT16_2_OUT_ACTIVATION_MIN;
+    pool_params.activation.max = MAXPOOL_INT16_2_OUT_ACTIVATION_MAX;
 
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
             muriscv_nn_maxpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
-        TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-        TEST_ASSERT_TRUE(validate_s16(output, maxpool_2_output_ref, MAXPOOL_2_DST_SIZE, TOLERANCE));
+        TEST_ASSERT_EQUAL(expected, result);
+        TEST_ASSERT_TRUE(validate_s16(output, maxpool_int16_2_output_ref, MAXPOOL_INT16_2_DST_SIZE));
     }
 }
 
@@ -161,9 +163,9 @@ int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(test_muriscv_nn_maxpool_0_s16);
-    RUN_TEST(test_muriscv_nn_maxpool_1_s16);
-    RUN_TEST(test_muriscv_nn_maxpool_2_s16);
+    RUN_TEST(maxpool_int16_muriscv_nn_maxpool_s16);
+    RUN_TEST(maxpool_int16_1_muriscv_nn_maxpool_s16);
+    RUN_TEST(maxpool_int16_2_muriscv_nn_maxpool_s16);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */

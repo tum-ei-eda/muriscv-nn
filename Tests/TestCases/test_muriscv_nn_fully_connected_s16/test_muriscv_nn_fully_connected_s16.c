@@ -19,14 +19,13 @@
  */
 
 #include <muriscv_nn_functions.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unity.h>
 
-#include "../../TestData/test_muriscv_nn_fully_connected_s16/test_data.h"
+#include "../../TestData/fc_int16_slow/test_data.h"
+#include "../../TestData/fully_connected_int16/test_data.h"
+#include "../../TestData/fully_connected_int16_big/test_data.h"
 #include "../../Utils/validate.h"
-
-#define TOLERANCE 0
 
 void setUp(void)
 { /* set stuff up here */
@@ -36,41 +35,44 @@ void tearDown(void)
 { /* clean stuff up here */
 }
 
-void test_muriscv_nn_fully_connected_1_s16(void)
+void fully_connected_int16_muriscv_nn_fully_connected_s16(void)
 {
-    q15_t output[FC_1_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    q15_t output[FULLY_CONNECTED_INT16_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_fc_params fc_params;
     muriscv_nn_per_tensor_quant_params quant_params;
-    muriscv_nn_dims input_dims = {0};
-    muriscv_nn_dims filter_dims = {0};
-    muriscv_nn_dims bias_dims = {0};
-    muriscv_nn_dims output_dims = {0};
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims bias_dims;
+    muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = fc_1_biases;
-    const q7_t *kernel_data = fc_1_weights;
-    const q15_t *input_data = fc_1_input;
+    const q63_t *bias_data = fully_connected_int16_biases;
+    const q7_t *kernel_data = fully_connected_int16_weights;
+    const q15_t *input_data = fully_connected_int16_input;
+    const q15_t *output_ref = fully_connected_int16_output_ref;
+    const int32_t output_ref_size = FULLY_CONNECTED_INT16_DST_SIZE;
 
-    input_dims.n = FC_1_INPUT_BATCHES;
-    input_dims.w = FC_1_INPUT_W;
-    input_dims.h = FC_1_INPUT_H;
-    input_dims.c = FC_1_IN_CH;
-    filter_dims.n = FC_1_ACCUMULATION_DEPTH;
-    filter_dims.c = FC_1_OUT_CH;
-    filter_dims.h = FC_1_INPUT_H;
-    filter_dims.w = FC_1_INPUT_W;
-    output_dims.n = FC_1_INPUT_BATCHES;
-    output_dims.c = FC_1_OUT_CH;
+    input_dims.n = FULLY_CONNECTED_INT16_INPUT_BATCHES;
+    input_dims.w = FULLY_CONNECTED_INT16_INPUT_W;
+    input_dims.h = FULLY_CONNECTED_INT16_INPUT_H;
+    input_dims.c = FULLY_CONNECTED_INT16_IN_CH;
+    filter_dims.n = FULLY_CONNECTED_INT16_ACCUMULATION_DEPTH;
+    filter_dims.c = FULLY_CONNECTED_INT16_OUT_CH;
+    filter_dims.h = FULLY_CONNECTED_INT16_INPUT_H;
+    filter_dims.w = FULLY_CONNECTED_INT16_INPUT_W;
+    output_dims.n = FULLY_CONNECTED_INT16_INPUT_BATCHES;
+    output_dims.c = FULLY_CONNECTED_INT16_OUT_CH;
 
     fc_params.input_offset = 0;
     fc_params.filter_offset = 0;
     fc_params.output_offset = 0;
-    fc_params.activation.min = FC_1_OUT_ACTIVATION_MIN;
-    fc_params.activation.max = FC_1_OUT_ACTIVATION_MAX;
+    fc_params.activation.min = FULLY_CONNECTED_INT16_OUT_ACTIVATION_MIN;
+    fc_params.activation.max = FULLY_CONNECTED_INT16_OUT_ACTIVATION_MAX;
 
-    quant_params.multiplier = FC_1_OUTPUT_MULTIPLIER;
-    quant_params.shift = FC_1_OUTPUT_SHIFT;
+    quant_params.multiplier = FULLY_CONNECTED_INT16_OUTPUT_MULTIPLIER;
+    quant_params.shift = FULLY_CONNECTED_INT16_OUTPUT_SHIFT;
 
     int32_t buf_size = muriscv_nn_fully_connected_s16_get_buffer_size(&filter_dims);
     ctx.buf = malloc(buf_size);
@@ -89,45 +91,48 @@ void test_muriscv_nn_fully_connected_1_s16(void)
                                                               output);
 
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(result, MURISCV_NN_SUCCESS);
-    TEST_ASSERT_TRUE(validate_s16(output, fc_1_output_ref, FC_1_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 }
 
-void test_muriscv_nn_fully_connected_2_s16(void)
+void fully_connected_int16_big_muriscv_nn_fully_connected_s16(void)
 {
-    q15_t output[FC_2_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    q15_t output[FULLY_CONNECTED_INT16_BIG_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_fc_params fc_params;
     muriscv_nn_per_tensor_quant_params quant_params;
-    muriscv_nn_dims input_dims = {0};
-    muriscv_nn_dims filter_dims = {0};
-    muriscv_nn_dims bias_dims = {0};
-    muriscv_nn_dims output_dims = {0};
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims bias_dims;
+    muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = fc_2_biases;
-    const q7_t *kernel_data = fc_2_weights;
-    const q15_t *input_data = fc_2_input;
+    const q63_t *bias_data = fully_connected_int16_big_biases;
+    const q7_t *kernel_data = fully_connected_int16_big_weights;
+    const q15_t *input_data = fully_connected_int16_big_input;
+    const q15_t *output_ref = fully_connected_int16_big_output_ref;
+    const int32_t output_ref_size = FULLY_CONNECTED_INT16_BIG_DST_SIZE;
 
-    input_dims.n = FC_2_INPUT_BATCHES;
-    input_dims.w = FC_2_INPUT_W;
-    input_dims.h = FC_2_INPUT_H;
-    input_dims.c = FC_2_IN_CH;
-    filter_dims.n = FC_2_ACCUMULATION_DEPTH;
-    filter_dims.c = FC_2_OUT_CH;
-    filter_dims.h = FC_2_INPUT_H;
-    filter_dims.w = FC_2_INPUT_W;
-    output_dims.n = FC_2_INPUT_BATCHES;
-    output_dims.c = FC_2_OUT_CH;
+    input_dims.n = FULLY_CONNECTED_INT16_BIG_INPUT_BATCHES;
+    input_dims.w = FULLY_CONNECTED_INT16_BIG_INPUT_W;
+    input_dims.h = FULLY_CONNECTED_INT16_BIG_INPUT_H;
+    input_dims.c = FULLY_CONNECTED_INT16_BIG_IN_CH;
+    filter_dims.n = FULLY_CONNECTED_INT16_BIG_ACCUMULATION_DEPTH;
+    filter_dims.c = FULLY_CONNECTED_INT16_BIG_OUT_CH;
+    filter_dims.h = FULLY_CONNECTED_INT16_BIG_INPUT_H;
+    filter_dims.w = FULLY_CONNECTED_INT16_BIG_INPUT_W;
+    output_dims.n = FULLY_CONNECTED_INT16_BIG_INPUT_BATCHES;
+    output_dims.c = FULLY_CONNECTED_INT16_BIG_OUT_CH;
 
     fc_params.input_offset = 0;
     fc_params.filter_offset = 0;
     fc_params.output_offset = 0;
-    fc_params.activation.min = FC_2_OUT_ACTIVATION_MIN;
-    fc_params.activation.max = FC_2_OUT_ACTIVATION_MAX;
+    fc_params.activation.min = FULLY_CONNECTED_INT16_BIG_OUT_ACTIVATION_MIN;
+    fc_params.activation.max = FULLY_CONNECTED_INT16_BIG_OUT_ACTIVATION_MAX;
 
-    quant_params.multiplier = FC_2_OUTPUT_MULTIPLIER;
-    quant_params.shift = FC_2_OUTPUT_SHIFT;
+    quant_params.multiplier = FULLY_CONNECTED_INT16_BIG_OUTPUT_MULTIPLIER;
+    quant_params.shift = FULLY_CONNECTED_INT16_BIG_OUTPUT_SHIFT;
 
     int32_t buf_size = muriscv_nn_fully_connected_s16_get_buffer_size(&filter_dims);
     ctx.buf = malloc(buf_size);
@@ -146,45 +151,48 @@ void test_muriscv_nn_fully_connected_2_s16(void)
                                                               output);
 
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(result, MURISCV_NN_SUCCESS);
-    TEST_ASSERT_TRUE(validate_s16(output, fc_2_output_ref, FC_2_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 }
 
-void test_muriscv_nn_fully_connected_3_s16(void)
+void fc_int16_slow_muriscv_nn_fully_connected_s16(void)
 {
-    q15_t output[FC_3_DST_SIZE] = {0};
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    q15_t output[FC_INT16_SLOW_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_fc_params fc_params;
     muriscv_nn_per_tensor_quant_params quant_params;
-    muriscv_nn_dims input_dims = {0};
-    muriscv_nn_dims filter_dims = {0};
-    muriscv_nn_dims bias_dims = {0};
-    muriscv_nn_dims output_dims = {0};
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims bias_dims;
+    muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = fc_3_biases;
-    const q7_t *kernel_data = fc_3_weights;
-    const q15_t *input_data = fc_3_input;
+    const q63_t *bias_data = fc_int16_slow_biases;
+    const q7_t *kernel_data = fc_int16_slow_weights;
+    const q15_t *input_data = fc_int16_slow_input;
+    const q15_t *output_ref = fc_int16_slow_output_ref;
+    const int32_t output_ref_size = FC_INT16_SLOW_DST_SIZE;
 
-    input_dims.n = FC_3_INPUT_BATCHES;
-    input_dims.w = FC_3_INPUT_W;
-    input_dims.h = FC_3_INPUT_H;
-    input_dims.c = FC_3_IN_CH;
-    filter_dims.n = FC_3_ACCUMULATION_DEPTH;
-    filter_dims.c = FC_3_OUT_CH;
-    filter_dims.h = FC_3_INPUT_H;
-    filter_dims.w = FC_3_INPUT_W;
-    output_dims.n = FC_3_INPUT_BATCHES;
-    output_dims.c = FC_3_OUT_CH;
+    input_dims.n = FC_INT16_SLOW_INPUT_BATCHES;
+    input_dims.w = FC_INT16_SLOW_INPUT_W;
+    input_dims.h = FC_INT16_SLOW_INPUT_H;
+    input_dims.c = FC_INT16_SLOW_IN_CH;
+    filter_dims.n = FC_INT16_SLOW_ACCUMULATION_DEPTH;
+    filter_dims.c = FC_INT16_SLOW_OUT_CH;
+    filter_dims.h = FC_INT16_SLOW_INPUT_H;
+    filter_dims.w = FC_INT16_SLOW_INPUT_W;
+    output_dims.n = FC_INT16_SLOW_INPUT_BATCHES;
+    output_dims.c = FC_INT16_SLOW_OUT_CH;
 
     fc_params.input_offset = 0;
     fc_params.filter_offset = 0;
     fc_params.output_offset = 0;
-    fc_params.activation.min = FC_3_OUT_ACTIVATION_MIN;
-    fc_params.activation.max = FC_3_OUT_ACTIVATION_MAX;
+    fc_params.activation.min = FC_INT16_SLOW_OUT_ACTIVATION_MIN;
+    fc_params.activation.max = FC_INT16_SLOW_OUT_ACTIVATION_MAX;
 
-    quant_params.multiplier = FC_3_OUTPUT_MULTIPLIER;
-    quant_params.shift = FC_3_OUTPUT_SHIFT;
+    quant_params.multiplier = FC_INT16_SLOW_OUTPUT_MULTIPLIER;
+    quant_params.shift = FC_INT16_SLOW_OUTPUT_SHIFT;
 
     int32_t buf_size = muriscv_nn_fully_connected_s16_get_buffer_size(&filter_dims);
     ctx.buf = malloc(buf_size);
@@ -203,17 +211,17 @@ void test_muriscv_nn_fully_connected_3_s16(void)
                                                               output);
 
     free(ctx.buf);
-    TEST_ASSERT_EQUAL(result, MURISCV_NN_SUCCESS);
-    TEST_ASSERT_TRUE(validate_s16(output, fc_3_output_ref, FC_3_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 }
 
 int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(test_muriscv_nn_fully_connected_1_s16);
-    RUN_TEST(test_muriscv_nn_fully_connected_2_s16);
-    RUN_TEST(test_muriscv_nn_fully_connected_3_s16);
+    RUN_TEST(fully_connected_int16_muriscv_nn_fully_connected_s16);
+    RUN_TEST(fully_connected_int16_big_muriscv_nn_fully_connected_s16);
+    RUN_TEST(fc_int16_slow_muriscv_nn_fully_connected_s16);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */

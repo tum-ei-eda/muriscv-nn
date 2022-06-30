@@ -19,14 +19,13 @@
  */
 
 #include <muriscv_nn_functions.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unity.h>
 
-#include "../../TestData/test_muriscv_nn_depthwise_conv_3x3_s8/test_data.h"
+#include "../../TestData/depthwise_kernel_3x3/test_data.h"
 #include "../../Utils/validate.h"
 
-#define TOLERANCE 0
+static const uint16_t dilation = 1;
 
 void setUp(void)
 { /* set stuff up here */
@@ -36,7 +35,7 @@ void tearDown(void)
 { /* clean stuff up here */
 }
 
-void depthwise_kernel_3x3_depthwise_conv_3x3_s8(void)
+void depthwise_kernel_3x3_muriscv_nn_depthwise_conv_3x3_s8(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
     q7_t output[DEPTHWISE_KERNEL_3X3_DST_SIZE] = {0};
@@ -96,7 +95,7 @@ void depthwise_kernel_3x3_depthwise_conv_3x3_s8(void)
 
     free(ctx.buf);
     TEST_ASSERT_EQUAL(expected, result);
-    TEST_ASSERT_TRUE(validate(output, depthwise_kernel_3x3_output_ref, DEPTHWISE_KERNEL_3X3_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_TRUE(validate(output, depthwise_kernel_3x3_output_ref, DEPTHWISE_KERNEL_3X3_DST_SIZE));
 
     const int32_t buf_size =
         muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims);
@@ -116,10 +115,10 @@ void depthwise_kernel_3x3_depthwise_conv_3x3_s8(void)
 
     free(ctx.buf);
     TEST_ASSERT_EQUAL(expected, result);
-    TEST_ASSERT_TRUE(validate(output, depthwise_kernel_3x3_output_ref, DEPTHWISE_KERNEL_3X3_DST_SIZE, TOLERANCE));
+    TEST_ASSERT_TRUE(validate(output, depthwise_kernel_3x3_output_ref, DEPTHWISE_KERNEL_3X3_DST_SIZE));
 }
 
-void depthwise_kernel_3x3_depthwise_conv_3x3_1_s8(void)
+void depthwise_kernel_3x3_muriscv_nn_depthwise_conv_3x3_1_s8(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_ARG_ERROR;
     q7_t output[DEPTHWISE_KERNEL_3X3_DST_SIZE] = {0};
@@ -202,7 +201,7 @@ void depthwise_kernel_3x3_depthwise_conv_3x3_1_s8(void)
     TEST_ASSERT_EQUAL(expected_wrapper, result);
 }
 
-void depthwise_kernel_3x3_depthwise_conv_3x3_2_s8(void)
+void depthwise_kernel_3x3_muriscv_nn_depthwise_conv_3x3_2_s8(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_ARG_ERROR;
     q7_t output[DEPTHWISE_KERNEL_3X3_DST_SIZE] = {0};
@@ -268,9 +267,9 @@ int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(depthwise_kernel_3x3_depthwise_conv_3x3_s8);
-    RUN_TEST(depthwise_kernel_3x3_depthwise_conv_3x3_1_s8);
-    RUN_TEST(depthwise_kernel_3x3_depthwise_conv_3x3_2_s8);
+    RUN_TEST(depthwise_kernel_3x3_muriscv_nn_depthwise_conv_3x3_s8);
+    RUN_TEST(depthwise_kernel_3x3_muriscv_nn_depthwise_conv_3x3_1_s8);
+    RUN_TEST(depthwise_kernel_3x3_muriscv_nn_depthwise_conv_3x3_2_s8);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */

@@ -26,7 +26,7 @@
 
 #define DELTA(x, y) (((x) > (y)) ? ((x) - (y)) : ((y) - (x)))
 
-static inline size_t validate(int8_t *act, const int8_t *ref, size_t size, int8_t tolerance)
+static inline size_t validate_t(int8_t *act, const int8_t *ref, size_t size, int8_t tolerance)
 {
     size_t test_passed = true;
     size_t count = 0;
@@ -57,7 +57,9 @@ static inline size_t validate(int8_t *act, const int8_t *ref, size_t size, int8_
     return test_passed;
 }
 
-static inline size_t validate_s16(int16_t *act, const int16_t *ref, size_t size, int16_t tolerance)
+static inline size_t validate(int8_t *act, const int8_t *ref, size_t size) { return validate_t(act, ref, size, 0); }
+
+static inline size_t validate_s16_t(int16_t *act, const int16_t *ref, size_t size, int16_t tolerance)
 {
     size_t test_passed = true;
     size_t count = 0;
@@ -76,6 +78,8 @@ static inline size_t validate_s16(int16_t *act, const int16_t *ref, size_t size,
         {
             // printf("PASS at pos %d: %d\r\n", i, act[i]);
         }
+        // Reset the output buffer so that following tests can't cheat
+        act[i] = 0;
     }
 
     if (!test_passed)
@@ -84,4 +88,9 @@ static inline size_t validate_s16(int16_t *act, const int16_t *ref, size_t size,
     }
 
     return test_passed;
+}
+
+static inline size_t validate_s16(int16_t *act, const int16_t *ref, size_t size)
+{
+    return validate_s16_t(act, ref, size, 0);
 }
