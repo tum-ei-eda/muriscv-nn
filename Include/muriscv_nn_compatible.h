@@ -130,7 +130,7 @@ static inline uint8_t __CLZ(uint32_t data)
 }
 
 #ifndef BUILDING_FOR_ETISS
-/* This is some very hacky code that requires some more explanation! */
+// TODO(fabianpedd): Check if this is still needed?
 #ifndef fp_barrierf
 #define fp_barrierf fp_barrierf
 static inline float fp_barrierf(float x)
@@ -148,10 +148,7 @@ __attribute__((weak)) float __math_xflowf(uint32_t sign, float y)
 {
     return eval_as_float(fp_barrierf(sign ? -y : y) * y);
 }
-__attribute__((weak)) float __math_oflowf(uint32_t sign)
-{
-    return __math_xflowf(sign, 0x1p97f);
-}
+__attribute__((weak)) float __math_oflowf(uint32_t sign) { return __math_xflowf(sign, 0x1p97f); }
 #undef fp_barrierf
 #endif
 

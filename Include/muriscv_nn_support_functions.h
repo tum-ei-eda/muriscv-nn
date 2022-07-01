@@ -38,8 +38,7 @@
 extern "C" {
 #endif
 
-// TODO(fabianpedd): write some comments explaining these macros so that other
-// people do not have to struggle the way I did...smh
+// TODO(fabianpedd): write some comments explaining these macros...
 #define LEFT_SHIFT(_shift) (_shift > 0 ? _shift : 0)
 #define RIGHT_SHIFT(_shift) (_shift > 0 ? 0 : -_shift)
 #define MASK_IF_ZERO(x) (x) == 0 ? ~0 : 0
