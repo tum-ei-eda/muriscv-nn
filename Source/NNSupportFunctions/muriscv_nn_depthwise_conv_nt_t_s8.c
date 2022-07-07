@@ -84,19 +84,19 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
         for (int i_row_x_col = 0; i_row_x_col < row_x_col; i_row_x_col++)
         {
             vint32m2_t ker = vsext_vf4_i32m2(vle8_v_i8mf2(rhs_0, vl), vl);
-            ker_sum = vadd_vv_i32m2(ker_sum, ker, vl);
+            ker_sum = vmacc_vv_i32m2(ker_sum, ker, vmv_v_x_i32m2(1, vl), vl);  // TODO(fabianpedd): Should be a tail undisturbed add
 
-            vint32m2_t ip_0 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_0, vl), vl);
-            out_0 = vmacc_vv_i32m2(out_0, ip_0, ker, vl);
+            vint32m2_t ip = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_0, vl), vl);
+            out_0 = vmacc_vv_i32m2(out_0, ip, ker, vl);
 
-            vint32m2_t ip_1 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_1, vl), vl);
-            out_1 = vmacc_vv_i32m2(out_1, ip_1, ker, vl);
+            ip = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_1, vl), vl);
+            out_1 = vmacc_vv_i32m2(out_1, ip, ker, vl);
 
-            vint32m2_t ip_2 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_2, vl), vl);
-            out_2 = vmacc_vv_i32m2(out_2, ip_2, ker, vl);
+            ip = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_2, vl), vl);
+            out_2 = vmacc_vv_i32m2(out_2, ip, ker, vl);
 
-            vint32m2_t ip_3 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_3, vl), vl);
-            out_3 = vmacc_vv_i32m2(out_3, ip_3, ker, vl);
+            ip = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_3, vl), vl);
+            out_3 = vmacc_vv_i32m2(out_3, ip, ker, vl);
 
             rhs_0 += num_ch;
             lhs_0 += num_ch;
@@ -143,7 +143,7 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
         out += vl;
         num_ch_to_process -= vl;
     }
-    return out + 3 * num_ch;;
+    return out + 3 * num_ch;
 #else
     (void)lhs;
     (void)rhs;

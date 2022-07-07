@@ -53,19 +53,42 @@ muriscv_nn_status muriscv_nn_depthwise_conv_wrapper_s16(const muriscv_nn_context
                                                         q15_t *output)
 {
     // TODO(fabianpedd): Implement optimized variants calling
-    // arm_depthwise_conv_fast_s16()
+    // muriscv_nn_depthwise_conv_fast_s16()
 
-    return muriscv_nn_depthwise_conv_s16(ctx,
-                                         dw_conv_params,
-                                         quant_params,
-                                         input_dims,
-                                         input,
-                                         filter_dims,
-                                         filter,
-                                         bias_dims,
-                                         bias,
-                                         output_dims,
-                                         output);
+    muriscv_nn_status status = MURISCV_NN_SUCCESS;
+
+    // if (dw_conv_params->ch_mult == 1 && dw_conv_params->dilation.w == 1 && dw_conv_params->dilation.h == 1 &&
+    //     filter_dims->w * filter_dims->h * input_dims->c < 512)
+    // {
+    //     status = muriscv_nn_depthwise_conv_fast_s16(ctx,
+    //                                          dw_conv_params,
+    //                                          quant_params,
+    //                                          input_dims,
+    //                                          input,
+    //                                          filter_dims,
+    //                                          filter,
+    //                                          bias_dims,
+    //                                          bias,
+    //                                          output_dims,
+    //                                          output);
+    // }
+    // else
+    {
+        status = muriscv_nn_depthwise_conv_s16(ctx,
+                                               dw_conv_params,
+                                               quant_params,
+                                               input_dims,
+                                               input,
+                                               filter_dims,
+                                               filter,
+                                               bias_dims,
+                                               bias,
+                                               output_dims,
+                                               output);
+    }
+
+    /* Return to application */
+    return status;
 }
 
 int32_t muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(const muriscv_nn_dw_conv_params *dw_conv_params,
@@ -80,7 +103,7 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(const muriscv_nn_d
     int32_t size = 0;
 
     // TODO(fabianpedd): Uncomment when implementing above
-    
+
     // if (dw_conv_params->ch_mult == 1 && dw_conv_params->dilation.w == 1 && dw_conv_params->dilation.h == 1 &&
     //     filter_dims->w * filter_dims->h * input_dims->c < 512)
     // {
