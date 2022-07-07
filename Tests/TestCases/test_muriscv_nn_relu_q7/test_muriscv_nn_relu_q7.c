@@ -33,9 +33,8 @@ void tearDown(void)
 void test_muriscv_nn_relu_q7(void)
 {
     q7_t *input_data = (q7_t *)relu_input;
-    muriscv_nn_status result = muriscv_nn_relu_q7(input_data, RELU_SIZE);
+    muriscv_nn_relu_q7(input_data, RELU_SIZE);
 
-    TEST_ASSERT_EQUAL(result, MURISCV_NN_SUCCESS);
     TEST_ASSERT_TRUE(validate(input_data, relu_output_ref, RELU_SIZE));
 }
 
