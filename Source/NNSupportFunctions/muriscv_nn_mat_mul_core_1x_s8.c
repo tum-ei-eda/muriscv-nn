@@ -51,28 +51,45 @@ muriscv_nn_status muriscv_nn_mat_mul_core_1x_s8(int32_t row_elements,
 {
     int32_t acc_n0 = 0;
     int32_t sum_tmp = 0;
+#if defined(USE_VEXT)
+    int8_t *row_ptr = (int8_t *)row_base;
+    int8_t *col_ptr = (int8_t *)col_base;
+    int32_t loop_cnt = row_elements;
 
-    // #if defined(USE_VEXT)
-    //
-    //     __ASM volatile("   vldrb.8         q0, [%[col]], #16     \n"
-    //                    "   wlstp.8         lr, %[cnt], 1f       \n"
-    //                    "2:                                      \n"
-    //                    "   vaddva.s8      %[sum], q0            \n"
-    //                    "   vldrb.8         q1, [%[row0]], #16    \n"
-    //                    "   vmladava.s8    %[out0], q0, q1       \n"
-    //                    "   vldrb.8         q0, [%[col]], #16     \n"
-    //                    "   letp            lr, 2b               \n"
-    //                    "1:                                      \n"
-    //                    : [col] "+r"(col_base), [sum] "+Te"(sum_tmp), [row0] "+r"(row_base), [out0] "+Te"(acc_n0)
-    //                    : [cnt] "r"(row_elements)
-    //                    : "q0", "q1", "memory", "r14");
-    // #else
+    size_t vl = vsetvl_e32m8(row_elements);
+    vint32m8_t acc = vmv_v_x_i32m8(0, vl);
+    vint32m8_t sum = vmv_v_x_i32m8(0, vl);
+
+    while (loop_cnt > 0)
+    {
+        vl = vsetvl_e32m8(loop_cnt);
+        vint32m8_t col_val = vsext_vf4_i32m8(vle8_v_i8m2(col_ptr, vl), vl);
+        vint32m8_t row_val = vsext_vf4_i32m8(vle8_v_i8m2(row_ptr, vl), vl);
+
+        acc = vmacc_vv_i32m8(acc, col_val, row_val, vl);
+        sum = vmacc_vv_i32m8(sum, col_val, vmv_v_x_i32m8(1, vl), vl); // TODO(fabianpedd): Should be a tail undisturbed add
+
+        loop_cnt -= vl;
+        row_ptr += vl;
+        col_ptr += vl;
+    }
+
+    vl = vsetvl_e32m8(row_elements);
+
+    vint32m1_t reduct = vmv_v_x_i32m1(0, vl);
+    reduct = vredsum_vs_i32m8_i32m1(reduct, acc, reduct, vl);
+    acc_n0 = vmv_x_s_i32m1_i32(reduct);
+
+    reduct = vmv_v_x_i32m1(0, vl);
+    reduct = vredsum_vs_i32m8_i32m1(reduct, sum, reduct, vl);
+    sum_tmp = vmv_x_s_i32m1_i32(reduct);
+#else
     for (int i = 0; i < row_elements; i++)
     {
         sum_tmp += col_base[i];
         acc_n0 += row_base[i] * col_base[i];
     }
-    // #endif
+#endif
 
     *sum_col = sum_tmp;
     *output = acc_n0;

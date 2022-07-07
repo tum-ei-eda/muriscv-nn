@@ -59,124 +59,122 @@ muriscv_nn_status muriscv_nn_convolve_1_x_n_s8(const muriscv_nn_context *ctx,
 {
     (void)bias_dims;
     muriscv_nn_status status = MURISCV_NN_SUCCESS;
+
     /* The wrapper API is the ultimate reference for argument check */
     if ((input_dims->h != 1) || (output_dims->w % 4 != 0) || conv_params->dilation.w != 1)
     {
         status = MURISCV_NN_ARG_ERROR;
-        goto out;
+        /* Return to application */
+        return status;
     }
 
-    // #if defined(USE_VEXT)
-    //     (void)ctx;
-    //
-    //     const uint16_t input_x = input_dims->w;
-    //     const uint16_t kernel_x = filter_dims->w;
-    //     const uint16_t output_x = output_dims->w;
-    //     const uint16_t output_ch = output_dims->c;
-    //     const uint16_t input_ch = input_dims->c;
-    //     const uint16_t pad_x = conv_params->padding.w;
-    //     const uint16_t stride_x = conv_params->stride.w;
-    //
-    //     const int32_t input_offset = conv_params->input_offset;
-    //     const int32_t out_offset = conv_params->output_offset;
-    //     const int32_t out_activation_min = conv_params->activation.min;
-    //     const int32_t out_activation_max = conv_params->activation.max;
-    //     int32_t *output_mult = quant_params->multiplier;
-    //     int32_t *output_shift = quant_params->shift;
-    //
-    //     int i_batch;
-    //     for (i_batch = 0; i_batch < input_dims->n; i_batch++)
-    //     {
-    //
-    //         for (int i_out_x = 0; i_out_x <= (output_x - 4); i_out_x += 4)
-    //         {
-    //             int32_t input_begin_idx[4];
-    //             int32_t ker_begin_idx[4];
-    //             int32_t ker_end_idx[4];
-    //
-    //             for (int i = 0; i < 4; i++)
-    //             {
-    //                 const int32_t est_input_x_idx = stride_x * (i_out_x + i) - pad_x;
-    //                 input_begin_idx[i] = MAX(0, est_input_x_idx);
-    //                 ker_begin_idx[i] = MAX(0, -est_input_x_idx);
-    //                 ker_end_idx[i] = MIN(kernel_x, input_x - est_input_x_idx);
-    //             }
-    //
-    //             if ((ker_begin_idx[0] != 0) || (ker_end_idx[3] != kernel_x))
-    //             {
-    //                 for (int i_out_ch = 0; i_out_ch < output_ch; i_out_ch++)
-    //                 {
-    //                     int32x4_t s_offset;
-    //                     int32_t acc[4];
-    //                     {
-    //                         int32_t sum_row[4];
-    //
-    //                         (void)muriscv_nn_mat_mul_core_1x_s8((ker_end_idx[0] - ker_begin_idx[0]) * input_ch,
-    //                                                             input_data + input_begin_idx[0] * input_ch,
-    //                                                             filter_data + (input_ch * kernel_x * i_out_ch) +
-    //                                                                 (ker_begin_idx[0] * input_ch),
-    //                                                             &sum_row[0],
-    //                                                             &acc[0]);
-    //                         (void)muriscv_nn_mat_mul_core_1x_s8((ker_end_idx[1] - ker_begin_idx[1]) * input_ch,
-    //                                                             input_data + input_begin_idx[1] * input_ch,
-    //                                                             filter_data + (input_ch * kernel_x * i_out_ch) +
-    //                                                                 (ker_begin_idx[1] * input_ch),
-    //                                                             &sum_row[1],
-    //                                                             &acc[1]);
-    //
-    //                         (void)muriscv_nn_mat_mul_core_1x_s8((ker_end_idx[2] - ker_begin_idx[2]) * input_ch,
-    //                                                             input_data + input_begin_idx[2] * input_ch,
-    //                                                             filter_data + (input_ch * kernel_x * i_out_ch) +
-    //                                                                 (ker_begin_idx[2] * input_ch),
-    //                                                             &sum_row[2],
-    //                                                             &acc[2]);
-    //
-    //                         (void)muriscv_nn_mat_mul_core_1x_s8((ker_end_idx[3] - ker_begin_idx[3]) * input_ch,
-    //                                                             input_data + input_begin_idx[3] * input_ch,
-    //                                                             filter_data + (input_ch * kernel_x * i_out_ch) +
-    //                                                                 (ker_begin_idx[3] * input_ch),
-    //                                                             &sum_row[3],
-    //                                                             &acc[3]);
-    //
-    //                         s_offset = vldrwq_s32(sum_row);
-    //                     }
-    //                     int32x4_t res = vldrwq_s32(acc);
-    //                     s_offset = vmulq_n_s32(s_offset, input_offset);
-    //                     res = vaddq_s32(res, s_offset);
-    //                     if (bias_data)
-    //                     {
-    //                         res = vaddq_n_s32(res, bias_data[i_out_ch]);
-    //                     }
-    //                     res = muriscv_nn_requantize_mve(res, output_mult[i_out_ch], output_shift[i_out_ch]);
-    //                     res = vaddq_n_s32(res, out_offset);
-    //
-    //                     res = vmaxq_s32(res, vdupq_n_s32(out_activation_min));
-    //                     res = vminq_s32(res, vdupq_n_s32(out_activation_max));
-    //
-    //                     const uint32x4_t scatter_offset = {0, output_ch, output_ch * 2, output_ch * 3};
-    //                     vstrbq_scatter_offset_s32(output_data, scatter_offset, res);
-    //                     output_data++;
-    //                 }
-    //                 output_data += (3 * output_ch);
-    //             }
-    //             else
-    //             {
-    //                 output_data = muriscv_nn_mat_mul_core_4x_s8(kernel_x * input_ch,
-    //                                                             stride_x * input_ch,
-    //                                                             input_data + input_begin_idx[0] * input_ch,
-    //                                                             filter_data,
-    //                                                             output_ch,
-    //                                                             conv_params,
-    //                                                             quant_params,
-    //                                                             bias_data,
-    //                                                             output_data);
-    //             }
-    //         }
-    //         /* Advance to the next batch */
-    //         input_data += (input_x * input_ch);
-    //     }
-    //
-    // #else
+#if defined(USE_VEXT)
+    (void)ctx;
+
+    const uint16_t input_x = input_dims->w;
+    const uint16_t kernel_x = filter_dims->w;
+    const uint16_t output_x = output_dims->w;
+    const uint16_t output_ch = output_dims->c;
+    const uint16_t input_ch = input_dims->c;
+    const uint16_t pad_x = conv_params->padding.w;
+    const uint16_t stride_x = conv_params->stride.w;
+
+    const int32_t input_offset = conv_params->input_offset;
+    const int32_t out_offset = conv_params->output_offset;
+    const int32_t out_activation_min = conv_params->activation.min;
+    const int32_t out_activation_max = conv_params->activation.max;
+    int32_t *output_mult = quant_params->multiplier;
+    int32_t *output_shift = quant_params->shift;
+
+    for (int i_batch = 0; i_batch < input_dims->n; i_batch++)
+    {
+
+        for (int i_out_x = 0; i_out_x <= (output_x - 4); i_out_x += 4)
+        {
+            int32_t input_begin_idx[4];
+            int32_t ker_begin_idx[4];
+            int32_t ker_end_idx[4];
+
+            for (int i = 0; i < 4; i++)
+            {
+                const int32_t est_input_x_idx = stride_x * (i_out_x + i) - pad_x;
+                input_begin_idx[i] = MAX(0, est_input_x_idx);
+                ker_begin_idx[i] = MAX(0, -est_input_x_idx);
+                ker_end_idx[i] = MIN(kernel_x, input_x - est_input_x_idx);
+            }
+
+            if ((ker_begin_idx[0] != 0) || (ker_end_idx[3] != kernel_x))
+            {
+                for (int i_out_ch = 0; i_out_ch < output_ch; i_out_ch++)
+                {
+                    int32_t s_offset[4];
+                    int32_t acc[4];
+                    {
+
+                        (void)muriscv_nn_mat_mul_core_1x_s8((ker_end_idx[0] - ker_begin_idx[0]) * input_ch,
+                                                            input_data + input_begin_idx[0] * input_ch,
+                                                            filter_data + (input_ch * kernel_x * i_out_ch) +
+                                                                (ker_begin_idx[0] * input_ch),
+                                                            &s_offset[0],
+                                                            &acc[0]);
+                        (void)muriscv_nn_mat_mul_core_1x_s8((ker_end_idx[1] - ker_begin_idx[1]) * input_ch,
+                                                            input_data + input_begin_idx[1] * input_ch,
+                                                            filter_data + (input_ch * kernel_x * i_out_ch) +
+                                                                (ker_begin_idx[1] * input_ch),
+                                                            &s_offset[1],
+                                                            &acc[1]);
+
+                        (void)muriscv_nn_mat_mul_core_1x_s8((ker_end_idx[2] - ker_begin_idx[2]) * input_ch,
+                                                            input_data + input_begin_idx[2] * input_ch,
+                                                            filter_data + (input_ch * kernel_x * i_out_ch) +
+                                                                (ker_begin_idx[2] * input_ch),
+                                                            &s_offset[2],
+                                                            &acc[2]);
+
+                        (void)muriscv_nn_mat_mul_core_1x_s8((ker_end_idx[3] - ker_begin_idx[3]) * input_ch,
+                                                            input_data + input_begin_idx[3] * input_ch,
+                                                            filter_data + (input_ch * kernel_x * i_out_ch) +
+                                                                (ker_begin_idx[3] * input_ch),
+                                                            &s_offset[3],
+                                                            &acc[3]);
+                    }
+
+                    const uint32_t scatter_offset[] = {0, output_ch, output_ch * 2, output_ch * 3};
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int32_t res = acc[i];
+                        res += s_offset[i] * input_offset;
+                        if (bias_data)
+                            res += bias_data[i_out_ch];
+                        res = muriscv_nn_requantize(res, output_mult[i_out_ch], output_shift[i_out_ch]);
+                        res += out_offset;
+                        res = MAX(res, out_activation_min);
+                        res = MIN(res, out_activation_max);
+                        *(int8_t *)(output_data + scatter_offset[i]) = res;
+                    }
+                    output_data++;
+                }
+
+                output_data += (3 * output_ch);
+            }
+
+            else
+            {
+                output_data = muriscv_nn_mat_mul_core_4x_s8(kernel_x * input_ch,
+                                                            stride_x * input_ch,
+                                                            input_data + input_begin_idx[0] * input_ch,
+                                                            filter_data,
+                                                            output_ch,
+                                                            conv_params,
+                                                            quant_params,
+                                                            bias_data,
+                                                            output_data);
+            }
+        }
+        /* Advance to the next batch */
+        input_data += (input_x * input_ch);
+    }
+#else
     status = muriscv_nn_convolve_s8(ctx,
                                     conv_params,
                                     quant_params,
@@ -188,9 +186,8 @@ muriscv_nn_status muriscv_nn_convolve_1_x_n_s8(const muriscv_nn_context *ctx,
                                     bias_data,
                                     output_dims,
                                     output_data);
-    // #endif
+#endif
 
-out:
     /* Return to application */
     return status;
 }

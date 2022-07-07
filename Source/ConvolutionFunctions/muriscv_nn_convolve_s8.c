@@ -132,23 +132,22 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
 
                 buffer_fill_cnt++;
 
-                // /* Computation is filed for every 4 columns */
-                // if (buffer_fill_cnt == 4 && (padded == 0))
-                // {
-                //     buffer_fill_cnt = 0;
-                //     out = muriscv_nn_mat_mul_core_4x_s8(num_elem,
-                //                                         num_elem,
-                //                                         (q7_t *)buffer_a,
-                //                                         filter_data,
-                //                                         output_ch,
-                //                                         conv_params,
-                //                                         quant_params,
-                //                                         bias_data,
-                //                                         out);
-                //     im2col_buf = (q7_t *)buffer_a;
-                // }
-                // else if (buffer_fill_cnt == 4 && (padded != 0))
-                if (buffer_fill_cnt == 4)
+                /* Computation is filed for every 4 columns */
+                if (buffer_fill_cnt == 4 && (padded == 0))
+                {
+                    buffer_fill_cnt = 0;
+                    out = muriscv_nn_mat_mul_core_4x_s8(num_elem,
+                                                        num_elem,
+                                                        (q7_t *)buffer_a,
+                                                        filter_data,
+                                                        output_ch,
+                                                        conv_params,
+                                                        quant_params,
+                                                        bias_data,
+                                                        out);
+                    im2col_buf = (q7_t *)buffer_a;
+                }
+                else if (buffer_fill_cnt == 4 && (padded != 0))
                 {
                     buffer_fill_cnt = 0;
                     out = muriscv_nn_mat_mult_s8(filter_data,
@@ -294,9 +293,9 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
                 }
                 /* Handle left over mac */
                 col_count = input_ch * kernel_y * kernel_x & 0x3;
-#else
+#else  /* defined(USE_PEXT) */
                 uint16_t col_count = input_ch * kernel_y * kernel_x;
-#endif
+#endif /* defined(USE_PEXT) */
                 while (col_count)
                 {
                     q7_t ker_a1 = *ker_a++;
@@ -313,6 +312,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
             }
         }
 #endif /* defined(USE_VEXT) */
+
         /* Advance to the next batch */
         input_data += (input_x * input_y * input_ch);
         output_data += (output_x * output_y * output_ch);

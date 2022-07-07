@@ -71,8 +71,7 @@ muriscv_nn_status muriscv_nn_convolve_wrapper_s8(const muriscv_nn_context *ctx,
                                                output_dims,
                                                output_data);
     }
-    else if ((output_dims->h == 1) && (input_dims->h == 1) && (filter_dims->h == 1) && (output_dims->w % 4 == 0) &&
-             (input_dims->n == 1) && (conv_params->dilation.w == 1 && conv_params->dilation.h == 1))
+    else if ((input_dims->h == 1) && (output_dims->w % 4 == 0) && conv_params->dilation.w == 1)
     {
         return muriscv_nn_convolve_1_x_n_s8(ctx,
                                             conv_params,
@@ -113,8 +112,7 @@ int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size(const muriscv_nn_conv_par
     {
         return muriscv_nn_convolve_1x1_s8_fast_get_buffer_size(input_dims);
     }
-    else if ((output_dims->h == 1) && (input_dims->h == 1) && (filter_dims->h == 1) && (output_dims->w % 4 == 0) &&
-             (input_dims->n == 1) && (conv_params->dilation.w == 1 && conv_params->dilation.h == 1))
+    else if ((input_dims->h == 1) && (output_dims->w % 4 == 0) && (conv_params->dilation.w == 1))
     {
         return muriscv_nn_convolve_1_x_n_s8_get_buffer_size(input_dims, filter_dims);
     }

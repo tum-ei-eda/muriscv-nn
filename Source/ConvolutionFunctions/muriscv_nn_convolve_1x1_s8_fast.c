@@ -24,8 +24,6 @@
 #include <rvp_intrinsic.h>
 #endif
 
-#include <string.h>
-
 #include "muriscv_nn_functions.h"
 #include "muriscv_nn_support_functions.h"
 
@@ -46,6 +44,7 @@
  * Used by muriscv_nn_convolve_wrapper_s8()
  *
  */
+
 muriscv_nn_status muriscv_nn_convolve_1x1_s8_fast(const muriscv_nn_context *ctx,
                                                   const muriscv_nn_conv_params *conv_params,
                                                   const muriscv_nn_per_channel_quant_params *quant_params,
@@ -58,70 +57,67 @@ muriscv_nn_status muriscv_nn_convolve_1x1_s8_fast(const muriscv_nn_context *ctx,
                                                   const muriscv_nn_dims *output_dims,
                                                   q7_t *output_data)
 {
-
     if (input_dims->c % 4 != 0 || conv_params->padding.w != 0 || conv_params->padding.h != 0 ||
         conv_params->stride.w != 1 || conv_params->stride.h != 1)
     {
         return MURISCV_NN_ARG_ERROR;
     }
 
-    // TODO(fabianpedd): Implement special vector accelerated case
-
     (void)ctx;
     (void)filter_dims;
     (void)bias_dims;
 
-    // #if defined(USE_VEXT)
-    //
-    //     const int32_t col_len = input_dims->w * input_dims->h * input_dims->n;
-    //     const int32_t output_ch = output_dims->c;
-    //     const int32_t input_ch = input_dims->c;
-    //     const int32_t input_offset = conv_params->input_offset;
-    //     const int32_t out_offset = conv_params->output_offset;
-    //     const int32_t out_activation_min = conv_params->activation.min;
-    //     const int32_t out_activation_max = conv_params->activation.max;
-    //     int32_t *output_mult = quant_params->multiplier;
-    //     int32_t *output_shift = quant_params->shift;
-    //
-    //     for (int i_items = 0; i_items <= (col_len - 4); i_items += 4)
-    //     {
-    //
-    //         output_data = muriscv_nn_mat_mul_core_4x_s8(input_ch,
-    //                                                     input_ch,
-    //                                                     input_data + i_items * input_ch,
-    //                                                     filter_data,
-    //                                                     output_ch,
-    //                                                     conv_params,
-    //                                                     quant_params,
-    //                                                     bias_data,
-    //                                                     output_data);
-    //     }
-    //
-    //     /* Handle left over elements */
-    //     for (int i_items = (col_len & ~0x3); i_items < col_len; i_items++)
-    //     {
-    //         for (int i_out_ch = 0; i_out_ch < output_ch; i_out_ch++)
-    //         {
-    //             int32_t sum_row = 0;
-    //             int32_t acc;
-    //             (void)muriscv_nn_mat_mul_core_1x_s8(
-    //                 input_ch, input_data + i_items * input_ch, filter_data + i_out_ch * input_ch, &sum_row, &acc);
-    //             if (bias_data)
-    //             {
-    //                 acc += bias_data[i_out_ch];
-    //             }
-    //             sum_row = (sum_row * input_offset);
-    //             acc += sum_row;
-    //             acc = muriscv_nn_requantize(acc, output_mult[i_out_ch], output_shift[i_out_ch]);
-    //             acc += out_offset;
-    //
-    //             acc = MAX(acc, out_activation_min);
-    //             acc = MIN(acc, out_activation_max);
-    //             *output_data++ = acc;
-    //         }
-    //     }
-    //
-    // #else
+#if defined(USE_VEXT)
+
+    const int32_t col_len = input_dims->w * input_dims->h * input_dims->n;
+    const int32_t output_ch = output_dims->c;
+    const int32_t input_ch = input_dims->c;
+    const int32_t input_offset = conv_params->input_offset;
+    const int32_t out_offset = conv_params->output_offset;
+    const int32_t out_activation_min = conv_params->activation.min;
+    const int32_t out_activation_max = conv_params->activation.max;
+    int32_t *output_mult = quant_params->multiplier;
+    int32_t *output_shift = quant_params->shift;
+
+    for (int i_items = 0; i_items <= (col_len - 4); i_items += 4)
+    {
+
+        output_data = muriscv_nn_mat_mul_core_4x_s8(input_ch,
+                                                    input_ch,
+                                                    input_data + i_items * input_ch,
+                                                    filter_data,
+                                                    output_ch,
+                                                    conv_params,
+                                                    quant_params,
+                                                    bias_data,
+                                                    output_data);
+    }
+
+    /* Handle left over elements */
+    for (int i_items = (col_len & ~0x3); i_items < col_len; i_items++)
+    {
+        for (int i_out_ch = 0; i_out_ch < output_ch; i_out_ch++)
+        {
+            int32_t sum_row = 0;
+            int32_t acc;
+            (void)muriscv_nn_mat_mul_core_1x_s8(
+                input_ch, input_data + i_items * input_ch, filter_data + i_out_ch * input_ch, &sum_row, &acc);
+            if (bias_data)
+            {
+                acc += bias_data[i_out_ch];
+            }
+            sum_row = (sum_row * input_offset);
+            acc += sum_row;
+            acc = muriscv_nn_requantize(acc, output_mult[i_out_ch], output_shift[i_out_ch]);
+            acc += out_offset;
+
+            acc = MAX(acc, out_activation_min);
+            acc = MIN(acc, out_activation_max);
+            *output_data++ = acc;
+        }
+    }
+
+#else
 
     /* Run the following code as reference implementation for Cortex-M processors with or without DSP extension */
     const int32_t lhs_rows = input_dims->w * input_dims->h * input_dims->n;
@@ -141,7 +137,8 @@ muriscv_nn_status muriscv_nn_convolve_1x1_s8_fast(const muriscv_nn_context *ctx,
                                 conv_params->output_offset,
                                 conv_params->activation.min,
                                 conv_params->activation.max);
-    // #endif
+
+#endif
 
     /* Return to application */
     return MURISCV_NN_SUCCESS;
