@@ -41,7 +41,7 @@
  *
  */
 
-muriscv_nn_status muriscv_nn_relu6_s8(q7_t *data, uint16_t size)
+void muriscv_nn_relu6_s8(q7_t *data, uint16_t size)
 {
 
 #if defined(USE_VEXT)
@@ -74,8 +74,6 @@ muriscv_nn_status muriscv_nn_relu6_s8(q7_t *data, uint16_t size)
     }
 
 #endif /* defined(USE_VEXT) */
-
-    return MURISCV_NN_SUCCESS;
 }
 
 /**

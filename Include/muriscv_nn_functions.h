@@ -1046,19 +1046,18 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16(const int16_t *input_1_vect,
 
 /**
  * @brief Q7 RELU function
- * @param[in,out]   data                    pointer to input
- * @param[in]       size                    number of elements
- * @return          The function returns    MURISCV_NN_SUCCESS
+ * @param[in,out]   data        pointer to input
+ * @param[in]       size        number of elements
+ * @return none.
  */
-muriscv_nn_status muriscv_nn_relu_q7(q7_t *data, const uint16_t size);
+void muriscv_nn_relu_q7(q7_t *data, uint16_t size);
 
 /**
  * @brief s8 ReLU6 function
- * @param[in,out]   data                    pointer to input
- * @param[in]       size                    number of elements
- * @return          The function returns    MURISCV_NN_SUCCESS
+ * @param[in,out]   data        pointer to input
+ * @param[in]       size        number of elements
  */
-muriscv_nn_status muriscv_nn_relu6_s8(q7_t *data, const uint16_t size);
+void muriscv_nn_relu6_s8(q7_t *data, uint16_t size);
 
 /**
  * @defgroup Pooling Pooling Functions
