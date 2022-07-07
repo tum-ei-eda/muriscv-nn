@@ -38,7 +38,7 @@ Toolchain/*
 
 
 # TFLM Integration
-TFLM/tflite-micro
+Integration/TFLM/tflite-micro
 
 # Tests
 Tests/UnitTest/TestCases/*/Unity/TestRunner/*

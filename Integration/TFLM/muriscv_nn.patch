@@ -1,6 +1,6 @@
 diff --git a/tensorflow/lite/micro/muriscv_nn/micro_time.cc b/tensorflow/lite/micro/muriscv_nn/micro_time.cc
 new file mode 100644
-index 0000000..38058c2
+index 0000000..19917a7
 --- /dev/null
 +++ b/tensorflow/lite/micro/muriscv_nn/micro_time.cc
 @@ -0,0 +1,32 @@
@@ -38,7 +38,7 @@ index 0000000..38058c2
 +}  // namespace tflite
 diff --git a/tensorflow/lite/micro/muriscv_nn/system_setup.cc b/tensorflow/lite/micro/muriscv_nn/system_setup.cc
 new file mode 100644
-index 0000000..0907a0e
+index 0000000..b34c1cd
 --- /dev/null
 +++ b/tensorflow/lite/micro/muriscv_nn/system_setup.cc
 @@ -0,0 +1,31 @@
@@ -74,7 +74,7 @@ index 0000000..0907a0e
 +
 +}  // namespace tflite
 diff --git a/tensorflow/lite/micro/tools/make/Makefile b/tensorflow/lite/micro/tools/make/Makefile
-index 2c16f7f..96f448c 100644
+index 4a9f367..b68b1f4 100644
 --- a/tensorflow/lite/micro/tools/make/Makefile
 +++ b/tensorflow/lite/micro/tools/make/Makefile
 @@ -127,9 +127,7 @@ endif
@@ -87,25 +87,24 @@ index 2c16f7f..96f448c 100644
    -Wunused-function \
    -Wswitch \
    -Wvla \
-@@ -139,6 +137,17 @@ CC_WARNINGS := \
+@@ -139,6 +137,16 @@ CC_WARNINGS := \
    -Wstrict-aliasing \
    -Wno-unused-parameter
 
-+# Because LLVM is more strict than GCC, it throws warnings. Together with
-+# Werror makes the code not compilable if we don't adjust things here.
 +ifeq ($(TOOLCHAIN), llvm)
 +  CC_WARNINGS += \
 +    -Wno-unused-but-set-variable
 +else
 +  CC_WARNINGS += \
 +    -Wdouble-promotion \
-+    -Wunused-variable
++    -Wunused-variable \
++    -Wno-stringop-overread
 +endif
 +
  COMMON_FLAGS := \
    -Werror \
    -fno-unwind-tables \
-@@ -509,7 +518,8 @@ ifneq ($(OPTIMIZED_KERNEL_DIR),)
+@@ -525,7 +533,8 @@ ifneq ($(OPTIMIZED_KERNEL_DIR),)
      $(error Incorrect OPTIMIZED_KERNEL_DIR: $(RESULT))
    endif
 
@@ -115,7 +114,7 @@ index 2c16f7f..96f448c 100644
    # Specialize for the optimized kernels
    MICROLITE_CC_KERNEL_SRCS := $(shell python3 $(MAKEFILE_DIR)/specialize_files.py \
  		--base_files "$(MICROLITE_CC_KERNEL_SRCS)" \
-@@ -691,6 +701,12 @@ ifeq ($(TOOLCHAIN), armclang)
+@@ -707,6 +716,12 @@ ifeq ($(TOOLCHAIN), armclang)
    $(BINDIR)%.bin: $(BINDIR)%
  		@mkdir -p $(dir $@)
  		$(FROMELF) --bin --output=$@ $<
@@ -130,7 +129,7 @@ index 2c16f7f..96f448c 100644
    $(BINDIR)%.bin: $(BINDIR)%
 diff --git a/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
 new file mode 100644
-index 0000000..4e84064
+index 0000000..e61b748
 --- /dev/null
 +++ b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
 @@ -0,0 +1,85 @@

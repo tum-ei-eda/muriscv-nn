@@ -33,19 +33,19 @@ TESTS=(hello_world_test magic_wand_test micro_speech_test network_tester_test pe
 BENCHMARKS=(keyword_benchmark keyword_benchmark_8bit person_detection_benchmark)
 
 # Path to muRISCV-NN, TFLM and Toolchain
-MURISCV_NN_PATH=${SCRIPT_DIR}/..
+MURISCV_NN_PATH=${SCRIPT_DIR}/../..
 TFLM_PATH=${SCRIPT_DIR}/tflite-micro
-GCC_TOOLCHAIN_ROOT=${SCRIPT_DIR}/../Toolchain/rv32gcv
+GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/rv32gcv
 
 # Compiliation parameters
 TARGET=muriscv_nn             # don't change
 OPTIMIZED_KERNEL_DIR=cmsis_nn # don't change
-USE_VEXT=OFF                  # ON/OFF
+USE_VEXT=ON                   # ON/OFF
 USE_PEXT=OFF                  # ON/OFF
 BUILD_TYPE=Release            # Debug/Release
-TOOLCHAIN=llvm                # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
-TARGET_ARCH=rv32gcv           # rv32gcv for GCC / rv32gcv0p10 for LLVM
-VLEN=32                       # Vector length parameter passed to simulator
+TOOLCHAIN=gcc                 # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
+TARGET_ARCH=rv32gcv           # rv32gcv for vector support
+VLEN=512                      # Vector length parameter passed to simulator
 SIMULATOR=OVPsim              # Spike/OVPsim
 # TODO(fabianpedd): check whether the args above actually get passed to the code, such as USE_VEXT
 
