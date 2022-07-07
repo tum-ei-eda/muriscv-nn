@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Arm Limited or its affiliates.
+ * Copyright (C) 2010-2022 Arm Limited or its affiliates.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -270,8 +270,7 @@ int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dim
 /**
  * @brief Optimized s16 convolution function
  * @param[in, out] ctx            Function context that contains the additional buffer if required by the function.
-                                  muriscv_nn_convolve_fast_s16_get_buffer_size will return the buffer_size if
- required
+                                  muriscv_nn_convolve_fast_s16_get_buffer_size will return the buffer_size if required
  * @param[in]      conv_params    Convolution parameters (e.g. strides, dilations, pads,...).
  *                                conv_params->input_offset  : Not used
  *                                conv_params->output_offset : Not used
@@ -280,8 +279,8 @@ int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dim
  * @param[in]      input_dims     Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
  * @param[in]      input_data     Input (activation) data pointer. Data type: int16
  * @param[in]      filter_dims    Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK are the
- *                                spatial filter dimensions. (filter_dims->w * filter_dims->h * input_dims->c) must
- not exceed 512
+ *                                spatial filter dimensions. (filter_dims->w * filter_dims->h * input_dims->c) must not
+ exceed 512
  * @param[in]      filter_data    Filter data pointer. Data type: int8
  * @param[in]      bias_dims      Bias tensor dimensions. Format: [C_OUT]
  * @param[in]      bias_data      Optional bias data pointer. Data type: int64
@@ -292,8 +291,7 @@ int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dim
  *
  * @details
  *    1. Supported framework: TensorFlow Lite micro
- *    2. q7/q15 is used as data type eventhough it is s8/s16 data. It is done so to be consistent with existing
- APIs.
+ *    2. q7/q15 is used as data type eventhough it is s8/s16 data. It is done so to be consistent with existing APIs.
  *    3. Additional memory is required for optimization. Refer to argument 'ctx' for details.
  *    4. Implementation supports kernel volumes (filter width * filter height * input channels) < 512.
  *
@@ -379,8 +377,7 @@ int32_t muriscv_nn_convolve_1x1_s8_fast_get_buffer_size(const muriscv_nn_dims *i
  * @brief 1xn convolution
  *
  * @param[in, out] ctx            Function context that contains the additional buffer if required by the function.
-                                  muriscv_nn_convolve_1_x_n_s8_get_buffer_size will return the buffer_size if
-                                  required
+                                  muriscv_nn_convolve_1_x_n_s8_get_buffer_size will return the buffer_size if required
  * @param[in]      conv_params    Convolution parameters (e.g. strides, dilations, pads,...).
  *                                Range of conv_params->input_offset  : [-127, 128]
  *                                Range of conv_params->output_offset : [-128, 127]
@@ -731,6 +728,12 @@ muriscv_nn_status muriscv_nn_depthwise_conv_3x3_s8(const muriscv_nn_context *ctx
  *                                                      ch_mult != 1
  *                <code>MURISCV_NN_SUCCESS</code> - Successful operation
  *
+ * @note       If number of channels is not a multiple of 4, upto 3 elements outside the boundary will be read out
+ *             for the following if the RISC-V vector extension is used.
+ *               - Output shift
+ *               - Output multiplier
+ *               - Output bias
+ *               - kernel
  * @details
  *    - Supported framework: TensorFlow Lite
  *    - The following constrains on the arguments apply
@@ -1234,7 +1237,6 @@ muriscv_nn_status muriscv_nn_maxpool_s16(const muriscv_nn_context *ctx,
  *       TensorFlow Lite's kernel
  *
  */
-
 void muriscv_nn_softmax_q7(const q7_t *vec_in, const uint16_t dim_vec, q7_t *p_out);
 
 /**
@@ -1324,7 +1326,6 @@ muriscv_nn_status muriscv_nn_softmax_s16(const int16_t *input,
  * @note Supported framework: TensorFlow Lite micro (bit-accurate)
  *
  */
-
 void muriscv_nn_softmax_u8(const uint8_t *input,
                            const int32_t num_rows,
                            const int32_t row_size,

@@ -145,6 +145,9 @@ static inline uint32_t rdinstret(void)
 
 // TODO(fabianpedd): Implement 64bit variants for rdtime and rdinstret
 
+#define MURSICV_NN_PROF_START uint32_t __prof = muriscv_nn_prof_start();
+#define MURSICV_NN_PROF_STOP muriscv_nn_prof_stop(__prof);
+
 /**
  * @brief Start profiling of a certain task.
  */
@@ -156,7 +159,7 @@ static inline uint32_t muriscv_nn_prof_start(void) { return rdcycle(); }
 static inline uint32_t muriscv_nn_prof_stop(uint32_t cycles)
 {
     cycles = rdcycle() - cycles;
-    printf("##### muRISCV-NN profiler: %u cycles #####\n", (uint32_t)cycles);
+    printf("##### muRISCV-NN profiler: %u cycles #####\n", (unsigned int)cycles);
     return cycles;
 }
 

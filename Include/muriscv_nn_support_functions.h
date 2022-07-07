@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2021 Arm Limited or its affiliates.
+ * Copyright (C) 2010-2022 Arm Limited or its affiliates.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -114,37 +114,6 @@ static inline void muriscv_nn_q7_to_q15_with_offset(const q7_t *src, q15_t *dst,
     }
 }
 
-// /**
-//  * @brief Depthwise conv on an im2col buffer where the input channel equals output channel.
-//  * @param[in]    row     pointer to row
-//  * @param[in]    col     pointer to im2col buffer, always consists of 2 columns.
-//  * @param[in]    num_ch   number of channels
-//  * @param[in]    out_shift  pointer to per output channel requantization shift parameter.
-//  * @param[in]    out_mult   pointer to per output channel requantization multiplier parameter.
-//  * @param[in]    out_offset      output tensor offset.
-//  * @param[in]    activation_min   minimum value to clamp the output to. Range : int8
-//  * @param[in]    activation_max   maximum value to clamp the output to. Range : int8
-//  * @param[in]    kernel_size   number of elements in one column.
-//  * @param[in]    output_bias per output channel bias. Range : int32
-//  * @param[out]   out         pointer to output
-//  * @return     The function returns one of the two
-//  *              1. The incremented output pointer for a successful operation or
-//  *              2. NULL if implementation is not available.
-//  *
-//  * @details     Supported framework: TensorFlow Lite micro.
-//  */
-// q7_t *muriscv_nn_depthwise_conv_s8_core(const q7_t *row,
-//                                         const q15_t *col,
-//                                         const uint16_t num_ch,
-//                                         const int32_t *out_shift,
-//                                         const int32_t *out_mult,
-//                                         const int32_t out_offset,
-//                                         const int32_t activation_min,
-//                                         const int32_t activation_max,
-//                                         const uint16_t kernel_size,
-//                                         const int32_t *const output_bias,
-//                                         q7_t *out);
-
 /**
  * @brief General Matrix-multiplication function with per-channel requantization.
  * @param[in]       input_row    pointer to row operand
@@ -181,6 +150,7 @@ q7_t *muriscv_nn_mat_mult_s8(const q7_t *input_row,
                              const uint16_t row_len,
                              const int32_t *const bias,
                              q7_t *out);
+
 /**
  * @brief Matrix-multiplication function for convolution with per-channel requantization for 16 bits convolution.
  * @param[in]       input_a     pointer to operand A
@@ -726,6 +696,10 @@ static inline q31_t muriscv_nn_requantize(const q31_t val, const q31_t multiplie
 }
 
 #if defined(USE_VEXT)
+
+// TODO(fabianpedd): Clean these muriscv_nn_requantize functions up and find a consitent naming scheme that respects
+// types and vector/scalar arguments
+
 /**
  * @brief           Requantize a given vector of values.
  * @param[in]       val         Vector of value to be requantized
@@ -756,6 +730,31 @@ muriscv_nn_requantize_vec(const vint32m8_t val, const q31_t multiplier, const q3
 
     mask = vmsgt_vv_i32m8_b4(remainder, threshold, vl);
     val_internal = vadd_vx_i32m8_m(mask, val_internal, val_internal, 1, vl);
+
+    return val_internal;
+}
+
+static inline vint32m4_t
+muriscv_nn_requantize_vint32m4(const vint32m4_t val, const q31_t multiplier, const q31_t shift, size_t vl)
+{
+    // TODO(fabianpedd): implement MURISCV_NN_USE_SINGLE_ROUNDING
+
+    vint32m4_t val_internal = vsmul_vx_i32m4(val, multiplier * (1 << LEFT_SHIFT(shift)), vl);
+
+    // TODO(fabianpedd): close, but sometimes off by 1 bit.
+    // in1_off = vssra_vx_i32m4(in1_off, RIGHT_SHIFT(input_1_shift), vl);
+
+    const q31_t remainder_mask = (1 << RIGHT_SHIFT(shift)) - 1;
+    vint32m4_t remainder = vand_vx_i32m4(val_internal, remainder_mask, vl);
+    vint32m4_t threshold = vmv_v_x_i32m4(remainder_mask >> 1, vl);
+
+    val_internal = vsra_vx_i32m4(val_internal, RIGHT_SHIFT(shift), vl);
+
+    vbool8_t mask = vmslt_vx_i32m4_b8(val_internal, 0, vl);
+    threshold = vadd_vx_i32m4_m(mask, threshold, threshold, 1, vl);
+
+    mask = vmsgt_vv_i32m4_b8(remainder, threshold, vl);
+    val_internal = vadd_vx_i32m4_m(mask, val_internal, val_internal, 1, vl);
 
     return val_internal;
 }
