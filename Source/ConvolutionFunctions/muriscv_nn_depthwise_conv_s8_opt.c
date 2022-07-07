@@ -211,6 +211,9 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
     }
 
 #else // defined(USE_PEXT)
+
+// TODO(fabianpedd): Implement packed accleration here
+
 //     (void)bias_dims;
 //     /* Run the following code in cores using DSP extension */
 //     q15_t *const col_buffer_start = buffer_a;

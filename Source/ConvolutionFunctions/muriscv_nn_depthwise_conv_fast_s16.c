@@ -54,6 +54,8 @@ muriscv_nn_status muriscv_nn_depthwise_conv_fast_s16(const muriscv_nn_context *c
                                                      const muriscv_nn_dims *output_dims,
                                                      q15_t *output)
 {
+    // TODO(fabianpedd): Implement code below
+
     const int32_t input_ch = input_dims->c;
     const int32_t output_ch = output_dims->c;
 
@@ -304,7 +306,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_fast_s16(const muriscv_nn_context *c
                                          bias,
                                          output_dims,
                                          output);
-// #endif /* USE_VEXT | USE_PEXT */
+    // #endif /* USE_VEXT | USE_PEXT */
 
     /* Return to application */
     return MURISCV_NN_SUCCESS;

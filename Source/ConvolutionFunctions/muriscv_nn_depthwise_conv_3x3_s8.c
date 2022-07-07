@@ -56,6 +56,9 @@ muriscv_nn_status muriscv_nn_depthwise_conv_3x3_s8(const muriscv_nn_context *ctx
                                                    const muriscv_nn_dims *output_dims,
                                                    q7_t *output)
 {
+    // TODO(fabianpedd): Accelerate this using the vector extension. While ARM can't do this efficently, we most likely
+    // can using discountinous loads and length agnostic vectors
+
     (void)ctx;
     (void)bias_dims;
 

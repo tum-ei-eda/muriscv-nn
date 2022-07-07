@@ -55,6 +55,8 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_svdf_s8(const q7_t *lhs,
                                                     const int32_t activation_min,
                                                     const int32_t activation_max)
 {
+    // TODO(fabianpedd): Implement vector and packed accleration
+
     (void)rhs_offset;
     if (rhs_cols < 0 || (Q31_MAX - rhs_cols) < 16 || dst_offset < 0)
     {

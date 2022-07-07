@@ -54,8 +54,6 @@ muriscv_nn_status muriscv_nn_depthwise_conv_wrapper_s8(const muriscv_nn_context 
                                                        const muriscv_nn_dims *output_dims,
                                                        q7_t *output)
 {
-    // uint32_t prof = muriscv_nn_prof_start();
-
     muriscv_nn_status status = MURISCV_NN_SUCCESS;
     if (1 == dw_conv_params->ch_mult && input_dims->n == 1 && dw_conv_params->dilation.w == 1 &&
         dw_conv_params->dilation.h == 1)
@@ -106,7 +104,6 @@ muriscv_nn_status muriscv_nn_depthwise_conv_wrapper_s8(const muriscv_nn_context 
                                               output_dims,
                                               output);
     }
-    // muriscv_nn_prof_stop(prof);
 
     /* Return to application */
     return status;

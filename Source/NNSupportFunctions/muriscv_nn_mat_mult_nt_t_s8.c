@@ -56,7 +56,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
                                               const int32_t activation_max)
 {
 
-    // TODO(fabianpedd): Implement P-Ext speedup
+    // TODO(fabianpedd): Implement P-Ext speedup (and maybe V-Ext?)
     for (int32_t rhs_rows_idx = 0; rhs_rows_idx <= (rhs_rows - 2); rhs_rows_idx += 2)
     {
         const q7_t *lhs_ptr = &lhs[0];

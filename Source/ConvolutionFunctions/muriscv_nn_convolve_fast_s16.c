@@ -153,7 +153,8 @@ muriscv_nn_status muriscv_nn_convolve_fast_s16(const muriscv_nn_context *ctx,
         //                 q31_t sum = 0;
         //
         //                 /* Point to the beginning of the im2col buffer where the input is available as a rearranged
-        //                 column */ const q15_t *ip_as_col = buffer_a;
+        //                 column */
+        //                 const q15_t *ip_as_col = buffer_a;
         //
         //                 /* 4 multiply and accumulates are done in one loop. */
         //                 uint16_t col_count = (input_ch * kernel_y * kernel_x) >> 2;
@@ -223,7 +224,8 @@ muriscv_nn_status muriscv_nn_convolve_fast_s16(const muriscv_nn_context *ctx,
     return MURISCV_NN_SUCCESS;
 }
 
-int32_t muriscv_nn_convolve_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
+int32_t muriscv_nn_convolve_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims,
+                                                     const muriscv_nn_dims *filter_dims)
 {
 #if defined(USE_PEXT) && !defined(USE_VEXT)
     return (2 * input_dims->c * filter_dims->w * filter_dims->h) * (int32_t)sizeof(int16_t);

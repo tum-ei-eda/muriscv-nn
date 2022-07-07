@@ -54,7 +54,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s16(const q15_t *lhs,
                                                 const int32_t activation_max)
 {
 
-    // TODO(fabianpedd): Vectorize using V extension, P extension makes no sense here
+    // TODO(fabianpedd): Vectorize using V extension, P extension (probably) makes no sense here
     for (int i_row_loop_cnt = 0; i_row_loop_cnt < rhs_rows; i_row_loop_cnt++)
     {
         const q15_t *lhs_ptr = lhs;

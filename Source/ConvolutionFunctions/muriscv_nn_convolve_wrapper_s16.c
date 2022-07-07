@@ -53,7 +53,41 @@ muriscv_nn_status muriscv_nn_convolve_wrapper_s16(const muriscv_nn_context *ctx,
                                                   const muriscv_nn_dims *output_dims,
                                                   q15_t *output_data)
 {
-    // TODO(fabianpedd): Implement special case calling arm_convolve_fast_s16()
+    // TODO(fabianpedd): Include special cases
+
+    // TODO(fabianpedd): Check special case include logic here
+
+    // #if defined(USE_PEXT) && !defined(USE_VEXT)
+    //     if (filter_dims->w * filter_dims->h * input_dims->c < 512 &&
+    //         (conv_params->dilation.w == 1 && conv_params->dilation.h == 1))
+    //     {
+    //         return muriscv_nn_convolve_fast_s16(ctx,
+    //                                          conv_params,
+    //                                          quant_params,
+    //                                          input_dims,
+    //                                          input_data,
+    //                                          filter_dims,
+    //                                          filter_data,
+    //                                          bias_dims,
+    //                                          bias_data,
+    //                                          output_dims,
+    //                                          output_data);
+    //     }
+    //     else
+    //     {
+    //         return muriscv_nn_convolve_s16(ctx,
+    //                                     conv_params,
+    //                                     quant_params,
+    //                                     input_dims,
+    //                                     input_data,
+    //                                     filter_dims,
+    //                                     filter_data,
+    //                                     bias_dims,
+    //                                     bias_data,
+    //                                     output_dims,
+    //                                     output_data);
+    //     }
+    // #else
     return muriscv_nn_convolve_s16(ctx,
                                    conv_params,
                                    quant_params,
@@ -65,6 +99,7 @@ muriscv_nn_status muriscv_nn_convolve_wrapper_s16(const muriscv_nn_context *ctx,
                                    bias_data,
                                    output_dims,
                                    output_data);
+    // #endif
 }
 
 int32_t muriscv_nn_convolve_wrapper_s16_get_buffer_size(const muriscv_nn_conv_params *conv_params,
@@ -72,12 +107,20 @@ int32_t muriscv_nn_convolve_wrapper_s16_get_buffer_size(const muriscv_nn_conv_pa
                                                         const muriscv_nn_dims *filter_dims,
                                                         const muriscv_nn_dims *output_dims)
 {
-    // TODO(fabianpedd): Implement special case calling arm_convolve_fast_s16()
-    
     (void)conv_params;
     (void)output_dims;
 
+    // #if defined(USE_PEXT) && !defined(USE_VEXT)
+    //     if (filter_dims->w * filter_dims->h * input_dims->c < 512 &&
+    //         (conv_params->dilation.w == 1 && conv_params->dilation.h == 1))
+    //     {
+    //         return muriscv_nn_convolve_fast_s16_get_buffer_size(input_dims, filter_dims);
+    //     }
+    //
+    //     return muriscv_nn_convolve_s16_get_buffer_size(input_dims, filter_dims);
+    // #else
     return muriscv_nn_convolve_s16_get_buffer_size(input_dims, filter_dims);
+    // #endif
 }
 
 /**

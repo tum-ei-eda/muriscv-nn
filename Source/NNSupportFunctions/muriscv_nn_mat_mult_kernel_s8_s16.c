@@ -44,6 +44,8 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
                                         const int32_t *const output_bias,
                                         q7_t *out_0)
 {
+    // TODO(fabianpedd): Check if vectorization makes sense here?
+
 #if !defined(USE_VEXT)
     /* set up the second output pointers */
     q7_t *out_1 = out_0 + output_ch;

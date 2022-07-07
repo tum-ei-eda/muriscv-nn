@@ -109,7 +109,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             rhs_cols_cnt -= vl;
         }
 
-        vl = vsetvl_e32m1(1);
+        vl = vsetvl_e32m1(1); // TODO(fabianpedd): Is this really needed?
         vint32m1_t reduct = vundefined_i32m1();
         if (bias)
         {
@@ -156,8 +156,10 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         const int8_t *rhs_ptr_1 = rhs + rhs_cols;
         rhs += 2 * rhs_cols;
 
-        // TODO(fabianpedd): Why is the compiler soo dump?! This adds a couple of instructions compared to the zero
-        // comparison... for (int j = 0; j < col_loop_cnt; j++)
+        // TODO(fabianpedd): Why is the compiler soo dumb?!
+        // This 'for (int j = 0; j < col_loop_cnt; j++)'
+        // adds a couple of instructions compared to the zero
+        // comparison currently used.
         for (int j = col_loop_cnt; j != 0; j--)
         {
             const int32_t lhs_packed = *(int32_t *)lhs_ptr;
@@ -238,8 +240,10 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         const int8_t *lhs_ptr = lhs;
         const int8_t *rhs_ptr_0 = rhs;
 
-        // TODO(fabianpedd): Why is the compiler soo dump?! This adds a couple of instructions compared to the zero
-        // comparison... for (int j = 0; j < col_loop_cnt; j++)
+        // TODO(fabianpedd): Why is the compiler soo dumb?!
+        // This 'for (int j = 0; j < col_loop_cnt; j++)'
+        // adds a couple of instructions compared to the zero
+        // comparison currently used.
         for (int j = col_loop_cnt; j != 0; j--)
         {
             const int32_t lhs_packed = *(int32_t *)lhs_ptr;

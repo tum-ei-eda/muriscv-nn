@@ -57,13 +57,6 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s8(const int8_t *input_1_vect,
                                                 const int32_t block_size)
 {
 
-    // TODO(fabianpedd): the rounding modes of the requantization used by ARMs
-    //                   requantization are very hard to replicate using RISC-V
-    //                   vector instructions. they only come close, but are not
-    //                   exact. hence, I implemented the scalar fallback functions
-    //                   in RISC-V vector instructions. they are exact, but also
-    //                   quite verbose...
-
     size_t loop_count = block_size;
 
 #if defined(USE_VEXT)
