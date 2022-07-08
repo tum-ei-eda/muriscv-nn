@@ -26,6 +26,18 @@ BUILD_TYPE=Release            # Debug/Release
 VLEN=512                      # Vector length parameter passed to simulator
 SIMULATOR=OVPsim
 
+VENV_DIR=$SCRIPT_DIR/.venv
+
+function install_tvm () {
+    virtualenv -p python3.8 $VENV_DIR
+    source $VENV_DIR/bin/activate
+    # pip install "tlcpack-nightly[tvmc]" -f https://tlcpack.ai/wheels
+    pip install "tlcpack-nightly" -f https://tlcpack.ai/wheels
+    pip install -r requirements.txt
+}
+
+install_tvm
+
 function build_model () {
     MODEL=$1
     USE_VEXT=$2
