@@ -86,22 +86,22 @@ def setup_etiss(config: Config):
                    'install'], check=True)
 
     # Build the ETISS processor example
-    config.etiss_dir_proc = os.path.join(config.etiss_dir_install, 'examples/bare_etiss_processor')
-    config.etiss_dir_proc_build = os.path.join(config.etiss_dir_proc, config.BUILD_DIR_NAME)
-    logging.info('Building ETISS processor example into %s', config.etiss_dir_proc_build)
-    os.makedirs(config.etiss_dir_proc_build, exist_ok=True)
-    subprocess.run(['cmake',
-                   '-S', config.etiss_dir_proc,
-                   '-B', config.etiss_dir_proc_build,
-                   '-DCMAKE_INSTALL_PREFIX=' + str(config.etiss_dir_install),
-                   '-DPULPINO_ROM_START=' + hex(config.PULPINO_ROM_START),
-                   '-DPULPINO_ROM_SIZE=' + hex(config.PULPINO_ROM_SIZE),
-                   '-DPULPINO_RAM_START=' + hex(config.PULPINO_RAM_START),
-                   '-DPULPINO_RAM_SIZE=' + hex(config.PULPINO_RAM_SIZE),
-                   '-DCMAKE_BUILD_TYPE=' + str(config.BUILD_TYPE)], check=True)
-    subprocess.run(['make',
-                   '-C', config.etiss_dir_proc_build,
-                   '-j', str(multiprocessing.cpu_count())], check=True)
+    # config.etiss_dir_proc = os.path.join(config.etiss_dir_install, 'examples/bare_etiss_processor')
+    # config.etiss_dir_proc_build = os.path.join(config.etiss_dir_proc, config.BUILD_DIR_NAME)
+    # logging.info('Building ETISS processor example into %s', config.etiss_dir_proc_build)
+    # os.makedirs(config.etiss_dir_proc_build, exist_ok=True)
+    # subprocess.run(['cmake',
+    #                '-S', config.etiss_dir_proc,
+    #                '-B', config.etiss_dir_proc_build,
+    #                '-DCMAKE_INSTALL_PREFIX=' + str(config.etiss_dir_install),
+    #                '-DPULPINO_ROM_START=' + hex(config.PULPINO_ROM_START),
+    #                '-DPULPINO_ROM_SIZE=' + hex(config.PULPINO_ROM_SIZE),
+    #                '-DPULPINO_RAM_START=' + hex(config.PULPINO_RAM_START),
+    #                '-DPULPINO_RAM_SIZE=' + hex(config.PULPINO_RAM_SIZE),
+    #                '-DCMAKE_BUILD_TYPE=' + str(config.BUILD_TYPE)], check=True)
+    # subprocess.run(['make',
+    #                '-C', config.etiss_dir_proc_build,
+    #                '-j', str(multiprocessing.cpu_count())], check=True)
 
     # Build the ETISS SW example
     config.etiss_dir_sw = os.path.join(config.etiss_dir_install, 'examples/SW/riscv')
@@ -125,11 +125,11 @@ def setup_etiss(config: Config):
                    '-j', str(multiprocessing.cpu_count())], check=True)
 
     # Create custom_memsegs.ini file with custom memory segment configuration
-    config.etiss_custom_memsegs = os.path.join(config.etiss_dir_proc, "custom_memsegs.ini")
+    config.etiss_custom_memsegs = os.path.join(config.etiss_dir_install, "bin", "custom_memsegs.ini")
     create_ini_file(config.etiss_custom_memsegs, config)
 
     # Test the ETISS installation by executing the SW example once
-    config.etiss_run_helper = os.path.join(config.etiss_dir_proc, 'run_helper.sh')
+    config.etiss_run_helper = os.path.join(config.etiss_dir_install, "bin", 'run_helper.sh')
     config.etiss_riscv_example = os.path.join(config.etiss_dir_sw_build, 'riscv_example.elf')
     logging.info('Running ETISS software example as toolchain check %s', config.etiss_riscv_example)
     try:
