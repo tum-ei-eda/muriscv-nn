@@ -29,6 +29,7 @@ SIMULATOR=OVPsim
 VENV_DIR=$SCRIPT_DIR/.venv
 
 function install_tvm () {
+    echo "Installing TVM into virtual environment..."
     virtualenv -p python3.8 $VENV_DIR
     source $VENV_DIR/bin/activate
     # pip install "tlcpack-nightly[tvmc]" -f https://tlcpack.ai/wheels
@@ -36,40 +37,8 @@ function install_tvm () {
     pip install -r requirements.txt
 }
 
-install_tvm
-
-function build_model () {
-    MODEL=$1
-    USE_VEXT=$2
-    USE_PEXT=$3
-    MODEL_BASE="$(basename $MODEL .tflite)"
-    if [[ "${USE_VEXT}" == "ON" ]]; then
-        MCPU=cortex-m55
-    elif [[ "${USE_PEXT}" == "ON" ]]; then
-        MCPU=cortex-m33
-    else
-        MCPU=
-    fi
-    echo "Build: $MODEL $MCPU"
-    OUT_DIR=$GEN_DIR/mlf_$MODEL_BASE
-    TVMC_TARGET_ARGS="--target $EXTRA_TARGET,$TARGET"
-    if [[ ! -z $MCPU ]]; then
-        TVMC_TARGET_ARGS="$TVMC_TARGET_ARGS --target-cmsis-nn-mcpu $MCPU"
-        OUT_DIR="${OUT_DIR}_${MCPU}"
-    fi
-
-    echo tvmc compile $MODEL --runtime crt --executor aot --pass-config "tir.disable_vectorize=1" --pass-config "tir.usmp.enable=1" --pass-config "tir.usmp.algorithm=hill_climb" --opt-level 3 -f mlf --runtime-crt-system-lib 0 --target-c-constants-byte-alignment 4 --target-c-workspace-byte-alignment 4 --target-c-executor aot --target-c-unpacked-api 1 --target-c-interface-api c $TVMC_TARGET_ARGS --output $OUT_DIR.tar
-    tvmc compile $MODEL --runtime crt --executor aot --pass-config "tir.disable_vectorize=1" --pass-config "tir.usmp.enable=1" --pass-config "tir.usmp.algorithm=hill_climb" --opt-level 3 -f mlf --runtime-crt-system-lib 0 --target-c-constants-byte-alignment 4 --target-c-workspace-byte-alignment 4 --target-c-executor aot --target-c-unpacked-api 1 --target-c-interface-api c $TVMC_TARGET_ARGS --output $OUT_DIR.tar
-
-    mkdir -p $OUT_DIR
-
-    tar xf $OUT_DIR.tar -C $OUT_DIR
-    rm $OUT_DIR.tar
-}
-
-
 function build_muriscvnn() {
-    echo "Prepare: muriscvnn"
+    echo "Building muRISCV-NN lib..."
     USE_VEXT=$1
     USE_PEXT=$2
     BUILD=$3
@@ -81,16 +50,41 @@ function build_muriscvnn() {
         PREFIX=$TOOLCHAINS_DIR/rv32gc
     fi
     mkdir -p $BUILD
+    # TODO: replace with Scripts/build.sh
     cmake $MURISCVNN_DIR -B$BUILD -DUSE_VEXT=$USE_VEXT -DUSE_PEXT=$USE_PEXT -DTOOLCHAIN=GCC -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DRISCV_GCC_PREFIX=$PREFIX -DENABLE_TESTS=OFF
     make -C $BUILD -j`nproc`
 }
 
-build_muriscvnn OFF OFF $BUILD_DIR/muriscvnn_default
-build_muriscvnn ON OFF $BUILD_DIR/muriscvnn_vext
-build_muriscvnn OFF ON $BUILD_DIR/muriscvnn_pext
+function build_model () {
+    echo "Building model via TVMC..."
+    MODEL=$1
+    USE_VEXT=$2
+    USE_PEXT=$3
+    MODEL_BASE="$(basename $MODEL .tflite)"
+    if [[ "${USE_VEXT}" == "ON" ]]; then
+        MCPU=cortex-m55
+    elif [[ "${USE_PEXT}" == "ON" ]]; then
+        MCPU=cortex-m33
+    else
+        MCPU=
+    fi
+    OUT_DIR=$GEN_DIR/mlf_$MODEL_BASE
+    TVMC_TARGET_ARGS="--target $EXTRA_TARGET,$TARGET"
+    if [[ ! -z $MCPU ]]; then
+        TVMC_TARGET_ARGS="$TVMC_TARGET_ARGS --target-cmsis-nn-mcpu $MCPU"
+        OUT_DIR="${OUT_DIR}_${MCPU}"
+    fi
+
+    tvmc compile $MODEL --runtime crt --executor aot --pass-config "tir.disable_vectorize=1" --pass-config "tir.usmp.enable=1" --pass-config "tir.usmp.algorithm=hill_climb" --opt-level 3 -f mlf --runtime-crt-system-lib 0 --target-c-constants-byte-alignment 4 --target-c-workspace-byte-alignment 4 --target-c-executor aot --target-c-unpacked-api 1 --target-c-interface-api c $TVMC_TARGET_ARGS --output $OUT_DIR.tar
+
+    mkdir -p $OUT_DIR
+
+    tar xf $OUT_DIR.tar -C $OUT_DIR
+    rm $OUT_DIR.tar
+}
 
 function compile_model () {
-    echo "Compile: $1"
+    echo "Compiling Target SW..."
     MLF=$1
     USE_VEXT=$2
     USE_PEXT=$3
@@ -120,7 +114,6 @@ function compile_model () {
    cd -
 
    KERNEL_SRCS=$(find $MLF/codegen/host/src -name "*.c")
-   echo "BUILD=$BUILD"
 
    # Build target SW and kernels
    # TODO: convert into makefile
@@ -140,6 +133,7 @@ function compile_model () {
 }
 
 function run_model () {
+    echo "Running Model..."
     ELF=$1
     USE_VEXT=$2
     USE_PEXT=$3
@@ -150,7 +144,6 @@ function run_model () {
     else
         ARCH=rv32gc
     fi
-    echo "Run: $ELF"
 
     # Host?
     # $ELF
@@ -158,23 +151,32 @@ function run_model () {
     $SIM_DIR/$SIMULATOR/run.sh $ELF $ARCH $VLEN 1
 }
 
+install_tvm
+
+build_muriscvnn OFF OFF $BUILD_DIR/muriscvnn_default
+build_muriscvnn ON OFF $BUILD_DIR/muriscvnn_vext
+build_muriscvnn OFF ON $BUILD_DIR/muriscvnn_pext
+
 for model in "${MODELS[@]}"; do
    model_base=$(basename $model .tflite)
+   echo "=== Model: ${model_base} ==="
+
    # default
+   echo "\n--- default ---"
    build_model $model OFF OFF
    compile_model $GEN_DIR/mlf_${model_base}/ OFF OFF $ELF_DIR/${model_base}_default.elf
    run_model $ELF_DIR/${model_base}_default.elf OFF OFF
 
    # vext -> mvei
+   echo "\n--- vext ---"
    build_model $model ON OFF
    compile_model $GEN_DIR/mlf_${model_base}/ ON OFF $ELF_DIR/${model_base}_vext.elf
    run_model $ELF_DIR/${model_base}_vext.elf ON OFF
 
    # pext -> dsp
+   echo "\n--- pext ---"
    build_model $model OFF ON
    compile_model $GEN_DIR/mlf_${model_base}/ OFF ON $ELF_DIR/${model_base}_pext.elf
    run_model $ELF_DIR/${model_base}_pext.elf OFF ON
-
-   break # TODO: remove
 done
 

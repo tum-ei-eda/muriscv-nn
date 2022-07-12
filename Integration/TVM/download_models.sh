@@ -3,7 +3,8 @@
 
 set -e
 
-MODELS=(sine_model cifar10 simple_mnist micro_speech magic_wand aww vww resnet toycar)
+# MODELS=(sine_model cifar10 simple_mnist micro_speech magic_wand aww vww resnet toycar)
+MODELS=(aww vww resnet toycar)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
