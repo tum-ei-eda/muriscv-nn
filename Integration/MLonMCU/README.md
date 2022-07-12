@@ -21,7 +21,7 @@ cd $DIR/Sim/OVPsim/bin && ./download.sh
 cd $DIR/Sim/ETISS/bin && virtualenv -p python3.8 .venv && source .venv/bin/activate && python setup_etiss.py && deactivate
 ```
 
-Further the script use Python3.8 and assumes that the Virtualenv package is installed on the machine. ()
+Further the script use Python3.8 and assumes that the Virtualenv package is installed on the machine.
 
 ## Usage
 
@@ -31,4 +31,4 @@ Just execute:
 ./mlonmcu_integration_tests.sh
 ```
 
-This might take a lot of time! Feel free to disable some models, targets inside the script to reduce the runtime.
+This might take a lot of time! Feel free to disable some models or targets inside the script to reduce the runtime.
