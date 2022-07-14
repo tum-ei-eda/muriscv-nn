@@ -22,5 +22,6 @@ set -e
 # Downloads the "full" version of the rv32gcv GCC toolchain
 # to be used as a standalone compiler!
 wget https://syncandshare.lrz.de/dl/fi89JQF89pEiWwP6aQh7cM4H/rv32gcv.tar.xz
-mkdir rv32gcv
+mkdir -p rv32gcv
 tar -xvf rv32gcv.tar.xz -C rv32gcv
+rm rv32gcv.tar.xz

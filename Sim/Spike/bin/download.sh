@@ -21,3 +21,4 @@ set -e
 
 wget https://syncandshare.lrz.de/dl/fi16Ls946jLcuK95bp1TcWDe/spike.tar.xz
 tar -xvf spike.tar.xz
+rm spike.tar.xz

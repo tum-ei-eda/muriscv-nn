@@ -21,3 +21,4 @@ set -e
 
 wget https://syncandshare.lrz.de/dl/fiV9Vdw6qeS45AMxq64WaYpV/ovpsim.tar.xz
 tar -xvf ovpsim.tar.xz
+rm ovpsim.tar.xz

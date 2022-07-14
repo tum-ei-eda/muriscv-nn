@@ -23,5 +23,6 @@ set -e
 # conjunction with LLVM. In order to reduce size it only contains headers
 # and libraries, no binaries!
 wget https://syncandshare.lrz.de/dl/fiRigtzTJj2rTrgVpvnWUJqD/rv32gcv-lite.tar.xz
-mkdir rv32gcv-lite
+mkdir -p rv32gcv-lite
 tar -xvf rv32gcv-lite.tar.xz -C rv32gcv-lite
+rm rv32gcv-lite.tar.xz
