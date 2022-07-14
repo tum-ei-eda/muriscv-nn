@@ -21,7 +21,7 @@ Currently, we have to force Clang to use the lld linker, as it otherwise wants t
 Once you have everything setup you will need to invoke Clang with the following arguments:  
 `--target=riscv32 -march=rv32gcv0p10 -mabi=ilp32d -menable-experimental-extensions --sysroot=<path-to-gcc-toolchain>/rv32gcv/riscv32-unknown-elf --gcc-toolchain=<path-to-gcc-toolchain>/rv32gcv -fuse-ld=lld-14`
 
-LLVM 13 also has RISC-V and RISC-V vector support. However, it is was only experimental in that version (use LLVM 14 instead if you can!). You need to add `-menable-experimental-extensions` and `-mno-relax` when compiling with LLVM 13. For more info, look [here](https://maskray.me/blog/2021-03-14-the-dark-side-of-riscv-linker-relaxation) and [here](https://www.sifive.com/blog/all-aboard-part-3-linker-relaxation-in-riscv-toolchain).
+LLVM 13 also has RISC-V and RISC-V vector support. However, it is only experimental in that version (use LLVM 14 instead if you can!). You need to add `-menable-experimental-extensions` and `-mno-relax` when compiling with LLVM 13. For more info, look [here](https://maskray.me/blog/2021-03-14-the-dark-side-of-riscv-linker-relaxation) and [here](https://www.sifive.com/blog/all-aboard-part-3-linker-relaxation-in-riscv-toolchain).
 
 ## Compile your own GCC
 
