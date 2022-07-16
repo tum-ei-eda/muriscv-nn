@@ -1,0 +1,98 @@
+---
+home: "{{ home_dir }}"
+logging:
+  level: DEBUG
+  to_file: false
+  rotate: false
+cleanup:
+  auto: true
+  keep: 5
+paths:
+  deps: deps
+  logs: logs
+  results: results
+  temp: temp
+  models:
+    - "{{ home_dir }}/models"
+repos:
+  tensorflow:
+    url: "https://github.com/tensorflow/tflite-micro.git"
+    ref: f868a900f1f788fd0a55b5655b47fc352f9a0239
+  tvm:
+    url: "https://github.com/apache/tvm.git"
+    ref: 76b9ce9b1f7d2b7e64b4b9c9d456a02b8a010473
+  spike:
+    url: "https://github.com/riscv-software-src/riscv-isa-sim.git"
+    ref: caf5a420ef7414031368739e16d60f3f418aa6ac
+  spikepk:
+    url: "https://github.com/riscv-software-src/riscv-pk.git"
+    ref: 2efabd3e6604b8a9e8f70baf52f57696680c7855
+  mlif:
+    url: "https://github.com/tum-ei-eda/mlonmcu-sw.git"
+    ref: 3f8e66b956fe1cf0d85a18d39d684816e92e2751
+frameworks:
+  default: tflm
+  tflm:
+    enabled: true
+    backends:
+      default: tflmi
+      tflmi:
+        enabled: true
+    features:
+      muriscvnn: true
+  tvm:
+    enabled: false
+    backends:
+      default: tvmaot
+      tvmaot:
+        enabled: true
+        features:
+          unpacked_api: true
+          usmp: true
+    features:
+      muriscvnnbyoc: true
+frontends:
+  tflite:
+    enabled: true
+    features:
+      validate: true
+platforms:
+  mlif:
+    enabled: true
+    features:
+      debug: true
+      validate: true
+targets:
+  default: host_x86
+  host_x86:
+    enabled: true
+  etiss_pulpino:
+    enabled: true
+  spike:
+    enabled: true
+    features:
+      pext: true
+      vext: true
+  ovpsim:
+    enabled: true
+    features:
+      pext: true
+      vext: true
+postprocesses:
+  use: []
+vars:
+  runs_per_stage: true
+  riscv_gcc.install_dir_default: "{{ home_dir }}/../../../Toolchain/rv32gc"
+  riscv_gcc.install_dir_vext: "{{ home_dir }}/../../../Toolchain/rv32gcv"
+  riscv_gcc.install_dir_pext: "{{ home_dir }}/../../../Toolchain/rv32gcp"
+  etiss.src_dir: "{{ home_dir }}/../../../Sim/ETISS/etiss-master"
+  etiss.install_dir: "{{ home_dir }}/../../../Sim/ETISS/etiss-master/build/install"
+  etissvp.exe: "{{ home_dir }}/../../../Sim/ETISS/etiss-master/build/install/bin/bare_etiss_processor"
+  etissvp.script: "{{ home_dir }}/../../../Sim/ETISS/etiss-master/build/install/bin/run_helper.sh"
+  ovpsim.exe: "{{ home_dir }}/../../../Sim/OVPsim/bin/riscvOVPsimPlus"
+  # Can not use downloaded spike version as it was built for Ubuntu 18.04
+  # spike.exe: "{{ home_dir }}/../../../Sim/Spike/bin/spike"
+  # spike.pk: "{{ home_dir }}/../../../Sim/Spike/bin/pk"
+  muriscvnn.src_dir: "{{ home_dir }}/../../.."
+  llvm.install_dir: ""  # Will not be used
+  muriscvnn.lib: ""  # Will not be used

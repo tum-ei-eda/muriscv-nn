@@ -20,6 +20,7 @@
 #ifndef _ARM_NNFUNCTIONS_H
 #define _ARM_NNFUNCTIONS_H
 
+#include "arm_nn_math_types.h"
 #include "arm_nn_types.h"
 #include "muriscv_nn_functions.h"
 

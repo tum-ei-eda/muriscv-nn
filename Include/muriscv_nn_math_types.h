@@ -21,11 +21,15 @@
 #ifndef _MURISCV_NN_MATH_TYPES_H
 #define _MURISCV_NN_MATH_TYPES_H
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <float.h>
+#include <limits.h>
+#include <math.h>
+#include <stdint.h>
+#include <string.h>
 
 /**
  * @brief 8-bit fractional data type in 1.7 format.

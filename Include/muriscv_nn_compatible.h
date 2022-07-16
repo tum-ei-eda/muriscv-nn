@@ -18,7 +18,7 @@
  * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
  */
 
-/* Contains functions that emulate some ARM instuctions that RISC-V does not have. */
+/* Contains functions that emulate ARM instructions that RISC-V does not have. */
 
 #ifndef _MURISCV_NN_COMPATIBLE_H
 #define _MURISCV_NN_COMPATIBLE_H
@@ -150,10 +150,10 @@ __attribute__((weak)) float __math_xflowf(uint32_t sign, float y)
 }
 __attribute__((weak)) float __math_oflowf(uint32_t sign) { return __math_xflowf(sign, 0x1p97f); }
 #undef fp_barrierf
-#endif
+#endif /* BUILDING_FOR_ETISS */
 
 #ifdef __cplusplus
 }
-#endif /* BUILDING_FOR_ETISS */
+#endif
 
 #endif /* _MURISCV_NN_COMPATIBLE_H */

@@ -26,6 +26,6 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-$SCRIPT_DIR/etiss-master/build/install/examples/bare_etiss_processor/run_helper.sh \
+$SCRIPT_DIR/etiss-master/build/install/bin/run_helper.sh \
     $PWD/$1 \
     -i$SCRIPT_DIR/etiss-master/build/install/examples/bare_etiss_processor/custom_memsegs.ini
