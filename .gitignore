@@ -36,7 +36,6 @@ Toolchain/*
 !Toolchain/download_lite.sh
 !Toolchain/README.md
 
-
 # TFLM Integration
 Integration/TFLM/tflite-micro
 
@@ -47,6 +46,9 @@ Tests/UnitTest/TestCases/TestData/*/*.tflite
 Tests/UnitTest/TestCases/TestData/*.json
 Tests/UnitTest/Output/*
 Tests/UnitTest/Unity/*
+
+# Random
+.pkl_memoize_py3
 
 ### C ###
 # Prerequisites

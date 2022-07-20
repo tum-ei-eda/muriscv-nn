@@ -16,6 +16,7 @@
 # limitations under the License.
 #
 
+# TODO(fabianpedd): Check if we really need 3.22, of if 3.10 does the job
 cmake_minimum_required(VERSION 3.22)
 
 message("CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
@@ -45,39 +46,41 @@ option(ENABLE_TESTS "Enable or disable tests" ON)
 
 # Configure CMake
 if(NOT ${TOOLCHAIN} STREQUAL "NONE")
-    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/CMake/toolchain_${TOOLCHAIN}.cmake")
+  set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/CMake/toolchain_${TOOLCHAIN}.cmake")
 endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 if(${ENABLE_TESTS})
-    include(AddTest)
+  include(AddTest)
 endif()
 
 if(${SIMULATOR} STREQUAL "ETISS")
-    file(GLOB_RECURSE PUPLINO_TARGET_CMAKE "${CMAKE_CURRENT_SOURCE_DIR}/Sim/ETISS/PulpinoTarget.cmake")
-    include(${PUPLINO_TARGET_CMAKE})
+  file(GLOB_RECURSE PUPLINO_TARGET_CMAKE "${CMAKE_CURRENT_SOURCE_DIR}/Sim/ETISS/PulpinoTarget.cmake")
+  include(${PUPLINO_TARGET_CMAKE})
 endif()
 
 project(muriscv_nn LANGUAGES C ASM DESCRIPTION "muRISCV-NN, a CMSIS-NN port for RISC-V.")
 
+if(USE_VEXT AND USE_PEXT)
+  message(FATAL_ERROR "P/V-Extension can not be enabled simultaneously.")
+elseif(USE_VEXT)
+  add_definitions(-DUSE_VEXT)
+elseif(USE_PEXT)
+  add_definitions(-DUSE_PEXT)
+endif()
+
+# set(CMAKE_C_STANDARD 11)
+
 # See whats going in CMake while getting the build process up and running
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-if(${ENABLE_TESTS})
-    enable_testing()
-endif()
-
-if(USE_VEXT AND USE_PEXT)
-    message(FATAL_ERROR "P/V-Extension can not be enabled simultaneously.")
-elseif(USE_VEXT)
-    add_definitions(-DUSE_VEXT)
-elseif(USE_PEXT)
-    add_definitions(-DUSE_PEXT)
-endif()
-
 # Set build mode, Debug by default
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Debug)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+
+if(${ENABLE_TESTS})
+  enable_testing()
 endif()
 
 if(${ENABLE_TESTS})
@@ -85,17 +88,17 @@ if(${ENABLE_TESTS})
   include(FetchContent)
   set(FETCHCONTENT_QUIET FALSE)
   FetchContent_Declare(
-      unity
-      GIT_REPOSITORY https://github.com/ThrowTheSwitch/Unity
-      GIT_TAG v2.5.2
-      GIT_PROGRESS TRUE
+    unity
+    GIT_REPOSITORY https://github.com/ThrowTheSwitch/Unity
+    GIT_TAG v2.5.2
+    GIT_PROGRESS TRUE
   )
   FetchContent_MakeAvailable(unity)
 endif()
 
 if(${SIMULATOR} STREQUAL "ETISS")
-    add_definitions(-DBUILDING_FOR_ETISS)
-    add_definitions(-DPULPINO_NO_GPIO)
+  add_definitions(-DBUILDING_FOR_ETISS)
+  add_definitions(-DPULPINO_NO_GPIO)
 endif()
 
 # Set some compiler options for easier debug or faster builds
@@ -108,5 +111,5 @@ add_subdirectory(Source)
 
 # Add test directory
 if(${ENABLE_TESTS})
-    add_subdirectory(Tests)
+  add_subdirectory(Tests)
 endif()
