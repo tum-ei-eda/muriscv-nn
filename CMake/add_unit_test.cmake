@@ -17,8 +17,7 @@
 #
 
 # Simple macro that will create a test executable and register it with CTest
-
-macro(add_muriscv_nn_test TEST_NAME)
+macro(add_muriscv_nn_unit_test TEST_NAME)
 
     # Move the "test" string from back to front in order to match test file name
     string(REGEX REPLACE "([^ ]*)_test$" "test_\\1" TEST_FILE_NAME ${TEST_NAME})
@@ -33,12 +32,14 @@ macro(add_muriscv_nn_test TEST_NAME)
     endif()
 
     # Take care of include directories and linking
-    target_include_directories(${TEST_NAME}
-                               PUBLIC ${CMAKE_SOURCE_DIR}/Include
-                                      ${CMAKE_SOURCE_DIR}/Tests/TestData
-                                      ${CMAKE_SOURCE_DIR}/Tests/Utils
-                                      ${unity_SOURCE_DIR}/src)
-    target_link_libraries(${TEST_NAME} PUBLIC ${CMAKE_PROJECT_NAME} unity)
+    target_include_directories(${TEST_NAME} PUBLIC
+                               ${CMAKE_SOURCE_DIR}/Include
+                               ${CMAKE_SOURCE_DIR}/Tests/TestData
+                               ${CMAKE_SOURCE_DIR}/Tests/Utils
+                               ${unity_SOURCE_DIR}/src)
+    target_link_libraries(${TEST_NAME} PUBLIC
+                          ${MURISCVNN_LIB}
+                          unity)
 
     # Register test with CTest and provide command to execute
     if(DEFINED RISCV_ARCH)
@@ -54,6 +55,8 @@ macro(add_muriscv_nn_test TEST_NAME)
             add_test(NAME ${TEST_NAME}
                      COMMAND ${CMAKE_SOURCE_DIR}/Sim/ETISS/run.sh ./${TEST_NAME}
                      WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        else()
+            message(SEND_ERROR "Could not add test for specified simulator ${SIMULATOR}!")
         endif()
     else()
         add_test(NAME ${TEST_NAME}

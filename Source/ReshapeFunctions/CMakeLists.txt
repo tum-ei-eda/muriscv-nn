@@ -18,4 +18,4 @@
 # Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
 #
 
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_reshape_s8.c)
+target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_reshape_s8.c)

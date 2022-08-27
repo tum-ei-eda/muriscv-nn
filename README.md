@@ -25,7 +25,7 @@ In order to run the unit tests, simply:
 Have a look at the [`CMakeLists.txt`](./CMakeLists.txt), as well as the toolchain files in the [`CMake`](./CMake) directory for more information on arguments (like paths) and options (like vector or packed support) to pass to CMake during build config.
 
 ## Upstream CMSIS-NN
-As already mentioned, muRISCV-NN is a RISC-V drop-in replacement for ARM's CMSIS-NN. The latest upstream CMSIS-NN commit muRISCV-NN is based on is: `8ec46de` (only respecting commits affecting the [CMSIS/NN](https://github.com/ARM-software/CMSIS_5/tree/develop/CMSIS/NN) directory).
+As already mentioned, muRISCV-NN is a RISC-V drop-in replacement for ARM's CMSIS-NN. The latest upstream CMSIS-NN commit muRISCV-NN is based on is: `8ec46de` (only respecting commits affecting the [CMSIS/NN/](https://github.com/ARM-software/CMSIS_5/tree/develop/CMSIS/NN) directory).
 
 ## Disclaimer
 This is a work in progress, and we apologize if things are not (yet) working as they should. If you run into issues, please let us know!

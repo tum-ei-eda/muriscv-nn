@@ -17,27 +17,48 @@
 #
 
 add_library(tflm STATIC)
-add_definitions(-DCMSIS_NN)
+
+# Enables the CMSIS-NN wrappers (make sure to use the correct TFLM source tree!)
+option(USE_CMSIS_NN_WRAPPER "Build TensorFlow Lite Micro with CMSIS-NN wrapper" ON)
+
+# Needed to run TensorFlow code with RISC-V toolchain
 add_definitions(-DTF_LITE_USE_GLOBAL_MAX)
 add_definitions(-DTF_LITE_USE_GLOBAL_MIN)
 add_definitions(-DTF_LITE_USE_GLOBAL_CMATH_FUNCTIONS)
 
-# TODO(fabianpedd): Figure out if these flags are actually needed 
+# TODO(fabianpedd): Figure out if these flags are actually needed
 # -DTF_LITE_MCU_DEBUG_LOG
 # -DTF_LITE_USE_CTIME
 
-target_include_directories(tflm PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ruy
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/gemmlowp
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/kissfft
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/flatbuffers
-  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/flatbuffers/include
-  ${CMAKE_SOURCE_DIR}/Include
-  ${CMAKE_SOURCE_DIR}/Include/CMSIS/NN/Include
-)
+if(USE_CMSIS_NN_WRAPPER)
+  # Files for running with optimized CMSIS-NN wrapper (which muRISCV-NN uses)
+  add_definitions(-DCMSIS_NN)
+  set(TFLM_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/fully_connected.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/mul.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/add.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/svdf.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/conv.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/depthwise_conv.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/pooling.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/softmax.cc
+  )
+else()
+  # Files for running with default TensorFlow kernels
+  set(TFLM_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/fully_connected.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/mul.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/add.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/svdf.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/conv.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/depthwise_conv.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/pooling.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/softmax.cc
+  )
+endif()
 
 set(TFLM_SRCS
+  ${TFLM_SRCS}
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/c/common.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/c/c_api_types.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/c/common.cc
@@ -176,14 +197,6 @@ set(TFLM_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/add.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/quantize_common.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/logical.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/fully_connected.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/mul.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/add.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/svdf.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/conv.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/depthwise_conv.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/pooling.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cmsis_nn/softmax.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/split.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/if.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/expand_dims.cc
@@ -373,6 +386,17 @@ set(TFLM_THIRD_PARTY_SRCS
 target_sources(tflm PRIVATE
   ${TFLM_SRCS}
   ${TFLM_THIRD_PARTY_SRCS}
+)
+
+target_include_directories(tflm PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ruy
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/gemmlowp
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/kissfft
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/flatbuffers
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/flatbuffers/include
+  ${CMAKE_SOURCE_DIR}/Include
+  ${CMAKE_SOURCE_DIR}/Include/CMSIS/NN/Include
 )
 
 target_link_libraries(tflm PRIVATE

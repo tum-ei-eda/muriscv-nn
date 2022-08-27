@@ -16,4 +16,7 @@
 # limitations under the License.
 #
 
-add_muriscv_nn_test(monkeytest_muriscv_nn_elementwise_add_s8)
+include(add_intg_test)
+
+add_subdirectory(tflm)
+# add_subdirectory(tvm)

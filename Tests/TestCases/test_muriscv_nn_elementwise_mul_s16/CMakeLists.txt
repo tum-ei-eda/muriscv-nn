@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-add_muriscv_nn_test(test_muriscv_nn_elementwise_mul_s16)
+add_muriscv_nn_unit_test(test_muriscv_nn_elementwise_mul_s16)

@@ -34,3 +34,6 @@ fi
 
 echo "Building tflm source tree."
 python3 tensorflow/lite/micro/tools/project_generation/create_tflm_tree.py .. --makefile_options=OPTIMIZED_KERNEL_DIR=cmsis_nn
+
+# Use this command to build the source tree without the CMSIS-NN wrapper (also disable USE_CMSIS_NN_WRAPPER in CMakeLists.txt!)
+# python3 tensorflow/lite/micro/tools/project_generation/create_tflm_tree.py ..

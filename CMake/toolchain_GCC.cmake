@@ -21,11 +21,12 @@
 # The Generic system name is used for bare-metal targets (without OS) in CMake
 set(CMAKE_SYSTEM_NAME Generic)
 
-# Fully featured RISC-V core with vector extension
-set(CMAKE_SYSTEM_PROCESSOR rv32mafdcv)
+# Fully featured RISC-V core with vector and packed extension
+set(CMAKE_SYSTEM_PROCESSOR rv32gcvp)
 
 # Lets stick to standard .elf file ending for now
 set(CMAKE_EXECUTABLE_SUFFIX_C .elf)
+set(CMAKE_EXECUTABLE_SUFFIX_CXX .elf)
 
 # Path to your RISC-V GCC compiler supporting the vector extension
 set(RISCV_GCC_PREFIX "/opt/riscv" CACHE PATH "Install location of GCC RISC-V toolchain.")
