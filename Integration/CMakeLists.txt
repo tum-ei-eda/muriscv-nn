@@ -19,4 +19,4 @@
 include(add_intg_test)
 
 add_subdirectory(tflm)
-# add_subdirectory(tvm)
+add_subdirectory(tvm)

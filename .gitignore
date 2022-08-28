@@ -36,10 +36,10 @@ Toolchain/*
 !Toolchain/download_lite.sh
 !Toolchain/README.md
 
-# TFLM Integration
+# Integration Tests
 Integration/TFLM/tflite-micro
 
-# Tests
+# Unit Tests
 Tests/UnitTest/TestCases/*/Unity/TestRunner/*
 Tests/UnitTest/TestCases/*/Unity/TestRunner/*
 Tests/UnitTest/TestCases/TestData/*/*.tflite

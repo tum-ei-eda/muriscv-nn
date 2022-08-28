@@ -13,16 +13,16 @@ SIM_DIR=$MURISCVNN_DIR/Sim
 # MODELS="aww vww resnet toycar"
 MODELS="toycar"
 
-VLEN=512                      # Vector length parameter passed to simulator
+VLEN=512 # Vector length parameter passed to simulator
 
 VENV_DIR=$SCRIPT_DIR/.venv
 
 # install mlonmcu
-    virtualenv -p python3.8 $VENV_DIR
-    source $VENV_DIR/bin/activate
-    pip install -r requirements.txt
+virtualenv -p python3.8 $VENV_DIR
+source $VENV_DIR/bin/activate
+pip install -r requirements.txt
 
-mlonmcu init $WORKSPACE_DIR -t environment.yml.j2  --non-interactive --clone-models --allow-exists
+mlonmcu init $WORKSPACE_DIR -t environment.yml.j2 --non-interactive --clone-models --allow-exists
 
 mlonmcu setup -H $WORKSPACE_DIR
 

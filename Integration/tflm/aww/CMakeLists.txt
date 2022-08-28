@@ -18,13 +18,13 @@
 
 set(TEST_NAME aww)
 
-add_executable(${TEST_NAME})
+add_executable(${TEST_NAME}_tflm)
 
-target_include_directories(${TEST_NAME} PRIVATE
+target_include_directories(${TEST_NAME}_tflm PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_sources(${TEST_NAME} PRIVATE
+target_sources(${TEST_NAME}_tflm PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}_data/${TEST_NAME}_input_data.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}_data/${TEST_NAME}_input_data.h
   ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}_data/${TEST_NAME}_model_data.cc
@@ -36,6 +36,6 @@ target_sources(${TEST_NAME} PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
-target_link_libraries(${TEST_NAME} PRIVATE tflm)
+target_link_libraries(${TEST_NAME}_tflm PRIVATE tflm)
 
-add_muriscv_nn_intg_test(${TEST_NAME})
+add_muriscv_nn_intg_test(${TEST_NAME}_tflm)

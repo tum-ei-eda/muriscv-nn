@@ -5,10 +5,10 @@ muRISCV-NN heritage stems for ARM's CMSIS-NN library. Because TFLM already offer
 
 ## Prerequisites
 
-To reduce the download time for external dependencies, it is assumed that all the required toolchain files and simulator files are already populated in their expected directory. This can be achived as follows:
+To reduce the download time for external dependencies, it is assumed that all the required toolchain files and simulator files are already populated in their expected directory. This can be achieved as follows:
 
 ```
-cd muriscvn-nn
+cd muriscv-nn
 DIR=$(pwd)
 
 # Toolchain (comment in others if required)
