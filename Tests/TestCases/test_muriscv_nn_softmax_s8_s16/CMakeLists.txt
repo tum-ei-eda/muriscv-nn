@@ -16,4 +16,4 @@
 # limitations under the License.
 #
 
-add_muriscv_nn_test(test_muriscv_nn_softmax_s8_s16)
+add_muriscv_nn_unit_test(test_muriscv_nn_softmax_s8_s16)

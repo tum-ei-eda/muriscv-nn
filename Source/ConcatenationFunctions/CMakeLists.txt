@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2021 Arm Limited. 
+# Copyright (C) 2019-2021 Arm Limited.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -18,7 +18,7 @@
 # Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
 #
 
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_concatenation_s8_w.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_concatenation_s8_x.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_concatenation_s8_y.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_concatenation_s8_z.c)
+target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_concatenation_s8_w.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_concatenation_s8_x.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_concatenation_s8_y.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_concatenation_s8_z.c)

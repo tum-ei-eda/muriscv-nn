@@ -33,9 +33,9 @@ option(RESHAPE              "Reshape"               ON)
 option(SVDF                 "SVDF"                  ON)
 option(NNSUPPORT            "NN Support"            ON)
 
-add_library(${CMAKE_PROJECT_NAME} STATIC)
+add_library(${MURISCVNN_LIB} STATIC)
 
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/Include)
+target_include_directories(${MURISCVNN_LIB} PUBLIC ${CMAKE_SOURCE_DIR}/Include)
 
 if(BASICMATHSNN)
   add_subdirectory(BasicMathFunctions)

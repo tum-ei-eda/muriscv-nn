@@ -20,7 +20,6 @@
 #ifndef _ARM_NN_TYPES_H
 #define _ARM_NN_TYPES_H
 
-#include "muriscv_nn_math_types.h"
 #include "muriscv_nn_types.h"
 
 #ifdef __cplusplus
@@ -39,15 +38,6 @@ extern "C" {
 #define cmsis_nn_fc_params muriscv_nn_fc_params
 #define cmsis_nn_svdf_params muriscv_nn_svdf_params
 #define cmsis_nn_softmax_lut_s16 muriscv_nn_softmax_lut_s16
-
-#define arm_cmsis_nn_status muriscv_nn_status
-#define ARM_CMSIS_NN_SUCCESS MURISCV_NN_SUCCESS
-#define ARM_CMSIS_NN_ARG_ERROR MURISCV_NN_ARG_ERROR
-#define ARM_CMSIS_NN_NO_IMPL_ERROR MURISCV_NN_NO_IMPL_ERROR
-
-// TODO: Kept only for backwards compatibility
-#define arm_status muriscv_nn_status
-#define ARM_MATH_SUCCESS MURISCV_NN_SUCCESS
 
 #ifdef __cplusplus
 }

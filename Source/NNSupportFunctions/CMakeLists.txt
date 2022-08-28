@@ -18,13 +18,13 @@
 # Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
 #
 
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_nt_t_padded_s8.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_nt_t_s8.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mul_core_1x_s8.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mul_core_4x_s8.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_kernel_s8_s16.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_nt_t_s8.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_s8.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mult_t_s8.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mult_t_s16.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mult_t_svdf_s8.c)
+target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_nt_t_padded_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_nt_t_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mul_core_1x_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mul_core_4x_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_kernel_s8_s16.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_nt_t_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mult_t_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mult_t_s16.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mult_t_svdf_s8.c)

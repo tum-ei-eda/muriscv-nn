@@ -18,7 +18,7 @@
 # Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
 #
 
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_avgpool_s8.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_avgpool_s16.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_maxpool_s8.c
-                                             ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_maxpool_s16.c)
+target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_avgpool_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_avgpool_s16.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_maxpool_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_maxpool_s16.c)

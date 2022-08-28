@@ -3,7 +3,26 @@
 
 muRISCV-NN heritage stems for ARM's CMSIS-NN library. Because TFLM already offers integration with the optimized [CMSIS-NN kernels](https://github.com/tensorflow/tflite-micro/tree/main/tensorflow/lite/micro/kernels/cmsis_nn) getting TFLM to use the muRISCV-NN kernels is quite straightforward. This is also thanks to the [CMSIS-NN wrappers](./Include/CMSIS) provided by muRISCV-NN.
 
-## Use
+## Prerequisites
+
+To reduce the download time for external dependencies, it is assumed that all the required toolchain files and simulator files are already populated in their expected directory. This can be achieved as follows:
+
+```
+cd muriscv-nn
+DIR=$(pwd)
+
+# Toolchain (comment in others if required)
+# cd $DIR/Toolchain && ./download_rv32gc.sh
+# cd $DIR/Toolchain && ./download_rv32gcp.sh
+cd $DIR/Toolchain && ./download_rv32gcv.sh
+
+# Sim (comment in others if required)
+# cd $DIR/Sim/Spike/bin && ./download.sh
+# cd $DIR/Sim/ETISS/bin && virtualenv -p python3.8 .venv && source .venv/bin/activate && python setup_etiss.py && deactivate
+cd $DIR/Sim/OVPsim/bin && ./download.sh
+```
+
+## Usage
 - Clone the [TFLM GitHub repository](https://github.com/tensorflow/tflite-micro) `git clone git@github.com:tensorflow/tflite-micro.git` (into "here" `TFLM/`)
 - Change into the TFLM directory `cd tflite-micro`
 - Apply the `muriscv_nn` patch `git apply ../muriscv_nn.patch`

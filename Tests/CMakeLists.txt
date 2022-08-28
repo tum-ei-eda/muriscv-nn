@@ -16,4 +16,17 @@
 # limitations under the License.
 #
 
+include(add_unit_test)
+
+# Get the Unity test framework
+include(FetchContent)
+set(FETCHCONTENT_QUIET FALSE)
+FetchContent_Declare(
+  unity
+  GIT_REPOSITORY https://github.com/ThrowTheSwitch/Unity
+  GIT_TAG v2.5.2
+  GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(unity)
+
 add_subdirectory(TestCases)

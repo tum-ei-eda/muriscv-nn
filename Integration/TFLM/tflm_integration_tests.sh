@@ -22,8 +22,10 @@
 # exceptions are caught. Inspect the test output manually in order to ensure
 # error free operation.
 
-set -e
+# Prevent silent failures
+set -euo pipefail
 
+# Path to this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # List of tests to run
@@ -46,7 +48,7 @@ BUILD_TYPE=Release            # Debug/Release
 TOOLCHAIN=gcc                 # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
 TARGET_ARCH=rv32gcv           # rv32gcv for vector support
 VLEN=512                      # Vector length parameter passed to simulator
-SIMULATOR=OVPsim              # Spike/OVPsim
+SIMULATOR=Spike               # Spike/OVPsim
 # TODO(fabianpedd): check whether the args above actually get passed to the code, such as USE_VEXT
 
 cd ${TFLM_PATH}
