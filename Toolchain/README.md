@@ -25,10 +25,10 @@ LLVM 13 also has RISC-V and RISC-V vector support. However, it is only experimen
 
 ## Compile your own GCC
 
-#### Scalar `rv32gc`
+### Scalar `rv32gc`
 Simply follow the instructions listed in the `README.md` in the [GCC](https://github.com/riscv-collab/riscv-gnu-toolchain) GitHub repo and build your toolchain from the main branch. You can also find GCC binaries through companies like SiFive or Imperas, or even through some package managers.
 
-#### Vector `rv32gcv`
+### Vector `rv32gcv`
 GCC's RISC-V vector support used to be quite bad. However, thanks to efforts from RISC-V collaborators GCC now supports the latest RISC-V vector 1.0 spec, as well as intrinsics (and autovectorization, but this feature seems to not perform very well yet).  
 
 **Steps**  
@@ -39,7 +39,7 @@ GCC's RISC-V vector support used to be quite bad. However, thanks to efforts fro
 
 This will take a while and build a `rv32gcv` into `/opt/riscv`.
 
-#### Packed `rv32gcp`
+### Packed `rv32gcp`
 GCC's itself does not yet offer P packed support. However, there are two PRs open for that. See here [GCC](https://github.com/riscv-collab/riscv-gcc/pull/258) and here [binutils](https://github.com/riscv-collab/riscv-binutils-gdb/pull/257).
 
 **Steps**  
