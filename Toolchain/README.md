@@ -56,7 +56,7 @@ GCC's itself does not yet offer P packed support. However, there are two PRs ope
   branch = riscv-gcc-experiment-p-ext
 ```
 Make sure the two directories now contain the latest commit of the respective PRs.
-- `export PATH=$PATH:/opt/riscv/bin` (ensure that your have `rwx` to `/opt`)
+- `export PATH=$PATH:/opt/riscv/bin` (ensure that you have `rwx` rights to `/opt`)
 - `./configure --prefix=/opt/riscv --with-arch=rv32gcp --with-abi=ilp32d`
 - `make`
 
