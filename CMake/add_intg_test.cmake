@@ -33,8 +33,28 @@ macro(add_muriscv_nn_intg_test TEST_NAME)
       add_test(NAME ${TEST_NAME}
         COMMAND ${CMAKE_SOURCE_DIR}/Sim/ETISS/run.sh ./${TEST_NAME}
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    elseif(${SIMULATOR} STREQUAL "Vicuna")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T ${CMAKE_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lld_link.ld")
+        target_link_options(${TEST_NAME} PRIVATE "-nostartfiles")
+        target_link_libraries(${TEST_NAME} PRIVATE vicuna_crt)
+
+        add_custom_command(TARGET ${TEST_NAME} POST_BUILD
+          COMMAND ${CMAKE_OBJCOPY} -O binary "$<TARGET_FILE:${TEST_NAME}>"
+                                             "$<TARGET_FILE:${TEST_NAME}>.bin" VERBATIM)
+
+        add_custom_command(TARGET ${TEST_NAME} POST_BUILD
+          COMMAND srec_cat "$<TARGET_FILE:${TEST_NAME}>.bin" -binary -offset 0x0000 -byte-swap 4 -o
+                           "$<TARGET_FILE:${TEST_NAME}>.vmem" -vmem VERBATIM)
+
+        add_custom_command(TARGET ${TEST_NAME} POST_BUILD
+          COMMAND realpath "$<TARGET_FILE:${TEST_NAME}>.vmem" >
+                           "$<TARGET_FILE:${TEST_NAME}>.path" VERBATIM)
+
+        add_test(NAME ${TEST_NAME}
+                 COMMAND ${CMAKE_SOURCE_DIR}/Sim/Vicuna/run.sh "$<TARGET_FILE:${TEST_NAME}>.path"
+                 WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     else()
-      message(SEND_ERROR "Could not add test for specified simulator ${SIMULATOR}!")
+      message(FATAL_ERROR "Could not add test for specified simulator ${SIMULATOR}!")
     endif()
   else()
     add_test(NAME ${TEST_NAME}

@@ -16,6 +16,13 @@
 # limitations under the License.
 #
 
-if(${SIMULATOR} STREQUAL "Vicuna")
-  add_subdirectory(Vicuna)
-endif()
+# Builds the vicuna C runtime
+add_library(vicuna_crt STATIC)
+
+target_include_directories(vicuna_crt PUBLIC ${CMAKE_SOURCE_DIR}/Sim/Vicuna)
+target_sources(vicuna_crt PRIVATE
+  ${CMAKE_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lib/runtime.c
+  ${CMAKE_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lib/uart.c
+  ${CMAKE_SOURCE_DIR}/Sim/Vicuna/crt/crt0.S
+  ${CMAKE_SOURCE_DIR}/Sim/Vicuna/crt/vicuna_crt.c
+)

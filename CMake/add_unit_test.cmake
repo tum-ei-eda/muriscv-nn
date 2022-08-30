@@ -31,15 +31,8 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
             ${CMAKE_SOURCE_DIR}/Tests/TestCases/${TEST_FILE_NAME}/${TEST_FILE_NAME}.c)
     endif()
 
-    # Take care of include directories and linking
-    target_include_directories(${TEST_NAME} PUBLIC
-                               ${CMAKE_SOURCE_DIR}/Include
-                               ${CMAKE_SOURCE_DIR}/Tests/TestData
-                               ${CMAKE_SOURCE_DIR}/Tests/Utils
-                               ${unity_SOURCE_DIR}/src)
-    target_link_libraries(${TEST_NAME} PUBLIC
-                          ${MURISCVNN_LIB}
-                          unity)
+    target_link_libraries(${TEST_NAME} PUBLIC ${MURISCVNN_LIB}
+                                              unity)
 
     # Register test with CTest and provide command to execute
     if(DEFINED RISCV_ARCH)
@@ -55,8 +48,28 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
             add_test(NAME ${TEST_NAME}
                      COMMAND ${CMAKE_SOURCE_DIR}/Sim/ETISS/run.sh ./${TEST_NAME}
                      WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        elseif(${SIMULATOR} STREQUAL "Vicuna")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T ${CMAKE_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lld_link.ld")
+            target_link_options(${TEST_NAME} PRIVATE "-nostartfiles")
+            target_link_libraries(${TEST_NAME} PRIVATE vicuna_crt)
+
+            add_custom_command(TARGET ${TEST_NAME} POST_BUILD
+              COMMAND ${CMAKE_OBJCOPY} -O binary "$<TARGET_FILE:${TEST_NAME}>"
+                                                 "$<TARGET_FILE:${TEST_NAME}>.bin" VERBATIM)
+
+            add_custom_command(TARGET ${TEST_NAME} POST_BUILD
+              COMMAND srec_cat "$<TARGET_FILE:${TEST_NAME}>.bin" -binary -offset 0x0000 -byte-swap 4 -o
+                               "$<TARGET_FILE:${TEST_NAME}>.vmem" -vmem VERBATIM)
+
+            add_custom_command(TARGET ${TEST_NAME} POST_BUILD
+              COMMAND realpath "$<TARGET_FILE:${TEST_NAME}>.vmem" >
+                               "$<TARGET_FILE:${TEST_NAME}>.path" VERBATIM)
+
+            add_test(NAME ${TEST_NAME}
+                     COMMAND ${CMAKE_SOURCE_DIR}/Sim/Vicuna/run.sh "$<TARGET_FILE:${TEST_NAME}>.path"
+                     WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
         else()
-            message(SEND_ERROR "Could not add test for specified simulator ${SIMULATOR}!")
+            message(FATAL_ERROR "Could not add test for specified simulator ${SIMULATOR}!")
         endif()
     else()
         add_test(NAME ${TEST_NAME}
@@ -67,6 +80,9 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
     if(${SIMULATOR} STREQUAL "ETISS")
         # TODO(fabianpedd): make ETISS tests fail after 2 second for now
         set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT 2)
+    elseif(${SIMULATOR} STREQUAL "Vicuna")
+        # TODO(fabianpedd): Vicuna needs extra time since its RTL
+        set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT 10000)
     else()
         # Tests should not take longer than 15 seconds
         set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT 15)
@@ -78,6 +94,6 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
                                   > "$<TARGET_FILE:${TEST_NAME}>.lst"
         VERBATIM)
 
-    message("Successfully added ${TEST_NAME}")
+    message(STATUS "Successfully added ${TEST_NAME}")
 
 endmacro()

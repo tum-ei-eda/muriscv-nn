@@ -75,6 +75,10 @@ elseif(USE_PEXT)
   add_definitions(-DUSE_PEXT)
 endif()
 
+# Let preprocessor know which simulator we will be running on
+string(TOUPPER ${SIMULATOR} SIMULATOR_UP)
+add_definitions(-DSIM_${SIMULATOR_UP})
+
 # Set build mode, Debug by default
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
@@ -89,6 +93,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wshadow -Wno-format -std=c11"
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 
 add_subdirectory(Source)
+
+add_subdirectory(Sim)
 
 if(${ENABLE_UNIT_TESTS} OR ${ENABLE_INTG_TESTS})
   enable_testing()

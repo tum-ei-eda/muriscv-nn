@@ -35,7 +35,7 @@ if [[ $2 == "rv32gcv" ]]; then
     --variant RVB32I \
     --override riscvOVPsim/cpu/add_Extensions=MAFDCV \
     --override riscvOVPsim/cpu/unaligned=T \
-    --override riscvOVPsim/cpu/vector_version=1.0-draft-20210130 \
+    --override riscvOVPsim/cpu/vector_version=1.0 \
     --override riscvOVPsim/cpu/VLEN=$3 \
     --override riscvOVPsim/cpu/ELEN=32 \
     --override riscvOVPsim/cpu/mstatus_FS=$4 \
@@ -61,6 +61,24 @@ elif [[ $2 == "rv32gc" ]]; then
     --override riscvOVPsim/cpu/add_Extensions=MAFDC \
     --override riscvOVPsim/cpu/unaligned=T \
     --override riscvOVPsim/cpu/mstatus_FS=$4
+
+elif [[ $2 == "rv32imv" || $2 == "rv32imzve32x" ]]; then
+  $SCRIPT_DIR/bin/riscvOVPsimPlus \
+    --program $1 \
+    --variant RVB32I \
+    --override riscvOVPsim/cpu/add_Extensions=MV \
+    --override riscvOVPsim/cpu/unaligned=T \
+    --override riscvOVPsim/cpu/vector_version=1.0 \
+    --override riscvOVPsim/cpu/VLEN=$3 \
+    --override riscvOVPsim/cpu/ELEN=32 \
+    --override riscvOVPsim/cpu/mstatus_VS=$4
+
+elif [[ $2 == "rv32im" ]]; then
+  $SCRIPT_DIR/bin/riscvOVPsimPlus \
+    --program $1 \
+    --variant RVB32I \
+    --override riscvOVPsim/cpu/add_Extensions=MV \
+    --override riscvOVPsim/cpu/unaligned=T
 
 else
   echo "Unsupported arch string $2"

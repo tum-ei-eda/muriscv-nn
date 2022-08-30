@@ -30,6 +30,11 @@
 #include "muriscv_nn_math_types.h"
 #include "muriscv_nn_types.h"
 
+// Include the Vicuna C runtime when running on Vicuna
+#ifdef SIM_VICUNA
+#include "crt/vicuna_crt.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
