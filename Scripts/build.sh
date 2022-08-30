@@ -19,7 +19,9 @@
 
 # This script tests whether muRISCV-NN builds in all configurations
 
-set -e
+# Prevent silent failures
+set -euo pipefail
+
 source config.sh
 
 ################################################################################
@@ -56,6 +58,17 @@ else
   (
     cd ${TC_DIR}
     ./download_rv32gcv.sh
+  )
+fi
+
+# Download rv32imv GCC
+if [ -d ${TC_DIR_RV32IMV} ]; then
+  echo "Found rv32imv GCC compiler in the Toolchain directory."
+else
+  echo "No rv32imv GCC compiler in the Toolchain directory found. Downloading one..."
+  (
+    cd ${TC_DIR}
+    ./download_rv32imv.sh
   )
 fi
 
@@ -109,7 +122,23 @@ cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=GCC -DR
 make -j $(nproc) -C ${BUILD_DIR}
 
 ################################################################################
-#################### Build P packed code rv32gcv ###############################
+#################### Build V vector code rv32imv ###############################
+################################################################################
+
+# Configure and build with LLVM
+rm -rf ${BUILD_DIR}
+mkdir ${BUILD_DIR}
+cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=LLVM -DRISCV_GCC_PREFIX=${TC_DIR_RV32IMV} -DUSE_VEXT=ON -DUSE_PEXT=OFF -DRISCV_ARCH=rv32imzve32x -DRISCV_ABI=ilp32
+make -j $(nproc) -C ${BUILD_DIR}
+
+# Configure and build with GCC
+rm -rf ${BUILD_DIR}
+mkdir ${BUILD_DIR}
+cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=GCC -DRISCV_GCC_PREFIX=${TC_DIR_RV32IMV} -DUSE_VEXT=ON -DUSE_PEXT=OFF -DRISCV_ARCH=rv32imv -DRISCV_ABI=ilp32
+make -j $(nproc) -C ${BUILD_DIR}
+
+################################################################################
+#################### Build P packed code rv32gcp ###############################
 ################################################################################
 
 # Configure and build with GCC

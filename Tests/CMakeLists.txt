@@ -18,7 +18,7 @@
 
 include(add_unit_test)
 
-# Get the Unity test framework
+# Get and build the Unity test framework
 include(FetchContent)
 set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(
@@ -27,6 +27,14 @@ FetchContent_Declare(
   GIT_TAG v2.5.2
   GIT_PROGRESS TRUE
 )
+add_definitions(-DUNITY_INCLUDE_CONFIG_H)
 FetchContent_MakeAvailable(unity)
+target_include_directories(unity PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Tests/TestData>
+                                        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Tests/Utils>
+                                        $<BUILD_INTERFACE:${unity_SOURCE_DIR}/src>)
+
+if(${SIMULATOR} STREQUAL "Vicuna")
+  target_include_directories(unity PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Sim/Vicuna>)
+endif()
 
 add_subdirectory(TestCases)

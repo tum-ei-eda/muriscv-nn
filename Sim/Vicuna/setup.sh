@@ -17,26 +17,31 @@
 # limitations under the License.
 #
 
-# This script contains configurations to be used with other scripts
-
 # Prevent silent failures
 set -euo pipefail
 
+# Path to this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-BUILD_TYPE=Release
-VLENS=(64 128 512) # Skipping some VLENS to save time (64 128 256 512 1024 2048)
+# TODO(fabianpedd): Add these to the script (taken from here https://vicuna.readthedocs.io/en/latest/01_user/prerequisites.html)
+# sudo apt-get install srecord llvm-14 clang-14
+# sudo apt-get install git perl python3 g++ flex bison ccache libfl2 libfl-dev zlib1g zlib1g-dev
 
-BUILD_DIR=../build
+echo "Download and setup Vicuna."
+if [ ! -d "vicuna" ]; then
+  git clone git@github.com:vproc/vicuna.git
+  cd vicuna
+  git submodule update --init --recursive
+  cd -
+fi
 
-TC_DIR=../Toolchain
-TC_DIR_RV32GC=${TC_DIR}/rv32gc
-TC_DIR_RV32GCV=${TC_DIR}/rv32gcv
-TC_DIR_RV32GCP=${TC_DIR}/rv32gcp
-TC_DIR_RV32IMV=${TC_DIR}/rv32imv
-
-SIM_DIR=../Sim
-SIM_BIN_DIR_OVP=${SIM_DIR}/OVPsim/bin
-SIM_BIN_DIR_SPIKE=${SIM_DIR}/Spike/bin
-SIM_BIN_PATH_OVP=${SIM_BIN_DIR_OVP}/riscvOVPsimPlus
-SIM_BIN_PATH_SPIKE=${SIM_BIN_DIR_SPIKE}/spike
+echo "Download and setup Verilator."
+if [ ! -d "verilator" ]; then
+  git clone https://github.com/verilator/verilator
+  cd verilator
+  git checkout tags/v4.210
+  autoconf
+  ./configure --prefix ${SCRIPT_DIR}/verilator/install
+  make all
+  make install
+fi

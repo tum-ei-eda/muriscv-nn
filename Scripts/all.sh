@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM.
 #
@@ -16,7 +17,12 @@
 # limitations under the License.
 #
 
-# Contains toolchain configurations and settings for using GCC on x86
+# This script runs all other build / test / integration scripts
 
-set(CMAKE_SYSTEM_NAME Linux)
-set(CMAKE_SYSTEM_PROCESSOR x86_64)
+# Prevent silent failures
+set -euo pipefail
+
+./build.sh
+./test_scalar.sh
+./test_vector.sh
+./test_packed.sh

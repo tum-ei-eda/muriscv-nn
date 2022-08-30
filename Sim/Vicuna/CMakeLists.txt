@@ -16,7 +16,13 @@
 # limitations under the License.
 #
 
-# Contains toolchain configurations and settings for using GCC on x86
+# Builds the vicuna C runtime
+add_library(vicuna_crt STATIC)
 
-set(CMAKE_SYSTEM_NAME Linux)
-set(CMAKE_SYSTEM_PROCESSOR x86_64)
+target_include_directories(vicuna_crt PUBLIC ${CMAKE_SOURCE_DIR}/Sim/Vicuna)
+target_sources(vicuna_crt PRIVATE
+  ${CMAKE_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lib/runtime.c
+  ${CMAKE_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lib/uart.c
+  ${CMAKE_SOURCE_DIR}/Sim/Vicuna/crt/crt0.S
+  ${CMAKE_SOURCE_DIR}/Sim/Vicuna/crt/vicuna_crt.c
+)

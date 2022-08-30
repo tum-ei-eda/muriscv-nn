@@ -45,8 +45,12 @@ Make sure to export the `RISCV` variable pointing to a `rv32gcv` compiler `expor
 - Clone the PK repository `git clone git@github.com:riscv-software-src/riscv-pk.git`
 - Follow the steps from [here](https://github.com/riscv-software-src/riscv-pk#build-steps)
 - However, replace the `configure` command with the following `../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv --with-abi=ilp32d`
+- **Important** Replace the arguments during `configure` accordingly in order to build the PK for the reduced ISA `rv32imv` with abi `ilp32` (not needed for Spike itself)
 
 #### Run
 - You should now find a `spike` and a `pk` executable in their respective `build` directories
 - Assuming you cloned Spike and PK next to each other you should now be able to execute binaries with Spike and pk from the Spike build directory like so `./spike --isa=rv32gcv ../../riscv-pk/build/pk <path/to/your/binary>`
 - In order to use them in with muRISCV-NN put the two binaries (`spike` and `pk`) into `Spike/bin/`.
+
+## Vicuna
+I am currently in the process of adding support for RTL level simulators...

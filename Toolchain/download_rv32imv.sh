@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM.
 #
@@ -16,7 +17,11 @@
 # limitations under the License.
 #
 
-# Contains toolchain configurations and settings for using GCC on x86
+set -e
 
-set(CMAKE_SYSTEM_NAME Linux)
-set(CMAKE_SYSTEM_PROCESSOR x86_64)
+# Downloads the "full" version of the rv32imv GCC toolchain
+# to be used as a standalone compiler!
+wget https://syncandshare.lrz.de/dl/fi9JTZmQHEhNqWEjijgLg5P4/rv32imv.tar.xz
+mkdir -p rv32imv
+tar -xvf rv32imv.tar.xz -C rv32imv
+rm rv32imv.tar.xz

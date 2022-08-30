@@ -18,22 +18,16 @@
 #
 
 # Positional arguments:
-# $1 - path to binary file
-# $2 - arch string, i.e. rv32gc or rv32gcv or rv32gcp
-# $3 - VLEN, from 64 to 1024 (only applicable if arch string is rv32gcv)
-# Example call to invoke Spike:
-# ./run.sh my_binary.elf rv32gcv 256
+# $1 - path to textfile containing the path to the binary image
 
-set -e
+# Prevent silent failures
+set -euo pipefail
 
+# Path to this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [[ $2 == "rv32gcv" || $2 == "rv32gcp" || $2 == "rv32gc" ]]; then
-  $SCRIPT_DIR/bin/spike --isa=$2 --varch=vlen:$3,elen:32 $SCRIPT_DIR/bin/pk_ilp32d $1
-elif [[ $2 == "rv32imv" || $2 == "rv32im" ]]; then
-  $SCRIPT_DIR/bin/spike --isa=$2 --varch=vlen:$3,elen:32 $SCRIPT_DIR/bin/pk_ilp32 $1
-elif [[ "rv32imzve32x" ]]; then
-  $SCRIPT_DIR/bin/spike --isa="rv32imv" --varch=vlen:$3,elen:32 $SCRIPT_DIR/bin/pk_ilp32 $1
-else
-  echo "Unsupported arch string $2"
-fi
+# Add Verilator binary directory to PATH variable
+export PATH=${SCRIPT_DIR}/verilator/install/bin:$PATH
+
+# Invoke Verilator Makefile with path to binary image path textfile
+make -f ${SCRIPT_DIR}/vicuna/sim/Makefile PROG_PATHS=$1

@@ -17,9 +17,11 @@
 # limitations under the License.
 #
 
-# This script tests whether muRISCV-NN vector code passes the unit tests
+# This script tests whether muRISCV-NN P packed code passes the unit tests
 
-set -e
+# Prevent silent failures
+set -euo pipefail
+
 source config.sh
 
 ################################################################################
