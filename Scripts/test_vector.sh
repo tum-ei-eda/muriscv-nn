@@ -17,9 +17,11 @@
 # limitations under the License.
 #
 
-# This script tests whether muRISCV-NN vector code passes the unit tests
+# This script tests whether muRISCV-NN V vector code passes the unit tests
 
-set -e
+# Prevent silent failures
+set -euo pipefail
+
 source config.sh
 
 ################################################################################
@@ -45,6 +47,17 @@ else
   (
     cd ${TC_DIR}
     ./download_rv32gcv.sh
+  )
+fi
+
+# Download rv32imv GCC
+if [ -d ${TC_DIR_RV32IMV} ]; then
+  echo "Found rv32imv GCC compiler in the Toolchain directory."
+else
+  echo "No rv32imv GCC compiler in the Toolchain directory found. Downloading one..."
+  (
+    cd ${TC_DIR}
+    ./download_rv32imv.sh
   )
 fi
 
@@ -76,7 +89,7 @@ fi
 # Loop over all common VLENs
 for vl in "${VLENS[@]}"; do
   ################################################################################
-  #################### Test on OVPsim ############################################
+  #################### Test on OVPsim rv32gcv ####################################
   ################################################################################
 
   # Configure and build with LLVM
@@ -100,7 +113,7 @@ for vl in "${VLENS[@]}"; do
   )
 
   ################################################################################
-  #################### Test on Spike ############################################
+  #################### Test on Spike rv32gcv #####################################
   ################################################################################
 
   # Configure and build with LLVM
@@ -122,4 +135,29 @@ for vl in "${VLENS[@]}"; do
     cd ${BUILD_DIR}
     ctest --verbose
   )
+
+  ################################################################################
+  #################### Test on Spike rv32imv #####################################
+  ################################################################################
+
+  # Configure and build with LLVM
+  rm -rf ${BUILD_DIR}
+  mkdir ${BUILD_DIR}
+  cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DSIMULATOR=Spike -DTOOLCHAIN=LLVM -DRISCV_GCC_PREFIX=${TC_DIR_RV32IMV} -DVLEN=${vl} -DUSE_VEXT=ON -DUSE_PEXT=OFF -DRISCV_ARCH=rv32imzve32x -DRISCV_ABI=ilp32
+  make -j $(nproc) -C ${BUILD_DIR}
+  (
+    cd ${BUILD_DIR}
+    ctest --verbose
+  )
+
+  # Configure and build with GCC
+  rm -rf ${BUILD_DIR}
+  mkdir ${BUILD_DIR}
+  cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DSIMULATOR=Spike -DTOOLCHAIN=GCC -DRISCV_GCC_PREFIX=${TC_DIR_RV32IMV} -DVLEN=${vl} -DUSE_VEXT=ON -DUSE_PEXT=OFF -DRISCV_ARCH=rv32imv -DRISCV_ABI=ilp32
+  make -j $(nproc) -C ${BUILD_DIR}
+  (
+    cd ${BUILD_DIR}
+    ctest --verbose
+  )
+
 done

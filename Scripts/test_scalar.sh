@@ -19,7 +19,9 @@
 
 # This script tests whether muRISCV-NN scalar code passes the unit tests
 
-set -e
+# Prevent silent failures
+set -euo pipefail
+
 source config.sh
 
 ################################################################################

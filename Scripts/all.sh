@@ -17,26 +17,12 @@
 # limitations under the License.
 #
 
-# This script contains configurations to be used with other scripts
+# This script runs all other build / test / integration scripts
 
 # Prevent silent failures
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-BUILD_TYPE=Release
-VLENS=(64 128 512) # Skipping some VLENS to save time (64 128 256 512 1024 2048)
-
-BUILD_DIR=../build
-
-TC_DIR=../Toolchain
-TC_DIR_RV32GC=${TC_DIR}/rv32gc
-TC_DIR_RV32GCV=${TC_DIR}/rv32gcv
-TC_DIR_RV32GCP=${TC_DIR}/rv32gcp
-TC_DIR_RV32IMV=${TC_DIR}/rv32imv
-
-SIM_DIR=../Sim
-SIM_BIN_DIR_OVP=${SIM_DIR}/OVPsim/bin
-SIM_BIN_DIR_SPIKE=${SIM_DIR}/Spike/bin
-SIM_BIN_PATH_OVP=${SIM_BIN_DIR_OVP}/riscvOVPsimPlus
-SIM_BIN_PATH_SPIKE=${SIM_BIN_DIR_SPIKE}/spike
+./build.sh
+./test_scalar.sh
+./test_vector.sh
+./test_packed.sh
