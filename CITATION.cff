@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Peddinghaus"
+  given-names: "Fabian"
+- family-names: "van Kempen"
+  given-names: "Philipp"
+- family-names: "Stahl"
+  given-names: "Rafael"
+- family-names: "Mueller-Gritschneder"
+  given-names: "Daniel"
+title: "muRISCV-NN: Efficient Deep-Learning Kernels for RISC-V"
+version: 0.1.0
+date-released: 2022-06-20
+url: "https://github.com/tum-ei-eda/muriscv-nn"
