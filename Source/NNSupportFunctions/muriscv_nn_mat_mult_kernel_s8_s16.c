@@ -67,7 +67,7 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
 
         /* align the second pointer for A */
         const q7_t *ip_a1 = ip_a0 + num_col_a;
-        
+
 
 
         q31_t ch_0_out_0 = 0;
@@ -85,48 +85,48 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
 
 #if defined(USE_PEXT)
         uint16_t col_count = num_col_a / 4;
-           
+
         const q7_t a0_align  = (uint32_t)ip_a0 % 4;
         const q7_t a0_align_bits = a0_align << 3;
         const q7_t a1_align  = (uint32_t)ip_a1 % 4;
-        const q7_t a1_align_bits = a1_align << 3;    
-        
+        const q7_t a1_align_bits = a1_align << 3;
+
         /* accumulate over the vector */
         while (col_count)
         {
             //Access always word aligned
             q31_t b0 = muriscv_nn_read_q15x2_ia_fast(&ip_b0);
-            
-            //Access is word aligned when num_col_a is even              
+
+            //Access is word aligned when num_col_a is even
             q31_t b1 = muriscv_nn_read_q15x2_ia_aligned(&ip_b1, b1_align);
-            
+
             //access word aligned when location is multiple of 4
             q31_t inA = muriscv_nn_read_q7x4_ia_aligned(&ip_a0, a0_align, a0_align_bits);
-    
-            q31_t a01 = __rv_sunpkd810(inA);
-            q31_t a02 = __rv_sunpkd832(inA);
-            
+
+            q31_t a01 = __rv__sunpkd810(inA);
+            q31_t a02 = __rv__sunpkd832(inA);
+
             //access word aligned when location is multiple of 4
             inA = muriscv_nn_read_q7x4_ia_aligned(&ip_a1, a1_align, a1_align_bits);
-            
-            q31_t a11 = __rv_sunpkd810(inA);
-            q31_t a12 = __rv_sunpkd832(inA);
 
-            ch_0_out_0 = __rv_kmada(ch_0_out_0, a01, b0);
-            ch_0_out_1 = __rv_kmada(ch_0_out_1, a01, b1);
-            ch_1_out_0 = __rv_kmada(ch_1_out_0, a11, b0);
-            ch_1_out_1 = __rv_kmada(ch_1_out_1, a11, b1);
+            q31_t a11 = __rv__sunpkd810(inA);
+            q31_t a12 = __rv__sunpkd832(inA);
+
+            ch_0_out_0 = __rv__kmada(ch_0_out_0, a01, b0);
+            ch_0_out_1 = __rv__kmada(ch_0_out_1, a01, b1);
+            ch_1_out_0 = __rv__kmada(ch_1_out_0, a11, b0);
+            ch_1_out_1 = __rv__kmada(ch_1_out_1, a11, b1);
 
             //access always word aligned
             b0 = muriscv_nn_read_q15x2_ia_fast(&ip_b0);
-            //Access is word aligned when num_col_a is even         
+            //Access is word aligned when num_col_a is even
             b1 = muriscv_nn_read_q15x2_ia_aligned(&ip_b1, b1_align);
-            
-            
-            ch_0_out_0 = __rv_kmada(ch_0_out_0, a02, b0);
-            ch_0_out_1 = __rv_kmada(ch_0_out_1, a02, b1);
-            ch_1_out_0 = __rv_kmada(ch_1_out_0, a12, b0);
-            ch_1_out_1 = __rv_kmada(ch_1_out_1, a12, b1);
+
+
+            ch_0_out_0 = __rv__kmada(ch_0_out_0, a02, b0);
+            ch_0_out_1 = __rv__kmada(ch_0_out_1, a02, b1);
+            ch_1_out_0 = __rv__kmada(ch_1_out_0, a12, b0);
+            ch_1_out_1 = __rv__kmada(ch_1_out_1, a12, b1);
 
             col_count--;
         } /* while over col_count */
@@ -207,16 +207,16 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
             q31_t b1 = muriscv_nn_read_q15x2_ia_fast(&ip_b1);
 
             q31_t inA = muriscv_nn_read_q7x4_ia_fast(&ip_a0);
-            q31_t a01 = __rv_sunpkd810(inA);
-            q31_t a02 = __rv_sunpkd832(inA);
+            q31_t a01 = __rv__sunpkd810(inA);
+            q31_t a02 = __rv__sunpkd832(inA);
 
-            ch_0_out_0 = __rv_kmada(ch_0_out_0, a01, b0);
-            ch_0_out_1 = __rv_kmada(ch_0_out_1, a01, b1);
+            ch_0_out_0 = __rv__kmada(ch_0_out_0, a01, b0);
+            ch_0_out_1 = __rv__kmada(ch_0_out_1, a01, b1);
 
             b0 = muriscv_nn_read_q15x2_ia_fast(&ip_b0);
             b1 = muriscv_nn_read_q15x2_ia_fast(&ip_b1);
-            ch_0_out_0 = __rv_kmada(ch_0_out_0, a02, b0);
-            ch_0_out_1 = __rv_kmada(ch_0_out_1, a02, b1);
+            ch_0_out_0 = __rv__kmada(ch_0_out_0, a02, b0);
+            ch_0_out_1 = __rv__kmada(ch_0_out_1, a02, b1);
 
             col_count--;
         }
