@@ -85,24 +85,24 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
             q31_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
 
             q31_t inA = muriscv_nn_read_q7x4_ia(&ip_a0);
-            q31_t a01 = __rv_sunpkd810(inA);
-            q31_t a02 = __rv_sunpkd832(inA);
+            q31_t a01 = __rv__sunpkd810(inA);
+            q31_t a02 = __rv__sunpkd832(inA);
             inA = muriscv_nn_read_q7x4_ia(&ip_a1);
-            q31_t a11 = __rv_sunpkd810(inA);
-            q31_t a12 = __rv_sunpkd832(inA);
+            q31_t a11 = __rv__sunpkd810(inA);
+            q31_t a12 = __rv__sunpkd832(inA);
 
-            ch_0_out_0 = __rv_kmada(ch_0_out_0, a01, b0);
-            ch_0_out_1 = __rv_kmada(ch_0_out_1, a01, b1);
-            ch_1_out_0 = __rv_kmada(ch_1_out_0, a11, b0);
-            ch_1_out_1 = __rv_kmada(ch_1_out_1, a11, b1);
+            ch_0_out_0 = __rv__kmada(ch_0_out_0, a01, b0);
+            ch_0_out_1 = __rv__kmada(ch_0_out_1, a01, b1);
+            ch_1_out_0 = __rv__kmada(ch_1_out_0, a11, b0);
+            ch_1_out_1 = __rv__kmada(ch_1_out_1, a11, b1);
 
             b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
             b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
 
-            ch_0_out_0 = __rv_kmada(ch_0_out_0, a02, b0);
-            ch_0_out_1 = __rv_kmada(ch_0_out_1, a02, b1);
-            ch_1_out_0 = __rv_kmada(ch_1_out_0, a12, b0);
-            ch_1_out_1 = __rv_kmada(ch_1_out_1, a12, b1);
+            ch_0_out_0 = __rv__kmada(ch_0_out_0, a02, b0);
+            ch_0_out_1 = __rv__kmada(ch_0_out_1, a02, b1);
+            ch_1_out_0 = __rv__kmada(ch_1_out_0, a12, b0);
+            ch_1_out_1 = __rv__kmada(ch_1_out_1, a12, b1);
 
             col_count--;
         } /* while over col_count */
@@ -182,16 +182,16 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
             q31_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
 
             q31_t inA = muriscv_nn_read_q7x4_ia(&ip_a0);
-            q31_t a01 = __rv_sunpkd810(inA);
-            q31_t a02 = __rv_sunpkd832(inA);
+            q31_t a01 = __rv__sunpkd810(inA);
+            q31_t a02 = __rv__sunpkd832(inA);
 
-            ch_0_out_0 = __rv_kmada(ch_0_out_0, a01, b0);
-            ch_0_out_1 = __rv_kmada(ch_0_out_1, a01, b1);
+            ch_0_out_0 = __rv__kmada(ch_0_out_0, a01, b0);
+            ch_0_out_1 = __rv__kmada(ch_0_out_1, a01, b1);
 
             b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
             b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-            ch_0_out_0 = __rv_kmada(ch_0_out_0, a02, b0);
-            ch_0_out_1 = __rv_kmada(ch_0_out_1, a02, b1);
+            ch_0_out_0 = __rv__kmada(ch_0_out_0, a02, b0);
+            ch_0_out_1 = __rv__kmada(ch_0_out_1, a02, b1);
 
             col_count--;
         }

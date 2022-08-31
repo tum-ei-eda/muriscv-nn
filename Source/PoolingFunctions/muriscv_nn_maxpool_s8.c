@@ -21,7 +21,7 @@
 #if defined(USE_VEXT)
 #include <riscv_vector.h>
 #elif defined(USE_PEXT)
-#include <rvp_intrinsic.h>
+#include <riscv-dsp.h>
 #endif
 
 #include "muriscv_nn_functions.h"
@@ -74,8 +74,8 @@ static inline void compare_and_replace_if_larger(int8_t *base, const int8_t *tar
 
         int32_t *b = (int32_t *)(base + idx);
         int32_t *t = (int32_t *)(target + idx);
-        *b = __rv_smax8(*b, *t);
-        *(b + 1) = __rv_smax8(*(b + 1), *(t + 1));
+        *b = __rv__smax8(*b, *t);
+        *(b + 1) = __rv__smax8(*(b + 1), *(t + 1));
 
         idx += 8;
     }
@@ -130,8 +130,8 @@ static inline void clamp_output(int8_t *source, int32_t length, const int32_t ac
         // source[idx + 3] = MIN(MAX(source[idx + 3], act_min), act_max);
 
         int32_t *s = (int32_t *)(source + idx);
-        *s = __rv_smin8(__rv_smax8(*s, min_packed), max_packed);
-        *(s+1) = __rv_smin8(__rv_smax8(*(s+1), min_packed), max_packed);
+        *s = __rv__smin8(__rv__smax8(*s, min_packed), max_packed);
+        *(s+1) = __rv__smin8(__rv__smax8(*(s+1), min_packed), max_packed);
 
         idx += 8;
     }

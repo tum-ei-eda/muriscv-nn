@@ -21,7 +21,7 @@
 #if defined(USE_VEXT)
 #include <riscv_vector.h>
 #elif defined(USE_PEXT)
-#include <rvp_intrinsic.h>
+#include <riscv-dsp.h>
 #endif
 
 #include <string.h>
@@ -277,17 +277,17 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
                     q31_t inA = muriscv_nn_read_q7x4_ia(&ker_a);
                     // q31_t inA = *(int32_t *)ker_a;
                     // ker_a += 4;
-                    q31_t ker_a1 = __rv_sunpkd810(inA);
-                    q31_t ker_a2 = __rv_sunpkd832(inA);
+                    q31_t ker_a1 = __rv__sunpkd810(inA);
+                    q31_t ker_a2 = __rv__sunpkd832(inA);
 
                     // q31_t ip_b1 = *(int32_t *)ip_as_col;
                     // ip_as_col += 2;
                     q31_t ip_b1 = muriscv_nn_read_q15x2_ia(&ip_as_col);
-                    sum = __rv_kmada(sum, ker_a1, ip_b1);
+                    sum = __rv__kmada(sum, ker_a1, ip_b1);
                     // q31_t ip_b2 = *(int32_t *)ip_as_col;
                     // ip_as_col += 2;
                     q31_t ip_b2 = muriscv_nn_read_q15x2_ia(&ip_as_col);
-                    sum = __rv_kmada(sum, ker_a2, ip_b2);
+                    sum = __rv__kmada(sum, ker_a2, ip_b2);
 
                     col_count--;
                 }
