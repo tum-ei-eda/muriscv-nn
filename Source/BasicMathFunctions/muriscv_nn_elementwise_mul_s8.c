@@ -114,44 +114,44 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s8(const int8_t *input_1_vect,
     {
         /* Load vec 1 */
         int32_t packed = muriscv_nn_read_q7x4_ia(&input_1_vect);
-        int32_t a1 = __rv_sunpkd810(packed);
-        a1 = __rv_add16(a1, offset_1_packed);
-        int32_t b1 = __rv_sunpkd832(packed);
-        b1 = __rv_add16(b1, offset_1_packed);
+        int32_t a1 = __rv__sunpkd810(packed);
+        a1 = __rv__add16(a1, offset_1_packed);
+        int32_t b1 = __rv__sunpkd832(packed);
+        b1 = __rv__add16(b1, offset_1_packed);
 
         /* Load vec 2 */
         packed = muriscv_nn_read_q7x4_ia(&input_2_vect);
-        int32_t a2 = __rv_sunpkd810(packed);
-        a2 = __rv_add16(a2, offset_2_packed);
-        int32_t b2 = __rv_sunpkd832(packed);
-        b2 = __rv_add16(b2, offset_2_packed);
+        int32_t a2 = __rv__sunpkd810(packed);
+        a2 = __rv__add16(a2, offset_2_packed);
+        int32_t b2 = __rv__sunpkd832(packed);
+        b2 = __rv__add16(b2, offset_2_packed);
 
         /* Sum 1 */
         int32_t sum = (int16_t)(a1 & 0x0FFFF) * (int16_t)(a2 & 0x0FFFF);
         sum = muriscv_nn_requantize(sum, out_mult, out_shift) + out_offset;
-        sum = __rv_max(sum, out_activation_min);
-        sum = __rv_min(sum, out_activation_max);
+        sum = MAX(sum, out_activation_min);
+        sum = MIN(sum, out_activation_max);
         int8_t r1 = (q7_t)sum;
 
         /* Sum 2 */
         sum = (int16_t)((a1 >> 16) & 0x0FFFF) * (int16_t)((a2 >> 16) & 0x0FFFF);
         sum = muriscv_nn_requantize(sum, out_mult, out_shift) + out_offset;
-        sum = __rv_max(sum, out_activation_min);
-        sum = __rv_min(sum, out_activation_max);
+        sum = MAX(sum, out_activation_min);
+        sum = MIN(sum, out_activation_max);
         int8_t r2 = (q7_t)sum;
 
         /* Sum 3 */
         sum = (int16_t)(b1 & 0x0FFFF) * (int16_t)(b2 & 0x0FFFF);
         sum = muriscv_nn_requantize(sum, out_mult, out_shift) + out_offset;
-        sum = __rv_max(sum, out_activation_min);
-        sum = __rv_min(sum, out_activation_max);
+        sum = MAX(sum, out_activation_min);
+        sum = MIN(sum, out_activation_max);
         int8_t r3 = (q7_t)sum;
 
         /* Sum 4 */
         sum = (int16_t)((b1 >> 16) & 0x0FFFF) * (int16_t)((b2 >> 16) & 0x0FFFF);
         sum = muriscv_nn_requantize(sum, out_mult, out_shift) + out_offset;
-        sum = __rv_max(sum, out_activation_min);
-        sum = __rv_min(sum, out_activation_max);
+        sum = MAX(sum, out_activation_min);
+        sum = MIN(sum, out_activation_max);
         int8_t r4 = (q7_t)sum;
 
         muriscv_nn_write_q7x4_ia(&output, PACK_Q7x4_32x1(r1, r2, r3, r4));
