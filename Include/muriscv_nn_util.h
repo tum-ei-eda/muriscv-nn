@@ -93,6 +93,7 @@ static inline uint32_t rdcycle(void)
 static inline uint64_t rdcycle64()
 {
 #if defined(__riscv) || defined(__riscv__)
+#if __riscv_xlen == 32
     uint32_t cycles;
     uint32_t cyclesh1;
     uint32_t cyclesh2;
@@ -107,6 +108,11 @@ static inline uint64_t rdcycle64()
     } while (cyclesh1 != cyclesh2);
 
     return (((uint64_t)cyclesh1) << 32) | cycles;
+#else
+    uint64_t cycles;
+    __asm__ volatile("rdcycle %0" : "=r"(cycles));
+    return cycles;
+#endif
 #else
     return 0;
 #endif
