@@ -35,7 +35,9 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
                                               unity)
 
     # Register test with CTest and provide command to execute
-    if(DEFINED RISCV_ARCH)
+    
+    #if(DEFINED RISCV_ARCH)  #does not work for x86 operation, this variable is still defined.  in x86 case, test is run on Spike and fails
+    if(NOT ${TOOLCHAIN} STREQUAL "x86")
         if(${SIMULATOR} STREQUAL "OVPsim")
             add_test(NAME ${TEST_NAME}
                      COMMAND ${CMAKE_SOURCE_DIR}/Sim/OVPsim/run.sh ./${TEST_NAME}.elf ${RISCV_ARCH} ${VLEN} 1
