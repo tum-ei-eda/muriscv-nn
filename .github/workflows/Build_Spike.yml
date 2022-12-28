@@ -70,4 +70,23 @@ jobs:
         cp ../riscv-isa-sim/build/spike spike
         cp ../riscv-pk/build/pk pk_ilp32d
         ls
+        
+    - name: Build PK for ilp32
+      working-directory: ./Sim/Spike/riscv-pk
+      run: |
+        rm -r build
+        export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32imv
+        export PATH=$PATH:$RISCV/bin
+        echo $PATH
+        mkdir build
+        cd build
+        ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32imv --with-abi=ilp32
+        make
+        sudo make install
+        
+    - name: PK Binary to correct location
+      working-directory: ./Sim/Spike/bin
+      run: |
+        cp ../riscv-pk/build/pk pk_ilp32
+        ls
 
