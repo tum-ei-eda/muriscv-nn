@@ -1,0 +1,109 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  Test_Scalar:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2  
+    
+    - name: Download Spike Cache
+      id: cache-Spike
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-spike-binaries
+      with:
+          path: ./Sim/Spike/bin
+          key: spike-binaries
+          
+    - name: Download GCC Cache
+      id: cache-GCC
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: ./Toolchain
+          key: gcc-binaries
+          
+    - name: Install Spike Dependencies
+      run: |
+        sudo apt-get install libboost-all-dev
+        sudo apt-get install device-tree-compiler
+        
+    - name: Run Scalar tests
+      working-directory: ./Scripts
+      run: |
+        ./test_scalar.sh
+        
+  Test_Packed:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2  
+    
+    - name: Download Spike Cache
+      id: cache-Spike
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-spike-binaries
+      with:
+          path: ./Sim/Spike/bin
+          key: spike-binaries
+          
+    - name: Download GCC Cache
+      id: cache-GCC
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: ./Toolchain
+          key: gcc-binaries
+          
+    - name: Install Spike Dependencies
+      run: |
+        sudo apt-get install libboost-all-dev
+        sudo apt-get install device-tree-compiler
+    
+    - name: Run Packed Tests
+      working-directory: ./Scripts
+      run: |
+        ./test_packed.sh
+  Test_Vector:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2  
+    
+    - name: Download Spike Cache
+      id: cache-Spike
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-spike-binaries
+      with:
+          path: ./Sim/Spike/bin
+          key: spike-binaries
+          
+    - name: Download GCC Cache
+      id: cache-GCC
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: ./Toolchain
+          key: gcc-binaries
+          
+    - name: Install Spike Dependencies
+      run: |
+        sudo apt-get install libboost-all-dev
+        sudo apt-get install device-tree-compiler
+    
+    - name: Run Vector Tests
+      working-directory: ./Scripts
+      run: |
+        ./test_vector.sh
+    
+
