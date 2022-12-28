@@ -36,7 +36,11 @@ jobs:
            ./download_rv32gcv.sh
            ./download_rv32imv.sh
            
-    - name: Cache GCC Binaries
+    - name: Print Path to rv32gcv
+      working-directory: ./Toolchain/rv32gcv
+      run: pwd
+           
+    - name: Cache Sim Binaries
       id: cache-sim
       uses: actions/cache@v3
       env:

@@ -1,0 +1,73 @@
+name: Build_Spike
+
+on:  
+  workflow_dispatch:
+
+jobs:
+  Build_Spike:
+    runs-on: ubuntu-20.04
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Download Cached GCC Binaries
+      id: cache-gcc
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: ./Toolchain
+          key: gcc-binaries
+          
+    - name: Setup Spike Cache
+      id: cache-Spike
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-spike-binaries
+      with:
+          path: ./Sim/Spike/bin
+          key: spike-binaries
+          
+    - name: Install BOOST
+      run: sudo apt-get install libboost-all-dev
+
+    - name: Clone Spike Repo
+      working-directory: ./Sim/Spike
+      run: git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+      
+    - name: Build Spike
+      working-directory: ./Sim/Spike/riscv-isa-sim
+      run: |
+        export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32gcv
+        export PATH=$PATH:$RISCV/bin
+        echo $PATH
+        sudo apt-get install device-tree-compiler
+        mkdir build
+        cd build
+        ../configure --prefix=$RISCV
+        make
+        sudo make install
+        
+    - name: Clone PK Repo
+      working-directory: ./Sim/Spike
+      run: git clone https://github.com/riscv-software-src/riscv-pk.git
+      
+    - name: Build PK for ilp32d
+      working-directory: ./Sim/Spike/riscv-pk
+      run: |
+        export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32gcv
+        export PATH=$PATH:$RISCV/bin
+        echo $PATH
+        mkdir build
+        cd build
+        ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv --with-abi=ilp32d
+        make
+        sudo make install
+        
+    - name: Copy Spike and PK binaries to correct location
+      working-directory: ./Sim/Spike/bin
+      run: |
+        cp ../riscv-isa-sim/build/spike spike
+        cp ../riscv-pk/build/pk pk_ilp32d
+        ls
+
