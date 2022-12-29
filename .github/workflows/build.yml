@@ -25,7 +25,9 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
-          key: gcc-binaries
+          key: gcc-binaries-${{ steps.date.outputs.date }}
+          restore-keys: |
+            gcc-binaries-
           
           
 
