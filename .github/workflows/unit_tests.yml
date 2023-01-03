@@ -17,9 +17,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2  
     
-    - name: Get current date
+    - name: Get date of last cache build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
     
     - name: Download Spike Cache
       id: cache-Spike
@@ -58,9 +58,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2  
     
-    - name: Get current date
+    - name: Get date of last cache build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
     
     - name: Download Spike Cache
       id: cache-Spike
@@ -99,9 +99,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2  
     
-    - name: Get current date
+    - name: Get date of last cache build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
     
     - name: Download Spike Cache
       id: cache-Spike

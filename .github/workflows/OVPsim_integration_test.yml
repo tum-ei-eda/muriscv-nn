@@ -28,9 +28,9 @@ jobs:
         pip3 install Pillow
         pip3 install Wave
         
-    - name: Get current date
+    - name: Get date of last cache build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
         
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -86,9 +86,9 @@ jobs:
         pip3 install Pillow
         pip3 install Wave
         
-    - name: Get current date
+    - name: Get date of last cache build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
         
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -135,9 +135,9 @@ jobs:
         pip3 install Pillow
         pip3 install Wave
         
-    - name: Get current date
+    - name: Get date of last cache build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
         
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -192,9 +192,9 @@ jobs:
         pip3 install Pillow
         pip3 install Wave
         
-    - name: Get current date
+    - name: Get date of last cache build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
         
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -249,9 +249,9 @@ jobs:
         pip3 install Pillow
         pip3 install Wave
         
-    - name: Get current date
+    - name: Get date of last cache build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
         
     - name: Download Cached GCC Binaries
       id: cache-gcc
