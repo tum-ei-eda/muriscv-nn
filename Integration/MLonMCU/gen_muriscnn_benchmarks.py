@@ -99,11 +99,6 @@ DEFAULT_FEATURES = [
 
 TUNING_RECORDS = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "..",
-    "resources",
-    "frameworks",
-    "tvm",
-    "tuning_records",
     "riscv_cpu_v0.01.log.best",
 )
 
