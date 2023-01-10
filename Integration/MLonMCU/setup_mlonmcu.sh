@@ -35,7 +35,7 @@ ENABLE_OVPSIM=0
 
 # ETISS
 ETISS_REF=4d2d26fb1fdb17e1da3a397c35d6f8877bf3ceab
-LOCAL_ETISS=1
+LOCAL_ETISS=0
 ENABLE_ETISS=0
 
 # RISC-V GCC
@@ -91,6 +91,9 @@ while getopts ':h-:' 'OPTKEY'; do
             'local-ovpsim')
                 LOCAL_OVPSIM=1
                 ;;
+            'local-gcc')
+                LOCAL_GCC=1
+                ;;
             'prebuilt-tvm')
                 PREBUILT_TVM=1
                 ;;
@@ -126,28 +129,68 @@ then
     exit 1
 fi
 
-if [[ "$LOCAL_SPIKE" -eq 1 ]]
+if [[ "$ENABLE_SPIKE" -eq 1 ]]
 then
-    if [[ ! -f $SCRIPT_DIR/../../Sim/Spike/bin/spike ]]
+    if [[ "$LOCAL_SPIKE" -eq 1 ]]
     then
-        echo "Could not find local spike installation in $SCRIPT_DIR/../../Sim/Spike/bin/spike. Please either set LOCAL_SPIKE=0 or download spike!" >&2
-        exit 1
+        if [[ ! -f $SCRIPT_DIR/../../Sim/Spike/bin/spike ]]
+        then
+            echo "Could not find local spike installation in $SCRIPT_DIR/../../Sim/Spike/bin/spike. Please either set LOCAL_SPIKE=0 or download spike!" >&2
+            exit 1
+        fi
     fi
 fi
-if [[ "$LOCAL_ETISS" -eq 1 ]]
+
+if [[ "$ENABLE_ETISS" -eq 1 ]]
 then
-    if [[ ! -f $SCRIPT_DIR/../../Sim/ETISS/etiss-master/build/bin/bare_etiss_processor ]]
+    if [[ "$LOCAL_ETISS" -eq 1 ]]
     then
-        echo "Could not find local etiss installation in $SCRIPT_DIR/../../Sim/ETISS/etiss-master/build/bin/. Please either set LOCAL_SPIKE=0 or download spike!" >&2
-        exit 1
+        if [[ ! -f $SCRIPT_DIR/../../Sim/ETISS/etiss-master/build/bin/bare_etiss_processor ]]
+        then
+            echo "Could not find local etiss installation in $SCRIPT_DIR/../../Sim/ETISS/etiss-master/build/bin/. Please either set LOCAL_ETISS=0 or download etiss!" >&2
+            exit 1
+        fi
     fi
 fi
-if [[ "$LOCAL_OVPSIM" -eq 1 ]]
+
+if [[ "$ENABLE_OVPSIM" -eq 1 ]]
 then
-    if [[ ! -f $SCRIPT_DIR/../../Sim/OVPsim/bin/riscvOVPsimPlus ]]
+    if [[ "$LOCAL_OVPSIM" -eq 1 ]]
     then
-        echo "Could not find local ovpsim installation in $SCRIPT_DIR/../../OVPsim/bin/. Please either set LOCAL_SPIKE=0 or download spike!" >&2
-        exit 1
+        if [[ ! -f $SCRIPT_DIR/../../Sim/OVPsim/bin/riscvOVPsimPlus ]]
+        then
+            echo "Could not find local ovpsim installation in $SCRIPT_DIR/../../Sim/OVPsim/bin/. Please install ovpsim first!" >&2
+            exit 1
+        fi
+    fi
+fi
+
+
+if [[ "$LOCAL_GCC" -eq 1 ]]
+then
+    if [[ "$ENABLE_DEFAULT" -eq 1 ]]
+    then
+        if [[ ! -d $SCRIPT_DIR/../../Toolchain/rv32gc/ ]]
+        then
+            echo "Could not find local rv32gc installation in $SCRIPT_DIR/../../Toolchain/. Please download it first!" >&2
+            exit 1
+        fi
+    fi
+    if [[ "$ENABLE_PEXT" -eq 1 ]]
+    then
+        if [[ ! -d $SCRIPT_DIR/../../Toolchain/rv32gcp/ ]]
+        then
+            echo "Could not find local rv32gcp installation in $SCRIPT_DIR/../../Toolchain/. Please download it first!" >&2
+            exit 1
+        fi
+    fi
+    if [[ "$ENABLE_VEXT" -eq 1 ]]
+    then
+        if [[ ! -d $SCRIPT_DIR/../../Toolchain/rv32gcv/ ]]
+        then
+            echo "Could not find local rv32gcv installation in $SCRIPT_DIR/../../Toolchain/. Please download it first!" >&2
+            exit 1
+        fi
     fi
 fi
 

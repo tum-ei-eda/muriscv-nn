@@ -10,16 +10,18 @@ To reduce the download time for external dependencies, it is assumed that all th
 cd muriscv-nn
 DIR=$(pwd)
 
-# Toolchain (comment in others if required)
-# cd $DIR/Toolchain && ./download_rv32gc.sh && cd -
-# cd $DIR/Toolchain && ./download_rv32gcp.sh && cd -
+# Toolchain (comment in/out others if (not) required)
+cd $DIR/Toolchain && ./download_rv32gc.sh && cd -
+cd $DIR/Toolchain && ./download_rv32gcp.sh && cd -
 cd $DIR/Toolchain && ./download_rv32gcv.sh && cd -
 
-# Sim (comment in others if required)
+# Sim (comment in/out others if (not) required)
 # cd $DIR/Sim/Spike/bin && ./download.sh && cd -
-cd $DIR/Sim/ETISS/ && virtualenv -p python3.8 .venv && source .venv/bin/activate && pip install -r requirements.txt && python setup_etiss.py && deactivate && cd -
-cd $DIR/Sim/OVPsim/bin && ./download.sh && cd -
+# cd $DIR/Sim/ETISS/ && virtualenv -p python3.8 .venv && source .venv/bin/activate && pip install -r requirements.txt && python setup_etiss.py && deactivate && cd -
+# cd $DIR/Sim/OVPsim/bin && ./download.sh && cd -
 ```
+
+Simulators can also be automatically installed with MLonMCU (recommended).
 
 Further the script use Python3.8 and assumes that the Virtualenv package is installed on the machine.
 
