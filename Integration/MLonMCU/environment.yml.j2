@@ -15,23 +15,34 @@ paths:
   models:
     - "{{ home_dir }}/models"
 repos:
-  tensorflow:
-    url: "https://github.com/tensorflow/tflite-micro.git"
-    ref: f868a900f1f788fd0a55b5655b47fc352f9a0239
-  tvm:
-    url: "https://github.com/apache/tvm.git"
-    ref: 76b9ce9b1f7d2b7e64b4b9c9d456a02b8a010473
-  spike:
-    url: "https://github.com/riscv-software-src/riscv-isa-sim.git"
-    ref: caf5a420ef7414031368739e16d60f3f418aa6ac
-  spikepk:
-    url: "https://github.com/riscv-software-src/riscv-pk.git"
-    ref: 2efabd3e6604b8a9e8f70baf52f57696680c7855
   mlif:
     url: "https://github.com/tum-ei-eda/mlonmcu-sw.git"
-    ref: 3f8e66b956fe1cf0d85a18d39d684816e92e2751
+    ref: {{ mlif_ref }}
+{% if enable_tflm | int %}
+  tensorflow:
+    url: "https://github.com/tensorflow/tflite-micro.git"
+    ref: {{ tflm_ref }}
+{% endif %}
+{% if enable_tvm | int %}
+  tvm:
+    url: "https://github.com/apache/tvm.git"
+    ref: {{ tvm_ref }}
+{% endif %}
+{% if enable_spike | int %}
+  spike:
+    url: "https://github.com/riscv-software-src/riscv-isa-sim.git"
+    ref: {{ spike_ref }}
+  spikepk:
+    url: "https://github.com/riscv-software-src/riscv-pk.git"
+    ref: {{ spikepk_ref }}
+{% endif %}
+{% if enable_etiss | int %}
+  etiss:
+    url: "https://github.com/tum-ei-eda/etiss.git"
+    ref: {{ etiss_ref }}
+{% endif %}
 frameworks:
-  default: tflm
+{% if enable_tflm | int %}
   tflm:
     enabled: true
     backends:
@@ -40,17 +51,23 @@ frameworks:
         enabled: true
     features:
       muriscvnn: true
+{% endif %}
+{% if enable_tvm  | int %}
   tvm:
-    enabled: false
+    enabled: true
     backends:
-      default: tvmaot
+      default: tvmaotplus
       tvmaot:
         enabled: true
         features:
           unpacked_api: true
           usmp: true
+      tvmaotplus:
+        enabled: true
+        features: []
     features:
       muriscvnnbyoc: true
+{% endif %}
 frontends:
   tflite:
     enabled: true
@@ -66,33 +83,72 @@ targets:
   default: host_x86
   host_x86:
     enabled: true
+{% if enable_etiss | int %}
   etiss_pulpino:
     enabled: true
+{% endif %}
+{% if enable_spike | int %}
   spike:
     enabled: true
     features:
+{% if enable_pext | int %}
       pext: true
+{% endif %}
+{% if enable_vext | int %}
       vext: true
+{% endif %}
+{% endif %}
+{% if enable_ovpsim | int %}
   ovpsim:
     enabled: true
     features:
+{% if enable_pext | int %}
       pext: true
+{% endif %}
+{% if enable_vext | int %}
       vext: true
+{% endif %}
+{% endif %}
 postprocesses:
   use: []
+toolchains:
+  gcc: true
+  llvm: false
 vars:
+  # general
   runs_per_stage: true
+
+  # muriscvnn
+  muriscvnn.src_dir: "{{ home_dir }}/../../.."
+  muriscvnn.skip_lib: true
+
+  # frameworks
+{% if enable_tvm | int and prebuilt_tvm | int %}
+  tvm.use_tlcpack: true
+{% endif %}
+
+  # toolchain
+  # riscv_gcc.name: "riscv64-unknown-elf"
   riscv_gcc.install_dir_default: "{{ home_dir }}/../../../Toolchain/rv32gc"
+{% if enable_vext | int %}
   riscv_gcc.install_dir_vext: "{{ home_dir }}/../../../Toolchain/rv32gcv"
+{% endif %}
+{% if enable_pext | int %}
   riscv_gcc.install_dir_pext: "{{ home_dir }}/../../../Toolchain/rv32gcp"
+{% endif %}
+
+  # simulators
+{% if enable_etiss | int and local_etiss | int %}
   etiss.src_dir: "{{ home_dir }}/../../../Sim/ETISS/etiss-master"
   etiss.install_dir: "{{ home_dir }}/../../../Sim/ETISS/etiss-master/build/install"
   etissvp.exe: "{{ home_dir }}/../../../Sim/ETISS/etiss-master/build/install/bin/bare_etiss_processor"
   etissvp.script: "{{ home_dir }}/../../../Sim/ETISS/etiss-master/build/install/bin/run_helper.sh"
+{% endif %}
+{% if enable_ovpsim | int and local_ovpsim | int %}
   ovpsim.exe: "{{ home_dir }}/../../../Sim/OVPsim/bin/riscvOVPsimPlus"
-  # Can not use downloaded spike version as it was built for Ubuntu 18.04
-  # spike.exe: "{{ home_dir }}/../../../Sim/Spike/bin/spike"
-  # spike.pk: "{{ home_dir }}/../../../Sim/Spike/bin/pk"
-  muriscvnn.src_dir: "{{ home_dir }}/../../.."
-  llvm.install_dir: ""  # Will not be used
+{% endif %}
+{% if enable_spike | int and local_spike | int %}
+  spike.exe: "{{ home_dir }}/../../../Sim/Spike/bin/spike"
+  spike.pk: "{{ home_dir }}/../../../Sim/Spike/bin/pk"
+{% endif %}
   muriscvnn.lib: ""  # Will not be used
