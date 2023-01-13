@@ -34,6 +34,7 @@ python3.8 -m venv .venv
 source .venv/bin/activate
 pip install tlcpack-nightly -f https://tlcpack.ai/wheels
 pip install -r requirements.txt
+pip install typing-extensions
 
 echo "Generate TVM kernel from models."
 for test in "${TESTS[@]}"; do
@@ -59,9 +60,9 @@ for test in "${TESTS[@]}"; do
       --runtime-crt-system-lib 0 \
       --target-c-constants-byte-alignment 4 \
       --target-c-workspace-byte-alignment 4 \
-      --target-c-executor aot \
-      --target-c-unpacked-api 1 \
-      --target-c-interface-api c \
+      --executor aot \
+      --executor-aot-unpacked-api 1 \
+      --executor-aot-interface-api c \
       ${TVMC_TARGET_ARGS} \
       --output ${test}/${test}.tar
 
