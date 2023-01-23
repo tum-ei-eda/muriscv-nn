@@ -14,6 +14,15 @@
 
 - [MLPerfTiny](https://github.com/mlcommons/tiny) Benchmark
 
+### Package Versions
+
+- MLonMCU : {{ "default" | env_var('MLIF_REF') }}
+- TFLM :  {{ "default" | env_var('TFLM_REF') }}
+- TVM : {% if "default" | env_var('PREBUILT_TVM') == '1' %} Nightly Pre-Build {% else %} {{ "default" | env_var('TVM_REF') }} {% endif %}
+- Spike : {{ "default" | env_var('SPIKE_REF') }}
+- Spike PK : {{ "default" | env_var('SPIKEPK_REF') }}
+
+
 ### Miscellaneous
 
 - Used `-Os` flag for compilation.
