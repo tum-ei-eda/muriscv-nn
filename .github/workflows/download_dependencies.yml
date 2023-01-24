@@ -1,0 +1,45 @@
+name: Download Dependencies
+
+on:
+  schedule:
+      # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
+    - cron: '0 5 * * SAT'
+    
+  workflow_dispatch:
+    
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Get current date
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+     
+    - name: Cache GCC Binaries
+      id: cache-gcc
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: ./Toolchain
+          key: gcc-binaries-${{ steps.date.outputs.date }}
+    
+    
+  
+    - name: Download GCC Binaries
+      working-directory: ./Toolchain
+      run: |
+           ./download_rv32gc.sh
+           ./download_rv32gcp.sh
+           ./download_rv32gcv.sh
+           ./download_rv32imv.sh
+           
+           
+
+    
+  
+
+

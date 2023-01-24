@@ -36,39 +36,64 @@ BENCHMARKS=(keyword_benchmark keyword_benchmark_8bit person_detection_benchmark)
 
 # Path to muRISCV-NN, TFLM and Toolchain
 MURISCV_NN_PATH=${SCRIPT_DIR}/../..
+
+
+cd ${SCRIPT_DIR}
 TFLM_PATH=${SCRIPT_DIR}/tflite-micro
-GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/rv32gcv
+
 
 # Compiliation parameters
 TARGET=muriscv_nn             # don't change
 OPTIMIZED_KERNEL_DIR=cmsis_nn # don't change
-USE_VEXT=ON                   # ON/OFF
-USE_PEXT=OFF                  # ON/OFF
-BUILD_TYPE=Release            # Debug/Release
-TOOLCHAIN=gcc                 # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
-TARGET_ARCH=rv32gcv           # rv32gcv for vector support
-VLEN=512                      # Vector length parameter passed to simulator
-SIMULATOR=Spike               # Spike/OVPsim
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied, using default configuration"
+    USE_VEXT=ON                  # ON/OFF
+    USE_PEXT=OFF                # ON/OFF
+    BUILD_TYPE=Release            # Debug/Release
+    TOOLCHAIN=llvm            # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
+    TARGET_ARCH=rv32gcv           # rv32gcv for vector support
+    GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/rv32gcv
+    VLEN=512               # Vector length parameter passed to simulator
+    SIMULATOR=OVPsim            # Spike/OVPsim
+    else
+    USE_VEXT=$1                  # ON/OFF
+    USE_PEXT=$2                # ON/OFF
+    BUILD_TYPE=$3            # Debug/Release
+    TOOLCHAIN=$4            # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
+    TARGET_ARCH=$5           # rv32gcv for vector support
+    GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/$5
+    VLEN=$6               # Vector length parameter passed to simulator
+    SIMULATOR=$7            # Spike/OVPsim
+    
+fi
+
+
 # TODO(fabianpedd): check whether the args above actually get passed to the code, such as USE_VEXT
 
 cd ${TFLM_PATH}
 
+
 make -f tensorflow/lite/micro/tools/make/Makefile clean
+
 for test in "${TESTS[@]}"; do
+#USE_PEXT originally missing
   make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \
     TARGET_ARCH=${TARGET_ARCH} \
     OPTIMIZED_KERNEL_DIR=${OPTIMIZED_KERNEL_DIR} \
     MURISCV_NN_PATH=${MURISCV_NN_PATH} \
     USE_VEXT=${USE_VEXT} \
+    USE_PEXT=${USE_PEXT} \
     TOOLCHAIN=${TOOLCHAIN} \
     GCC_TOOLCHAIN_ROOT=${GCC_TOOLCHAIN_ROOT} \
     BUILD_TYPE=${BUILD_TYPE} \
     ${test}
-
-  ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
-    ${TFLM_PATH}/tensorflow/lite/micro/tools/make/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${test} \
-    ${TARGET_ARCH} ${VLEN} 1
+    
+    ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
+        ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${test} \
+        ${TARGET_ARCH} ${VLEN} 1
+    
 done
 
 make -f tensorflow/lite/micro/tools/make/Makefile clean
@@ -84,8 +109,8 @@ for bm in "${BENCHMARKS[@]}"; do
     GCC_TOOLCHAIN_ROOT=${GCC_TOOLCHAIN_ROOT} \
     BUILD_TYPE=${BUILD_TYPE} \
     ${bm}
-
-  ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
-    ${TFLM_PATH}/tensorflow/lite/micro/tools/make/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${bm} \
+    
+    ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
+    ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${bm} \
     ${TARGET_ARCH} ${VLEN} 1
 done

@@ -14,9 +14,26 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Get date of last cache build
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
+    
+    - name: Download Cached GCC Binaries
+      id: cache-gcc
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: ./Toolchain
+          key: gcc-binaries-${{ steps.date.outputs.date }}
+          restore-keys: |
+            gcc-binaries-
+          
+          
 
     - name: Build
       working-directory: ./Scripts
