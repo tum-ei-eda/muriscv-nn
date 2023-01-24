@@ -154,11 +154,8 @@ fi
 # Setup Python #
 ################
 
-<<<<<<< HEAD
-virtualenv -p python3 $VENV_DIR
-=======
 virtualenv -p python3.8 $VENV_DIR
->>>>>>> d8264760a4bf051caabd275551f895843711d647
+
 source $VENV_DIR/bin/activate
 
 # install mlonmcu from repository
