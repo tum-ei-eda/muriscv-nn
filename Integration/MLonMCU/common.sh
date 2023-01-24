@@ -13,8 +13,6 @@ TOOLCHAINS_DIR=$MURISCVNN_DIR/Toolchain
 SIM_DIR=$MURISCVNN_DIR/Sim
 VENV_DIR=$SCRIPT_DIR/venv
 
-
-
 ########################################
 # Default config  for setup_mlonmcu.sh #
 ########################################
