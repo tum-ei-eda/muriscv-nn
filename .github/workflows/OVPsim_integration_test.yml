@@ -1,9 +1,9 @@
 name: OVPsim Integration Tests
 
 on:
-  schedule:
+  # schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
-    - cron: '0 8 * * *'
+    # - cron: '0 8 * * *'
   push:
     branches: [ "master" ]
   pull_request:
