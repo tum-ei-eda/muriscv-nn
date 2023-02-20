@@ -1,0 +1,94 @@
+name: Style Checks
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  clang-format:
+    name: Formatting Check (C/C++)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        path:
+          - 'Source'
+          - 'Include'
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run clang-format style check for C/C++ programs.
+      uses: jidicula/clang-format-action@v4.10.2
+      with:
+        clang-format-version: '13'
+        check-path: ${{ matrix.path }}
+    - name: Check for changes
+      run: |
+        git status
+  cmake-format:
+    name: Formatting Check (CMake)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Format CMake files
+      id: cmake-format
+      uses: PuneetMatharu/cmake-format-lint-action@v1.0.0
+      with:
+        # Arguments to be passed to cmake-format.
+        #
+        # Options:
+        #   -h, --help            show this help message and exit
+        #   -v, --version         show program's version number and exit
+        #   -l {error,warning,info,debug}, --log-level {error,warning,info,debug}
+        #   --dump-config [{yaml,json,python}]
+        #                         If specified, print the default configuration to stdout and exit
+        #   --dump {lex,parse,parsedb,layout,markup}
+        #   --no-help             When used with --dump-config, will omit helptext comments in the output
+        #   --no-default          When used with --dump-config, will omit any unmodified configuration value.
+        #   -i, --in-place
+        #   --check               Exit with status code 0 if formatting would not change file contents, or status code 1 if it would
+        #   -o OUTFILE_PATH, --outfile-path OUTFILE_PATH
+        #                         Where to write the formatted file. Default is stdout.
+        #   -c CONFIG_FILES [CONFIG_FILES ...], --config-files CONFIG_FILES [CONFIG_FILES ...]
+        #                         path to configuration file(s)
+        args: --config-files .cmake-format.yaml --check
+    - name: Check for changes
+      run: |
+        git status
+  python-format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: psf/black@stable
+      with:
+        options: "--check --verbose --preview -l 120"
+        version: "~= 22.0"
+    - name: Check for changes
+      run: |
+        git status
+  shell-format:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+    - name: Run ShellCheck
+      uses: azohra/shell-linter@latest
+    - name: Check for changes
+      run: |
+        git status
+  license-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout latest code
+        uses: actions/checkout@v3
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3.5.1
+        with:
+          node-version: 16.x
+      - name: Authenticate with GitHub package registry
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.ACCESS_TOKEN }}" >> ~/.npmrc
+      - name: Run npm install
+        run: npm install
+      - name: Check licenses
+        uses: tangro/actions-license-check@v1.0.12
+        with:
+          allowed-licenses: 'Apache-2.0'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_CONTEXT: ${{ toJson(github) }}
