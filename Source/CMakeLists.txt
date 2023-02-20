@@ -3,42 +3,37 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-# Licensed under the Apache License, Version 2.0 (the License); you may
-# not use this file except in compliance with the License.
-# You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the License); you may not use this file except in compliance with the
+# License. You may obtain a copy of the License at
 #
 # www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an AS IS BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an
+# AS IS BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
+# language governing permissions and limitations under the License.
 #
 # Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
 #
 
-# Select which parts of muRISCV-NN should be compiled.
-# There are some dependencies between the parts but they are not tracked
-# by this cmake. So, enabling some functions may require to enable some
-# other ones.
-option(CONCATENATION        "Concatenation"         ON)
-option(FULLYCONNECTED       "Fully Connected"       ON)
-option(CONVOLUTION          "Convolutions"          ON)
-option(ACTIVATION           "Activations"           ON)
-option(POOLING              "Pooling"               ON)
-option(SOFTMAX              "Softmax"               ON)
-option(BASICMATHSNN         "Basic Maths for NN"    ON)
-option(RESHAPE              "Reshape"               ON)
-option(SVDF                 "SVDF"                  ON)
-option(NNSUPPORT            "NN Support"            ON)
-option(LSTM                 "LSTM Support"          ON)
+# Select which parts of muRISCV-NN should be compiled. There are some dependencies between the parts but they are not
+# tracked by this cmake. So, enabling some functions may require to enable some other ones.
+option(CONCATENATION "Concatenation" ON)
+option(FULLYCONNECTED "Fully Connected" ON)
+option(CONVOLUTION "Convolutions" ON)
+option(ACTIVATION "Activations" ON)
+option(POOLING "Pooling" ON)
+option(SOFTMAX "Softmax" ON)
+option(BASICMATHSNN "Basic Maths for NN" ON)
+option(RESHAPE "Reshape" ON)
+option(SVDF "SVDF" ON)
+option(NNSUPPORT "NN Support" ON)
+option(LSTM "LSTM Support" ON)
 
 add_library(${MURISCVNN_LIB} STATIC)
 
-target_include_directories(${MURISCVNN_LIB} PUBLIC
-  ${CMAKE_SOURCE_DIR}/Include
-  ${CMAKE_SOURCE_DIR}/Include/CMSIS/NN/Include)
+target_include_directories(
+  ${MURISCVNN_LIB} PUBLIC ${CMAKE_SOURCE_DIR}/Include ${CMAKE_SOURCE_DIR}/Include/CMSIS/NN/Include
+)
 
 # TODO(fabianpedd): We currently need to include the Vicuna headers in order to redirect printf
 if(${SIMULATOR} STREQUAL "Vicuna")
