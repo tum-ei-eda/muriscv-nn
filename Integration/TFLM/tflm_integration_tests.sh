@@ -66,7 +66,7 @@ if [ $# -eq 0 ]
     GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/$5
     VLEN=$6               # Vector length parameter passed to simulator
     SIMULATOR=$7            # Spike/OVPsim
-    
+
 fi
 
 
@@ -96,7 +96,7 @@ for test in "${TESTS[@]}"; do
     ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
         ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${test} \
         ${TARGET_ARCH} ${VLEN} 1
-    
+
 done
 
 make -f tensorflow/lite/micro/tools/make/Makefile clean
@@ -114,7 +114,7 @@ for bm in "${BENCHMARKS[@]}"; do
     GCC_TOOLCHAIN_ROOT=${GCC_TOOLCHAIN_ROOT} \
     BUILD_TYPE=${BUILD_TYPE} \
     ${bm}
-    
+
     ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
     ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${bm} \
     ${TARGET_ARCH} ${VLEN} 1
