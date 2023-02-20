@@ -30,7 +30,7 @@ format:
   line_width: 120
   _help_tab_size:
   - How many spaces to tab for indent
-  tab_size: 4
+  tab_size: 2
   _help_use_tabchars:
   - If true, lines are indented using tab characters (utf-8
   - 0x09) instead of <tab_size> space characters (utf-8 0x20).
@@ -97,7 +97,7 @@ format:
   line_ending: unix
   _help_command_case:
   - Format command names consistently as 'lower' or 'upper' case
-  command_case: upper
+  command_case: lower
   _help_keyword_case:
   - Format keywords consistently as 'lower' or 'upper' case
   keyword_case: upper
