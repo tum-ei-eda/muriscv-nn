@@ -30,9 +30,9 @@ ENABLE_OVPSIM=0
 ENABLE_ETISS=0
 
 # RISC-V GCC
-ENABLE_DEFAULT=1
-ENABLE_PEXT=1
-ENABLE_VEXT=1
+ENABLE_DEFAULT=0
+ENABLE_PEXT=0
+ENABLE_VEXT=0
 
 MODELS=""
 
@@ -138,7 +138,8 @@ TARGET_ARGS_VEXT=""
 TARGET_ARGS_PEXT=""
 CONFIG_ARGS="--config mlif.num_threads=$COMPILE_THREADS"
 # FEATURE_ARGS="--feature debug --feature validate"
-FEATURE_ARGS="--feature debug"
+#FEATURE_ARGS="--feature debug"
+FEATURE_ARGS=""
 
 if [[ "$ENABLE_TFLM" -eq 1 ]]
 then
