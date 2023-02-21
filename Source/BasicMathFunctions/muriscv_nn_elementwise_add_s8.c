@@ -132,14 +132,17 @@ muriscv_nn_status muriscv_nn_elementwise_add_s8(const int8_t *input_1_vect,
     while (loop_count > 0)
     {
         /* Load vec 1 */
-        int32_t input_packed = muriscv_nn_read_q7x4_ia(&input_1_vect);
+        
+        
+        int32_t input_packed = muriscv_nn_read_q7x4_ia_fast(&input_1_vect);
+        
         input_packed = __rv_add8(input_packed, offset_1_packed);
         int32_t a1 = __rv_zunpkd810(input_packed);
         int32_t b1 = __rv_zunpkd832(input_packed);
         
                
         /* Load vec 2 */
-        input_packed = muriscv_nn_read_q7x4_ia(&input_2_vect);
+        input_packed = muriscv_nn_read_q7x4_ia_fast(&input_2_vect);
         input_packed = __rv_add8(input_packed, offset_2_packed);
         int32_t a2 = __rv_zunpkd810(input_packed);
         int32_t b2 = __rv_zunpkd832(input_packed);

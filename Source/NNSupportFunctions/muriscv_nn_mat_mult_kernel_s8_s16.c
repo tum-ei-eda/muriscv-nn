@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2010-2022 Arm Limited or its affiliates.
  *
@@ -81,13 +82,44 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
         /* accumulate over the vector */
         while (col_count)
         {
-            q31_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-            q31_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-
-            q31_t inA = muriscv_nn_read_q7x4_ia(&ip_a0);
+            //Access always word aligned
+            q31_t b0 = muriscv_nn_read_q15x2_ia_fast(&ip_b0);
+            
+            //Access is word aligned when num_col_a is even
+            q31_t b1;
+            if( num_col_a & 0x1)
+            {
+                b1 = muriscv_nn_read_q15x2_ia_slow(&ip_b1);
+            }
+            else
+            {
+                b1 = muriscv_nn_read_q15x2_ia_fast(&ip_b1);
+            }
+            
+            //access word aligned when location is multiple of 4
+            q31_t inA;
+            if( (uint32_t)ip_a0 % 4)
+            {
+                inA = muriscv_nn_read_q7x4_ia_slow(&ip_a0);
+            }
+            else
+            {
+                inA = muriscv_nn_read_q7x4_ia_fast(&ip_a0);
+            }
+                
             q31_t a01 = __rv_sunpkd810(inA);
             q31_t a02 = __rv_sunpkd832(inA);
-            inA = muriscv_nn_read_q7x4_ia(&ip_a1);
+            
+            //access word aligned when location is multiple of 4
+            if((uint32_t)ip_a1 % 4)
+            {
+                inA = muriscv_nn_read_q7x4_ia_slow(&ip_a1);
+            }
+            else
+            {
+                inA = muriscv_nn_read_q7x4_ia_fast(&ip_a1);
+            }
+            
             q31_t a11 = __rv_sunpkd810(inA);
             q31_t a12 = __rv_sunpkd832(inA);
 
@@ -96,8 +128,18 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
             ch_1_out_0 = __rv_kmada(ch_1_out_0, a11, b0);
             ch_1_out_1 = __rv_kmada(ch_1_out_1, a11, b1);
 
-            b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-            b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+            //access always word aligned
+            b0 = muriscv_nn_read_q15x2_ia_fast(&ip_b0);
+            
+            //access word aligned when num_col_a is even
+            if(num_col_a & 0x1)
+            {
+                b1 = muriscv_nn_read_q15x2_ia_slow(&ip_b1);
+            }
+            else
+            {
+                b1 = muriscv_nn_read_q15x2_ia_fast(&ip_b1);
+            }
 
             ch_0_out_0 = __rv_kmada(ch_0_out_0, a02, b0);
             ch_0_out_1 = __rv_kmada(ch_0_out_1, a02, b1);
@@ -178,18 +220,19 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
         uint16_t col_count = num_col_a >> 2;
         while (col_count)
         {
-            q31_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-            q31_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+            //possible optimization here
+            q31_t b0 = muriscv_nn_read_q15x2_ia_fast(&ip_b0);
+            q31_t b1 = muriscv_nn_read_q15x2_ia_fast(&ip_b1);
 
-            q31_t inA = muriscv_nn_read_q7x4_ia(&ip_a0);
+            q31_t inA = muriscv_nn_read_q7x4_ia_fast(&ip_a0);
             q31_t a01 = __rv_sunpkd810(inA);
             q31_t a02 = __rv_sunpkd832(inA);
 
             ch_0_out_0 = __rv_kmada(ch_0_out_0, a01, b0);
             ch_0_out_1 = __rv_kmada(ch_0_out_1, a01, b1);
 
-            b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-            b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+            b0 = muriscv_nn_read_q15x2_ia_fast(&ip_b0);
+            b1 = muriscv_nn_read_q15x2_ia_fast(&ip_b1);
             ch_0_out_0 = __rv_kmada(ch_0_out_0, a02, b0);
             ch_0_out_1 = __rv_kmada(ch_0_out_1, a02, b1);
 
@@ -199,6 +242,7 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
 #else
         uint16_t col_count = num_col_a;
 #endif
+        //possible optimization here
         while (col_count)
         {
             q7_t a0 = *ip_a0++;

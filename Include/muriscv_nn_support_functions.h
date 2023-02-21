@@ -528,11 +528,24 @@ void muriscv_nn_softmax_common_s8(const int8_t *input,
  @param[in]     in_q15   Pointer to pointer that holds address of input.
  @return        q31 value
 */
-static inline q31_t muriscv_nn_read_q15x2_ia(const q15_t **in_q15)
+static inline q31_t muriscv_nn_read_q15x2_ia_slow(const q15_t **in_q15)
 {
     q31_t val;
-
     memcpy(&val, *in_q15, 4);
+    *in_q15 += 2;
+
+    return val;
+}
+
+/**
+ @brief         Read 2 q15 elements and post increment pointer.
+ @param[in]     in_q15   Pointer to pointer that holds address of input.
+ @return        q31 value
+*/
+static inline q31_t muriscv_nn_read_q15x2_ia_fast(const q15_t **in_q15)
+{
+    q31_t val;
+    val = (*((uint32_t*)(*in_q15)));
     *in_q15 += 2;
 
     return val;
@@ -543,12 +556,24 @@ static inline q31_t muriscv_nn_read_q15x2_ia(const q15_t **in_q15)
   @param[in]     in_q7       Pointer to pointer that holds address of input.
   @return        q31 value
  */
-static inline q31_t muriscv_nn_read_q7x4_ia(const q7_t **in_q7)
+static inline q31_t muriscv_nn_read_q7x4_ia_fast(const q7_t **in_q7)
+{
+    q31_t val;
+    val = (*((q31_t*)(*in_q7)));
+    *in_q7 += 4;
+    return val;
+}
+/**
+  @brief         Read 4 q7 from q7 pointer and post increment pointer.
+  @param[in]     in_q7       Pointer to pointer that holds address of input.
+  @return        q31 value
+ */
+static inline q31_t muriscv_nn_read_q7x4_ia_slow(const q7_t **in_q7)
 {
     q31_t val;
     memcpy(&val, *in_q7, 4);
+    //val = (*((q31_t*)(*in_q7)));
     *in_q7 += 4;
-
     return val;
 }
 
@@ -561,7 +586,7 @@ static inline q31_t muriscv_nn_read_q15x2(const q15_t *in_q15)
 {
     q31_t val;
     memcpy(&val, in_q15, 4);
-
+    //val = (*((uint32_t*)(in_q15)));
     return val;
 }
 
@@ -574,6 +599,7 @@ static inline q31_t muriscv_nn_read_q7x4(const q7_t *in_q7)
 {
     q31_t val;
     memcpy(&val, in_q7, 4);
+    //val = (*((uint32_t*)(in_q7)));
 
     return val;
 }
