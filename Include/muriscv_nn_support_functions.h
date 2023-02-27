@@ -572,7 +572,6 @@ static inline q31_t muriscv_nn_read_q7x4_ia_slow(const q7_t **in_q7)
 {
     q31_t val;
     memcpy(&val, *in_q7, 4);
-    //val = (*((q31_t*)(*in_q7)));
     *in_q7 += 4;
     return val;
 }
@@ -585,8 +584,7 @@ static inline q31_t muriscv_nn_read_q7x4_ia_slow(const q7_t **in_q7)
 static inline q31_t muriscv_nn_read_q15x2(const q15_t *in_q15)
 {
     q31_t val;
-    memcpy(&val, in_q15, 4);
-    //val = (*((uint32_t*)(in_q15)));
+    val = (*((uint32_t*)(in_q15)));
     return val;
 }
 
@@ -598,8 +596,7 @@ static inline q31_t muriscv_nn_read_q15x2(const q15_t *in_q15)
 static inline q31_t muriscv_nn_read_q7x4(const q7_t *in_q7)
 {
     q31_t val;
-    memcpy(&val, in_q7, 4);
-    //val = (*((uint32_t*)(in_q7)));
+    val = (*((uint32_t*)(in_q7)));
 
     return val;
 }
