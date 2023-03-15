@@ -550,7 +550,26 @@ static inline q31_t muriscv_nn_read_q15x2_ia_fast(const q15_t **in_q15)
 
     return val;
 }
+/**
+ @brief         Read 2 q15 elements and post increment pointer.
+ @param[in]     in_q15   Pointer to pointer that holds address of input.
+ @return        q31 value
+*/
+static inline q31_t muriscv_nn_read_q15x2_ia_aligned(const q15_t **in_q15, const uint8_t alignment)
+{
+    q31_t val;
+    if(alignment == 0)
+    {
+         val = (*((uint32_t*)(*in_q15)));       
+    }
+    else
+    {
+         val = (uint32_t)((*((uint64_t*)(*in_q15 - 1))) >> 16); 
+    }
+    *in_q15 += 2;
 
+    return val;
+}
 /**
   @brief         Read 4 q7 from q7 pointer and post increment pointer.
   @param[in]     in_q7       Pointer to pointer that holds address of input.
@@ -575,7 +594,25 @@ static inline q31_t muriscv_nn_read_q7x4_ia_slow(const q7_t **in_q7)
     *in_q7 += 4;
     return val;
 }
-
+/**
+  @brief         Read 4 q7 from q7 pointer and post increment pointer.
+  @param[in]     in_q7       Pointer to pointer that holds address of input.
+  @return        q31 value
+ */
+static inline q31_t muriscv_nn_read_q7x4_ia_aligned(const q7_t **in_q7, const uint8_t alignment)
+{
+    q31_t val;
+    if (alignment == 0)
+    {
+        val = (*((q31_t*)(*in_q7)));
+    }
+    else
+    {
+        val = (uint32_t)((*((uint64_t*)(*in_q7 - alignment))) >> ((alignment) << 3));
+    }
+    *in_q7 += 4;
+    return val;
+}
 /**
   @brief         Read 2 q15 from q15 pointer.
   @param[in]     in_q15   pointer to address of input.

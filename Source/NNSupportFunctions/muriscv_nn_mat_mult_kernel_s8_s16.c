@@ -47,11 +47,14 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
 {
     // TODO(fabianpedd): Check if vectorization makes sense here?
 
+
 #if !defined(USE_VEXT)
     /* set up the second output pointers */
     q7_t *out_1 = out_0 + output_ch;
     const int32_t *bias = output_bias;
-
+    #if defined(USE_PEXT)
+    const q7_t b1_align = num_col_a % 2;
+    #endif
     uint16_t row_count = output_ch / 2;
     const q7_t *ip_a0 = input_a;
     /* this loop over rows in A */
@@ -61,8 +64,11 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
         const q15_t *ip_b0 = input_b;
         const q15_t *ip_b1 = ip_b0 + num_col_a;
 
+
         /* align the second pointer for A */
         const q7_t *ip_a1 = ip_a0 + num_col_a;
+        
+
 
         q31_t ch_0_out_0 = 0;
         q31_t ch_0_out_1 = 0;
@@ -79,46 +85,29 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
 
 #if defined(USE_PEXT)
         uint16_t col_count = num_col_a / 4;
+           
+        const q7_t a0_align  = (uint32_t)ip_a0 % 4;
+        const q7_t a1_align  = (uint32_t)ip_a1 % 4;    
+        
         /* accumulate over the vector */
         while (col_count)
         {
             //Access always word aligned
             q31_t b0 = muriscv_nn_read_q15x2_ia_fast(&ip_b0);
             
-            //Access is word aligned when num_col_a is even
-            q31_t b1;
-            if( num_col_a & 0x1)
-            {
-                b1 = muriscv_nn_read_q15x2_ia_slow(&ip_b1);
-            }
-            else
-            {
-                b1 = muriscv_nn_read_q15x2_ia_fast(&ip_b1);
-            }
+            //Access is word aligned when num_col_a is even              
+            q31_t b1 = muriscv_nn_read_q15x2_ia_aligned(&ip_b1, b1_align);
             
             //access word aligned when location is multiple of 4
-            q31_t inA;
-            if( (uint32_t)ip_a0 % 4)
-            {
-                inA = muriscv_nn_read_q7x4_ia_slow(&ip_a0);
-            }
-            else
-            {
-                inA = muriscv_nn_read_q7x4_ia_fast(&ip_a0);
-            }
-                
+            q31_t inA = muriscv_nn_read_q7x4_ia_aligned(&ip_a0, a0_align);
+
+            
+              
             q31_t a01 = __rv_sunpkd810(inA);
             q31_t a02 = __rv_sunpkd832(inA);
             
             //access word aligned when location is multiple of 4
-            if((uint32_t)ip_a1 % 4)
-            {
-                inA = muriscv_nn_read_q7x4_ia_slow(&ip_a1);
-            }
-            else
-            {
-                inA = muriscv_nn_read_q7x4_ia_fast(&ip_a1);
-            }
+            inA = muriscv_nn_read_q7x4_ia_aligned(&ip_a1, a1_align);
             
             q31_t a11 = __rv_sunpkd810(inA);
             q31_t a12 = __rv_sunpkd832(inA);
@@ -130,17 +119,10 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
 
             //access always word aligned
             b0 = muriscv_nn_read_q15x2_ia_fast(&ip_b0);
+            //Access is word aligned when num_col_a is even         
+            b1 = muriscv_nn_read_q15x2_ia_aligned(&ip_b1, b1_align);
             
-            //access word aligned when num_col_a is even
-            if(num_col_a & 0x1)
-            {
-                b1 = muriscv_nn_read_q15x2_ia_slow(&ip_b1);
-            }
-            else
-            {
-                b1 = muriscv_nn_read_q15x2_ia_fast(&ip_b1);
-            }
-
+            
             ch_0_out_0 = __rv_kmada(ch_0_out_0, a02, b0);
             ch_0_out_1 = __rv_kmada(ch_0_out_1, a02, b1);
             ch_1_out_0 = __rv_kmada(ch_1_out_0, a12, b0);
