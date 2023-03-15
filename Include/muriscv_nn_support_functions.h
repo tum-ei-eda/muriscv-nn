@@ -524,7 +524,7 @@ void muriscv_nn_softmax_common_s8(const int8_t *input,
  */
 
 /**
- @brief         Read 2 q15 elements and post increment pointer.
+ @brief         Read 2 q15 elements and post increment pointer. Always uses memcpy for read, consistent speed, regardless of alignment
  @param[in]     in_q15   Pointer to pointer that holds address of input.
  @return        q31 value
 */
@@ -538,7 +538,7 @@ static inline q31_t muriscv_nn_read_q15x2_ia_slow(const q15_t **in_q15)
 }
 
 /**
- @brief         Read 2 q15 elements and post increment pointer.
+ @brief         Read 2 q15 elements and post increment pointer.  Performs best for word aligned reads, otherwise performs extremely slowly
  @param[in]     in_q15   Pointer to pointer that holds address of input.
  @return        q31 value
 */
@@ -551,8 +551,9 @@ static inline q31_t muriscv_nn_read_q15x2_ia_fast(const q15_t **in_q15)
     return val;
 }
 /**
- @brief         Read 2 q15 elements and post increment pointer.
- @param[in]     in_q15   Pointer to pointer that holds address of input.
+ @brief         Read 2 q15 elements and post increment pointer.  Always performs read on word boundaries
+ @param[in]     in_q15           Pointer to pointer that holds address of input.
+ @param[in]     alignment        Number of q15 values away from word aligned boundary
  @return        q31 value
 */
 static inline q31_t muriscv_nn_read_q15x2_ia_aligned(const q15_t **in_q15, const uint8_t alignment)
@@ -571,7 +572,7 @@ static inline q31_t muriscv_nn_read_q15x2_ia_aligned(const q15_t **in_q15, const
     return val;
 }
 /**
-  @brief         Read 4 q7 from q7 pointer and post increment pointer.
+  @brief         Read 4 q7 from q7 pointer and post increment pointer.  Performs best for word aligned reads, otherwise performs extremely slowly
   @param[in]     in_q7       Pointer to pointer that holds address of input.
   @return        q31 value
  */
@@ -583,7 +584,7 @@ static inline q31_t muriscv_nn_read_q7x4_ia_fast(const q7_t **in_q7)
     return val;
 }
 /**
-  @brief         Read 4 q7 from q7 pointer and post increment pointer.
+  @brief         Read 4 q7 from q7 pointer and post increment pointer.  Always uses memcpy for read, consistent speed, regardless of alignment
   @param[in]     in_q7       Pointer to pointer that holds address of input.
   @return        q31 value
  */
@@ -595,11 +596,13 @@ static inline q31_t muriscv_nn_read_q7x4_ia_slow(const q7_t **in_q7)
     return val;
 }
 /**
-  @brief         Read 4 q7 from q7 pointer and post increment pointer.
-  @param[in]     in_q7       Pointer to pointer that holds address of input.
+  @brief         Read 4 q7 from q7 pointer and post increment pointer.  Always performs read on memory word boundaries
+  @param[in]     in_q7            Pointer to pointer that holds address of input.
+  @param[in]     alignment        Number of q7 values away from word aligned boundary
+  @param[in]     alignment_bits   Number of bits to shift to receive desired value, precalculated for efficency
   @return        q31 value
  */
-static inline q31_t muriscv_nn_read_q7x4_ia_aligned(const q7_t **in_q7, const uint8_t alignment)
+static inline q31_t muriscv_nn_read_q7x4_ia_aligned(const q7_t **in_q7, const uint8_t alignment, const uint8_t alignment_bits)
 {
     q31_t val;
     if (alignment == 0)
@@ -608,7 +611,7 @@ static inline q31_t muriscv_nn_read_q7x4_ia_aligned(const q7_t **in_q7, const ui
     }
     else
     {
-        val = (uint32_t)((*((uint64_t*)(*in_q7 - alignment))) >> ((alignment) << 3));
+        val = (uint32_t)((*((uint64_t*)(*in_q7 - alignment))) >> (alignment_bits));
     }
     *in_q7 += 4;
     return val;

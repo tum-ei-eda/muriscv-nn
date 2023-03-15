@@ -87,7 +87,9 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
         uint16_t col_count = num_col_a / 4;
            
         const q7_t a0_align  = (uint32_t)ip_a0 % 4;
-        const q7_t a1_align  = (uint32_t)ip_a1 % 4;    
+        const q7_t a0_align_bits = a0_align << 3;
+        const q7_t a1_align  = (uint32_t)ip_a1 % 4;
+        const q7_t a1_align_bits = a1_align << 3;    
         
         /* accumulate over the vector */
         while (col_count)
@@ -99,15 +101,13 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
             q31_t b1 = muriscv_nn_read_q15x2_ia_aligned(&ip_b1, b1_align);
             
             //access word aligned when location is multiple of 4
-            q31_t inA = muriscv_nn_read_q7x4_ia_aligned(&ip_a0, a0_align);
-
-            
-              
+            q31_t inA = muriscv_nn_read_q7x4_ia_aligned(&ip_a0, a0_align, a0_align_bits);
+    
             q31_t a01 = __rv_sunpkd810(inA);
             q31_t a02 = __rv_sunpkd832(inA);
             
             //access word aligned when location is multiple of 4
-            inA = muriscv_nn_read_q7x4_ia_aligned(&ip_a1, a1_align);
+            inA = muriscv_nn_read_q7x4_ia_aligned(&ip_a1, a1_align, a1_align_bits);
             
             q31_t a11 = __rv_sunpkd810(inA);
             q31_t a12 = __rv_sunpkd832(inA);
