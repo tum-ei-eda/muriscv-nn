@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+ * Copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -38,6 +38,12 @@ extern "C" {
 #define cmsis_nn_fc_params muriscv_nn_fc_params
 #define cmsis_nn_svdf_params muriscv_nn_svdf_params
 #define cmsis_nn_softmax_lut_s16 muriscv_nn_softmax_lut_s16
+
+#define cmsis_nn_lstm_params muriscv_nn_lstm_params
+#define cmsis_nn_lstm_context muriscv_nn_lstm_context
+#define cmsis_nn_lstm_dims muriscv_nn_lstm_dims
+
+
 
 #ifdef __cplusplus
 }

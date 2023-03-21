@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM.
+# Copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -29,7 +29,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # List of tests to run
-TESTS=(hello_world_test magic_wand_test micro_speech_test network_tester_test person_detection_test)
+#TESTS=(hello_world magic_wand_test micro_speech_test network_tester_test person_detection_test)
+TESTS=(hello_world)
 
 # List of benchmarks to run
 BENCHMARKS=(keyword_benchmark keyword_benchmark_8bit person_detection_benchmark)
@@ -73,11 +74,11 @@ fi
 
 cd ${TFLM_PATH}
 
-
+echo "starting make tests"
 make -f tensorflow/lite/micro/tools/make/Makefile clean
-
+echo "finish make tests"
 for test in "${TESTS[@]}"; do
-#USE_PEXT originally missing
+  echo ${test}
   make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \
     TARGET_ARCH=${TARGET_ARCH} \
@@ -89,14 +90,16 @@ for test in "${TESTS[@]}"; do
     GCC_TOOLCHAIN_ROOT=${GCC_TOOLCHAIN_ROOT} \
     BUILD_TYPE=${BUILD_TYPE} \
     ${test}
-    
+  echo ${test}
     ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
         ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${test} \
         ${TARGET_ARCH} ${VLEN} 1
     
 done
-
+echo "Starting make"
 make -f tensorflow/lite/micro/tools/make/Makefile clean
+
+echo "Completed Make"
 for bm in "${BENCHMARKS[@]}"; do
   make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \

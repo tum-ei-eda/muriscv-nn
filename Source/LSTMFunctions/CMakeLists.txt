@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2019-2021 Arm Limited.
+# SPDX-FileCopyrightText: Copyright 2019-2022 Arm Limited and/or its affiliates <open-source-office@arm.com>
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -15,9 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
+# Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
 #
 
-target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_relu_q7.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_relu6_s8.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_activation_s16.c)
+
+target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_lstm_unidirectional_s16_s8.c)
