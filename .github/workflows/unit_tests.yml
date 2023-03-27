@@ -3,7 +3,7 @@ name: Unit Tests
 on:
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
-    - cron: '0 8 * * *'
+    - cron: '0 4 * * *'
     
   push:
     branches: [ "master" ]
@@ -12,25 +12,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  Test_Scalar:
+  Test_x86:
     runs-on: ubuntu-20.04
+    continue-on-error: true
     steps:
     - uses: actions/checkout@v2  
-    
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-    
-    - name: Download Spike Cache
-      id: cache-Spike
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-spike-binaries
-      with:
-          path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            spike-binaries-
           
     - name: Download GCC Cache
       id: cache-GCC
@@ -42,97 +28,186 @@ jobs:
           key: gcc-binaries-${{ steps.date.outputs.date }}
           restore-keys: |
             gcc-binaries-
-          
-    - name: Install Spike Dependencies
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
         
-    - name: Run Scalar tests
+    - name: Run Scalar Tests on x86
       working-directory: ./Scripts
       run: |
-        ./test_scalar.sh
-        
-  Test_Packed:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v2  
-    
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-    
-    - name: Download Spike Cache
-      id: cache-Spike
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-spike-binaries
-      with:
-          path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            spike-binaries-
-          
-    - name: Download GCC Cache
-      id: cache-GCC
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-gcc-binaries
-      with:
-          path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            gcc-binaries-
-          
-    - name: Install Spike Dependencies
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-    
-    - name: Run Packed Tests
-      working-directory: ./Scripts
-      run: |
-        ./test_packed.sh
-        
-  Test_Vector:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@v2  
-    
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-    
-    - name: Download Spike Cache
-      id: cache-Spike
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-spike-binaries
-      with:
-          path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            spike-binaries-
-          
-    - name: Download GCC Cache
-      id: cache-GCC
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-gcc-binaries
-      with:
-          path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            gcc-binaries-
-          
-    - name: Install Spike Dependencies
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-    
-    - name: Run Vector Tests
-      working-directory: ./Scripts
-      run: |
-        ./test_vector.sh
-    
+        ./unit_tests.sh -t x86
 
+  Test_Spike:
+    runs-on: ubuntu-20.04
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v2  
+    
+    - name: Get date of last cache build
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
+    
+    - name: Download Spike Cache
+      id: cache-Spike
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-spike-binaries
+      with:
+          path: ./Sim/Spike/bin
+          key: spike-binaries-${{ steps.date.outputs.date }}
+          restore-keys: |
+            spike-binaries-
+          
+    - name: Download GCC Cache
+      id: cache-GCC
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: ./Toolchain
+          key: gcc-binaries-${{ steps.date.outputs.date }}
+          restore-keys: |
+            gcc-binaries-
+          
+    - name: Install Spike Dependencies
+      run: |
+        sudo apt-get install libboost-all-dev
+        sudo apt-get install device-tree-compiler
+        
+    - name: Run Scalar Tests on Spike with GCC
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s Spike
+        
+    - name: Run Scalar Tests on Spike with LLVM
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s Spike
+        
+    - name: Run PEXT Tests on Spike with GCC
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s Spike -p
+        
+    - name: Run VEXT Tests on Spike with GCC VLEN = 64
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s Spike -v -l 64
+    
+    - name: Run VEXT Tests on Spike with GCC VLEN = 128
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s Spike -v -l 128
+        
+    - name: Run VEXT Tests on Spike with GCC VLEN = 512
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s Spike -v -l 512
+        
+    - name: Run VEXT Tests on Spike with LLVM VLEN = 64
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s Spike -v -l 64
+    
+    - name: Run VEXT Tests on Spike with LLVM VLEN = 128
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s Spike -v -l 128
+        
+    - name: Run VEXT Tests on Spike with LLVM VLEN = 512
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s Spike -v -l 512
+
+    - name: Run VEXT Tests on Spike with GCC IMV VLEN = 64
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s Spike -v -i -l 64
+    
+    - name: Run VEXT Tests on Spike with GCC IMV VLEN = 128
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s Spike -v -i -l 128
+        
+    - name: Run VEXT Tests on Spike with GCC IMV VLEN = 512
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s Spike -v -i -l 512
+        
+    - name: Run VEXT Tests on Spike with LLVM IMV VLEN = 64
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s Spike -v -i -l 64
+    
+    - name: Run VEXT Tests on Spike with LLVM IMV VLEN = 128
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s Spike -v -i -l 128
+        
+    - name: Run VEXT Tests on Spike with LLVM IMV VLEN = 512
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s Spike -v -i -l 512
+
+  Test_OVPsim:
+    runs-on: ubuntu-20.04
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v2  
+    
+    - name: Get date of last cache build
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
+          
+    - name: Download GCC Cache
+      id: cache-GCC
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: ./Toolchain
+          key: gcc-binaries-${{ steps.date.outputs.date }}
+          restore-keys: |
+            gcc-binaries-
+        
+    - name: Run Scalar Tests on OVPsim with GCC
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s OVPsim
+        
+    - name: Run Scalar Tests on OVPsim with LLVM
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s OVPsim
+        
+    - name: Run PEXT Tests on OVPsim with GCC
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s OVPsim -p
+        
+    - name: Run VEXT Tests on OVPsim with GCC VLEN = 64
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s OVPsim -v -l 64
+    
+    - name: Run VEXT Tests on OVPsim with GCC VLEN = 128
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s OVPsim -v -l 128
+        
+    - name: Run VEXT Tests on OVPsim with GCC VLEN = 512
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t GCC -s OVPsim -v -l 512
+        
+    - name: Run VEXT Tests on OVPsim with LLVM VLEN = 64
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s OVPsim -v -l 64
+    
+    - name: Run VEXT Tests on OVPsim with LLVM VLEN = 128
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s OVPsim -v -l 128
+        
+    - name: Run VEXT Tests on OVPsim with LLVM VLEN = 512
+      working-directory: ./Scripts
+      run: |
+        ./unit_tests.sh -t LLVM -s OVPsim -v -l 512

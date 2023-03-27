@@ -67,17 +67,9 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
       
-    - name: Build Scalar muRISCV-NN with gcc
-      working-directory: ./Scripts
-      run: ./build_one.sh GCC rv32gc
-      
     - name: TFLM Integration Test for Scalar muRISCV-NN with gcc
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh OFF OFF RELEASE gcc rv32gc 1024 Spike
-      
-    - name: Build Scalar muRISCV-NN with llvm
-      working-directory: ./Scripts
-      run: ./build_one.sh LLVM rv32gc
       
     - name: TFLM Integration Test for Scalar muRISCV-NN with llvm
       working-directory: ./Integration/TFLM/tflite-micro
@@ -137,10 +129,6 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
       
-    - name: Build Scalar muRISCV-NN with gcc
-      working-directory: ./Scripts
-      run: ./build_one.sh GCC rv32gcp
-      
     - name: TFLM Integration Test for Scalar muRISCV-NN with gcc
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh OFF ON RELEASE gcc rv32gcp 1024 Spike
@@ -198,17 +186,9 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
       
-    - name: Build Scalar muRISCV-NN with gcc
-      working-directory: ./Scripts
-      run: ./build_one.sh GCC rv32gcv
-      
     - name: TFLM Integration Test for Scalar muRISCV-NN with gcc
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 64 Spike
-      
-    - name: Build Scalar muRISCV-NN with llvm
-      working-directory: ./Scripts
-      run: ./build_one.sh LLVM rv32gcv
       
     - name: TFLM Integration Test for Scalar muRISCV-NN with llvm
       working-directory: ./Integration/TFLM/tflite-micro
@@ -267,17 +247,9 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
       
-    - name: Build Scalar muRISCV-NN with gcc
-      working-directory: ./Scripts
-      run: ./build_one.sh GCC rv32gcv
-      
     - name: TFLM Integration Test for Scalar muRISCV-NN with gcc
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 128 Spike
-      
-    - name: Build Scalar muRISCV-NN with llvm
-      working-directory: ./Scripts
-      run: ./build_one.sh LLVM rv32gcv
       
     - name: TFLM Integration Test for Scalar muRISCV-NN with llvm
       working-directory: ./Integration/TFLM/tflite-micro
@@ -336,17 +308,9 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
       
-    - name: Build Scalar muRISCV-NN with gcc
-      working-directory: ./Scripts
-      run: ./build_one.sh GCC rv32gcv
-      
     - name: TFLM Integration Test for Scalar muRISCV-NN with gcc
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 512 Spike
-      
-    - name: Build Scalar muRISCV-NN with llvm
-      working-directory: ./Scripts
-      run: ./build_one.sh LLVM rv32gcv
       
     - name: TFLM Integration Test for Scalar muRISCV-NN with llvm
       working-directory: ./Integration/TFLM/tflite-micro
