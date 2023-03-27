@@ -14,7 +14,6 @@ on:
 jobs:
   Test_x86:
     runs-on: ubuntu-20.04
-    continue-on-error: true
     steps:
     - uses: actions/checkout@v2  
           
@@ -36,7 +35,6 @@ jobs:
 
   Test_Spike:
     runs-on: ubuntu-20.04
-    continue-on-error: true
     steps:
     - uses: actions/checkout@v2  
     
@@ -77,71 +75,85 @@ jobs:
         ./unit_tests.sh -t GCC -s Spike
         
     - name: Run Scalar Tests on Spike with LLVM
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s Spike
         
     - name: Run PEXT Tests on Spike with GCC
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s Spike -p
         
     - name: Run VEXT Tests on Spike with GCC VLEN = 64
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s Spike -v -l 64
     
     - name: Run VEXT Tests on Spike with GCC VLEN = 128
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s Spike -v -l 128
         
     - name: Run VEXT Tests on Spike with GCC VLEN = 512
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s Spike -v -l 512
         
     - name: Run VEXT Tests on Spike with LLVM VLEN = 64
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s Spike -v -l 64
     
     - name: Run VEXT Tests on Spike with LLVM VLEN = 128
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s Spike -v -l 128
         
     - name: Run VEXT Tests on Spike with LLVM VLEN = 512
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s Spike -v -l 512
 
     - name: Run VEXT Tests on Spike with GCC IMV VLEN = 64
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s Spike -v -i -l 64
     
     - name: Run VEXT Tests on Spike with GCC IMV VLEN = 128
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s Spike -v -i -l 128
         
     - name: Run VEXT Tests on Spike with GCC IMV VLEN = 512
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s Spike -v -i -l 512
         
     - name: Run VEXT Tests on Spike with LLVM IMV VLEN = 64
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s Spike -v -i -l 64
     
     - name: Run VEXT Tests on Spike with LLVM IMV VLEN = 128
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s Spike -v -i -l 128
         
     - name: Run VEXT Tests on Spike with LLVM IMV VLEN = 512
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s Spike -v -i -l 512
@@ -173,41 +185,49 @@ jobs:
         ./unit_tests.sh -t GCC -s OVPsim
         
     - name: Run Scalar Tests on OVPsim with LLVM
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s OVPsim
         
     - name: Run PEXT Tests on OVPsim with GCC
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s OVPsim -p
         
     - name: Run VEXT Tests on OVPsim with GCC VLEN = 64
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s OVPsim -v -l 64
     
     - name: Run VEXT Tests on OVPsim with GCC VLEN = 128
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s OVPsim -v -l 128
         
     - name: Run VEXT Tests on OVPsim with GCC VLEN = 512
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t GCC -s OVPsim -v -l 512
         
     - name: Run VEXT Tests on OVPsim with LLVM VLEN = 64
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s OVPsim -v -l 64
     
     - name: Run VEXT Tests on OVPsim with LLVM VLEN = 128
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s OVPsim -v -l 128
         
     - name: Run VEXT Tests on OVPsim with LLVM VLEN = 512
+      if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh -t LLVM -s OVPsim -v -l 512

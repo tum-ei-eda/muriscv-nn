@@ -1,9 +1,9 @@
-name: Spike Integration Tests
+name: Integration Tests
 
 on:
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
-    - cron: '0 8 * * *'
+    - cron: '0 6 * * *'
   push:
     branches: [ "master" ]
   pull_request:
@@ -14,9 +14,103 @@ on:
   
 jobs:
   
-  Spike_Integration_Tests_Scalar:
-    name: Scalar Integration Tests
+  OVPsim_Integration_Tests:
+    name: OVPsim Integration Tests
     runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install TFLM dependencies
+      run: |
+        sudo apt-get install python3-setuptools
+        pip3 install wheel
+        pip3 install Pillow
+        pip3 install Wave
+        
+    - name: Get date of last cache build
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
+        
+    - name: Download Cached GCC Binaries
+      id: cache-gcc
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: ./Toolchain
+          key: gcc-binaries-${{ steps.date.outputs.date }}
+          restore-keys: |
+            gcc-binaries-
+    
+    - name: Download OVPsim
+      working-directory: ./Sim/OVPsim/bin
+      run: ./download.sh
+      
+    - name: Download TFLM
+      working-directory: ./Integration/TFLM
+      run: git clone https://github.com/tensorflow/tflite-micro.git
+      
+    - name: Patch TFLM
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: git apply ../muriscv_nn.patch
+      
+    - name: Download LLVM
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 14
+        rm llvm.sh
+      
+    - name: TFLM Integration Test for Scalar muRISCV-NN with gcc with OVPsim
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: ../tflm_integration_tests.sh OFF OFF RELEASE gcc rv32gc 1024 OVPsim
+      
+    - name: TFLM Integration Test for Scalar muRISCV-NN with llvm with OVPsim
+      if: success() || failure()
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: ../tflm_integration_tests.sh OFF OFF RELEASE llvm rv32gc 1024 OVPsim
+      
+    - name: TFLM Integration Test for PEXT muRISCV-NN with gcc with OVPsim
+      if: success() || failure()
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: ../tflm_integration_tests.sh OFF ON RELEASE gcc rv32gcp 1024 OVPsim
+      
+    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=64 with OVPsim
+      if: success() || failure()
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 64 OVPsim
+      
+    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=64 with OVPsim
+      if: success() || failure()
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 64 OVPsim
+      
+    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=128 with OVPsim
+      if: success() || failure()
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 128 OVPsim
+      
+    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=128 with OVPsim
+      if: success() || failure()
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 128 OVPsim
+     
+    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=512 with OVPsim
+      if: success() || failure()
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 512 OVPsim
+      
+    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=512 with OVPsim
+      if: success() || failure()
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 512 OVPsim
+
+  Spike_Integration_Tests_Scalar:
+    name: Spike Scalar Integration Tests
+    runs-on: ubuntu-20.04
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v3
@@ -67,18 +161,28 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
       
-    - name: TFLM Integration Test for Scalar muRISCV-NN with gcc
+    - name: Download LLVM
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 14
+        rm llvm.sh
+      
+    - name: TFLM Integration Test for Scalar muRISCV-NN with gcc with Spike
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh OFF OFF RELEASE gcc rv32gc 1024 Spike
       
-    - name: TFLM Integration Test for Scalar muRISCV-NN with llvm
+    - name: TFLM Integration Test for Scalar muRISCV-NN with llvm with Spike
+      if: success() || failure()
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh OFF OFF RELEASE llvm rv32gc 1024 Spike
       
       
   Spike_Integration_Tests_Packed:
-    name: Packed Integration Tests
+    name: Spike Packed Integration Tests
     runs-on: ubuntu-20.04
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v3
@@ -129,13 +233,14 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
       
-    - name: TFLM Integration Test for Scalar muRISCV-NN with gcc
+    - name: TFLM Integration Test for PEXT muRISCV-NN with gcc with Spike
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh OFF ON RELEASE gcc rv32gcp 1024 Spike
       
   Spike_Integration_Tests_Vector_64:
-    name: Vector Integration Tests Len=64
+    name: Spike Vector Integration Tests Len=64
     runs-on: ubuntu-20.04
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v3
@@ -186,17 +291,27 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
       
-    - name: TFLM Integration Test for Scalar muRISCV-NN with gcc
+    - name: Download LLVM
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 14
+        rm llvm.sh
+      
+    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=64 with Spike
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 64 Spike
       
-    - name: TFLM Integration Test for Scalar muRISCV-NN with llvm
+    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=64 with Spike
+      if: success() || failure()
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 64 Spike
       
   Spike_Integration_Tests_Vector_128:
-    name: Vector Integration Tests Len=128
+    name: Spike Vector Integration Tests Len=128
     runs-on: ubuntu-20.04
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v3
@@ -247,17 +362,27 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
       
-    - name: TFLM Integration Test for Scalar muRISCV-NN with gcc
+    - name: Download LLVM
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 14
+        rm llvm.sh
+      
+    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=128 with Spike
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 128 Spike
       
-    - name: TFLM Integration Test for Scalar muRISCV-NN with llvm
+    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=128 with Spike
+      if: success() || failure()
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 128 Spike
-      
+  
   Spike_Integration_Tests_Vector_512:
-    name: Vector Integration Tests Len=512
+    name: Spike Vector Integration Tests Len=512
     runs-on: ubuntu-20.04
+    continue-on-error: true
 
     steps:
     - uses: actions/checkout@v3
@@ -308,10 +433,21 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
       
-    - name: TFLM Integration Test for Scalar muRISCV-NN with gcc
+    - name: Download LLVM
+      working-directory: ./Integration/TFLM/tflite-micro
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh 14
+        rm llvm.sh
+      
+    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=512 with Spike
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 512 Spike
       
-    - name: TFLM Integration Test for Scalar muRISCV-NN with llvm
+    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=512 with Spike
+      if: success() || failure()
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 512 Spike
+
+
