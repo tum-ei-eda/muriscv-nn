@@ -11,10 +11,24 @@ on:
     
   workflow_dispatch:
   
-  
 jobs:
   
   OVPsim_Integration_Tests:
+    strategy:
+        fail-fast: false
+        max-parallel: 1
+        matrix:
+          config:
+            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gc", vlen: 1024, sim: "OVPsim"}
+            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gc", vlen: 1024, sim: "OVPsim"}
+            - {vext: "OFF", pext: "ON", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcp", vlen: 1024, sim: "OVPsim"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 64, sim: "OVPsim"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 64, sim: "OVPsim"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 128, sim: "OVPsim"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 128, sim: "OVPsim"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 512, sim: "OVPsim"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 512, sim: "OVPsim"}
+            
     name: OVPsim Integration Tests
     runs-on: ubuntu-20.04
 
@@ -62,328 +76,28 @@ jobs:
         chmod +x llvm.sh
         sudo ./llvm.sh 14
         rm llvm.sh
-      
-    - name: TFLM Integration Test for Scalar muRISCV-NN with gcc with OVPsim
+           
+    - name: TFLM Integration Test for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with OVPsim, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh OFF OFF RELEASE gcc rv32gc 1024 OVPsim
-      
-    - name: TFLM Integration Test for Scalar muRISCV-NN with llvm with OVPsim
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh OFF OFF RELEASE llvm rv32gc 1024 OVPsim
-      
-    - name: TFLM Integration Test for PEXT muRISCV-NN with gcc with OVPsim
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh OFF ON RELEASE gcc rv32gcp 1024 OVPsim
-      
-    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=64 with OVPsim
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 64 OVPsim
-      
-    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=64 with OVPsim
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 64 OVPsim
-      
-    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=128 with OVPsim
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 128 OVPsim
-      
-    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=128 with OVPsim
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 128 OVPsim
-     
-    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=512 with OVPsim
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 512 OVPsim
-      
-    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=512 with OVPsim
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 512 OVPsim
-
-  Spike_Integration_Tests_Scalar:
-    name: Spike Scalar Integration Tests
-    runs-on: ubuntu-20.04
-    continue-on-error: true
-
-    steps:
-    - uses: actions/checkout@v3
+      run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.sim }}    
     
-    - name: Install TFLM dependencies
-      run: |
-        sudo apt-get install python3-setuptools
-        pip3 install wheel
-        pip3 install Pillow
-        pip3 install Wave
-        
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-        
-    - name: Download Cached GCC Binaries
-      id: cache-gcc
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-gcc-binaries
-      with:
-          path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            gcc-binaries-
+  Spike_Integration_Tests:    
+    strategy:
+        fail-fast: false
+        matrix:
+          config:
+            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gc", vlen: 1024, sim: "Spike"}
+            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gc", vlen: 1024, sim: "Spike"}
+            - {vext: "OFF", pext: "ON", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcp", vlen: 1024, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 64, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 64, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 128, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 128, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 512, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 512, sim: "Spike"}
             
-    - name: Install Spike Dependencies
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-    
-    - name: Download Spike Cache
-      id: cache-Spike
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-spike-binaries
-      with:
-          path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            spike-binaries-
-      
-    - name: Download TFLM
-      working-directory: ./Integration/TFLM
-      run: git clone https://github.com/tensorflow/tflite-micro.git
-      
-    - name: Patch TFLM
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: git apply ../muriscv_nn.patch
-      
-    - name: Download LLVM
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 14
-        rm llvm.sh
-      
-    - name: TFLM Integration Test for Scalar muRISCV-NN with gcc with Spike
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh OFF OFF RELEASE gcc rv32gc 1024 Spike
-      
-    - name: TFLM Integration Test for Scalar muRISCV-NN with llvm with Spike
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh OFF OFF RELEASE llvm rv32gc 1024 Spike
-      
-      
-  Spike_Integration_Tests_Packed:
-    name: Spike Packed Integration Tests
+    name: Spike Integration Tests
     runs-on: ubuntu-20.04
-    continue-on-error: true
-
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Install TFLM dependencies
-      run: |
-        sudo apt-get install python3-setuptools
-        pip3 install wheel
-        pip3 install Pillow
-        pip3 install Wave
-        
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-        
-    - name: Download Cached GCC Binaries
-      id: cache-gcc
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-gcc-binaries
-      with:
-          path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            gcc-binaries-
-            
-    - name: Install Spike Dependencies
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-    
-    - name: Download Spike Cache
-      id: cache-Spike
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-spike-binaries
-      with:
-          path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            spike-binaries-
-      
-    - name: Download TFLM
-      working-directory: ./Integration/TFLM
-      run: git clone https://github.com/tensorflow/tflite-micro.git
-      
-    - name: Patch TFLM
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: git apply ../muriscv_nn.patch
-      
-    - name: TFLM Integration Test for PEXT muRISCV-NN with gcc with Spike
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh OFF ON RELEASE gcc rv32gcp 1024 Spike
-      
-  Spike_Integration_Tests_Vector_64:
-    name: Spike Vector Integration Tests Len=64
-    runs-on: ubuntu-20.04
-    continue-on-error: true
-
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Install TFLM dependencies
-      run: |
-        sudo apt-get install python3-setuptools
-        pip3 install wheel
-        pip3 install Pillow
-        pip3 install Wave
-        
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-        
-    - name: Download Cached GCC Binaries
-      id: cache-gcc
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-gcc-binaries
-      with:
-          path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            gcc-binaries-
-            
-    - name: Install Spike Dependencies
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-    
-    - name: Download Spike Cache
-      id: cache-Spike
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-spike-binaries
-      with:
-          path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            spike-binaries-
-      
-    - name: Download TFLM
-      working-directory: ./Integration/TFLM
-      run: git clone https://github.com/tensorflow/tflite-micro.git
-      
-    - name: Patch TFLM
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: git apply ../muriscv_nn.patch
-      
-    - name: Download LLVM
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 14
-        rm llvm.sh
-      
-    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=64 with Spike
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 64 Spike
-      
-    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=64 with Spike
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 64 Spike
-      
-  Spike_Integration_Tests_Vector_128:
-    name: Spike Vector Integration Tests Len=128
-    runs-on: ubuntu-20.04
-    continue-on-error: true
-
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Install TFLM dependencies
-      run: |
-        sudo apt-get install python3-setuptools
-        pip3 install wheel
-        pip3 install Pillow
-        pip3 install Wave
-        
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-        
-    - name: Download Cached GCC Binaries
-      id: cache-gcc
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-gcc-binaries
-      with:
-          path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            gcc-binaries-
-            
-    - name: Install Spike Dependencies
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-    
-    - name: Download Spike Cache
-      id: cache-Spike
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-spike-binaries
-      with:
-          path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            spike-binaries-
-      
-    - name: Download TFLM
-      working-directory: ./Integration/TFLM
-      run: git clone https://github.com/tensorflow/tflite-micro.git
-      
-    - name: Patch TFLM
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: git apply ../muriscv_nn.patch
-      
-    - name: Download LLVM
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 14
-        rm llvm.sh
-      
-    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=128 with Spike
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 128 Spike
-      
-    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=128 with Spike
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 128 Spike
-  
-  Spike_Integration_Tests_Vector_512:
-    name: Spike Vector Integration Tests Len=512
-    runs-on: ubuntu-20.04
-    continue-on-error: true
-
     steps:
     - uses: actions/checkout@v3
     
@@ -440,14 +154,8 @@ jobs:
         chmod +x llvm.sh
         sudo ./llvm.sh 14
         rm llvm.sh
-      
-    - name: TFLM Integration Test for VEXT muRISCV-NN with gcc VLEN=512 with Spike
+           
+    - name: TFLM Integration Test for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE gcc rv32gcv 512 Spike
+      run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.sim }}
       
-    - name: TFLM Integration Test for VEXT muRISCV-NN with llvm VLEN=512 with Spike
-      if: success() || failure()
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ON OFF RELEASE llvm rv32gcv 512 Spike
-
-
