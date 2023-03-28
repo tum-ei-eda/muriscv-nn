@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM.
+# Copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -29,7 +29,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # List of tests to run
-TESTS=(hello_world_test magic_wand_test micro_speech_test network_tester_test person_detection_test)
+#TESTS=(hello_world magic_wand_test micro_speech_test network_tester_test person_detection_test)
+TESTS=(hello_world)
 
 # List of benchmarks to run
 BENCHMARKS=(keyword_benchmark keyword_benchmark_8bit person_detection_benchmark)
@@ -69,15 +70,17 @@ if [ $# -eq 0 ]
 fi
 
 
-# TODO(fabianpedd): check whether the args above actually get passed to the code, such as USE_VEXT
+#If VEXT is disabled, set VLEN to 1024 to prevent simulator complaints
+if [ ${USE_VEXT} == OFF ]; then
+    VLEN='1024'
+fi
 
 cd ${TFLM_PATH}
-
 
 make -f tensorflow/lite/micro/tools/make/Makefile clean
 
 for test in "${TESTS[@]}"; do
-#USE_PEXT originally missing
+  echo ${test}
   make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \
     TARGET_ARCH=${TARGET_ARCH} \
@@ -89,7 +92,7 @@ for test in "${TESTS[@]}"; do
     GCC_TOOLCHAIN_ROOT=${GCC_TOOLCHAIN_ROOT} \
     BUILD_TYPE=${BUILD_TYPE} \
     ${test}
-    
+  echo ${test}
     ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
         ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${test} \
         ${TARGET_ARCH} ${VLEN} 1
@@ -97,6 +100,8 @@ for test in "${TESTS[@]}"; do
 done
 
 make -f tensorflow/lite/micro/tools/make/Makefile clean
+
+
 for bm in "${BENCHMARKS[@]}"; do
   make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \

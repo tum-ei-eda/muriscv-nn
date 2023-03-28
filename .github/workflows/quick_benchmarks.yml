@@ -40,25 +40,6 @@ jobs:
       run: |
         sudo apt-get install libboost-all-dev
         sudo apt-get install device-tree-compiler
-    
-    - name: Download Spike Cache
-      id: cache-Spike
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-spike-binaries
-      with:
-          path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            spike-binaries-
-            
-    - name: Download TFLM
-      working-directory: ./Integration/TFLM
-      run: git clone https://github.com/tensorflow/tflite-micro.git
-      
-    - name: Patch TFLM
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: git apply ../muriscv_nn.patch
       
     - name: Setup MLonMCU
       working-directory: ./Integration/MLonMCU

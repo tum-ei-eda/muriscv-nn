@@ -1,6 +1,5 @@
-#!/bin/bash
 #
-# Copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM.
+# SPDX-FileCopyrightText: Copyright 2019-2022 Arm Limited and/or its affiliates <open-source-office@arm.com>
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -16,13 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
+#
 
-# This script runs all other build / test / integration scripts
 
-# Prevent silent failures
-set -euo pipefail
-
-./build.sh
-./test_scalar.sh
-./test_vector.sh
-./test_packed.sh
+target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_lstm_unidirectional_s16_s8.c)

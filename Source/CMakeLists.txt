@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+# Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
 #
 
 # Select which parts of muRISCV-NN should be compiled.
@@ -32,6 +32,7 @@ option(BASICMATHSNN         "Basic Maths for NN"    ON)
 option(RESHAPE              "Reshape"               ON)
 option(SVDF                 "SVDF"                  ON)
 option(NNSUPPORT            "NN Support"            ON)
+option(LSTM                 "LSTM Support"          ON)
 
 add_library(${MURISCVNN_LIB} STATIC)
 
@@ -78,6 +79,10 @@ endif()
 
 if(RESHAPE)
   add_subdirectory(ReshapeFunctions)
+endif()
+
+if(LSTM)
+  add_subdirectory(LSTMFunctions)
 endif()
 
 # Keep NNSUPPORT at the end

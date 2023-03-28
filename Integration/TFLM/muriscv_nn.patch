@@ -5,7 +5,7 @@ index 0000000..19917a7
 +++ b/tensorflow/lite/micro/muriscv_nn/micro_time.cc
 @@ -0,0 +1,32 @@
 +/*
-+ * Copyright (C) 2022 Chair of Electronic Design Automation, TUM
++ * Copyright (C) 2023 Chair of Electronic Design Automation, TUM
 + *
 + * SPDX-License-Identifier: Apache-2.0
 + *
@@ -43,7 +43,7 @@ index 0000000..b34c1cd
 +++ b/tensorflow/lite/micro/muriscv_nn/system_setup.cc
 @@ -0,0 +1,31 @@
 +/*
-+ * Copyright (C) 2022 Chair of Electronic Design Automation, TUM
++ * Copyright (C) 2023 Chair of Electronic Design Automation, TUM
 + *
 + * SPDX-License-Identifier: Apache-2.0
 + *
@@ -141,7 +141,7 @@ index 0000000..e61b748
 --- /dev/null
 +++ b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
 @@ -0,0 +1,90 @@
-+# Copyright (C) 2021 Chair of Electronic Design Automation, TUM
++# Copyright (C) 2023 Chair of Electronic Design Automation, TUM
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
 +# you may not use this file except in compliance with the License.
@@ -248,11 +248,10 @@ diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/conv.cc b/tensorflow/lite/mi
 index bf88e88..422f8e0 100644
 --- a/tensorflow/lite/micro/kernels/cmsis_nn/conv.cc
 +++ b/tensorflow/lite/micro/kernels/cmsis_nn/conv.cc
-@@ -15,8 +15,8 @@ limitations under the License.
+@@ -15,7 +15,8 @@ limitations under the License.
  
  #include "tensorflow/lite/micro/kernels/conv.h"
  
--#include "Include/arm_nn_types.h"
 -#include "Include/arm_nnfunctions.h"
 +#include "../../../Include/CMSIS/NN/Include/arm_nn_types.h"
 +#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
@@ -328,14 +327,28 @@ diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/svdf.cc b/tensorflow/lite/mi
 index 99f2a74..5f52a68 100644
 --- a/tensorflow/lite/micro/kernels/cmsis_nn/svdf.cc
 +++ b/tensorflow/lite/micro/kernels/cmsis_nn/svdf.cc
-@@ -15,8 +15,8 @@ limitations under the License.
+@@ -15,7 +15,8 @@ limitations under the License.
  
  #include "tensorflow/lite/micro/kernels/svdf.h"
  
--#include "Include/arm_nn_types.h"
 -#include "Include/arm_nnfunctions.h"
 +#include "../../../Include/CMSIS/NN/Include/arm_nn_types.h"
 +#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
  #include "tensorflow/lite/c/builtin_op_data.h"
  #include "tensorflow/lite/c/common.h"
  #include "tensorflow/lite/kernels/internal/common.h"
+ 
+diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/unidirectional_sequence_lstm.cc b/tensorflow/lite/micro/kernels/cmsis_nn/unidirectional_sequence_lstm.cc
+index 4e7402e..6117f84 100644
+--- a/tensorflow/lite/micro/kernels/cmsis_nn/unidirectional_sequence_lstm.cc
++++ b/tensorflow/lite/micro/kernels/cmsis_nn/unidirectional_sequence_lstm.cc
+@@ -20,7 +20,8 @@ limitations under the License.
+ #include <algorithm>
+ #include <limits>
+ 
+-#include "Include/arm_nnfunctions.h"
++#include "../../../Include/CMSIS/NN/Include/arm_nn_types.h"
++#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
+ #include "tensorflow/lite/kernels/internal/quantization_util.h"
+ #include "tensorflow/lite/kernels/kernel_util.h"
+ #include "tensorflow/lite/micro/kernels/fully_connected.h"

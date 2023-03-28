@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
  */
 
 /**
@@ -1051,6 +1051,24 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16(const int16_t *input_1_vect,
  * sigmoid and tanh
  *
  */
+ 
+ /**
+ * @brief s16 neural network activation function using direct table look-up
+ * @param[in]       input        pointer to input data
+ * @param[out]      output      pointer to output
+ * @param[in]       size        number of elements
+ * @param[in]       left_shift  bit-width of the integer part, assume to be smaller than 3
+ * @param[in]       type        type of activation functions
+ *
+ * @details Supported framework: TensorFlow Lite for Microcontrollers.
+ * This activation function must be bit precise congruent with the corresponding TFLM tanh and sigmoid actication
+ * functions
+ */
+void muriscv_nn_activation_s16(const int16_t *input,
+                           int16_t *output,
+                           const uint16_t size,
+                           const uint16_t left_shift,
+                           const muriscv_nn_activation_type type);
 
 /**
  * @brief Q7 RELU function
@@ -1642,6 +1660,76 @@ muriscv_nn_status muriscv_nn_svdf_state_s16_s8(const muriscv_nn_context *input_c
                                                const q31_t *bias_data,
                                                const muriscv_nn_dims *output_dims,
                                                q7_t *output_data);
+                                               
+                                               
+/**
+ * @defgroup LSTM LSTM Layer Functions
+ *
+ */
+
+/**
+ * @brief LSTM unidirectional function with 8 bit input and output and 16 bit gate output
+ * Peephole connections, projection, clipping, combined input/forget gate and layer normalization are not supported.
+ *
+ * @param[in]   scratch_buffers                 Struct containing scratch buffers
+ *                                              Expected size for each scratch buffer is
+ *                                              lstm_dims->num_batches * lstm_dims->num_outputs.
+ * @param[in]   input_data                      Pointer to input data
+ * @param[in]   lstm_dims                       LSTM input parameters related to dimensions
+ * @param[in]   input_to_input_weights          Input to input weights
+ * @param[in]   input_to_forget_weights         Input to forget weights
+ * @param[in]   input_to_cell_weights           Input to cell weights
+ * @param[in]   input_to_output_weights         Input to output weights
+ * @param[in]   recurrent_to_input_weights      Recurrent to input weights
+ * @param[in]   recurrent_to_forget_weights     Recurrent to forget weights
+ * @param[in]   recurrent_to_cell_weights       Recurrent to cell weights
+ * @param[in]   recurrent_to_output_weights     Recurrent to output weights
+ * @param[in]   cell_to_input_weights           Cell to input weights. Not used.
+ * @param[in]   cell_to_forget_weights          Cell to forget weights. Not used.
+ * @param[in]   cell_to_output_weights          Cell to output weights. Not used.
+ * @param[in]   projection_weights              Projection weights. Not used.
+ * @param[in]   lstm                            LSTM parameters. See struct declaration
+ * @param[in]   output_state                    Pointer to (recurrent) output state
+ * @param[in]   cell_state                      Pointer to cell state
+ * @param[in]   output_data                     Pointer to output state
+ *
+ * @note Following assumptions are done based on LSTM functionality as supported by
+ *       Keras version 2.9.0 at the time of development. As stated here,
+ *       https://github.com/tensorflow/community/blob/master/rfcs/20180920-unify-rnn-interface.md
+ *       Keras's LSTMCell is equivalent to TensorFlow's BasicLSTMCell,
+ *       which does not support peephole, clipping or projection.
+ *       Layer normalization and combined input/forget gate are not supported either.
+ *
+ *       1 Input to input weight can not be nullptr. Otherwise nullptr for combined input/forgat gate.
+ *       2 Cell weights are not used and should be nullptr. Otherwise needed for peephole connections.
+ *       3 Projection weight is not used and should be nullpr. Otherwise needed for projection.
+ *
+ * @return     The function returns <code>ARM_CMSIS_NN_SUCCESS</code>
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite micro
+ *
+ */
+muriscv_nn_status muriscv_nn_lstm_unidirectional_s16_s8(muriscv_nn_lstm_context *scratch_buffers,
+                                                   const int8_t *input_data,
+                                                   const muriscv_nn_lstm_dims *lstm_dims,
+                                                   const int8_t *input_to_input_weights,
+                                                   const int8_t *input_to_forget_weights,
+                                                   const int8_t *input_to_cell_weights,
+                                                   const int8_t *input_to_output_weights,
+                                                   const int8_t *recurrent_to_input_weights,
+                                                   const int8_t *recurrent_to_forget_weights,
+                                                   const int8_t *recurrent_to_cell_weights,
+                                                   const int8_t *recurrent_to_output_weights,
+                                                   const int16_t *cell_to_input_weights,
+                                                   const int16_t *cell_to_forget_weights,
+                                                   const int16_t *cell_to_output_weights,
+                                                   const int8_t *projection_weights,
+                                                   const muriscv_nn_lstm_params *lstm,
+                                                   int8_t *output_state,
+                                                   int16_t *cell_state,
+                                                   int8_t *output_data);
+
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+ * Copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -78,6 +78,8 @@ extern "C" {
 
 #define arm_svdf_s8 muriscv_nn_svdf_s8
 #define arm_svdf_state_s16_s8 muriscv_nn_svdf_state_s16_s8
+
+#define arm_lstm_unidirectional_s16_s8 muriscv_nn_lstm_unidirectional_s16_s8
 
 #ifdef __cplusplus
 }
