@@ -70,13 +70,15 @@ if [ $# -eq 0 ]
 fi
 
 
-# TODO(fabianpedd): check whether the args above actually get passed to the code, such as USE_VEXT
+#If VEXT is disabled, set VLEN to 1024 to prevent simulator complaints
+if [ ${USE_VEXT} == OFF ]; then
+    VLEN='1024'
+fi
 
 cd ${TFLM_PATH}
 
-echo "starting make tests"
 make -f tensorflow/lite/micro/tools/make/Makefile clean
-echo "finish make tests"
+
 for test in "${TESTS[@]}"; do
   echo ${test}
   make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
@@ -96,10 +98,10 @@ for test in "${TESTS[@]}"; do
         ${TARGET_ARCH} ${VLEN} 1
     
 done
-echo "Starting make"
+
 make -f tensorflow/lite/micro/tools/make/Makefile clean
 
-echo "Completed Make"
+
 for bm in "${BENCHMARKS[@]}"; do
   make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \
