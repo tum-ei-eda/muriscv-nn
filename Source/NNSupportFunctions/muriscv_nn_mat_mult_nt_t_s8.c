@@ -89,7 +89,8 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
         //Sum elements 4 at a time
         for (int32_t x = 0; x < (rhs_cols >> 2); ++x)
         {   
-            //possible optimization, better sign extension method than <<16 >> 16?? DO THIS
+            
+            //attempt a better version of this?
             q31_t rhs_element = muriscv_nn_read_q7x4_ia_fast(&rhs_0);
             q31_t rhs_10 = __rv_sunpkd810(rhs_element);
             q31_t rhs_32 = __rv_sunpkd832(rhs_element);
@@ -113,6 +114,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
             rhs_32 = __rv_sunpkd832(rhs_element);
             result = __rv_add16(rhs_10, rhs_32);
             lhs_offset_contribution3 += ((result << 16) >> 16) + (result >> 16);
+            
             
         }
         //Leftover elements
@@ -182,48 +184,27 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
             
             for (int32_t x = 0; x < (rhs_cols >> 2); ++x)
             {
-            
-                q31_t read_in = muriscv_nn_read_q7x4_ia_aligned(&lhs_ptr, lhs_0_align, lhs_0_alignbits); 
-                q31_t lhs_10 = __rv_sunpkd810(read_in);
-                q31_t lhs_32 = __rv_sunpkd832(read_in);
                 
-                read_in = muriscv_nn_read_q7x4_ia_fast(&rhs_0);
-                q31_t rhs_0_10 = __rv_sunpkd810(read_in);
-                q31_t rhs_0_32 = __rv_sunpkd832(read_in);
-                
-                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_1, rhs_1_align, rhs_1_alignbits);
-                q31_t rhs_1_10 = __rv_sunpkd810(read_in);
-                q31_t rhs_1_32 = __rv_sunpkd832(read_in);
-                
-                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_2, rhs_2_align, rhs_2_alignbits);
-                q31_t rhs_2_10 = __rv_sunpkd810(read_in);
-                q31_t rhs_2_32 = __rv_sunpkd832(read_in);
-                
-                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_3, rhs_3_align, rhs_3_alignbits);
-                q31_t rhs_3_10 = __rv_sunpkd810(read_in);
-                q31_t rhs_3_32 = __rv_sunpkd832(read_in);
-                
-                res00 = __rv_kmada(res00, lhs_10, rhs_0_10);
-                res00 = __rv_kmada(res00, lhs_32, rhs_0_32);
-                res01 = __rv_kmada(res01, lhs_10, rhs_1_10);
-                res01 = __rv_kmada(res01, lhs_32, rhs_1_32);
-                res02 = __rv_kmada(res02, lhs_10, rhs_2_10);
-                res02 = __rv_kmada(res02, lhs_32, rhs_2_32);
-                res03 = __rv_kmada(res03, lhs_10, rhs_3_10);
-                res03 = __rv_kmada(res03, lhs_32, rhs_3_32);
+                q31_t in_lhs= muriscv_nn_read_q7x4_ia_aligned(&lhs_ptr, lhs_0_align, lhs_0_alignbits); 
 
-                read_in = muriscv_nn_read_q7x4_ia_aligned(&lhs_ptr1, lhs_1_align, lhs_1_alignbits);
-                lhs_10 = __rv_sunpkd810(read_in);
-                lhs_32 = __rv_sunpkd832(read_in);
+                q31_t in_rhs_0 = muriscv_nn_read_q7x4_ia_fast(&rhs_0);
+                q31_t in_rhs_1 = muriscv_nn_read_q7x4_ia_aligned(&rhs_1, rhs_1_align, rhs_1_alignbits);
+                q31_t in_rhs_2 = muriscv_nn_read_q7x4_ia_aligned(&rhs_2, rhs_2_align, rhs_2_alignbits);
+                q31_t in_rhs_3 = muriscv_nn_read_q7x4_ia_aligned(&rhs_3, rhs_3_align, rhs_3_alignbits);
                 
-                res10 = __rv_kmada(res10, lhs_10, rhs_0_10);
-                res10 = __rv_kmada(res10, lhs_32, rhs_0_32);
-                res11 = __rv_kmada(res11, lhs_10, rhs_1_10);
-                res11 = __rv_kmada(res11, lhs_32, rhs_1_32);
-                res12 = __rv_kmada(res12, lhs_10, rhs_2_10);
-                res12 = __rv_kmada(res12, lhs_32, rhs_2_32);
-                res13 = __rv_kmada(res13, lhs_10, rhs_3_10);
-                res13 = __rv_kmada(res13, lhs_32, rhs_3_32);
+                res00 = __rv_smaqa(res00, in_lhs, in_rhs_0);
+                res01 = __rv_smaqa(res01, in_lhs, in_rhs_1);
+                res02 = __rv_smaqa(res02, in_lhs, in_rhs_2);
+                res03 = __rv_smaqa(res03, in_lhs, in_rhs_3);
+
+                in_lhs = muriscv_nn_read_q7x4_ia_aligned(&lhs_ptr1, lhs_1_align, lhs_1_alignbits);
+                
+                res10 = __rv_smaqa(res10, in_lhs, in_rhs_0);
+                res11 = __rv_smaqa(res11, in_lhs, in_rhs_1);
+                res12 = __rv_smaqa(res12, in_lhs, in_rhs_2);
+                res13 = __rv_smaqa(res13, in_lhs, in_rhs_3);
+                
+                
             }
             //leftover columns in rhs.  Case not used by aww vww
             for (int32_t x = 0; x < (rhs_cols % 4); ++x)
@@ -301,7 +282,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
         }
         // Left-over rows in LHS
         //might be able to fold this up into previous case at cost of performance
-        //This is the only case used by vww and aww
+        //This is the only edge case used by vww and aww
         if (lhs_rows % 2)
         {
             const q7_t *rhs_ptr = &rhs[0];
@@ -331,35 +312,19 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
             }
                     
             for (int32_t x = 0; x < (rhs_cols >> 2); ++x)
-            {
-                q31_t read_in = muriscv_nn_read_q7x4_ia_aligned(&lhs_ptr, lhs_0_align, lhs_0_alignbits); 
-                q31_t lhs_10 = __rv_sunpkd810(read_in);
-                q31_t lhs_32 = __rv_sunpkd832(read_in);
+            {   
+                q31_t in_lhs = muriscv_nn_read_q7x4_ia_aligned(&lhs_ptr, lhs_0_align, lhs_0_alignbits); 
                 
-                read_in = muriscv_nn_read_q7x4_ia_fast(&rhs_0);
-                q31_t rhs_0_10 = __rv_sunpkd810(read_in);
-                q31_t rhs_0_32 = __rv_sunpkd832(read_in);
+                q31_t in_rhs_0 = muriscv_nn_read_q7x4_ia_fast(&rhs_0);              
+                q31_t in_rhs_1 = muriscv_nn_read_q7x4_ia_aligned(&rhs_1, rhs_1_align, rhs_1_alignbits);           
+                q31_t in_rhs_2 = muriscv_nn_read_q7x4_ia_aligned(&rhs_2, rhs_2_align, rhs_2_alignbits);                
+                q31_t in_rhs_3 = muriscv_nn_read_q7x4_ia_aligned(&rhs_3, rhs_3_align, rhs_3_alignbits);
                 
-                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_1, rhs_1_align, rhs_1_alignbits);
-                q31_t rhs_1_10 = __rv_sunpkd810(read_in);
-                q31_t rhs_1_32 = __rv_sunpkd832(read_in);
+                res00 = __rv_smaqa(res00, in_lhs, in_rhs_0);
+                res01 = __rv_smaqa(res01, in_lhs, in_rhs_1);
+                res02 = __rv_smaqa(res02, in_lhs, in_rhs_2);
+                res03 = __rv_smaqa(res03, in_lhs, in_rhs_3);
                 
-                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_2, rhs_2_align, rhs_2_alignbits);
-                q31_t rhs_2_10 = __rv_sunpkd810(read_in);
-                q31_t rhs_2_32 = __rv_sunpkd832(read_in);
-                
-                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_3, rhs_3_align, rhs_3_alignbits);
-                q31_t rhs_3_10 = __rv_sunpkd810(read_in);
-                q31_t rhs_3_32 = __rv_sunpkd832(read_in);
-                
-                res00 = __rv_kmada(res00, lhs_10, rhs_0_10);
-                res00 = __rv_kmada(res00, lhs_32, rhs_0_32);
-                res01 = __rv_kmada(res01, lhs_10, rhs_1_10);
-                res01 = __rv_kmada(res01, lhs_32, rhs_1_32);
-                res02 = __rv_kmada(res02, lhs_10, rhs_2_10);
-                res02 = __rv_kmada(res02, lhs_32, rhs_2_32);
-                res03 = __rv_kmada(res03, lhs_10, rhs_3_10);
-                res03 = __rv_kmada(res03, lhs_32, rhs_3_32);     
             }
             //for leftover columns.  Possible optimizations, not used by aww/vww
             for (int32_t x = 0; x < (rhs_cols % 4); ++x)
