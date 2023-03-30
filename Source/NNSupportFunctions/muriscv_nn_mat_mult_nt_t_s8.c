@@ -15,11 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
  */
 
 #if defined(USE_VEXT)
 #include <riscv_vector.h>
+#elif defined(USE_PEXT)
+#include <rvp_intrinsic.h>
 #endif
 
 #include "muriscv_nn_support_functions.h"
@@ -55,8 +57,404 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
                                               const int32_t activation_min,
                                               const int32_t activation_max)
 {
+    #if defined(USE_PEXT)
+     // TODO(parkerjones): Find benchmark to test remaining edge cases for PEXT (and maybe implement V-Ext?)
+     int32_t activation_max_packed = ((uint8_t)activation_max << 24) | ((uint8_t)activation_max << 16) | ((uint8_t)activation_max << 8) |((uint8_t)activation_max);
+     int32_t activation_min_packed = ((uint8_t)activation_min << 24) | ((uint8_t)activation_min << 16) | ((uint8_t)activation_min << 8) |((uint8_t)activation_min);
+     int32_t dst_offset_packed = ((uint8_t)dst_offset << 24) | ((uint8_t)dst_offset << 16) | ((uint8_t)dst_offset << 8) |((uint8_t)dst_offset);
+     
+    for (int32_t rhs_rows_idx = 0; rhs_rows_idx <= (rhs_rows - 4); rhs_rows_idx += 4)
+    {
+        const q7_t *lhs_ptr = &lhs[0];
+        q7_t *dst_ptr = &dst[0];
 
-    // TODO(fabianpedd): Implement P-Ext speedup (and maybe V-Ext?)
+        q31_t lhs_offset_contribution0 = 0;
+        q31_t lhs_offset_contribution1 = 0;
+        q31_t lhs_offset_contribution2 = 0;
+        q31_t lhs_offset_contribution3 = 0;
+        
+        //Precalculate row addresses and alignment
+        //First row is always aligned
+        const q7_t *rhs_0 = rhs;
+        const q7_t *rhs_1 = rhs_0 + rhs_cols;
+        uint8_t rhs_1_align = (rhs_cols % 4);
+        uint8_t rhs_1_alignbits = rhs_1_align << 3;
+        const q7_t *rhs_2 = rhs_1 + rhs_cols;
+        uint8_t rhs_2_align = (rhs_cols % 2) << 1;
+        uint8_t rhs_2_alignbits = rhs_2_align << 3;
+        const q7_t *rhs_3 = rhs_2 + rhs_cols;
+        uint8_t rhs_3_align = (4 - (rhs_cols % 4)) % 4;
+        uint8_t rhs_3_alignbits = rhs_3_align << 3;
+
+        //Sum elements 4 at a time
+        for (int32_t x = 0; x < (rhs_cols >> 2); ++x)
+        {   
+            //possible optimization, better sign extension method than <<16 >> 16?? DO THIS
+            q31_t rhs_element = muriscv_nn_read_q7x4_ia_fast(&rhs_0);
+            q31_t rhs_10 = __rv_sunpkd810(rhs_element);
+            q31_t rhs_32 = __rv_sunpkd832(rhs_element);
+            q31_t result = __rv_add16(rhs_10, rhs_32);
+            lhs_offset_contribution0 += ((result << 16) >> 16) + (result >> 16);
+            
+            rhs_element = muriscv_nn_read_q7x4_ia_aligned(&rhs_1, rhs_1_align, rhs_1_alignbits);
+            rhs_10 = __rv_sunpkd810(rhs_element);
+            rhs_32 = __rv_sunpkd832(rhs_element);
+            result = __rv_add16(rhs_10, rhs_32);
+            lhs_offset_contribution1 += ((result << 16) >> 16) + (result >> 16);  
+            
+            rhs_element = muriscv_nn_read_q7x4_ia_aligned(&rhs_2, rhs_2_align, rhs_2_alignbits);
+            rhs_10 = __rv_sunpkd810(rhs_element);
+            rhs_32 = __rv_sunpkd832(rhs_element);
+            result = __rv_add16(rhs_10, rhs_32);
+            lhs_offset_contribution2 += ((result << 16) >> 16) + (result >> 16);       
+                  
+            rhs_element = muriscv_nn_read_q7x4_ia_aligned(&rhs_3, rhs_3_align, rhs_3_alignbits);
+            rhs_10 = __rv_sunpkd810(rhs_element);
+            rhs_32 = __rv_sunpkd832(rhs_element);
+            result = __rv_add16(rhs_10, rhs_32);
+            lhs_offset_contribution3 += ((result << 16) >> 16) + (result >> 16);
+            
+        }
+        //Leftover elements
+        for (int32_t x = 0; x < (rhs_cols % 4); ++x)
+        {   
+               
+            lhs_offset_contribution0 += rhs_0[x];
+            lhs_offset_contribution1 += rhs_1[x];           
+            lhs_offset_contribution2 += rhs_2[x];                        
+            lhs_offset_contribution3 += rhs_3[x];
+         }
+         
+        lhs_offset_contribution0 *= lhs_offset;
+        lhs_offset_contribution1 *= lhs_offset;
+        lhs_offset_contribution2 *= lhs_offset;
+        lhs_offset_contribution3 *= lhs_offset;
+        
+        if (bias)
+        {
+            lhs_offset_contribution0 += bias[rhs_rows_idx];
+            lhs_offset_contribution1 += bias[rhs_rows_idx + 1];
+            lhs_offset_contribution2 += bias[rhs_rows_idx + 2];
+            lhs_offset_contribution3 += bias[rhs_rows_idx + 3];
+        }
+
+        int32_t lhs_rows_idx = lhs_rows >> 1;
+
+        while (lhs_rows_idx)
+        {
+            q31_t res00 = lhs_offset_contribution0;
+            q31_t res01 = lhs_offset_contribution1;
+            q31_t res02 = lhs_offset_contribution2;
+            q31_t res03 = lhs_offset_contribution3;
+            q31_t res10 = lhs_offset_contribution0;
+            q31_t res11 = lhs_offset_contribution1;
+            q31_t res12 = lhs_offset_contribution2;
+            q31_t res13 = lhs_offset_contribution3;
+            
+            
+            //Precalculate rhs row pointers
+            rhs_0 = rhs;
+            rhs_1 = rhs_0 + rhs_cols;
+            rhs_2 = rhs_1 + rhs_cols;
+            rhs_3 = rhs_2 + rhs_cols;
+            
+            
+            //initialize pointer
+            const q7_t *lhs_ptr1 = lhs_ptr + rhs_cols;
+            q7_t lhs_0_align, lhs_0_alignbits, lhs_1_align, lhs_1_alignbits;
+            
+            
+            //determine alignment of lhs reads for current two rows
+            if( lhs_rows_idx % 2)
+            {
+                lhs_0_align = 0;
+                lhs_0_alignbits = 0;
+                lhs_1_align = rhs_1_align;
+                lhs_1_align = rhs_1_align;
+            }
+            else
+            {
+                lhs_0_align = rhs_2_align;
+                lhs_0_alignbits = rhs_2_alignbits;
+                lhs_1_align = rhs_3_align;
+                lhs_1_align = rhs_3_align;
+            }
+            
+            for (int32_t x = 0; x < (rhs_cols >> 2); ++x)
+            {
+            
+                q31_t read_in = muriscv_nn_read_q7x4_ia_aligned(&lhs_ptr, lhs_0_align, lhs_0_alignbits); 
+                q31_t lhs_10 = __rv_sunpkd810(read_in);
+                q31_t lhs_32 = __rv_sunpkd832(read_in);
+                
+                read_in = muriscv_nn_read_q7x4_ia_fast(&rhs_0);
+                q31_t rhs_0_10 = __rv_sunpkd810(read_in);
+                q31_t rhs_0_32 = __rv_sunpkd832(read_in);
+                
+                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_1, rhs_1_align, rhs_1_alignbits);
+                q31_t rhs_1_10 = __rv_sunpkd810(read_in);
+                q31_t rhs_1_32 = __rv_sunpkd832(read_in);
+                
+                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_2, rhs_2_align, rhs_2_alignbits);
+                q31_t rhs_2_10 = __rv_sunpkd810(read_in);
+                q31_t rhs_2_32 = __rv_sunpkd832(read_in);
+                
+                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_3, rhs_3_align, rhs_3_alignbits);
+                q31_t rhs_3_10 = __rv_sunpkd810(read_in);
+                q31_t rhs_3_32 = __rv_sunpkd832(read_in);
+                
+                res00 = __rv_kmada(res00, lhs_10, rhs_0_10);
+                res00 = __rv_kmada(res00, lhs_32, rhs_0_32);
+                res01 = __rv_kmada(res01, lhs_10, rhs_1_10);
+                res01 = __rv_kmada(res01, lhs_32, rhs_1_32);
+                res02 = __rv_kmada(res02, lhs_10, rhs_2_10);
+                res02 = __rv_kmada(res02, lhs_32, rhs_2_32);
+                res03 = __rv_kmada(res03, lhs_10, rhs_3_10);
+                res03 = __rv_kmada(res03, lhs_32, rhs_3_32);
+
+                read_in = muriscv_nn_read_q7x4_ia_aligned(&lhs_ptr1, lhs_1_align, lhs_1_alignbits);
+                lhs_10 = __rv_sunpkd810(read_in);
+                lhs_32 = __rv_sunpkd832(read_in);
+                
+                res10 = __rv_kmada(res10, lhs_10, rhs_0_10);
+                res10 = __rv_kmada(res10, lhs_32, rhs_0_32);
+                res11 = __rv_kmada(res11, lhs_10, rhs_1_10);
+                res11 = __rv_kmada(res11, lhs_32, rhs_1_32);
+                res12 = __rv_kmada(res12, lhs_10, rhs_2_10);
+                res12 = __rv_kmada(res12, lhs_32, rhs_2_32);
+                res13 = __rv_kmada(res13, lhs_10, rhs_3_10);
+                res13 = __rv_kmada(res13, lhs_32, rhs_3_32);
+            }
+            //leftover columns in rhs.  Case not used by aww vww
+            for (int32_t x = 0; x < (rhs_cols % 4); ++x)
+            {
+                q7_t rhs_value0 = rhs_0[0];
+                q7_t rhs_value1 = rhs_1[0];
+                q7_t rhs_value2 = rhs_2[0];
+                q7_t rhs_value3 = rhs_3[0];
+                q7_t lhs_value = lhs_ptr[0];
+
+                
+                res00 += lhs_value * rhs_value0;
+                res01 += lhs_value * rhs_value1;
+                res02 += lhs_value * rhs_value2;
+                res03 += lhs_value * rhs_value3;
+
+                lhs_value = lhs_ptr[rhs_cols];
+                
+                res10 += lhs_value * rhs_value0;
+                res11 += lhs_value * rhs_value1;
+                res12 += lhs_value * rhs_value2;
+                res13 += lhs_value * rhs_value3;
+
+                ++rhs_0;
+                ++rhs_1;
+                ++rhs_2;
+                ++rhs_3;
+                ++lhs_ptr;
+            }
+
+            //possible optimization, read dst_shifts/dst_multipliers 4 at a time?
+            // Quantize down
+            res00 = muriscv_nn_requantize(res00, dst_multipliers[rhs_rows_idx], dst_shifts[rhs_rows_idx]);
+            res01 = muriscv_nn_requantize(res01, dst_multipliers[rhs_rows_idx + 1], dst_shifts[rhs_rows_idx + 1]);
+            res02 = muriscv_nn_requantize(res02, dst_multipliers[rhs_rows_idx + 2], dst_shifts[rhs_rows_idx + 2]);
+            res03 = muriscv_nn_requantize(res03, dst_multipliers[rhs_rows_idx + 3], dst_shifts[rhs_rows_idx + 3]);
+            res10 = muriscv_nn_requantize(res10, dst_multipliers[rhs_rows_idx], dst_shifts[rhs_rows_idx]);
+            res11 = muriscv_nn_requantize(res11, dst_multipliers[rhs_rows_idx + 1], dst_shifts[rhs_rows_idx + 1]);
+            res12 = muriscv_nn_requantize(res12, dst_multipliers[rhs_rows_idx + 2], dst_shifts[rhs_rows_idx + 2]);
+            res13 = muriscv_nn_requantize(res13, dst_multipliers[rhs_rows_idx + 3], dst_shifts[rhs_rows_idx + 3]);
+           
+            int32_t packed_out_0 = PACK_Q7x4_32x1(res00, res01, res02, res03);
+            int32_t packed_out_1 = PACK_Q7x4_32x1(res10, res11, res12, res13);
+            
+            // Add offset
+            packed_out_0 = __rv_add8(packed_out_0, dst_offset_packed);
+            packed_out_1 = __rv_add8(packed_out_1, dst_offset_packed); 
+
+            // Clamp the result
+            packed_out_0 = __rv_smax8(packed_out_0, activation_min_packed);
+            packed_out_0 = __rv_smin8(packed_out_0, activation_max_packed);
+            packed_out_1 = __rv_smax8(packed_out_1, activation_min_packed);
+            packed_out_1 = __rv_smin8(packed_out_1, activation_max_packed);     
+
+            //when not word aligned, write with memcpy
+            //probably a better way to do this, but need benchmark with rhs_rows % 4 != 0 to properly test
+            if(rhs_rows % 4)
+            {
+                muriscv_nn_write_q7x4(dst_ptr, packed_out_0);
+                dst_ptr += rhs_rows;
+                muriscv_nn_write_q7x4(dst_ptr, packed_out_1);
+            }
+            else
+            {
+                muriscv_nn_write_q7x4_fast(dst_ptr, packed_out_0);
+                dst_ptr += rhs_rows;
+                muriscv_nn_write_q7x4_fast(dst_ptr, packed_out_1);
+            
+            }
+            
+            dst_ptr += rhs_rows;
+            lhs_ptr += rhs_cols;
+
+            lhs_rows_idx--;
+        }
+        // Left-over rows in LHS
+        //might be able to fold this up into previous case at cost of performance
+        //This is the only case used by vww and aww
+        if (lhs_rows % 2)
+        {
+            const q7_t *rhs_ptr = &rhs[0];
+
+            q31_t res00 = lhs_offset_contribution0;
+            q31_t res01 = lhs_offset_contribution1;
+            q31_t res02 = lhs_offset_contribution2;
+            q31_t res03 = lhs_offset_contribution3;
+            
+            //precalculate row address pointers
+            rhs_0 = rhs;
+            rhs_1 = rhs + rhs_cols;
+            rhs_2 = rhs_1 + rhs_cols;
+            rhs_3 = rhs_2 + rhs_cols;          
+                           
+            //determine alignment of lhs read
+            q7_t lhs_0_align, lhs_0_alignbits; 
+            if( lhs_rows % 4 == 1)
+            {
+                lhs_0_align = 0;
+                lhs_0_alignbits = 0;
+            }
+            else
+            {
+                lhs_0_align = rhs_2_align;
+                lhs_0_alignbits = rhs_2_alignbits;
+            }
+                    
+            for (int32_t x = 0; x < (rhs_cols >> 2); ++x)
+            {
+                q31_t read_in = muriscv_nn_read_q7x4_ia_aligned(&lhs_ptr, lhs_0_align, lhs_0_alignbits); 
+                q31_t lhs_10 = __rv_sunpkd810(read_in);
+                q31_t lhs_32 = __rv_sunpkd832(read_in);
+                
+                read_in = muriscv_nn_read_q7x4_ia_fast(&rhs_0);
+                q31_t rhs_0_10 = __rv_sunpkd810(read_in);
+                q31_t rhs_0_32 = __rv_sunpkd832(read_in);
+                
+                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_1, rhs_1_align, rhs_1_alignbits);
+                q31_t rhs_1_10 = __rv_sunpkd810(read_in);
+                q31_t rhs_1_32 = __rv_sunpkd832(read_in);
+                
+                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_2, rhs_2_align, rhs_2_alignbits);
+                q31_t rhs_2_10 = __rv_sunpkd810(read_in);
+                q31_t rhs_2_32 = __rv_sunpkd832(read_in);
+                
+                read_in = muriscv_nn_read_q7x4_ia_aligned(&rhs_3, rhs_3_align, rhs_3_alignbits);
+                q31_t rhs_3_10 = __rv_sunpkd810(read_in);
+                q31_t rhs_3_32 = __rv_sunpkd832(read_in);
+                
+                res00 = __rv_kmada(res00, lhs_10, rhs_0_10);
+                res00 = __rv_kmada(res00, lhs_32, rhs_0_32);
+                res01 = __rv_kmada(res01, lhs_10, rhs_1_10);
+                res01 = __rv_kmada(res01, lhs_32, rhs_1_32);
+                res02 = __rv_kmada(res02, lhs_10, rhs_2_10);
+                res02 = __rv_kmada(res02, lhs_32, rhs_2_32);
+                res03 = __rv_kmada(res03, lhs_10, rhs_3_10);
+                res03 = __rv_kmada(res03, lhs_32, rhs_3_32);     
+            }
+            //for leftover columns.  Possible optimizations, not used by aww/vww
+            for (int32_t x = 0; x < (rhs_cols % 4); ++x)
+            {
+                q7_t rhs_value0 = rhs_ptr[0];
+                q7_t rhs_value1 = rhs_ptr[rhs_cols];
+                q7_t rhs_value2 = rhs_ptr[2 * rhs_cols];
+                q7_t rhs_value3 = rhs_ptr[3 * rhs_cols];
+                q7_t lhs_value = lhs_ptr[0];
+
+                res00 += lhs_value * rhs_value0;
+                res01 += lhs_value * rhs_value1;
+                res02 += lhs_value * rhs_value2;
+                res03 += lhs_value * rhs_value3;
+
+                ++rhs_0;
+                ++rhs_1;
+                ++rhs_2;
+                ++rhs_3;
+                ++lhs_ptr;
+            }
+            // Quantize down
+            res00 = muriscv_nn_requantize(res00, dst_multipliers[rhs_rows_idx], dst_shifts[rhs_rows_idx]);
+            res01 = muriscv_nn_requantize(res01, dst_multipliers[rhs_rows_idx + 1], dst_shifts[rhs_rows_idx + 1]);
+            res02 = muriscv_nn_requantize(res02, dst_multipliers[rhs_rows_idx + 2], dst_shifts[rhs_rows_idx + 2]);
+            res03 = muriscv_nn_requantize(res03, dst_multipliers[rhs_rows_idx + 3], dst_shifts[rhs_rows_idx + 3]);
+
+            int32_t packed_out_0 = PACK_Q7x4_32x1(res00, res01, res02, res03);
+            
+            // Add offset
+            packed_out_0 = __rv_add8(packed_out_0, dst_offset_packed);
+
+            // Clamp the result
+            packed_out_0 = __rv_smax8(packed_out_0, activation_min_packed);
+            packed_out_0 = __rv_smin8(packed_out_0, activation_max_packed);
+
+            //check alignement and write
+            if(rhs_rows % 4)
+            {
+                muriscv_nn_write_q7x4(dst_ptr, packed_out_0);
+            }
+            else
+            {
+                muriscv_nn_write_q7x4_fast(dst_ptr, packed_out_0);       
+            }
+        }
+        rhs += 4 * rhs_cols;
+        dst += 4;
+    }  
+    //Leftover rhs_rows
+    //Possible optimizations to mimic above, not currently used in either vww or aww, would need a new benchmark to properly gauge performance
+    int32_t rhs_rows_idx = rhs_rows % 4;
+    while (rhs_rows_idx)
+    {
+        const q7_t *lhs_ptr = &lhs[0];
+        q7_t *dst_ptr = &dst[0];
+
+        for (int32_t lhs_rows_idx = 0; lhs_rows_idx < lhs_rows; ++lhs_rows_idx)
+        {
+            const q7_t *rhs_ptr = &rhs[0];
+            q31_t res00 = 0;
+            if (bias)
+            {
+                res00 = bias[rhs_rows - 1];
+            }
+
+            for (int32_t rhs_cols_idx = rhs_cols; rhs_cols_idx != 0; rhs_cols_idx--)
+            {
+                q31_t rhs_value = rhs_ptr[0];
+                q31_t lhs_value = lhs_ptr[0] + lhs_offset;
+
+                res00 += lhs_value * rhs_value;
+
+                ++rhs_ptr;
+                ++lhs_ptr;
+            }
+            // Quantize down
+            res00 = muriscv_nn_requantize(res00, dst_multipliers[rhs_rows - 1], dst_shifts[rhs_rows - 1]);
+
+            // Add offset
+            res00 += dst_offset;
+
+            // Clamp the result
+            res00 = MAX(res00, activation_min);
+            res00 = MIN(res00, activation_max);
+
+            dst_ptr[0] = (q7_t)res00;
+            dst_ptr += rhs_rows;
+        }
+        rhs += rhs_rows;
+        rhs_rows_idx -= 1;
+    }
+    return MURISCV_NN_SUCCESS;
+       
+    #else
     for (int32_t rhs_rows_idx = 0; rhs_rows_idx <= (rhs_rows - 2); rhs_rows_idx += 2)
     {
         const q7_t *lhs_ptr = &lhs[0];
@@ -222,8 +620,11 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
             dst_ptr[0] = (q7_t)res00;
             dst_ptr += rhs_rows;
         }
+        
     }
     return MURISCV_NN_SUCCESS;
+    
+    #endif
 }
 
 /**

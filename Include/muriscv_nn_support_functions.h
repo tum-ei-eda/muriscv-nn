@@ -659,6 +659,16 @@ static inline void muriscv_nn_write_q7x4_ia(q7_t **in, q31_t value)
  */
 static inline void muriscv_nn_write_q7x4(q7_t *in, q31_t value) { memcpy(in, &value, 4); }
 
+/**
+  @brief         Write four q7 to q7 pointer and increment pointer afterwards.
+  @param[in]     in       Double pointer to input value
+  @param[in]     value    Four bytes to copy
+ */
+static inline void muriscv_nn_write_q7x4_fast(q7_t *in, q31_t value) 
+{
+    *((uint32_t*)(in)) = value;
+}
+
 // Macros for shortening quantization functions' names and avoid long lines
 #define MUL_SAT(a, b) muriscv_nn_doubling_high_mult_no_sat((a), (b))
 
