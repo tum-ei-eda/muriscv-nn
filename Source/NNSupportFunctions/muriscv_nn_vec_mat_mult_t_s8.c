@@ -136,7 +136,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 
 #elif defined(USE_PEXT) /* defined(USE_VEXT) */
 
-    const uint32_t lhs_offset_s16x2 = __rv__pkbb16(lhs_offset, lhs_offset);
+    const uint32_t lhs_offset_s16x2 = __rv_packu(lhs_offset, lhs_offset);
 
     const int32_t row_loop_cnt = rhs_rows / 2;
     for (int32_t i = 0; i < row_loop_cnt; i++)
@@ -163,26 +163,26 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         for (int j = col_loop_cnt; j != 0; j--)
         {
             const int32_t lhs_packed = *(int32_t *)lhs_ptr;
-            int32_t lhs_1 = __rv__sunpkd810(lhs_packed);
-            int32_t lhs_2 = __rv__sunpkd832(lhs_packed);
-            lhs_1 = __rv__add16(lhs_offset_s16x2, lhs_1);
-            lhs_2 = __rv__add16(lhs_offset_s16x2, lhs_2);
+            int32_t lhs_1 = __rv_sunpkd810(lhs_packed);
+            int32_t lhs_2 = __rv_sunpkd832(lhs_packed);
+            lhs_1 = __rv_add16(lhs_offset_s16x2, lhs_1);
+            lhs_2 = __rv_add16(lhs_offset_s16x2, lhs_2);
 
             /* Accumulate first rhs row */
             int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
-            int32_t rhs_1 = __rv__sunpkd810(rhs_packed);
-            int32_t rhs_2 = __rv__sunpkd832(rhs_packed);
+            int32_t rhs_1 = __rv_sunpkd810(rhs_packed);
+            int32_t rhs_2 = __rv_sunpkd832(rhs_packed);
 
-            acc_0 = __rv__kmada(acc_0, rhs_1, lhs_1);
-            acc_0 = __rv__kmada(acc_0, rhs_2, lhs_2);
+            acc_0 = __rv_kmada(acc_0, rhs_1, lhs_1);
+            acc_0 = __rv_kmada(acc_0, rhs_2, lhs_2);
 
             /* Accumulate second rhs row */
             rhs_packed = *(int32_t *)rhs_ptr_1;
-            rhs_1 = __rv__sunpkd810(rhs_packed);
-            rhs_2 = __rv__sunpkd832(rhs_packed);
+            rhs_1 = __rv_sunpkd810(rhs_packed);
+            rhs_2 = __rv_sunpkd832(rhs_packed);
 
-            acc_1 = __rv__kmada(acc_1, rhs_1, lhs_1);
-            acc_1 = __rv__kmada(acc_1, rhs_2, lhs_2);
+            acc_1 = __rv_kmada(acc_1, rhs_1, lhs_1);
+            acc_1 = __rv_kmada(acc_1, rhs_2, lhs_2);
 
             rhs_ptr_0 += 4;
             rhs_ptr_1 += 4;
@@ -247,18 +247,18 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         for (int j = col_loop_cnt; j != 0; j--)
         {
             const int32_t lhs_packed = *(int32_t *)lhs_ptr;
-            int32_t lhs_1 = __rv__sunpkd810(lhs_packed);
-            int32_t lhs_2 = __rv__sunpkd832(lhs_packed);
-            lhs_1 = __rv__add16(lhs_offset_s16x2, lhs_1);
-            lhs_2 = __rv__add16(lhs_offset_s16x2, lhs_2);
+            int32_t lhs_1 = __rv_sunpkd810(lhs_packed);
+            int32_t lhs_2 = __rv_sunpkd832(lhs_packed);
+            lhs_1 = __rv_add16(lhs_offset_s16x2, lhs_1);
+            lhs_2 = __rv_add16(lhs_offset_s16x2, lhs_2);
 
             /* Accumulate first rhs row */
             int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
-            int32_t rhs_1 = __rv__sunpkd810(rhs_packed);
-            int32_t rhs_2 = __rv__sunpkd832(rhs_packed);
+            int32_t rhs_1 = __rv_sunpkd810(rhs_packed);
+            int32_t rhs_2 = __rv_sunpkd832(rhs_packed);
 
-            acc_0 = __rv__kmada(acc_0, rhs_1, lhs_1);
-            acc_0 = __rv__kmada(acc_0, rhs_2, lhs_2);
+            acc_0 = __rv_kmada(acc_0, rhs_1, lhs_1);
+            acc_0 = __rv_kmada(acc_0, rhs_2, lhs_2);
 
             rhs_ptr_0 += 4;
             lhs_ptr += 4;

@@ -24,7 +24,7 @@
 #if defined(USE_VEXT)
 #include <riscv_vector.h>
 #elif defined(USE_PEXT)
-#include <riscv-dsp.h>
+#include <rvp_intrinsic.h>
 #endif
 
 #include <stdbool.h>
@@ -46,10 +46,8 @@ extern "C" {
 #define SELECT_USING_MASK(mask, a, b) ((mask) & (a)) ^ (~(mask) & (b))
 
 #if defined(USE_PEXT)
-// #define MAX(A, B) __rv_max(A, B)
-#define MAX(A, B) __rv__maxw(A, B)
-// #define MIN(A, B) __rv_min(A, B)
-#define MIN(A, B) __rv__minw(A, B)
+#define MAX(A, B) __rv_max(A, B)
+#define MIN(A, B) __rv_min(A, B)
 #else
 #define MAX(A, B) ((A) > (B) ? (A) : (B))
 #define MIN(A, B) ((A) < (B) ? (A) : (B))

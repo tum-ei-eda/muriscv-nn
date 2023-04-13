@@ -21,7 +21,7 @@
 #if defined(USE_VEXT)
 #include <riscv_vector.h>
 #elif defined(USE_PEXT)
-#include <riscv-dsp.h>
+#include <rvp_intrinsic.h>
 #endif
 
 #include <string.h>
