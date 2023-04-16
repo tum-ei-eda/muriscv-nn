@@ -38,3 +38,23 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=${RISCV_ARCH} -mabi=${RISCV_ABI}"
 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -march=${RISCV_ARCH} -mabi=${RISCV_ABI}")
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -march=${RISCV_ARCH} -mabi=${RISCV_ABI}")
+
+IF(AUTO_VECTORIZE)
+    IF(USE_VEXT)
+        IF(NOT AUTO_VECTORIZE_VLEN)
+            MESSAGE(FATAL_ERROR "AUTO_VECTORIZE requires AUTO_VECTORIZE_VLEN to be set.")
+        ENDIF()
+        SET(CMAKE_CXX_FLAGS_RELEASE
+            "${CMAKE_CXX_FLAGS_RELEASE} \
+            -fopt-info-vec \
+            -fopt-info-vec-missed \
+        "
+        )
+        SET(CMAKE_C_FLAGS_RELEASE
+            "${CMAKE_C_FLAGS_RELEASE} \
+            -fopt-info-vec \
+            -fopt-info-vec-missed \
+        "
+        )
+    ENDIF()
+ENDIF()

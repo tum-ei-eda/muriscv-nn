@@ -58,3 +58,23 @@ SET(CMAKE_ASM_FLAGS
 )
 
 SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld")
+
+IF(AUTO_VECTORIZE)
+    IF(USE_VEXT)
+        IF(NOT AUTO_VECTORIZE_VLEN)
+            MESSAGE(FATAL_ERROR "AUTO_VECTORIZE requires AUTO_VECTORIZE_VLEN to be set.")
+        ENDIF()
+        SET(CMAKE_CXX_FLAGS_RELEASE
+            "${CMAKE_CXX_FLAGS_RELEASE} \
+            -mllvm \
+            --riscv-v-vector-bits-min=${AUTO_VECTORIZE_VLEN} \
+        "
+        )
+        SET(CMAKE_C_FLAGS_RELEASE
+            "${CMAKE_C_FLAGS_RELEASE} \
+            -mllvm \
+            --riscv-v-vector-bits-min=${AUTO_VECTORIZE_VLEN} \
+        "
+        )
+    ENDIF()
+ENDIF()
