@@ -57,7 +57,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
                                               const int32_t activation_min,
                                               const int32_t activation_max)
 {
-    #if defined(USE_PEXT)
+#if defined(USE_PEXT)
      // TODO(parkerjones): Find benchmark to test remaining edge cases for PEXT (and maybe implement V-Ext?)
      int32_t activation_max_packed = ((uint8_t)activation_max << 24) | ((uint8_t)activation_max << 16) | ((uint8_t)activation_max << 8) |((uint8_t)activation_max);
      int32_t activation_min_packed = ((uint8_t)activation_min << 24) | ((uint8_t)activation_min << 16) | ((uint8_t)activation_min << 8) |((uint8_t)activation_min);
@@ -235,7 +235,6 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
                 ++lhs_ptr;
             }
 
-            //possible optimization, read dst_shifts/dst_multipliers 4 at a time?
             // Quantize down
             res00 = muriscv_nn_requantize(res00, dst_multipliers[rhs_rows_idx], dst_shifts[rhs_rows_idx]);
             res01 = muriscv_nn_requantize(res01, dst_multipliers[rhs_rows_idx + 1], dst_shifts[rhs_rows_idx + 1]);
@@ -259,8 +258,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
             packed_out_1 = __rv_smax8(packed_out_1, activation_min_packed);
             packed_out_1 = __rv_smin8(packed_out_1, activation_max_packed);     
 
-            //when not word aligned, write with memcpy
-            //probably a better way to do this, but need benchmark with rhs_rows % 4 != 0 to properly test
+            //when not word aligned, write with memcpy.  Improvment possible, need benchmark that utilizes the unaligned case to test
             if(rhs_rows % 4)
             {
                 muriscv_nn_write_q7x4(dst_ptr, packed_out_0);
@@ -281,7 +279,6 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
             lhs_rows_idx--;
         }
         // Left-over rows in LHS
-        //might be able to fold this up into previous case at cost of performance
         //This is the only edge case used by vww and aww
         if (lhs_rows % 2)
         {
@@ -419,7 +416,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
     }
     return MURISCV_NN_SUCCESS;
        
-    #else
+#else /* defined(USE_PEXT) */
     for (int32_t rhs_rows_idx = 0; rhs_rows_idx <= (rhs_rows - 2); rhs_rows_idx += 2)
     {
         const q7_t *lhs_ptr = &lhs[0];
