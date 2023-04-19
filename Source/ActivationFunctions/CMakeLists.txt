@@ -16,7 +16,7 @@
 #
 
 target_sources(
-  ${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_relu_q7.c
-                           ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_relu6_s8.c
-                           ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_activation_s16.c
+  ${MURISCVNN_LIB}
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_relu_q7.c ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_relu6_s8.c
+          ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_activation_s16.c
 )
