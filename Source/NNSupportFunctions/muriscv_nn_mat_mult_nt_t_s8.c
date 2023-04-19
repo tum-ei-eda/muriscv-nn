@@ -59,9 +59,9 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
 {
 #if defined(USE_PEXT)
      // TODO(parkerjones): Find benchmark to test remaining edge cases for PEXT (and maybe implement V-Ext?)
-     int32_t activation_max_packed = ((uint8_t)activation_max << 24) | ((uint8_t)activation_max << 16) | ((uint8_t)activation_max << 8) |((uint8_t)activation_max);
-     int32_t activation_min_packed = ((uint8_t)activation_min << 24) | ((uint8_t)activation_min << 16) | ((uint8_t)activation_min << 8) |((uint8_t)activation_min);
-     int32_t dst_offset_packed = ((uint8_t)dst_offset << 24) | ((uint8_t)dst_offset << 16) | ((uint8_t)dst_offset << 8) |((uint8_t)dst_offset);
+     int32_t activation_max_packed = (__rv_packu((uint8_t)activation_max, (uint8_t)activation_max)) | ((__rv_packu((uint8_t)activation_max, (uint8_t)activation_max)) << 8);
+     int32_t activation_min_packed = (__rv_packu((uint8_t)activation_min, (uint8_t)activation_min)) | ((__rv_packu((uint8_t)activation_min, (uint8_t)activation_min)) << 8);
+     int32_t dst_offset_packed = (__rv_packu((uint8_t)dst_offset, (uint8_t)dst_offset)) | ((__rv_packu((uint8_t)dst_offset, (uint8_t)dst_offset)) << 8);
      
     for (int32_t rhs_rows_idx = 0; rhs_rows_idx <= (rhs_rows - 4); rhs_rows_idx += 4)
     {
