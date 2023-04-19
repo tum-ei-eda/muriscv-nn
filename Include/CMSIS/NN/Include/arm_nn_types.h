@@ -43,8 +43,6 @@ extern "C" {
 #define cmsis_nn_lstm_context muriscv_nn_lstm_context
 #define cmsis_nn_lstm_dims muriscv_nn_lstm_dims
 
-
-
 #ifdef __cplusplus
 }
 #endif

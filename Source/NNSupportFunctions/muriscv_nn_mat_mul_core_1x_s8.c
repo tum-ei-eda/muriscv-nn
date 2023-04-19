@@ -67,7 +67,8 @@ muriscv_nn_status muriscv_nn_mat_mul_core_1x_s8(int32_t row_elements,
         vint32m8_t row_val = vsext_vf4_i32m8(vle8_v_i8m2(row_ptr, vl), vl);
 
         acc = vmacc_vv_i32m8(acc, col_val, row_val, vl);
-        sum = vmacc_vv_i32m8(sum, col_val, vmv_v_x_i32m8(1, vl), vl); // TODO(fabianpedd): Should be a tail undisturbed add
+        sum = vmacc_vv_i32m8(
+            sum, col_val, vmv_v_x_i32m8(1, vl), vl); // TODO(fabianpedd): Should be a tail undisturbed add
 
         loop_cnt -= vl;
         row_ptr += vl;

@@ -1051,8 +1051,8 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16(const int16_t *input_1_vect,
  * sigmoid and tanh
  *
  */
- 
- /**
+
+/**
  * @brief s16 neural network activation function using direct table look-up
  * @param[in]       input        pointer to input data
  * @param[out]      output      pointer to output
@@ -1065,10 +1065,10 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16(const int16_t *input_1_vect,
  * functions
  */
 void muriscv_nn_activation_s16(const int16_t *input,
-                           int16_t *output,
-                           const uint16_t size,
-                           const uint16_t left_shift,
-                           const muriscv_nn_activation_type type);
+                               int16_t *output,
+                               const uint16_t size,
+                               const uint16_t left_shift,
+                               const muriscv_nn_activation_type type);
 
 /**
  * @brief Q7 RELU function
@@ -1660,8 +1660,7 @@ muriscv_nn_status muriscv_nn_svdf_state_s16_s8(const muriscv_nn_context *input_c
                                                const q31_t *bias_data,
                                                const muriscv_nn_dims *output_dims,
                                                q7_t *output_data);
-                                               
-                                               
+
 /**
  * @defgroup LSTM LSTM Layer Functions
  *
@@ -1711,25 +1710,24 @@ muriscv_nn_status muriscv_nn_svdf_state_s16_s8(const muriscv_nn_context *input_c
  *
  */
 muriscv_nn_status muriscv_nn_lstm_unidirectional_s16_s8(muriscv_nn_lstm_context *scratch_buffers,
-                                                   const int8_t *input_data,
-                                                   const muriscv_nn_lstm_dims *lstm_dims,
-                                                   const int8_t *input_to_input_weights,
-                                                   const int8_t *input_to_forget_weights,
-                                                   const int8_t *input_to_cell_weights,
-                                                   const int8_t *input_to_output_weights,
-                                                   const int8_t *recurrent_to_input_weights,
-                                                   const int8_t *recurrent_to_forget_weights,
-                                                   const int8_t *recurrent_to_cell_weights,
-                                                   const int8_t *recurrent_to_output_weights,
-                                                   const int16_t *cell_to_input_weights,
-                                                   const int16_t *cell_to_forget_weights,
-                                                   const int16_t *cell_to_output_weights,
-                                                   const int8_t *projection_weights,
-                                                   const muriscv_nn_lstm_params *lstm,
-                                                   int8_t *output_state,
-                                                   int16_t *cell_state,
-                                                   int8_t *output_data);
-
+                                                        const int8_t *input_data,
+                                                        const muriscv_nn_lstm_dims *lstm_dims,
+                                                        const int8_t *input_to_input_weights,
+                                                        const int8_t *input_to_forget_weights,
+                                                        const int8_t *input_to_cell_weights,
+                                                        const int8_t *input_to_output_weights,
+                                                        const int8_t *recurrent_to_input_weights,
+                                                        const int8_t *recurrent_to_forget_weights,
+                                                        const int8_t *recurrent_to_cell_weights,
+                                                        const int8_t *recurrent_to_output_weights,
+                                                        const int16_t *cell_to_input_weights,
+                                                        const int16_t *cell_to_forget_weights,
+                                                        const int16_t *cell_to_output_weights,
+                                                        const int8_t *projection_weights,
+                                                        const muriscv_nn_lstm_params *lstm,
+                                                        int8_t *output_state,
+                                                        int16_t *cell_state,
+                                                        int8_t *output_data);
 
 #ifdef __cplusplus
 }

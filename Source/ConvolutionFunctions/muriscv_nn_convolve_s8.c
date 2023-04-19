@@ -59,10 +59,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
                                          q7_t *output_data)
 {
     (void)bias_dims;
-    
-  
-    
-    
+
     if (ctx->buf == NULL && muriscv_nn_convolve_s8_get_buffer_size(input_dims, filter_dims) > 0)
     {
         return MURISCV_NN_ARG_ERROR;
@@ -273,16 +270,15 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
 
 /* 4 multiply and accumulates are done in one loop. */
 #if defined(USE_PEXT)
-                
+
                 uint16_t col_count = (input_ch * kernel_y * kernel_x) >> 2;
-                
-                
+
                 q31_t inA;
                 while (col_count)
                 {
-                    
-                    //Possible optimization here.  Why does a slow read first improve performance?
-                    
+
+                    // Possible optimization here.  Why does a slow read first improve performance?
+
                     q31_t inA = muriscv_nn_read_q7x4_ia_slow(&ker_a);
 
                     q31_t ker_a1 = __rv_sunpkd810(inA);
@@ -293,7 +289,6 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
                     sum = __rv_kmada(sum, ker_a2, ip_b2);
 
                     col_count--;
-            
                 }
                 /* Handle left over mac */
                 col_count = input_ch * kernel_y * kernel_x & 0x3;
@@ -321,9 +316,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
         input_data += (input_x * input_y * input_ch);
         output_data += (output_x * output_y * output_ch);
     }
-    
-    
-    
+
     /* Return to application */
     return MURISCV_NN_SUCCESS;
 }

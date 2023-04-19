@@ -29,7 +29,6 @@
  * Target Processor:  Cortex-M processors
  *
  * -------------------------------------------------------------------- */
- 
 
 #include "muriscv_nn_support_functions.h"
 
@@ -40,24 +39,24 @@
  *
  */
 muriscv_nn_status muriscv_nn_lstm_unidirectional_s16_s8(muriscv_nn_lstm_context *scratch_buffers,
-                                                   const int8_t *input_data,
-                                                   const muriscv_nn_lstm_dims *lstm_dims,
-                                                   const int8_t *in_to_in_weights,
-                                                   const int8_t *in_to_forget_weights,
-                                                   const int8_t *in_to_cell_weights,
-                                                   const int8_t *in_to_out_weights,
-                                                   const int8_t *recurrent_to_in_weights,
-                                                   const int8_t *recurrent_to_forget_weights,
-                                                   const int8_t *recurrent_to_cell_weights,
-                                                   const int8_t *recurrent_to_out_weights,
-                                                   const int16_t *cell_to_in_weights,
-                                                   const int16_t *cell_to_forget_weights,
-                                                   const int16_t *cell_to_out_weights,
-                                                   const int8_t *projection_weights,
-                                                   const muriscv_nn_lstm_params *lstm,
-                                                   int8_t *output_state,
-                                                   int16_t *cell_state,
-                                                   int8_t *output_data)
+                                                        const int8_t *input_data,
+                                                        const muriscv_nn_lstm_dims *lstm_dims,
+                                                        const int8_t *in_to_in_weights,
+                                                        const int8_t *in_to_forget_weights,
+                                                        const int8_t *in_to_cell_weights,
+                                                        const int8_t *in_to_out_weights,
+                                                        const int8_t *recurrent_to_in_weights,
+                                                        const int8_t *recurrent_to_forget_weights,
+                                                        const int8_t *recurrent_to_cell_weights,
+                                                        const int8_t *recurrent_to_out_weights,
+                                                        const int16_t *cell_to_in_weights,
+                                                        const int16_t *cell_to_forget_weights,
+                                                        const int16_t *cell_to_out_weights,
+                                                        const int8_t *projection_weights,
+                                                        const muriscv_nn_lstm_params *lstm,
+                                                        int8_t *output_state,
+                                                        int16_t *cell_state,
+                                                        int8_t *output_data)
 {
     (void)cell_to_in_weights;
     (void)cell_to_forget_weights;
@@ -100,23 +99,23 @@ muriscv_nn_status muriscv_nn_lstm_unidirectional_s16_s8(muriscv_nn_lstm_context 
         for (int i_max_time = 0; i_max_time < max_time; i_max_time++)
         {
             muriscv_nn_status status = muriscv_nn_lstm_step_s8_s16(input_data + i_max_time * in_step,
-                                                                 in_to_in_weights,
-                                                                 in_to_forget_weights,
-                                                                 in_to_cell_weights,
-                                                                 in_to_out_weights,
-                                                                 recurrent_to_in_weights,
-                                                                 recurrent_to_forget_weights,
-                                                                 recurrent_to_cell_weights,
-                                                                 recurrent_to_out_weights,
-                                                                 lstm,
-                                                                 num_batch,
-                                                                 num_cell,
-                                                                 num_input,
-                                                                 num_output,
-                                                                 output_state,
-                                                                 cell_state,
-                                                                 output_data + i_max_time * out_step,
-                                                                 scratch_buffers);
+                                                                   in_to_in_weights,
+                                                                   in_to_forget_weights,
+                                                                   in_to_cell_weights,
+                                                                   in_to_out_weights,
+                                                                   recurrent_to_in_weights,
+                                                                   recurrent_to_forget_weights,
+                                                                   recurrent_to_cell_weights,
+                                                                   recurrent_to_out_weights,
+                                                                   lstm,
+                                                                   num_batch,
+                                                                   num_cell,
+                                                                   num_input,
+                                                                   num_output,
+                                                                   output_state,
+                                                                   cell_state,
+                                                                   output_data + i_max_time * out_step,
+                                                                   scratch_buffers);
             if (status != MURISCV_NN_SUCCESS)
             {
                 return status;
@@ -133,24 +132,25 @@ muriscv_nn_status muriscv_nn_lstm_unidirectional_s16_s8(muriscv_nn_lstm_context 
             {
                 const int32_t time_offset = i_num_batch * max_time + i_max_time;
 
-                muriscv_nn_status status = muriscv_nn_lstm_step_s8_s16(input_data + time_offset * in_step,
-                                                                     in_to_in_weights,
-                                                                     in_to_forget_weights,
-                                                                     in_to_cell_weights,
-                                                                     in_to_out_weights,
-                                                                     recurrent_to_in_weights,
-                                                                     recurrent_to_forget_weights,
-                                                                     recurrent_to_cell_weights,
-                                                                     recurrent_to_out_weights,
-                                                                     lstm,
-                                                                     /*num_batch=*/1,
-                                                                     num_cell,
-                                                                     num_input,
-                                                                     num_output,
-                                                                     output_state + i_num_batch * out_batch_leading_dim,
-                                                                     cell_state + i_num_batch * num_cell,
-                                                                     output_data + time_offset * out_step,
-                                                                     scratch_buffers);
+                muriscv_nn_status status =
+                    muriscv_nn_lstm_step_s8_s16(input_data + time_offset * in_step,
+                                                in_to_in_weights,
+                                                in_to_forget_weights,
+                                                in_to_cell_weights,
+                                                in_to_out_weights,
+                                                recurrent_to_in_weights,
+                                                recurrent_to_forget_weights,
+                                                recurrent_to_cell_weights,
+                                                recurrent_to_out_weights,
+                                                lstm,
+                                                /*num_batch=*/1,
+                                                num_cell,
+                                                num_input,
+                                                num_output,
+                                                output_state + i_num_batch * out_batch_leading_dim,
+                                                cell_state + i_num_batch * num_cell,
+                                                output_data + time_offset * out_step,
+                                                scratch_buffers);
                 if (status != MURISCV_NN_SUCCESS)
                 {
                     return status;

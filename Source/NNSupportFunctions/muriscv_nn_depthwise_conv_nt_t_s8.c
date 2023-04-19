@@ -84,7 +84,8 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
         for (int i_row_x_col = 0; i_row_x_col < row_x_col; i_row_x_col++)
         {
             vint32m2_t ker = vsext_vf4_i32m2(vle8_v_i8mf2(rhs_0, vl), vl);
-            ker_sum = vmacc_vv_i32m2(ker_sum, ker, vmv_v_x_i32m2(1, vl), vl);  // TODO(fabianpedd): Should be a tail undisturbed add
+            ker_sum = vmacc_vv_i32m2(
+                ker_sum, ker, vmv_v_x_i32m2(1, vl), vl); // TODO(fabianpedd): Should be a tail undisturbed add
 
             vint32m2_t ip = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_0, vl), vl);
             out_0 = vmacc_vv_i32m2(out_0, ip, ker, vl);

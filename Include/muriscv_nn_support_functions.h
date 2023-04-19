@@ -524,7 +524,8 @@ void muriscv_nn_softmax_common_s8(const int8_t *input,
  */
 
 /**
- @brief         Read 2 q15 elements and post increment pointer. Always uses memcpy for read, consistent speed, regardless of alignment
+ @brief         Read 2 q15 elements and post increment pointer. Always uses memcpy for read, consistent speed,
+ regardless of alignment
  @param[in]     in_q15   Pointer to pointer that holds address of input.
  @return        q31 value
 */
@@ -538,14 +539,15 @@ static inline q31_t muriscv_nn_read_q15x2_ia_slow(const q15_t **in_q15)
 }
 
 /**
- @brief         Read 2 q15 elements and post increment pointer.  Performs best for word aligned reads, otherwise performs extremely slowly
+ @brief         Read 2 q15 elements and post increment pointer.  Performs best for word aligned reads, otherwise
+ performs extremely slowly
  @param[in]     in_q15   Pointer to pointer that holds address of input.
  @return        q31 value
 */
 static inline q31_t muriscv_nn_read_q15x2_ia_fast(const q15_t **in_q15)
 {
     q31_t val;
-    val = (*((uint32_t*)(*in_q15)));
+    val = (*((uint32_t *)(*in_q15)));
     *in_q15 += 2;
 
     return val;
@@ -559,32 +561,34 @@ static inline q31_t muriscv_nn_read_q15x2_ia_fast(const q15_t **in_q15)
 static inline q31_t muriscv_nn_read_q15x2_ia_aligned(const q15_t **in_q15, const uint8_t alignment)
 {
     q31_t val;
-    if(alignment == 0)
+    if (alignment == 0)
     {
-         val = (*((uint32_t*)(*in_q15)));       
+        val = (*((uint32_t *)(*in_q15)));
     }
     else
     {
-         val = (uint32_t)((*((uint64_t*)(*in_q15 - 1))) >> 16); 
+        val = (uint32_t)((*((uint64_t *)(*in_q15 - 1))) >> 16);
     }
     *in_q15 += 2;
 
     return val;
 }
 /**
-  @brief         Read 4 q7 from q7 pointer and post increment pointer.  Performs best for word aligned reads, otherwise performs extremely slowly
+  @brief         Read 4 q7 from q7 pointer and post increment pointer.  Performs best for word aligned reads, otherwise
+  performs extremely slowly
   @param[in]     in_q7       Pointer to pointer that holds address of input.
   @return        q31 value
  */
 static inline q31_t muriscv_nn_read_q7x4_ia_fast(const q7_t **in_q7)
 {
     q31_t val;
-    val = (*((q31_t*)(*in_q7)));
+    val = (*((q31_t *)(*in_q7)));
     *in_q7 += 4;
     return val;
 }
 /**
-  @brief         Read 4 q7 from q7 pointer and post increment pointer.  Always uses memcpy for read, consistent speed, regardless of alignment
+  @brief         Read 4 q7 from q7 pointer and post increment pointer.  Always uses memcpy for read, consistent speed,
+  regardless of alignment
   @param[in]     in_q7       Pointer to pointer that holds address of input.
   @return        q31 value
  */
@@ -602,16 +606,17 @@ static inline q31_t muriscv_nn_read_q7x4_ia_slow(const q7_t **in_q7)
   @param[in]     alignment_bits   Number of bits to shift to receive desired value, precalculated for efficency
   @return        q31 value
  */
-static inline q31_t muriscv_nn_read_q7x4_ia_aligned(const q7_t **in_q7, const uint8_t alignment, const uint8_t alignment_bits)
+static inline q31_t
+muriscv_nn_read_q7x4_ia_aligned(const q7_t **in_q7, const uint8_t alignment, const uint8_t alignment_bits)
 {
     q31_t val;
     if (alignment == 0)
     {
-        val = (*((q31_t*)(*in_q7)));
+        val = (*((q31_t *)(*in_q7)));
     }
     else
     {
-        val = (uint32_t)((*((uint64_t*)(*in_q7 - alignment))) >> (alignment_bits));
+        val = (uint32_t)((*((uint64_t *)(*in_q7 - alignment))) >> (alignment_bits));
     }
     *in_q7 += 4;
     return val;
@@ -624,7 +629,7 @@ static inline q31_t muriscv_nn_read_q7x4_ia_aligned(const q7_t **in_q7, const ui
 static inline q31_t muriscv_nn_read_q15x2(const q15_t *in_q15)
 {
     q31_t val;
-    val = (*((uint32_t*)(in_q15)));
+    val = (*((uint32_t *)(in_q15)));
     return val;
 }
 
@@ -636,7 +641,7 @@ static inline q31_t muriscv_nn_read_q15x2(const q15_t *in_q15)
 static inline q31_t muriscv_nn_read_q7x4(const q7_t *in_q7)
 {
     q31_t val;
-    val = (*((uint32_t*)(in_q7)));
+    val = (*((uint32_t *)(in_q7)));
 
     return val;
 }
@@ -664,10 +669,7 @@ static inline void muriscv_nn_write_q7x4(q7_t *in, q31_t value) { memcpy(in, &va
   @param[in]     in       Double pointer to input value
   @param[in]     value    Four bytes to copy
  */
-static inline void muriscv_nn_write_q7x4_fast(q7_t *in, q31_t value) 
-{
-    *((uint32_t*)(in)) = value;
-}
+static inline void muriscv_nn_write_q7x4_fast(q7_t *in, q31_t value) { *((uint32_t *)(in)) = value; }
 
 // Macros for shortening quantization functions' names and avoid long lines
 #define MUL_SAT(a, b) muriscv_nn_doubling_high_mult_no_sat((a), (b))
@@ -1012,23 +1014,23 @@ static inline int32_t muriscv_nn_one_over_one_plus_x_for_x_in_0_1(int32_t val)
  * param[in] *scratch_buffers                   Struct containing scratch buffers
  */
 muriscv_nn_status muriscv_nn_lstm_step_s8_s16(const int8_t *input,
-                                            const int8_t *input_to_input_weight,
-                                            const int8_t *input_to_forget_weight,
-                                            const int8_t *input_to_cell_weight,
-                                            const int8_t *input_to_output_weight,
-                                            const int8_t *recurrent_to_input_weight,
-                                            const int8_t *recurrent_to_forget_weight,
-                                            const int8_t *recurrent_to_cell_weight,
-                                            const int8_t *recurrent_to_output_weight,
-                                            const muriscv_nn_lstm_params *lstm,
-                                            const int n_batch,
-                                            const int n_cell,
-                                            const int n_input,
-                                            const int n_output,
-                                            int8_t *output_state,
-                                            int16_t *cell_state,
-                                            int8_t *output,
-                                            muriscv_nn_lstm_context *scratch_buffers);
+                                              const int8_t *input_to_input_weight,
+                                              const int8_t *input_to_forget_weight,
+                                              const int8_t *input_to_cell_weight,
+                                              const int8_t *input_to_output_weight,
+                                              const int8_t *recurrent_to_input_weight,
+                                              const int8_t *recurrent_to_forget_weight,
+                                              const int8_t *recurrent_to_cell_weight,
+                                              const int8_t *recurrent_to_output_weight,
+                                              const muriscv_nn_lstm_params *lstm,
+                                              const int n_batch,
+                                              const int n_cell,
+                                              const int n_input,
+                                              const int n_output,
+                                              int8_t *output_state,
+                                              int16_t *cell_state,
+                                              int8_t *output,
+                                              muriscv_nn_lstm_context *scratch_buffers);
 
 /**
  * @brief         Updates a LSTM gate for an iteration step of LSTM function, int8x8_16 version.
@@ -1049,19 +1051,19 @@ muriscv_nn_status muriscv_nn_lstm_step_s8_s16(const int8_t *input,
  * param[out]   n_cell                          Cell size
  */
 void muriscv_nn_lstm_calculate_gate_s8_s16(const int8_t *input,
-                                       const int8_t *input_to_gate_weights,
-                                       const int32_t *input_to_gate_bias,
-                                       const muriscv_nn_scaling input_to_gate_scaling,
-                                       const int8_t *output_state,
-                                       const int8_t *recurrent_to_gate_weights,
-                                       const int32_t *recurrent_to_gate_bias,
-                                       const muriscv_nn_scaling recurrent_to_gate_scaling,
-                                       const int32_t n_batch,
-                                       const int32_t n_input,
-                                       const int32_t n_output,
-                                       const int32_t n_cell,
-                                       const muriscv_nn_activation_type activation_type,
-                                       int16_t *gate);
+                                           const int8_t *input_to_gate_weights,
+                                           const int32_t *input_to_gate_bias,
+                                           const muriscv_nn_scaling input_to_gate_scaling,
+                                           const int8_t *output_state,
+                                           const int8_t *recurrent_to_gate_weights,
+                                           const int32_t *recurrent_to_gate_bias,
+                                           const muriscv_nn_scaling recurrent_to_gate_scaling,
+                                           const int32_t n_batch,
+                                           const int32_t n_input,
+                                           const int32_t n_output,
+                                           const int32_t n_cell,
+                                           const muriscv_nn_activation_type activation_type,
+                                           int16_t *gate);
 
 /**
  * @brief       Update cell state for a single LSTM iteration step, int8x8_16 version.
@@ -1073,11 +1075,11 @@ void muriscv_nn_lstm_calculate_gate_s8_s16(const int8_t *input,
  * @param[in]   cell_gate           Input vector of size, n_block
  */
 void muriscv_nn_lstm_update_cell_state_s16(const int32_t n_block,
-                                       const int32_t cell_state_scale,
-                                       int16_t *cell_state,
-                                       const int16_t *input_gate,
-                                       const int16_t *forget_gate,
-                                       const int16_t *cell_gate);
+                                           const int32_t cell_state_scale,
+                                           int16_t *cell_state,
+                                           const int16_t *input_gate,
+                                           const int16_t *forget_gate,
+                                           const int16_t *cell_gate);
 
 /**
  * @brief       Calculate the output state tensor of an LSTM step, s8 input/output and s16 weight version.
@@ -1093,15 +1095,15 @@ void muriscv_nn_lstm_update_cell_state_s16(const int32_t n_block,
  * @param[in]       cell_gate_scratch           Scratch buffer
  */
 void muriscv_nn_lstm_update_output_s8_s16(const int n_batch,
-                                      const int n_cell,
-                                      int16_t *cell_state,
-                                      const int32_t cell_state_scale,
-                                      const int16_t *output_gate,
-                                      const muriscv_nn_scaling hidden_scale,
-                                      const int32_t hidden_offset,
-                                      int8_t *output_state,
-                                      int16_t *cell_gate_scratch);
-                                      
+                                          const int n_cell,
+                                          int16_t *cell_state,
+                                          const int32_t cell_state_scale,
+                                          const int16_t *output_gate,
+                                          const muriscv_nn_scaling hidden_scale,
+                                          const int32_t hidden_offset,
+                                          int8_t *output_state,
+                                          int16_t *cell_gate_scratch);
+
 /**
  * @brief The result of the multiplication is accumulated to the passed result buffer.
  * Multiplies a matrix by a "batched" vector (i.e. a matrix with a batch dimension composed by input vectors independent
@@ -1119,15 +1121,15 @@ void muriscv_nn_lstm_update_output_s8_s16(const int n_batch,
  * @param[in]   batch            Batch size
  */
 void muriscv_nn_vec_mat_mul_result_acc_s8(const int8_t *lhs_in,
-                                      const int8_t *rhs_in,
-                                      const int32_t *bias,
-                                      int16_t *dst,
-                                      const int32_t dst_offset,
-                                      const int32_t dst_multiplier,
-                                      const int32_t dst_shift,
-                                      const int32_t rhs_cols,
-                                      const int32_t rhs_rows,
-                                      const int32_t batch);
+                                          const int8_t *rhs_in,
+                                          const int32_t *bias,
+                                          int16_t *dst,
+                                          const int32_t dst_offset,
+                                          const int32_t dst_multiplier,
+                                          const int32_t dst_shift,
+                                          const int32_t rhs_cols,
+                                          const int32_t rhs_rows,
+                                          const int32_t batch);
 
 /**
  * @brief s16 elementwise multiplication with s8 output
@@ -1143,14 +1145,12 @@ void muriscv_nn_vec_mat_mul_result_acc_s8(const int8_t *lhs_in,
  * @details   Supported framework: TensorFlow Lite micro
  */
 muriscv_nn_status muriscv_nn_elementwise_mul_s16_s8(const int16_t *input_1_vect,
-                                               const int16_t *input_2_vect,
-                                               int8_t *output,
-                                               const int32_t out_offset,
-                                               const int32_t out_mult,
-                                               const int32_t out_shift,
-                                               const int32_t block_size);
-
-
+                                                    const int16_t *input_2_vect,
+                                                    int8_t *output,
+                                                    const int32_t out_offset,
+                                                    const int32_t out_mult,
+                                                    const int32_t out_shift,
+                                                    const int32_t block_size);
 
 #ifdef __cplusplus
 }

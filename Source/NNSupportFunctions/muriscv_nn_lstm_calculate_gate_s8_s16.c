@@ -55,44 +55,44 @@
  * Refer to header file for details
  */
 void muriscv_nn_lstm_calculate_gate_s8_s16(const int8_t *input,
-                                       const int8_t *input_to_gate_weights,
-                                       const int32_t *input_to_gate_bias,
-                                       const muriscv_nn_scaling input_to_gate_scaling,
-                                       const int8_t *output_state,
-                                       const int8_t *recurrent_to_gate_weights,
-                                       const int32_t *recurrent_to_gate_bias,
-                                       const muriscv_nn_scaling recurrent_to_gate,
-                                       const int32_t n_batch,
-                                       const int32_t n_input,
-                                       const int32_t n_output,
-                                       const int32_t n_cell,
-                                       const muriscv_nn_activation_type activation_type,
-                                       int16_t *gate)
+                                           const int8_t *input_to_gate_weights,
+                                           const int32_t *input_to_gate_bias,
+                                           const muriscv_nn_scaling input_to_gate_scaling,
+                                           const int8_t *output_state,
+                                           const int8_t *recurrent_to_gate_weights,
+                                           const int32_t *recurrent_to_gate_bias,
+                                           const muriscv_nn_scaling recurrent_to_gate,
+                                           const int32_t n_batch,
+                                           const int32_t n_input,
+                                           const int32_t n_output,
+                                           const int32_t n_cell,
+                                           const muriscv_nn_activation_type activation_type,
+                                           int16_t *gate)
 {
     const int32_t n_block = n_batch * n_cell;
 
     memset(gate, 0, n_block * sizeof(int16_t));
     muriscv_nn_vec_mat_mul_result_acc_s8(input,
-                                     input_to_gate_weights,
-                                     input_to_gate_bias,
-                                     gate,
-                                     0,
-                                     input_to_gate_scaling.multiplier,
-                                     input_to_gate_scaling.shift,
-                                     n_input,
-                                     n_cell,
-                                     n_batch);
+                                         input_to_gate_weights,
+                                         input_to_gate_bias,
+                                         gate,
+                                         0,
+                                         input_to_gate_scaling.multiplier,
+                                         input_to_gate_scaling.shift,
+                                         n_input,
+                                         n_cell,
+                                         n_batch);
 
     muriscv_nn_vec_mat_mul_result_acc_s8(output_state,
-                                     recurrent_to_gate_weights,
-                                     recurrent_to_gate_bias,
-                                     gate,
-                                     0,
-                                     recurrent_to_gate.multiplier,
-                                     recurrent_to_gate.shift,
-                                     n_output,
-                                     n_cell,
-                                     n_batch);
+                                         recurrent_to_gate_weights,
+                                         recurrent_to_gate_bias,
+                                         gate,
+                                         0,
+                                         recurrent_to_gate.multiplier,
+                                         recurrent_to_gate.shift,
+                                         n_output,
+                                         n_cell,
+                                         n_batch);
 
     muriscv_nn_activation_s16(gate, gate, n_block, 0, activation_type);
 }
