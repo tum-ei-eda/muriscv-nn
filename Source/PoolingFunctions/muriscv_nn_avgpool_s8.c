@@ -49,63 +49,63 @@ muriscv_nn_status muriscv_nn_avgpool_s8(const muriscv_nn_context *ctx,
     const int32_t act_max = pool_params->activation.max;
     const int32_t ch_src = input_dims->c;
 
-// #if defined(USE_PEXT)
-//
-//     if (ctx->buf == NULL && muriscv_nn_avgpool_s8_get_buffer_size(output_dims->w, input_dims->c))
-//     {
-//         return MURISCV_NN_ARG_ERROR;
-//     }
-//     q15_t *buffer = (q15_t *)ctx->buf;
-//
-//     /* Run the following code for cores with P extension
-//      */
-//     for (int i_y = 0, idx_y = -pad_y; i_y < output_y; idx_y += stride_y, i_y++)
-//     {
-//         for (int i_x = 0, idx_x = -pad_x; i_x < output_x; idx_x += stride_x, i_x++)
-//         {
-//             /* Condition for kernel start dimension:
-//                       (base_idx_<x,y> + kernel_<x,y>_start) >= 0 */
-//             const int32_t kernel_y_start = MAX(0, -idx_y);
-//             const int32_t kernel_x_start = MAX(0, -idx_x);
-//
-//             /* Condition for kernel end dimension:
-//                    (base_idx_<x,y> + kernel_<x,y>_end) < dim_src_<width,height> */
-//             const int32_t kernel_y_end = MIN(kernel_y, input_y - idx_y);
-//             const int32_t kernel_x_end = MIN(kernel_x, input_x - idx_x);
-//
-//             int count = 0;
-//             for (int k_y = kernel_y_start; k_y < kernel_y_end; k_y++)
-//             {
-//                 for (int k_x = kernel_x_start; k_x < kernel_x_end; k_x++)
-//                 {
-//                     const q7_t *start = src + ch_src * (k_x + idx_x + (k_y + idx_y) * input_x);
-//
-//                     for (int i = 0; i < ch_src; i++)
-//                     {
-//                         buffer[i] += start[i];
-//                     }
-//                     count++;
-//                 }
-//             }
-//
-//             // Prevent static code issue DIVIDE_BY_ZERO.
-//             if (count == 0)
-//             {
-//                 return MURISCV_NN_ARG_ERROR;
-//             }
-//
-//             for (int i = 0; i < ch_src; i++)
-//             {
-//                 int32_t sum = buffer[i] > 0 ? (buffer[i] + count / 2) : (buffer[i] - count / 2);
-//                 sum /= count;
-//                 sum = MAX(sum, act_min);
-//                 sum = MIN(sum, act_max);
-//                 dst[i] = (q7_t)sum;
-//             }
-//             dst += ch_src;
-//         }
-//     }
-// #else /* defined(USE_PEXT) */
+    // #if defined(USE_PEXT)
+    //
+    //     if (ctx->buf == NULL && muriscv_nn_avgpool_s8_get_buffer_size(output_dims->w, input_dims->c))
+    //     {
+    //         return MURISCV_NN_ARG_ERROR;
+    //     }
+    //     q15_t *buffer = (q15_t *)ctx->buf;
+    //
+    //     /* Run the following code for cores with P extension
+    //      */
+    //     for (int i_y = 0, idx_y = -pad_y; i_y < output_y; idx_y += stride_y, i_y++)
+    //     {
+    //         for (int i_x = 0, idx_x = -pad_x; i_x < output_x; idx_x += stride_x, i_x++)
+    //         {
+    //             /* Condition for kernel start dimension:
+    //                       (base_idx_<x,y> + kernel_<x,y>_start) >= 0 */
+    //             const int32_t kernel_y_start = MAX(0, -idx_y);
+    //             const int32_t kernel_x_start = MAX(0, -idx_x);
+    //
+    //             /* Condition for kernel end dimension:
+    //                    (base_idx_<x,y> + kernel_<x,y>_end) < dim_src_<width,height> */
+    //             const int32_t kernel_y_end = MIN(kernel_y, input_y - idx_y);
+    //             const int32_t kernel_x_end = MIN(kernel_x, input_x - idx_x);
+    //
+    //             int count = 0;
+    //             for (int k_y = kernel_y_start; k_y < kernel_y_end; k_y++)
+    //             {
+    //                 for (int k_x = kernel_x_start; k_x < kernel_x_end; k_x++)
+    //                 {
+    //                     const q7_t *start = src + ch_src * (k_x + idx_x + (k_y + idx_y) * input_x);
+    //
+    //                     for (int i = 0; i < ch_src; i++)
+    //                     {
+    //                         buffer[i] += start[i];
+    //                     }
+    //                     count++;
+    //                 }
+    //             }
+    //
+    //             // Prevent static code issue DIVIDE_BY_ZERO.
+    //             if (count == 0)
+    //             {
+    //                 return MURISCV_NN_ARG_ERROR;
+    //             }
+    //
+    //             for (int i = 0; i < ch_src; i++)
+    //             {
+    //                 int32_t sum = buffer[i] > 0 ? (buffer[i] + count / 2) : (buffer[i] - count / 2);
+    //                 sum /= count;
+    //                 sum = MAX(sum, act_min);
+    //                 sum = MIN(sum, act_max);
+    //                 dst[i] = (q7_t)sum;
+    //             }
+    //             dst += ch_src;
+    //         }
+    //     }
+    // #else /* defined(USE_PEXT) */
 
     (void)ctx; /* Only needed for P extension */
 
@@ -214,7 +214,7 @@ muriscv_nn_status muriscv_nn_avgpool_s8(const muriscv_nn_context *ctx,
 #endif /* defined(USE_VEXT) */
         }
     }
-// #endif /* defined(USE_PEXT) */
+    // #endif /* defined(USE_PEXT) */
 
     return MURISCV_NN_SUCCESS;
 }

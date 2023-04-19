@@ -50,10 +50,10 @@
  */
 
 void muriscv_nn_activation_s16(const int16_t *input,
-                           int16_t *output,
-                           const uint16_t size,
-                           const uint16_t left_shift,
-                           const muriscv_nn_activation_type type)
+                               int16_t *output,
+                               const uint16_t size,
+                               const uint16_t left_shift,
+                               const muriscv_nn_activation_type type)
 {
     uint32_t abs_input_shift, max_saturation;
     switch (type)

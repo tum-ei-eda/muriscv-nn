@@ -46,62 +46,62 @@
  *
  */
 muriscv_nn_status muriscv_nn_elementwise_mul_s16_s8(const int16_t *input_1_vect,
-                                               const int16_t *input_2_vect,
-                                               int8_t *output,
-                                               const int32_t out_offset,
-                                               const int32_t out_mult,
-                                               const int32_t out_shift,
-                                               const int32_t block_size)
+                                                    const int16_t *input_2_vect,
+                                                    int8_t *output,
+                                                    const int32_t out_offset,
+                                                    const int32_t out_mult,
+                                                    const int32_t out_shift,
+                                                    const int32_t block_size)
 {
     int32_t loop_count = block_size;
 
-/*#if defined(ARM_MATH_MVEI)
+    /*#if defined(ARM_MATH_MVEI)
 
-    while (loop_count > 0)
-    {
-        mve_pred16_t pred = vctp32q(loop_count);
+        while (loop_count > 0)
+        {
+            mve_pred16_t pred = vctp32q(loop_count);
 
-        int32x4_t input_1 = vldrhq_z_s32(input_1_vect, pred);
-        int32x4_t input_2 = vldrhq_z_s32(input_2_vect, pred);
+            int32x4_t input_1 = vldrhq_z_s32(input_1_vect, pred);
+            int32x4_t input_2 = vldrhq_z_s32(input_2_vect, pred);
 
-        int32x4_t res_0 = vmulq_s32(input_1, input_2);
+            int32x4_t res_0 = vmulq_s32(input_1, input_2);
 
-        res_0 = arm_requantize_mve_32x4(res_0, vdupq_n_s32(out_mult), vdupq_n_s32(out_shift));
-        res_0 = vaddq_n_s32(res_0, out_offset);
+            res_0 = arm_requantize_mve_32x4(res_0, vdupq_n_s32(out_mult), vdupq_n_s32(out_shift));
+            res_0 = vaddq_n_s32(res_0, out_offset);
 
-        res_0 = vmaxq_s32(res_0, vdupq_n_s32(NN_Q7_MIN));
-        res_0 = vminq_s32(res_0, vdupq_n_s32(NN_Q7_MAX));
+            res_0 = vmaxq_s32(res_0, vdupq_n_s32(NN_Q7_MIN));
+            res_0 = vminq_s32(res_0, vdupq_n_s32(NN_Q7_MAX));
 
-        vstrbq_p_s32(output, res_0, pred);
-        input_1_vect += 4;
-        input_2_vect += 4;
+            vstrbq_p_s32(output, res_0, pred);
+            input_1_vect += 4;
+            input_2_vect += 4;
 
-        output += 4;
-        loop_count -= 4;
-    }
+            output += 4;
+            loop_count -= 4;
+        }
 
-#else
-    #if defined(ARM_MATH_DSP)
+    #else
+        #if defined(ARM_MATH_DSP)
 
-    while (loop_count > 1)
-    {
-        int32_t input_1 = arm_nn_read_q15x2_ia(&input_1_vect);
-        int32_t input_2 = arm_nn_read_q15x2_ia(&input_2_vect);
+        while (loop_count > 1)
+        {
+            int32_t input_1 = arm_nn_read_q15x2_ia(&input_1_vect);
+            int32_t input_2 = arm_nn_read_q15x2_ia(&input_2_vect);
 
-        int32_t mul_res = SMULBB(input_1, input_2);
-        mul_res = arm_nn_requantize(mul_res, out_mult, out_shift) + out_offset;
-        mul_res = CLAMP(mul_res, NN_Q7_MAX, NN_Q7_MIN);
-        int32_t mul = (int16_t)(mul_res & 0xFF);
+            int32_t mul_res = SMULBB(input_1, input_2);
+            mul_res = arm_nn_requantize(mul_res, out_mult, out_shift) + out_offset;
+            mul_res = CLAMP(mul_res, NN_Q7_MAX, NN_Q7_MIN);
+            int32_t mul = (int16_t)(mul_res & 0xFF);
 
-        mul_res = SMULTT(input_1, input_2);
-        mul_res = arm_nn_requantize(mul_res, out_mult, out_shift) + out_offset;
-        mul_res = CLAMP(mul_res, NN_Q7_MAX, NN_Q7_MIN);
-        mul |= (int16_t)mul_res << 8;
+            mul_res = SMULTT(input_1, input_2);
+            mul_res = arm_nn_requantize(mul_res, out_mult, out_shift) + out_offset;
+            mul_res = CLAMP(mul_res, NN_Q7_MAX, NN_Q7_MIN);
+            mul |= (int16_t)mul_res << 8;
 
-        arm_nn_write_s8x2_ia(&output, mul);
-        loop_count -= 2;
-    }
-    #endif*/
+            arm_nn_write_s8x2_ia(&output, mul);
+            loop_count -= 2;
+        }
+        #endif*/
     for (int i = 0; i < loop_count; i++)
     {
         /* C = A * B */
@@ -113,7 +113,7 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_s8(const int16_t *input_1_vect,
         output[i] = (int8_t)mul_res;
     }
 
-//#endif
+    //#endif
 
     return MURISCV_NN_SUCCESS;
 }

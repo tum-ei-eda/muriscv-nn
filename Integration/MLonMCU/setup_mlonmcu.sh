@@ -1,4 +1,22 @@
 #!/usr/bin/env bash
+##
+## Copyright (c) 2023 TUM Department of Electrical and Computer Engineering - Chair of Electronic Design Automation.
+##
+## This file is part of muRISCV-NN.
+## See https://github.com/tum-ei-eda/muriscv-nn for further info.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+##
 
 set -e
 
@@ -54,6 +72,7 @@ while getopts ':h-:' 'OPTKEY'; do
                 PREBUILT_TVM=1
                 ;;
             *)
+                    # shellcheck disable=SC2154
                     if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
                         echo "Unknown option --${OPTARG}" >&2
                     fi
@@ -154,15 +173,16 @@ fi
 # Setup Python #
 ################
 
-virtualenv -p python3.8 $VENV_DIR
+virtualenv -p python3.8 "$VENV_DIR"
 
-source $VENV_DIR/bin/activate
+# shellcheck source=/dev/null
+source "$VENV_DIR/bin/activate"
 
 # install mlonmcu from repository
 pip install git+https://github.com/tum-ei-eda/mlonmcu.git@${MLONMCU_REF}
 
 
-if [[ "$PREBUILD_TVM" == "true" ]]
+if [[ "$PREBUILT_TVM" == "true" ]]
 then
     # pip install "tlcpack-nightly==$TLCPACK_VERSION" -f https://tlcpack.ai/wheels
     pip install "tlcpack-nightly" -f https://tlcpack.ai/wheels
@@ -180,11 +200,11 @@ TEMPLATE_ARGS="-c enable_tflm=$ENABLE_TFLM enable_tvm=$ENABLE_TVM enable_spike=$
 echo "TEMPLATE_ARGS=$TEMPLATE_ARGS"
 
 
-mlonmcu init $WORKSPACE_DIR -t environment.yml.j2 --non-interactive --clone-models --allow-exists $TEMPLATE_ARGS
+mlonmcu init "$WORKSPACE_DIR" -t environment.yml.j2 --non-interactive --clone-models --allow-exists "$TEMPLATE_ARGS"
 
 # Install environment-specific Python pkgs
-mlonmcu setup -g -H $WORKSPACE_DIR
-pip install -r $WORKSPACE_DIR/requirements_addition.txt
+mlonmcu setup -g -H "$WORKSPACE_DIR"
+pip install -r "$WORKSPACE_DIR/requirements_addition.txt"
 
 # Install dependencies (this might take a long time)
-mlonmcu setup -H $WORKSPACE_DIR -v
+mlonmcu setup -H "$WORKSPACE_DIR" -v

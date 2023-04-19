@@ -1,4 +1,22 @@
 #!/bin/bash
+##
+## Copyright (c) 2023 TUM Department of Electrical and Computer Engineering - Chair of Electronic Design Automation.
+##
+## This file is part of muRISCV-NN.
+## See https://github.com/tum-ei-eda/muriscv-nn for further info.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+##
 
 if [ "${BASH_SOURCE[0]}" -ef "$0" ]
 then
@@ -7,11 +25,11 @@ then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_DIR=$SCRIPT_DIR/workspace
-MURISCVNN_DIR=$SCRIPT_DIR/../..
-TOOLCHAINS_DIR=$MURISCVNN_DIR/Toolchain
-SIM_DIR=$MURISCVNN_DIR/Sim
-VENV_DIR=$SCRIPT_DIR/venv
+export WORKSPACE_DIR=$SCRIPT_DIR/workspace
+export MURISCVNN_DIR=$SCRIPT_DIR/../..
+export TOOLCHAINS_DIR=$MURISCVNN_DIR/Toolchain
+export SIM_DIR=$MURISCVNN_DIR/Sim
+export VENV_DIR=$SCRIPT_DIR/venv
 
 ########################################
 # Default config  for setup_mlonmcu.sh #
@@ -48,11 +66,10 @@ export LOCAL_ETISS=0
 export ENABLE_ETISS=0
 
 # RISC-V GCC
-LOCAL_GCC=1
-ENABLE_DEFAULT=1
-ENABLE_PEXT=1
-ENABLE_VEXT=1
+export LOCAL_GCC=1
+export ENABLE_DEFAULT=1
+export ENABLE_PEXT=1
+export ENABLE_VEXT=1
 
 # LLVM
 # Not supported
-

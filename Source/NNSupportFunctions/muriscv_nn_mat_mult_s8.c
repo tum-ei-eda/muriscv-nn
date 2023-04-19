@@ -125,5 +125,5 @@ q7_t *muriscv_nn_mat_mult_s8(const q7_t *input_row,
     (void)out;
     return NULL;
 
-#endif  /* defined(USE_VEXT) */
+#endif /* defined(USE_VEXT) */
 }

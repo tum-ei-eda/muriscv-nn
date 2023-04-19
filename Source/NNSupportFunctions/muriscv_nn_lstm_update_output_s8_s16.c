@@ -47,14 +47,14 @@
  * Refer to header files for details
  */
 void muriscv_nn_lstm_update_output_s8_s16(const int n_batch,
-                                      const int n_cell,
-                                      int16_t *cell_state,
-                                      const int32_t cell_state_scale,
-                                      const int16_t *output_gate,
-                                      const muriscv_nn_scaling hidden_scaling,
-                                      const int32_t hidden_offset,
-                                      int8_t *output_state,
-                                      int16_t *cell_gate_scratch)
+                                          const int n_cell,
+                                          int16_t *cell_state,
+                                          const int32_t cell_state_scale,
+                                          const int16_t *output_gate,
+                                          const muriscv_nn_scaling hidden_scaling,
+                                          const int32_t hidden_offset,
+                                          int8_t *output_state,
+                                          int16_t *cell_gate_scratch)
 {
     const int32_t size = n_batch * n_cell;
 
@@ -71,12 +71,12 @@ void muriscv_nn_lstm_update_output_s8_s16(const int n_batch,
     muriscv_nn_activation_s16(cell_state, cell_gate_scratch, size, tanh_input_left_shift, MURISCV_TANH);
 
     muriscv_nn_elementwise_mul_s16_s8(output_gate,
-                               cell_gate_scratch,
-                               output_state,
-                               hidden_offset,
-                               hidden_scaling.multiplier,
-                               hidden_scaling.shift,
-                               size);
+                                      cell_gate_scratch,
+                                      output_state,
+                                      hidden_offset,
+                                      hidden_scaling.multiplier,
+                                      hidden_scaling.shift,
+                                      size);
 }
 /**
  * @} end of supportLSTM group

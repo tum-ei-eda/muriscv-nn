@@ -1,5 +1,22 @@
 #!/bin/bash
-# TODO: docs and license
+##
+## Copyright (c) 2023 TUM Department of Electrical and Computer Engineering - Chair of Electronic Design Automation.
+##
+## This file is part of muRISCV-NN.
+## See https://github.com/tum-ei-eda/muriscv-nn for further info.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+##
 
 set -e
 
@@ -76,6 +93,7 @@ while getopts ':v:h-:' 'OPTKEY'; do
                 ENABLE_PEXT=1
                 ;;
             *)
+                    # shellcheck disable=SC2154
                     if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
                         echo "Unknown option --${OPTARG}" >&2
                     fi
@@ -109,9 +127,10 @@ shift $(( OPTIND - 1 ))
 NUM_MODELS=0
 for i in $(seq 1 1 $#)
 do
-  MODEL=${@:$i:1}
+  MODEL=${*:$i:1}
   MODELS="$MODELS $MODEL"
-  NUM_MODELS=$(expr $NUM_MODELS + 1)
+  # shellcheck disable=SC2003
+  NUM_MODELS=$(expr "$NUM_MODELS" + 1)
 done
 
 if [[ "$NUM_MODELS" -eq 0 ]]
@@ -128,9 +147,11 @@ then
 fi
 
 
-source $VENV_DIR/bin/activate
+# shellcheck source=/dev/null
+source "$VENV_DIR/bin/activate"
 
-COMPILE_THREADS=$(expr `nproc` / $NUM_MODELS)
+# shellcheck disable=SC2003
+COMPILE_THREADS=$(expr "$(nproc)" / "$NUM_MODELS")
 
 BACKEND_ARGS=""
 TARGET_ARGS_DEFAULT=""
@@ -188,21 +209,21 @@ fi
 if [[ "$ENABLE_DEFAULT" -eq 1 ]]
 then
     # run, default
-    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_DEFAULT $FEATURE_ARGS $CONFIG_ARGS $EXTRA_ARGS
-    mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_DEFAULT $FEATURE_ARGS $CONFIG_ARGS $EXTRA_ARGS
+    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_DEFAULT" "$FEATURE_ARGS" "$CONFIG_ARGS" "$EXTRA_ARGS"
+    mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_DEFAULT" "$FEATURE_ARGS" "$CONFIG_ARGS" "$EXTRA_ARGS"
 fi
 
 
 if [[ "$ENABLE_PEXT" -eq 1 ]]
 then
     # run, pext
-    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_PEXT $FEATURE_ARGS $CONFIG_ARGS --feature pext $EXTRA_ARGS
-    mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_PEXT $FEATURE_ARGS $CONFIG_ARGS --feature pext $EXTRA_ARGS
+    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_PEXT" "$FEATURE_ARGS" "$CONFIG_ARGS" --feature pext "$EXTRA_ARGS"
+    mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_PEXT" "$FEATURE_ARGS" "$CONFIG_ARGS" --feature pext "$EXTRA_ARGS"
 fi
 
 if [[ "$ENABLE_VEXT" -eq 1 ]]
 then
     # run, vext
-    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_VEXT $FEATURE_ARGS $CONFIG_ARGS --feature vext --config vext.vlen=$VLEN $EXTRA_ARGS
-    mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_VEXT $FEATURE_ARGS $CONFIG_ARGS --feature vext --config vext.vlen=$VLEN $EXTRA_ARGS
+    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_VEXT" "$FEATURE_ARGS" "$CONFIG_ARGS" --feature vext --config "vext.vlen=$VLEN" "$EXTRA_ARGS"
+    mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_VEXT" "$FEATURE_ARGS" "$CONFIG_ARGS" --feature vext --config "vext.vlen=$VLEN" "$EXTRA_ARGS"
 fi

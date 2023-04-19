@@ -78,7 +78,8 @@ int8_t *muriscv_nn_mat_mul_core_4x_s8(const int32_t row_elements,
             vl = vsetvl_e32m2(loop_cnt);
 
             vint32m2_t col_val = vsext_vf4_i32m2(vle8_v_i8mf2(col_base + loop_ptr, vl), vl);
-            sum_tmp_v = vmacc_vv_i32m2(sum_tmp_v, col_val, vmv_v_x_i32m2(1, vl), vl);  // TODO(fabianpedd): Should be a tail undisturbed add
+            sum_tmp_v = vmacc_vv_i32m2(
+                sum_tmp_v, col_val, vmv_v_x_i32m2(1, vl), vl); // TODO(fabianpedd): Should be a tail undisturbed add
 
             vint32m2_t row_val = vsext_vf4_i32m2(vle8_v_i8mf2(ip_row_0 + loop_ptr, vl), vl);
             acc_n0_v = vmacc_vv_i32m2(acc_n0_v, col_val, row_val, vl);

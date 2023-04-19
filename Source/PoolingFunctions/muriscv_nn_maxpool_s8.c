@@ -131,7 +131,7 @@ static inline void clamp_output(int8_t *source, int32_t length, const int32_t ac
 
         int32_t *s = (int32_t *)(source + idx);
         *s = __rv_smin8(__rv_smax8(*s, min_packed), max_packed);
-        *(s+1) = __rv_smin8(__rv_smax8(*(s+1), min_packed), max_packed);
+        *(s + 1) = __rv_smin8(__rv_smax8(*(s + 1), min_packed), max_packed);
 
         idx += 8;
     }

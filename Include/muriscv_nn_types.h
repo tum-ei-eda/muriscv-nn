@@ -241,7 +241,6 @@ typedef struct
 
 } muriscv_nn_lstm_params;
 
-
 #ifdef __cplusplus
 }
 #endif
