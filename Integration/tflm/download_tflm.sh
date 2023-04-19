@@ -22,7 +22,7 @@
 set -euo pipefail
 
 # Path to this script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Download TFLM sources."
 if [ ! -d "tflite-micro" ]; then

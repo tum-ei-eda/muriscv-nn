@@ -25,11 +25,11 @@ then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_DIR=$SCRIPT_DIR/workspace
-MURISCVNN_DIR=$SCRIPT_DIR/../..
-TOOLCHAINS_DIR=$MURISCVNN_DIR/Toolchain
-SIM_DIR=$MURISCVNN_DIR/Sim
-VENV_DIR=$SCRIPT_DIR/venv
+export WORKSPACE_DIR=$SCRIPT_DIR/workspace
+export MURISCVNN_DIR=$SCRIPT_DIR/../..
+export TOOLCHAINS_DIR=$MURISCVNN_DIR/Toolchain
+export SIM_DIR=$MURISCVNN_DIR/Sim
+export VENV_DIR=$SCRIPT_DIR/venv
 
 ########################################
 # Default config  for setup_mlonmcu.sh #
@@ -66,11 +66,10 @@ export LOCAL_ETISS=0
 export ENABLE_ETISS=0
 
 # RISC-V GCC
-LOCAL_GCC=1
-ENABLE_DEFAULT=1
-ENABLE_PEXT=1
-ENABLE_VEXT=1
+export LOCAL_GCC=1
+export ENABLE_DEFAULT=1
+export ENABLE_PEXT=1
+export ENABLE_VEXT=1
 
 # LLVM
 # Not supported
-

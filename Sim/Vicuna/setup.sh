@@ -42,7 +42,7 @@ if [ ! -d "verilator" ]; then
   cd verilator
   git checkout tags/v4.210
   autoconf
-  ./configure --prefix ${SCRIPT_DIR}/verilator/install
+  ./configure --prefix "$SCRIPT_DIR/verilator/install"
   make all
   make install
 fi

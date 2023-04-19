@@ -38,8 +38,7 @@ BENCHMARKS=(keyword_benchmark keyword_benchmark_8bit person_detection_benchmark)
 # Path to muRISCV-NN, TFLM and Toolchain
 MURISCV_NN_PATH=${SCRIPT_DIR}/../..
 
-
-cd ${SCRIPT_DIR}
+cd "$SCRIPT_DIR"
 TFLM_PATH=${SCRIPT_DIR}/tflite-micro
 
 
@@ -71,31 +70,31 @@ fi
 
 
 #If VEXT is disabled, set VLEN to 1024 to prevent simulator complaints
-if [ ${USE_VEXT} == OFF ]; then
+if [ "$USE_VEXT" == OFF ]; then
     VLEN='1024'
 fi
 
-cd ${TFLM_PATH}
+cd "$TFLM_PATH"
 
 make -f tensorflow/lite/micro/tools/make/Makefile clean
 
 for test in "${TESTS[@]}"; do
-  echo ${test}
-  make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
+  echo "$test"
+  make "-j$(nproc)" -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \
-    TARGET_ARCH=${TARGET_ARCH} \
+    "TARGET_ARCH=$TARGET_ARCH" \
     OPTIMIZED_KERNEL_DIR=${OPTIMIZED_KERNEL_DIR} \
-    MURISCV_NN_PATH=${MURISCV_NN_PATH} \
-    USE_VEXT=${USE_VEXT} \
-    USE_PEXT=${USE_PEXT} \
-    TOOLCHAIN=${TOOLCHAIN} \
-    GCC_TOOLCHAIN_ROOT=${GCC_TOOLCHAIN_ROOT} \
-    BUILD_TYPE=${BUILD_TYPE} \
-    ${test}
-  echo ${test}
-    ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
-        ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${test} \
-        ${TARGET_ARCH} ${VLEN} 1
+    "MURISCV_NN_PATH=$MURISCV_NN_PATH" \
+    "USE_VEXT=$USE_VEXT" \
+    "USE_PEXT=$USE_PEXT" \
+    "TOOLCHAIN=$TOOLCHAIN" \
+    "GCC_TOOLCHAIN_ROOT=$GCC_TOOLCHAIN_ROOT" \
+    "BUILD_TYPE=$BUILD_TYPE" \
+    "$test"
+  echo "$test"
+    "$MURISCV_NN_PATH/Sim/$SIMULATOR/run.sh" \
+        "$TFLM_PATH/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/$test" \
+        "$TARGET_ARCH" "$VLEN" 1
 
 done
 
@@ -103,19 +102,19 @@ make -f tensorflow/lite/micro/tools/make/Makefile clean
 
 
 for bm in "${BENCHMARKS[@]}"; do
-  make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
-    TARGET=${TARGET} \
-    TARGET_ARCH=${TARGET_ARCH} \
-    OPTIMIZED_KERNEL_DIR=${OPTIMIZED_KERNEL_DIR} \
-    MURISCV_NN_PATH=${MURISCV_NN_PATH} \
-    USE_VEXT=${USE_VEXT} \
-    USE_PEXT=${USE_PEXT} \
-    TOOLCHAIN=${TOOLCHAIN} \
-    GCC_TOOLCHAIN_ROOT=${GCC_TOOLCHAIN_ROOT} \
-    BUILD_TYPE=${BUILD_TYPE} \
-    ${bm}
+  make "-j$(nproc)" -f tensorflow/lite/micro/tools/make/Makefile \
+    "TARGET=$TARGET" \
+    "TARGET_ARCH=$TARGET_ARCH" \
+    "OPTIMIZED_KERNEL_DIR=$OPTIMIZED_KERNEL_DIR" \
+    "MURISCV_NN_PATH=$MURISCV_NN_PATH" \
+    "USE_VEXT=$USE_VEXT" \
+    "USE_PEXT=$USE_PEXT" \
+    "TOOLCHAIN=$TOOLCHAIN" \
+    "GCC_TOOLCHAIN_ROOT=$GCC_TOOLCHAIN_ROOT" \
+    "BUILD_TYPE=$BUILD_TYPE" \
+    "$bm"
 
-    ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
-    ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${bm} \
-    ${TARGET_ARCH} ${VLEN} 1
+    "$MURISCV_NN_PATH/Sim/$SIMULATOR/run.sh" \
+    "$TFLM_PATH/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/$bm" \
+    "$TARGET_ARCH" "$VLEN" 1
 done

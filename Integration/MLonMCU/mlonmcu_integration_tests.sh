@@ -93,6 +93,7 @@ while getopts ':v:h-:' 'OPTKEY'; do
                 ENABLE_PEXT=1
                 ;;
             *)
+                    # shellcheck disable=SC2154
                     if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
                         echo "Unknown option --${OPTARG}" >&2
                     fi
@@ -126,9 +127,10 @@ shift $(( OPTIND - 1 ))
 NUM_MODELS=0
 for i in $(seq 1 1 $#)
 do
-  MODEL=${@:$i:1}
+  MODEL=${*:$i:1}
   MODELS="$MODELS $MODEL"
-  NUM_MODELS=$(expr $NUM_MODELS + 1)
+  # shellcheck disable=SC2003
+  NUM_MODELS=$(expr "$NUM_MODELS" + 1)
 done
 
 if [[ "$NUM_MODELS" -eq 0 ]]
@@ -145,9 +147,11 @@ then
 fi
 
 
-source $VENV_DIR/bin/activate
+# shellcheck source=/dev/null
+source "$VENV_DIR/bin/activate"
 
-COMPILE_THREADS=$(expr `nproc` / $NUM_MODELS)
+# shellcheck disable=SC2003
+COMPILE_THREADS=$(expr "$(nproc)" / "$NUM_MODELS")
 
 BACKEND_ARGS=""
 TARGET_ARGS_DEFAULT=""
@@ -205,21 +209,21 @@ fi
 if [[ "$ENABLE_DEFAULT" -eq 1 ]]
 then
     # run, default
-    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_DEFAULT $FEATURE_ARGS $CONFIG_ARGS $EXTRA_ARGS
-    mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_DEFAULT $FEATURE_ARGS $CONFIG_ARGS $EXTRA_ARGS
+    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_DEFAULT" "$FEATURE_ARGS" "$CONFIG_ARGS" "$EXTRA_ARGS"
+    mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_DEFAULT" "$FEATURE_ARGS" "$CONFIG_ARGS" "$EXTRA_ARGS"
 fi
 
 
 if [[ "$ENABLE_PEXT" -eq 1 ]]
 then
     # run, pext
-    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_PEXT $FEATURE_ARGS $CONFIG_ARGS --feature pext $EXTRA_ARGS
-    mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_PEXT $FEATURE_ARGS $CONFIG_ARGS --feature pext $EXTRA_ARGS
+    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_PEXT" "$FEATURE_ARGS" "$CONFIG_ARGS" --feature pext "$EXTRA_ARGS"
+    mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_PEXT" "$FEATURE_ARGS" "$CONFIG_ARGS" --feature pext "$EXTRA_ARGS"
 fi
 
 if [[ "$ENABLE_VEXT" -eq 1 ]]
 then
     # run, vext
-    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_VEXT $FEATURE_ARGS $CONFIG_ARGS --feature vext --config vext.vlen=$VLEN $EXTRA_ARGS
-    mlonmcu flow run $MODELS -H $WORKSPACE_DIR --parallel --progress $BACKEND_ARGS $TARGET_ARGS_VEXT $FEATURE_ARGS $CONFIG_ARGS --feature vext --config vext.vlen=$VLEN $EXTRA_ARGS
+    [[ "$VERBOSE" -eq 1 ]] && echo mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_VEXT" "$FEATURE_ARGS" "$CONFIG_ARGS" --feature vext --config "vext.vlen=$VLEN" "$EXTRA_ARGS"
+    mlonmcu flow run "$MODELS" -H "$WORKSPACE_DIR" --parallel --progress "$BACKEND_ARGS" "$TARGET_ARGS_VEXT" "$FEATURE_ARGS" "$CONFIG_ARGS" --feature vext --config "vext.vlen=$VLEN" "$EXTRA_ARGS"
 fi

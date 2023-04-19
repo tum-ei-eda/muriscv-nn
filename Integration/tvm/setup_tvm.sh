@@ -22,7 +22,7 @@
 set -euo pipefail
 
 # Path to this script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # List of integration tests to run
 TESTS=(aww ic toy vww)
@@ -32,6 +32,7 @@ BUILDS=(mlf mlf_vext mlf_pext)
 
 echo "Download and install TVM sources."
 python3.8 -m venv .venv
+# shellcheck source=/dev/null
 source .venv/bin/activate
 pip install tlcpack-nightly -f https://tlcpack.ai/wheels
 pip install -r requirements.txt
@@ -49,7 +50,7 @@ for test in "${TESTS[@]}"; do
       TVMC_TARGET_ARGS="${TVMC_TARGET_ARGS} --target-cmsis-nn-mcpu cortex-m33"
     fi
 
-    tvmc compile ${test}/${test}.tflite \
+    tvmc compile "${test}/${test}.tflite" \
       --verbose \
       --runtime crt \
       --executor aot \
@@ -64,11 +65,11 @@ for test in "${TESTS[@]}"; do
       --executor aot \
       --executor-aot-unpacked-api 1 \
       --executor-aot-interface-api c \
-      ${TVMC_TARGET_ARGS} \
-      --output ${test}/${test}.tar
+      "${TVMC_TARGET_ARGS}" \
+      --output "${test}/${test}.tar"
 
-    mkdir -p ${test}/${build}
-    tar xf ${test}/${test}.tar -C ${test}/${build}
-    rm ${test}/${test}.tar
+    mkdir -p "${test}/${build}"
+    tar xf "${test}/${test}.tar" -C "${test}/${build}"
+    rm "${test}/${test}.tar"
   done
 done

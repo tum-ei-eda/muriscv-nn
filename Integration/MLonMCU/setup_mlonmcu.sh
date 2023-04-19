@@ -72,6 +72,7 @@ while getopts ':h-:' 'OPTKEY'; do
                 PREBUILT_TVM=1
                 ;;
             *)
+                    # shellcheck disable=SC2154
                     if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
                         echo "Unknown option --${OPTARG}" >&2
                     fi
@@ -172,15 +173,16 @@ fi
 # Setup Python #
 ################
 
-virtualenv -p python3.8 $VENV_DIR
+virtualenv -p python3.8 "$VENV_DIR"
 
-source $VENV_DIR/bin/activate
+# shellcheck source=/dev/null
+source "$VENV_DIR/bin/activate"
 
 # install mlonmcu from repository
 pip install git+https://github.com/tum-ei-eda/mlonmcu.git@${MLONMCU_REF}
 
 
-if [[ "$PREBUILD_TVM" == "true" ]]
+if [[ "$PREBUILT_TVM" == "true" ]]
 then
     # pip install "tlcpack-nightly==$TLCPACK_VERSION" -f https://tlcpack.ai/wheels
     pip install "tlcpack-nightly" -f https://tlcpack.ai/wheels
@@ -198,11 +200,11 @@ TEMPLATE_ARGS="-c enable_tflm=$ENABLE_TFLM enable_tvm=$ENABLE_TVM enable_spike=$
 echo "TEMPLATE_ARGS=$TEMPLATE_ARGS"
 
 
-mlonmcu init $WORKSPACE_DIR -t environment.yml.j2 --non-interactive --clone-models --allow-exists $TEMPLATE_ARGS
+mlonmcu init "$WORKSPACE_DIR" -t environment.yml.j2 --non-interactive --clone-models --allow-exists "$TEMPLATE_ARGS"
 
 # Install environment-specific Python pkgs
-mlonmcu setup -g -H $WORKSPACE_DIR
-pip install -r $WORKSPACE_DIR/requirements_addition.txt
+mlonmcu setup -g -H "$WORKSPACE_DIR"
+pip install -r "$WORKSPACE_DIR/requirements_addition.txt"
 
 # Install dependencies (this might take a long time)
-mlonmcu setup -H $WORKSPACE_DIR -v
+mlonmcu setup -H "$WORKSPACE_DIR" -v
