@@ -6,12 +6,12 @@ then
     exit 1
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_DIR=$SCRIPT_DIR/workspace
-MURISCVNN_DIR=$SCRIPT_DIR/../..
-TOOLCHAINS_DIR=$MURISCVNN_DIR/Toolchain
-SIM_DIR=$MURISCVNN_DIR/Sim
-VENV_DIR=$SCRIPT_DIR/venv
+export SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export WORKSPACE_DIR=$SCRIPT_DIR/workspace
+export MURISCVNN_DIR=$SCRIPT_DIR/../..
+export TOOLCHAINS_DIR=$MURISCVNN_DIR/Toolchain
+export SIM_DIR=$MURISCVNN_DIR/Sim
+export VENV_DIR=$SCRIPT_DIR/venv
 
 ########################################
 # Default config  for setup_mlonmcu.sh #
@@ -19,7 +19,6 @@ VENV_DIR=$SCRIPT_DIR/venv
 
 # MLonMCU
 export MLONMCU_REF=91e0539be5ed37dac17e056d48e0d474126b4dc9
-# MLONMCU_REF=068212b7a6d392f8d032ccc867d3b06b50356ca3
 export MLIF_REF=2ab749d3747c04f3b01973ef955bda5be0964f0f
 
 # TFLM
@@ -48,11 +47,10 @@ export LOCAL_ETISS=0
 export ENABLE_ETISS=0
 
 # RISC-V GCC
-LOCAL_GCC=1
-ENABLE_DEFAULT=1
-ENABLE_PEXT=1
-ENABLE_VEXT=1
+export LOCAL_GCC=1
+export ENABLE_DEFAULT=1
+export ENABLE_PEXT=1
+export ENABLE_VEXT=1
 
 # LLVM
 # Not supported
-
