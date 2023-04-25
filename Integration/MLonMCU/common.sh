@@ -18,7 +18,7 @@ export VENV_DIR=$SCRIPT_DIR/venv
 ########################################
 
 # MLonMCU
-export MLONMCU_REF=91e0539be5ed37dac17e056d48e0d474126b4dc9
+export MLONMCU_REF=763762f51d82baa8d6171f52c285ef6f68e582f2
 export MLIF_REF=2ab749d3747c04f3b01973ef955bda5be0964f0f
 
 # TFLM
