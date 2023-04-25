@@ -207,6 +207,7 @@ MODELS = [
 POSTPROCESSES_0 = [
     "features2cols",
     "config2cols",
+    "compare_rows"
 ]
 
 POSTPROCESSES_1 = [
@@ -220,9 +221,12 @@ POSTPROCESS_CONFIG = {
         "Backend",
         "Target",
         "Cycles",
+        "Cycles (rel.)",
         "Runtime [s]",
         "Total ROM",
+        "Total ROM (rel.)",
         "Total RAM",
+        "Total RAM (rel.)",
         "ROM read-only",
         "ROM code",
         # "ROM read-only",
