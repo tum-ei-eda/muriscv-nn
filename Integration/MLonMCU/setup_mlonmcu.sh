@@ -162,7 +162,7 @@ source $VENV_DIR/bin/activate
 pip install git+https://github.com/tum-ei-eda/mlonmcu.git@${MLONMCU_REF}
 
 
-if [[ "$PREBUILD_TVM" == "true" ]]
+if [[ "$PREBUILT_TVM" -eq 1 ]]
 then
     # pip install "tlcpack-nightly==$TLCPACK_VERSION" -f https://tlcpack.ai/wheels
     pip install "tlcpack-nightly" -f https://tlcpack.ai/wheels
