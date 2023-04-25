@@ -250,6 +250,12 @@ POSTPROCESS_CONFIG = {
         "config_tvmaot.desired_layout": "Layout",
     },
     "filter_cols.drop_nan": True,
+    "compare_rows.to_compare": None,  # Figure out automatically (All metrics, expects those filtered out later)
+    "compare_rows.group_by": None,  # Figure out outomatically
+    "compare_rows.percent": False,  # Set to True to multiply values by 100.0
+    "compare_rows.invert": False,  # Set to True to 1/x values, which might make sense when considering speedups
+    "compare_rows.substract": False,  # Set to True to make the baseline 0.0 instead of 1.0
+    "compare_rows.baseline": 1,  # Typ. compare with first row per group, but 1 is more meaningful here
 }
 
 
