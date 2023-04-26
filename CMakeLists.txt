@@ -69,7 +69,7 @@ set(CMAKE_SYSTEM_NAME Generic)
 # simply a convenient option to configure the unit tests.
 # HINT: Because spike only supports VLEN >= 64 we do not allow for VLEN=32.
 set(VLEN "1024" CACHE STRING "Specify the vector length. ONLY used to configure the simulator for tests.")
-set_property(CACHE VLEN PROPERTY STRINGS 64 128 256 512 1024)
+set_property(CACHE VLEN PROPERTY STRINGS 32 64 128 256 512 1024)
 
 # Enable tests by default
 option(ENABLE_UNIT_TESTS "Enable unit tests" ON)
