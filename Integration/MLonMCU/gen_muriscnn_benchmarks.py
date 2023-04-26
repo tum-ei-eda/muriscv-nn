@@ -258,7 +258,6 @@ POSTPROCESS_CONFIG = {
     "compare_rows.baseline": 1,  # Typ. compare with first row per group, but 1 is more meaningful here
 }
 
-
 def gen_features(backend, features, validate=False):
     ret = []
     ret.extend(BACKEND_DEFAULT_FEATURES[backend])
@@ -276,7 +275,7 @@ def gen_features(backend, features, validate=False):
     else:
         ret += features
     return ret
-
+    
 
 def gen_config(backend, backend_config, features, vlen, enable_postprocesses=False):
     ret = {}
@@ -284,7 +283,9 @@ def gen_config(backend, backend_config, features, vlen, enable_postprocesses=Fal
     ret.update(BACKEND_DEFAULT_CONFIG[backend])
     ret.update(backend_config)
     if enable_postprocesses:
-        ret.update(POSTPROCESS_CONFIG)
+            ret.update(POSTPROCESS_CONFIG)
+            if backend == "tvmaot":
+                ret["compare_rows.baseline"] = 4
     if "muriscvnn" in features or "muriscvnnbyoc" in features:
         for feature in features:
             if feature == "pext":

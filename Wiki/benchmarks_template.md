@@ -40,32 +40,32 @@ Comparing reference kernel implementations (`Default`) with `cmsis-nn` optimized
 
 ### Audio Wake Words (`aww`)
 
-| Cycles    | Total ROM | Total RAM | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
-| --------- | --------- | --------- | ------------- | -------- | ---- | ---------- | ---------- |
-{% for x in aww_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{x[4]}} | {{x[5]}} | {{x[6]}} | {{x[7]}} | {{x[8]}} | {{x[10]}} | {{x[11]}} |
-{% endif %}{% endfor %} 
+|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
+| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | ---------- | ---------- |
+{% for x in aww_tflmi_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{x[8]}} | {{x[4]}} | {{x[9]}} | {{x[5]}} | {{x[10]}} | {{x[6]}} | {{x[7]}} | {{x[11]}} |  {{x[12]}} | {{x[13]}} |
+{% endif %}{% endfor %} 
 
 ### Visual Wake Words (`vww`)
 
-| Cycles    | Total ROM | Total RAM | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
-| --------- | --------- | --------- | ------------- | -------- | ---- | ---------- | ---------- |
-{% for x in vww_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{x[4]}} | {{x[5]}} | {{x[6]}} | {{x[7]}} | {{x[8]}} | {{x[10]}} | {{x[11]}} |
-{% endif %}{% endfor %} 
+|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
+| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | ---------- | ---------- |
+{% for x in vww_tflmi_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{x[8]}} | {{x[4]}} | {{x[9]}} | {{x[5]}} | {{x[10]}} | {{x[6]}} | {{x[7]}} | {{x[11]}} |  {{x[12]}} | {{x[13]}} |
+{% endif %}{% endfor %} 
 
 
 ### Image Classification (`resnet`)
 
-| Cycles    | Total ROM | Total RAM | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
-| --------- | --------- | --------- | ------------- | -------- | ---- | ---------- | ---------- |
-{% for x in resnet_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{x[4]}} | {{x[5]}} | {{x[6]}} | {{x[7]}} | {{x[8]}} | {{x[10]}} | {{x[11]}} |
-{% endif %}{% endfor %} 
+|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
+| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | ---------- | ---------- |
+{% for x in resnet_tflmi_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{x[8]}} | {{x[4]}} | {{x[9]}} | {{x[5]}} | {{x[10]}} | {{x[6]}} | {{x[7]}} | {{x[11]}} |  {{x[12]}} | {{x[13]}} |
+{% endif %}{% endfor %} 
 
 ### Anomaly Detection (`toycar`)
 
-| Cycles    | Total ROM | Total RAM | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
-| --------- | --------- | --------- | ------------- | -------- | ---- | ---------- | ---------- |
-{% for x in toycar_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{x[4]}} | {{x[5]}} | {{x[6]}} | {{x[7]}} | {{x[8]}} | {{x[10]}} | {{x[11]}} |
-{% endif %}{% endfor %} 
+|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
+| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | ---------- | ---------- |
+{% for x in toycar_tflmi_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{x[8]}} | {{x[4]}} | {{x[9]}} | {{x[5]}} | {{x[10]}} | {{x[6]}} | {{x[7]}} | {{x[11]}} |  {{x[12]}} | {{x[13]}} |
+{% endif %}{% endfor %} 
 
 ## TVM
 
@@ -81,31 +81,31 @@ Used data/kernel layouts:
 
 ### Audio Wake Words (`aww`)
 
-| Cycles    | Total ROM | Total RAM | ROM read-only | ROM code | VLEN | Layout    | Kernels    | Extensions |
-| --------- | --------- | --------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
-{% for x in aww_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{x[4]}} | {{x[5]}} | {{x[6]}} | {{x[7]}} | {{x[8]}} | {{x[9]}} | {{x[10]}} | {{x[11]}} |
-{% endif %}{% endfor %} 
+|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN |  Layout   | Kernels    | Extensions |
+| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
+{% for x in aww_tvmaot_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{x[8]}} | {{x[4]}} | {{x[9]}} | {{x[5]}} | {{x[10]}} | {{x[6]}} | {{x[7]}} | {{x[12]}} | {{x[11]}} | {{x[13]}} | {{x[14]}} |
+{% endif %}{% endfor %} 
 
 ### Visual Wake Words (`vww`)
 
-| Cycles    | Total ROM | Total RAM | ROM read-only | ROM code | VLEN | Layout    | Kernels    | Extensions |
-| --------- | --------- | --------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
-{% for x in vww_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{x[4]}} | {{x[5]}} | {{x[6]}} | {{x[7]}} | {{x[8]}} | {{x[9]}} | {{x[10]}} | {{x[11]}} |
-{% endif %}{% endfor %} 
+|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN |  Layout   | Kernels    | Extensions |
+| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
+{% for x in vww_tvmaot_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{x[8]}} | {{x[4]}} | {{x[9]}} | {{x[5]}} | {{x[10]}} | {{x[6]}} | {{x[7]}} | {{x[12]}} | {{x[11]}} | {{x[13]}} | {{x[14]}} |
+{% endif %}{% endfor %} 
 
 ### Image Classification (`resnet`)
 
-| Cycles    | Total ROM | Total RAM | ROM read-only | ROM code | VLEN | Layout    | Kernels    | Extensions |
-| --------- | --------- | --------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
-{% for x in resnet_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{x[4]}} | {{x[5]}} | {{x[6]}} | {{x[7]}} | {{x[8]}} | {{x[9]}} | {{x[10]}} | {{x[11]}} |
-{% endif %}{% endfor %}
+|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN |  Layout   | Kernels    | Extensions |
+| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
+{% for x in resnet_tvmaot_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{x[8]}} | {{x[4]}} | {{x[9]}} | {{x[5]}} | {{x[10]}} | {{x[6]}} | {{x[7]}} | {{x[12]}} | {{x[11]}} | {{x[13]}} | {{x[14]}} |
+{% endif %}{% endfor %}
 
 ### Anomaly Detection (`toycar`)
 
-| Cycles    | Total ROM | Total RAM | ROM read-only | ROM code | VLEN | Layout    | Kernels    | Extensions |
-| --------- | --------- | --------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
-{% for x in toycar_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{x[4]}} | {{x[5]}} | {{x[6]}} | {{x[7]}} | {{x[8]}} | {{x[9]}} | {{x[10]}} | {{x[11]}} |
-{% endif %}{% endfor %}
+|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN |  Layout   | Kernels    | Extensions |
+| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
+{% for x in toycar_tvmaot_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{x[8]}} | {{x[4]}} | {{x[9]}} | {{x[5]}} | {{x[10]}} | {{x[6]}} | {{x[7]}} | {{x[12]}} | {{x[11]}} | {{x[13]}} | {{x[14]}} |
+{% endif %}{% endfor %}
 
 
 ## Code size compared to CMSIS-NN
