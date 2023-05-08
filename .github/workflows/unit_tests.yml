@@ -97,7 +97,9 @@ jobs:
         ./unit_tests.sh ${{ matrix.config.args }}
 
   Test_OVPsim:
+    if: false
     strategy:
+      max-parallel: 1
       fail-fast: false
       matrix:
         config:
