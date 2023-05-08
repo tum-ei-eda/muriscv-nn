@@ -29,7 +29,7 @@
 - Benchmarks generated using [MLonMCU](https://github.com/tum-ei-eda/mlonmcu) deployment tool with minimal efforts.
 - Memory metrics are reported in Bytes
 
-### Frameworksjinja filter error is undefined
+### Frameworks
 
 Benchmarks exist for integration with TensorFlow Lite for Microcontrollers (TFLM) and TVM.
 
