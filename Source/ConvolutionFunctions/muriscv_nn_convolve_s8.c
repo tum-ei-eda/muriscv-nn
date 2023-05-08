@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
  */
 
 #if defined(USE_VEXT)
@@ -280,15 +280,14 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
                 q31_t inA;
                 while (col_count)
                 {
-                    
-                    //Possible optimization here.  Why does a slow read first improve performance?
-                    
-                    q31_t inA = muriscv_nn_read_q7x4_ia_slow(&ker_a);
+                    q31_t inA = muriscv_nn_read_q7x4_ia_fast(&ker_a);
 
                     q31_t ker_a1 = __rv_sunpkd810(inA);
                     q31_t ker_a2 = __rv_sunpkd832(inA);
+
                     q31_t ip_b1 = muriscv_nn_read_q15x2_ia_fast(&ip_as_col);
                     sum = __rv_kmada(sum, ker_a1, ip_b1);
+
                     q31_t ip_b2 = muriscv_nn_read_q15x2_ia_fast(&ip_as_col);
                     sum = __rv_kmada(sum, ker_a2, ip_b2);
 
