@@ -78,6 +78,11 @@ muriscv_nn_status muriscv_nn_depthwise_conv_3x3_s8(const muriscv_nn_context *ctx
     const int32_t input_offset = dw_conv_params->input_offset;
     const int32_t output_activation_min = dw_conv_params->activation.min;
     const int32_t output_activation_max = dw_conv_params->activation.max;
+    
+    #if defined(USE_PEXT)
+    const uint32_t input_offset_s16x2 = __rv_packu(input_offset, input_offset);
+    #endif
+    
 
     /* Check input constraints input_ch == output_ch */
     if (input_ch != output_ch)
@@ -106,12 +111,70 @@ muriscv_nn_status muriscv_nn_depthwise_conv_3x3_s8(const muriscv_nn_context *ctx
 
                 const int8_t *input_ptr = input + (in_h + ker_h_start) * (input_ch * input_x) + in_w * input_ch + in_ch;
                 const int8_t *kernel_ptr = kernel + ker_h_start * (input_ch * 3) + in_ch;
+                
 
                 for (int32_t ker_h = ker_h_start; ker_h < MIN(3, input_y - in_h); ++ker_h)
                 {
                     int32_t in_val = 0;
                     int32_t ker_val = 0;
+                    
+                    #if defined(USE_PEXT)
+                    int32_t in_val01 = 0;
+                    int32_t in_val23 = 0;
+                    int32_t ker_val01 = 0;
+                    int32_t ker_val23 = 0;
 
+                    if (ker_w_start == 0)
+                    {
+                        in_val = muriscv_nn_read_q7x4(input_ptr);
+                        ker_val = muriscv_nn_read_q7x4(kernel_ptr);
+                        
+                        in_val01 = __rv_add16(__rv_sunpkd810(in_val), input_offset_s16x2);
+                        in_val23 = __rv_add16(__rv_sunpkd832(in_val), input_offset_s16x2);
+                        
+                        ker_val01 = __rv_sunpkd810(ker_val);
+                        ker_val23 = __rv_sunpkd832(ker_val);
+                        
+                        out_buff0 = __rv_kmabb(out_buff0, in_val01, ker_val01);
+                        out_buff1 = __rv_kmatt(out_buff1, in_val01, ker_val01);
+                        out_buff2 = __rv_kmabb(out_buff2, in_val23, ker_val23);
+                        out_buff3 = __rv_kmatt(out_buff3, in_val23, ker_val23);
+
+                    }
+
+                    in_val = muriscv_nn_read_q7x4(input_ptr + input_ch);
+                    ker_val = muriscv_nn_read_q7x4(kernel_ptr + input_ch);
+
+                    in_val01 = __rv_add16(__rv_sunpkd810(in_val), input_offset_s16x2);
+                    in_val23 = __rv_add16(__rv_sunpkd832(in_val), input_offset_s16x2);
+                    
+                    ker_val01 = __rv_sunpkd810(ker_val);
+                    ker_val23 = __rv_sunpkd832(ker_val);
+                    
+                    out_buff0 = __rv_kmabb(out_buff0, in_val01, ker_val01);
+                    out_buff1 = __rv_kmatt(out_buff1, in_val01, ker_val01);
+                    out_buff2 = __rv_kmabb(out_buff2, in_val23, ker_val23);
+                    out_buff3 = __rv_kmatt(out_buff3, in_val23, ker_val23);
+
+                    if ((input_x - in_w) >= 3)
+                    {
+                        in_val = muriscv_nn_read_q7x4(input_ptr + (input_ch << 1));
+                        ker_val = muriscv_nn_read_q7x4(kernel_ptr + (input_ch << 1));
+
+                        in_val01 = __rv_add16(__rv_sunpkd810(in_val), input_offset_s16x2);
+                        in_val23 = __rv_add16(__rv_sunpkd832(in_val), input_offset_s16x2);
+                        
+                        ker_val01 = __rv_sunpkd810(ker_val);
+                        ker_val23 = __rv_sunpkd832(ker_val);
+                        
+                        out_buff0 = __rv_kmabb(out_buff0, in_val01, ker_val01);
+                        out_buff1 = __rv_kmatt(out_buff1, in_val01, ker_val01);
+                        out_buff2 = __rv_kmabb(out_buff2, in_val23, ker_val23);
+                        out_buff3 = __rv_kmatt(out_buff3, in_val23, ker_val23);
+                    }
+                    
+                    
+                    #else //if defined(USE_PEXT)
                     if (ker_w_start == 0)
                     {
                         in_val = muriscv_nn_read_q7x4(input_ptr);
@@ -141,6 +204,8 @@ muriscv_nn_status muriscv_nn_depthwise_conv_3x3_s8(const muriscv_nn_context *ctx
                         out_buff2 += ((int8_t)(in_val >> 16) + input_offset) * (int8_t)(ker_val >> 16);
                         out_buff3 += ((int8_t)(in_val >> 24) + input_offset) * (int8_t)(ker_val >> 24);
                     }
+                    #endif
+                    
 
                     input_ptr += (input_ch * input_x);
                     kernel_ptr += (input_ch * 3);

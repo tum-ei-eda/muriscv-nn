@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         benchmark: [aww, vww, resnet, toycar]
+        backend: [tvmaot, tflmi]
     
     steps:
     
@@ -58,7 +59,7 @@ jobs:
         source common.sh
         source $VENV_DIR/bin/activate
         export MLONMCU_HOME=$WORKSPACE_DIR
-        python gen_muriscnn_benchmarks.py -b tflmi -b tvmaot -t spike --vlen 64 --vlen 1024 --post -p --parallel -f muriscvnn --autotuned ${{matrix.benchmark}}
+        python gen_muriscnn_benchmarks.py -b ${{matrix.backend}} -t spike --vlen 64 --vlen 1024 --post -p --parallel -f muriscvnn --autotuned ${{matrix.benchmark}}
         
     - name: Get current date
       id: date-today
@@ -68,7 +69,7 @@ jobs:
     - name: Archive Benchmark Results
       uses: actions/upload-artifact@v3
       with:
-          name: ${{matrix.benchmark}}-benchmark-${{ steps.date-today.outputs.date }}
+          name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{ steps.date-today.outputs.date }}
           path: ./Integration/MLonMCU/out.csv
           
           
@@ -89,9 +90,7 @@ jobs:
         run: |
           pip install numpy
           pip install -U Jinja2
-          
-      
-        
+             
       - name: Get current date
         id: date-today
         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"

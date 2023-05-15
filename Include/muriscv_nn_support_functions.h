@@ -59,9 +59,16 @@ extern "C" {
 /**
  * @brief definition to pack four 8 bit values.
  */
+#if defined(USE_PEXT)
+#define PACK_Q7x4_32x1(v0, v1, v2, v3) ((__rv_packu((uint8_t)(v0), (uint8_t)(v2))) | ((__rv_packu((uint8_t)(v1), (uint8_t)(v3))) << 8))
+#else
 #define PACK_Q7x4_32x1(v0, v1, v2, v3)                                                                                 \
     ((((int32_t)(v0) << 0) & (int32_t)0x000000FF) | (((int32_t)(v1) << 8) & (int32_t)0x0000FF00) |                     \
      (((int32_t)(v2) << 16) & (int32_t)0x00FF0000) | (((int32_t)(v3) << 24) & (int32_t)0xFF000000))
+#endif
+
+
+
 
 /**
  * @brief definition to pack two 16 bit values.
