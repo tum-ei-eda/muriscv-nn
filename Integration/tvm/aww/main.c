@@ -9,11 +9,17 @@
 #include "tvm/runtime/crt/error_codes.h"
 #include "tvmgen_default.h"
 
+#include <uart.h>
+#include <runtime.h>
+#define printf uart_printf
+
+
+
 void TVMLogf(const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
-    vfprintf(stdout, msg, args);
+    //vfprintf(stdout, msg, args);
     va_end(args);
 }
 
@@ -40,7 +46,23 @@ int run_test()
         int8_t output_data[256] = {0}; // TODO(fabianpedd): Make this precise by using defines for the array sizes
         struct tvmgen_default_outputs tvmgen_default_outputs = {output_data};
 
+
+
+        uint32_t timerBefore;
+        uint32_t timerAfter;
+        
+        __asm__ volatile("csrr %0, cycle;" : "=r" (timerBefore)  );
+
         int ret_val = tvmgen_default_run(&tvmgen_default_inputs, &tvmgen_default_outputs);
+
+        __asm__ volatile("csrr %0, cycle;" : "=r" (timerAfter)  );
+
+        printf("Value Before : %d\n", timerBefore);
+        printf("Value After  : %d\n", timerAfter);
+        printf("Total Cycles : %d\n", abs(timerAfter - timerBefore));
+
+
+
         if (ret_val)
         {
             TVMPlatformAbort(kTvmErrorPlatformCheckFailure);
