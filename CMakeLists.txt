@@ -40,7 +40,7 @@ option(USE_PEXT "Use the RISC-V P Packed Extension" OFF)
 # - rv32imzve32x / ilp32 -> integer only and embedded vector support (GCC only supports rv32imv!)
 if(${SIMULATOR} STREQUAL "Vicuna") # Vicuna only supports a reduced set of extensions
   if(USE_VEXT)
-    set(RISCV_ARCH "rv32imv" CACHE STRING "march argument to the compiler, using the vector extension")
+    set(RISCV_ARCH "rv32imzve32x" CACHE STRING "march argument to the compiler, using the vector extension")
   elseif(USE_PEXT)
     message(FATAL_ERROR "Vicuna does not support packed instructions.")
   else()
