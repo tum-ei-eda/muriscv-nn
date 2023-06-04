@@ -68,6 +68,28 @@ extern "C" {
 #endif
 
 
+#if (SIMULATOR==Vicuna)
+
+#define vsext_vf4_i32m2 vicuna_sext_i32m2
+
+static inline vint32m2_t vicuna_sext_i32m2(vint8mf2_t input, size_t vl)
+{
+    return vsext_vf2_i32m2(vsext_vf2_i16m1(input, vl), vl);
+
+
+}
+
+#define vsext_vf4_i32m8 vicuna_sext_i32m8
+static inline vint32m8_t vicuna_sext_i32m8(vint8m2_t input, size_t vl)
+{
+
+    return vwadd_vx_i32m8(vsext_vf2_i16m4(input, vl), 0, vl);
+    
+
+
+}
+
+#endif
 
 
 /**
