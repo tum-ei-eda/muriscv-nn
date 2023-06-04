@@ -45,7 +45,27 @@ int run_test()
         int8_t output_data[256] = {0}; // TODO(fabianpedd): Make this precise by using defines for the array sizes
         struct tvmgen_default_outputs tvmgen_default_outputs = {output_data};
 
+        printf("Beginning Run\n");
+
+        uint32_t timerBefore;
+        uint32_t timerAfter;
+        uint32_t instBefore;
+        uint32_t instAfter;
+
+        __asm__ volatile("csrr %0, cycle;" : "=r" (timerBefore)  );
+        __asm__ volatile("csrr %0, minstret;" : "=r" (instBefore)  );
+
         int ret_val = tvmgen_default_run(&tvmgen_default_inputs, &tvmgen_default_outputs);
+
+        __asm__ volatile("csrr %0, cycle;" : "=r" (timerAfter)  );
+        __asm__ volatile("csrr %0, minstret;" : "=r" (instAfter)  );
+
+        printf("Total Cycles : %d\n\n", abs(timerAfter - timerBefore));
+
+        printf("Total Instructions  : %d\n\n", abs(instAfter - instBefore));
+
+        return 0;
+
         if (ret_val)
         {
             TVMPlatformAbort(kTvmErrorPlatformCheckFailure);

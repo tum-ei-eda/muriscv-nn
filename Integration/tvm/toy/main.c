@@ -34,13 +34,36 @@ TVM_DLL int TVMFuncRegisterGlobal(const char *name, TVMFunctionHandle f, int ove
 
 int run_test()
 {
+    int ret_val = 42;
     for (size_t i = 0; i < toy_data_sample_cnt; i++)
     {
         struct tvmgen_default_inputs tvmgen_default_inputs = {(int8_t *)toy_input_data[i]};
         int8_t output_data[1024] = {0}; // TODO(fabianpedd): Make this precise by using defines for the array sizes
         struct tvmgen_default_outputs tvmgen_default_outputs = {output_data};
 
-        int ret_val = tvmgen_default_run(&tvmgen_default_inputs, &tvmgen_default_outputs);
+
+        printf("Beginning Run\n");
+
+        uint32_t timerBefore;
+        uint32_t timerAfter;
+
+        uint32_t instBefore;
+        uint32_t instAfter;
+
+        __asm__ volatile("csrr %0, cycle;" : "=r" (timerBefore)  );
+        __asm__ volatile("csrr %0, minstret;" : "=r" (instBefore)  );
+
+        printf("A\n");
+        ret_val = tvmgen_default_run(&tvmgen_default_inputs, &tvmgen_default_outputs);
+        printf("B\n");
+
+        __asm__ volatile("csrr %0, cycle;" : "=r" (timerAfter)  );
+        __asm__ volatile("csrr %0, minstret;" : "=r" (instAfter)  );
+
+        printf("Total Cycles  : %d\n\n", abs(timerAfter - timerBefore));
+
+        printf("Total Instructions  : %d\n\n", abs(instAfter - instBefore));
+
         if (ret_val)
         {
             TVMPlatformAbort(kTvmErrorPlatformCheckFailure);
