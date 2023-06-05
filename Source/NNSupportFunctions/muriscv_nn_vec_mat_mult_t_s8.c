@@ -60,6 +60,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 
     (void)rhs_offset;
 
+// #if (defined(USE_VEXT) && SIMULATOR != Vicuna)
 #if defined(USE_VEXT)
 
     /* At some point in time there might be implementations with the Zvediv extension.
