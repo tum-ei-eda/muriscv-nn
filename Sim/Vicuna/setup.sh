@@ -32,6 +32,7 @@ if [ ! -d "vicuna" ]; then
   git clone https://github.com/vproc/vicuna.git
   cd vicuna
   git submodule update --init --recursive
+  git apply ../muriscv_nn.patch
   cd -
 fi
 

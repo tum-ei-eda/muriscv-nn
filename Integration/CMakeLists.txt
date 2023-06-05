@@ -18,5 +18,12 @@
 
 include(add_intg_test)
 
-add_subdirectory(tflm)
+#Vicuna only tested with tvm
+if(NOT(${SIMULATOR} STREQUAL "Vicuna"))
+    add_subdirectory(tflm)
+endif()
+
 add_subdirectory(tvm)
+
+
+

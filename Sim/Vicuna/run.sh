@@ -30,4 +30,4 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export PATH=${SCRIPT_DIR}/verilator/install/bin:$PATH
 
 # Invoke Verilator Makefile with path to binary image path textfile
-make -f ${SCRIPT_DIR}/vicuna/sim/Makefile PROG_PATHS=$1 CORE=cv32e40x
+make -f ${SCRIPT_DIR}/vicuna/sim/Makefile PROG_PATHS=$1 CORE=cv32e40x MEM_SZ=524288 VPROC_CONFIG=dual VREG_W=64

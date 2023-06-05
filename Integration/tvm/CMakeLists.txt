@@ -17,6 +17,10 @@
 #
 
 add_subdirectory(aww)
-#add_subdirectory(ic)
-#add_subdirectory(toy)
-#add_subdirectory(vww)
+add_subdirectory(ic)
+add_subdirectory(toy)
+
+#current setup for Vicuna does not have enough memory to store the vww integration test
+if(NOT(${SIMULATOR} STREQUAL "Vicuna"))
+    add_subdirectory(vww)
+endif()

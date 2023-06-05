@@ -67,8 +67,24 @@ extern "C" {
      (((int32_t)(v2) << 16) & (int32_t)0x00FF0000) | (((int32_t)(v3) << 24) & (int32_t)0xFF000000))
 #endif
 
+/**
+* @brief These instructions are part of the rv32imv spec, but not currently supported by Vicuna (as of 06/2023). Attempting to use them results in an illegal instruction exception.
+*/
+#if defined(SIM_VICUNA)
 
+#define vsext_vf4_i32m2 vicuna_sext_i32m2
+static inline vint32m2_t vicuna_sext_i32m2(vint8mf2_t input, size_t vl)
+{
+    return vsext_vf2_i32m2(vsext_vf2_i16m1(input, vl), vl);
+}
 
+#define vsext_vf4_i32m8 vicuna_sext_i32m8
+static inline vint32m8_t vicuna_sext_i32m8(vint8m2_t input, size_t vl)
+{
+    return vwadd_vx_i32m8(vsext_vf2_i16m4(input, vl), 0, vl);
+}
+
+#endif
 
 /**
  * @brief definition to pack two 16 bit values.
