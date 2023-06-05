@@ -9,9 +9,40 @@
     .option norvc;
 
     # redirect all interrupts to the execption wrapper
-    .rept 31
-    nop
-    .endr
+    #.rept 31
+    #nop
+    #.endr
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
+    j exc_wrapper
     j exc_wrapper
 
     # the reset vector is redirected to _start
