@@ -18,12 +18,14 @@
 
 include(add_intg_test)
 
-#Vicuna only tested with tvm
-if(NOT(${SIMULATOR} STREQUAL "Vicuna"))
+option(DISABLE_TFLM_INTG_TESTS "Enable tflm integration tests" OFF)
+option(DISABLE_TVM_INTG_TESTS "Enable tvm integration tests" OFF)
+
+if(NOT DISABLE_TFLM_INTG_TESTS)
     add_subdirectory(tflm)
 endif()
-
-add_subdirectory(tvm)
-
+if(NOT DISABLE_TVM_INTG_TESTS)
+    add_subdirectory(tvm)
+endif()
 
 

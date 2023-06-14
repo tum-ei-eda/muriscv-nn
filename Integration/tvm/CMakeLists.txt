@@ -16,11 +16,20 @@
 # limitations under the License.
 #
 
-add_subdirectory(aww)
-add_subdirectory(ic)
-add_subdirectory(toy)
+option(DISABLE_TVM_AWW_INTG_TESTS "Enable tvm integration tests for aww model" OFF)
+option(DISABLE_TVM_IC_INTG_TESTS "Enable tvm integration tests for ic model" OFF)
+option(DISABLE_TVM_TOY_INTG_TESTS "Enable tvm integration tests for toy model" OFF)
+option(DISABLE_TVM_VWW_INTG_TESTS "Enable tvm integration tests for vww model" OFF)
 
-#current setup for Vicuna does not have enough memory to store the vww integration test
-if(NOT(${SIMULATOR} STREQUAL "Vicuna"))
+if(NOT DISABLE_TVM_AWW_INTG_TESTS)
+    add_subdirectory(aww)
+endif()
+if(NOT DISABLE_TVM_IC_INTG_TESTS)
+    add_subdirectory(ic)
+endif()
+if(NOT DISABLE_TVM_TOY_INTG_TESTS)
+    add_subdirectory(toy)
+endif()
+if(NOT DISABLE_TVM_VWW_INTG_TESTS)
     add_subdirectory(vww)
 endif()

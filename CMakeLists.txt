@@ -50,6 +50,7 @@ if(${SIMULATOR} STREQUAL "Vicuna") # Vicuna only supports a reduced set of exten
     set(RISCV_ARCH "rv32im" CACHE STRING "march argument to the compiler, using only scalar instructions")
   endif()
   set(RISCV_ABI "ilp32" CACHE STRING "mabi argument to the compiler")
+  set(RISCV_CMODEL "medany" CACHE STRING "mcmodel argument to the compiler")
 else() # All other (instruction level) simulator support the full RISC-V ISA
   if(USE_VEXT)
     set(RISCV_ARCH "rv32gcv" CACHE STRING "march argument to the compiler, using the vector extension")
@@ -59,6 +60,7 @@ else() # All other (instruction level) simulator support the full RISC-V ISA
     set(RISCV_ARCH "rv32gc" CACHE STRING "march argument to the compiler, using only scalar instructions")
   endif()
   set(RISCV_ABI "ilp32d" CACHE STRING "mabi argument to the compiler")
+  set(RISCV_CMODEL "medlow" CACHE STRING "mcmodel argument to the compiler")
 endif()
 
 # Tell CMake about our processor
@@ -116,7 +118,7 @@ add_definitions(-DSIM_${SIMULATOR_UP})
 
 # Set build mode, Debug by default
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug)
+  set(CMAKE_BUILD_TYPE Release)
 endif()
 
 # Set some compiler options for easier debug or faster builds
