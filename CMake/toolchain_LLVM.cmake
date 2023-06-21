@@ -22,7 +22,7 @@
 set(RISCV_GCC_PREFIX "/opt/riscv" CACHE PATH "Install location of GCC RISC-V toolchain.")
 set(RISCV_GCC_BASENAME "riscv32-unknown-elf" CACHE STRING "Base name of the toolchain executables.")
 
-s# set(CMAKE_C_COMPILER clang-14)
+# set(CMAKE_C_COMPILER clang-14)
 # set(CMAKE_CXX_COMPILER clang-14)
 # set(CMAKE_ASM_COMPILER clang-14)
 # set(CMAKE_C_COMPILER clang-16)
