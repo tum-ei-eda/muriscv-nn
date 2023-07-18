@@ -23,6 +23,102 @@
 
 #if defined(USE_VEXT)
 #include <riscv_vector.h>
+#ifdef __clang__
+#if __clang_major__ >= 16
+
+#define vsmul_vx_i32m8 __riscv_vsmul_vx_i32m8
+#define vand_vx_i32m8 __riscv_vand_vx_i32m8
+#define vmv_v_x_i32m8 __riscv_vmv_v_x_i32m8
+#define vsra_vx_i32m8 __riscv_vsra_vx_i32m8
+#define vmslt_vx_i32m8_b4 __riscv_vmslt_vx_i32m8_b4
+#define vadd_vx_i32m8_m __riscv_vadd_vx_i32m8_m
+#define vmsgt_vv_i32m8_b4 __riscv_vmsgt_vv_i32m8_b4
+#define vsmul_vx_i32m4 __riscv_vsmul_vx_i32m4
+#define vand_vx_i32m4 __riscv_vand_vx_i32m4
+#define vmv_v_x_i32m4 __riscv_vmv_v_x_i32m4
+#define vsra_vx_i32m4 __riscv_vsra_vx_i32m4
+#define vmslt_vx_i32m4_b8 __riscv_vmslt_vx_i32m4_b8
+#define vadd_vx_i32m4_m __riscv_vadd_vx_i32m4_m
+#define vadd_vx_i32m4 __riscv_vadd_vx_i32m4
+#define vmsgt_vv_i32m4_b8 __riscv_vmsgt_vv_i32m4_b8
+#define vreinterpret_v_i32m2_u32m2 __riscv_vreinterpret_v_i32m2_u32m2
+#define vneg_v_i32m2 __riscv_vneg_v_i32m2
+#define vsmul_vv_i32m2 __riscv_vsmul_vv_i32m2
+#define vsra_vv_i32m2 __riscv_vsra_vv_i32m2
+#define vsub_vx_i32m2 __riscv_vsub_vx_i32m2
+#define vsll_vv_i32m2 __riscv_vsll_vv_i32m2
+#define vmv_v_x_i32m2 __riscv_vmv_v_x_i32m2
+#define vsra_vx_i32m2 __riscv_vsra_vx_i32m2
+#define vmslt_vx_i32m2_b16 __riscv_vmslt_vx_i32m2_b16
+#define vadd_vx_i32m2_m __riscv_vadd_vx_i32m2_m
+#define vand_vv_i32m2 __riscv_vand_vv_i32m2
+#define vmsgt_vv_i32m2_b16 __riscv_vmsgt_vv_i32m2_b16
+#define vsetvl_e8m8 __riscv_vsetvl_e8m8
+#define vsetvl_e32m4 __riscv_vsetvl_e32m4
+#define vle8_v_i8m8 __riscv_vle8_v_i8m8
+#define vse8_v_i8m8 __riscv_vse8_v_i8m8
+#define vadd_vv_i32m8 __riscv_vadd_vv_i32m8
+#define vadd_vx_i32m2 __riscv_vadd_vx_i32m2
+#define vadd_vx_i32m8 __riscv_vadd_vx_i32m8
+#define vle16_v_i16m4 __riscv_vle16_v_i16m4
+#define vle16_v_i16m8 __riscv_vle16_v_i16m8
+#define vle32_v_i32m2 __riscv_vle32_v_i32m2
+#define vle8_v_i8m2 __riscv_vle8_v_i8m2
+#define vle8_v_i8mf2 __riscv_vle8_v_i8mf2
+#define vmacc_vv_i32m2 __riscv_vmacc_vv_i32m2
+#define vmacc_vv_i32m8 __riscv_vmacc_vv_i32m8
+#define vmax_vv_i16m8 __riscv_vmax_vv_i16m8
+#define vmax_vv_i8m8 __riscv_vmax_vv_i8m8
+#define vmax_vx_i16m8 __riscv_vmax_vx_i16m8
+#define vmax_vx_i8m8 __riscv_vmax_vx_i8m8
+#define vmin_vx_i8m8 __riscv_vmin_vx_i8m8
+#define vmnot_m_b4 __riscv_vmnot_m_b4
+#define vmsgt_vx_i32m8_b4 __riscv_vmsgt_vx_i32m8_b4
+#define vmul_vv_i32m8 __riscv_vmul_vv_i32m8
+#define vmv_v_x_i32m1 __riscv_vmv_v_x_i32m1
+#define vmv_v_x_i8m8 __riscv_vmv_v_x_i8m8
+#define vredsum_vs_i32m8_i32m1 __riscv_vredsum_vs_i32m8_i32m1
+#define vse16_v_i16m8 __riscv_vse16_v_i16m8
+#define vsetvl_e16m4 __riscv_vsetvl_e16m4
+#define vsetvl_e16m8 __riscv_vsetvl_e16m8
+#define vsetvl_e32m1 __riscv_vsetvl_e32m1
+#define vsetvl_e32m2 __riscv_vsetvl_e32m2
+#define vsetvl_e32m8 __riscv_vsetvl_e32m8
+#define vsetvl_e8m2 __riscv_vsetvl_e8m2
+#define vsext_vf2_i32m8 __riscv_vsext_vf2_i32m8
+#define vsext_vf4_i32m2 __riscv_vsext_vf4_i32m2
+#define vsext_vf4_i32m8 __riscv_vsext_vf4_i32m8
+#define vsll_vx_i32m8 __riscv_vsll_vx_i32m8
+#define vundefined_i32m1 __riscv_vundefined_i32m1
+#define vadd_vv_i32m2 __riscv_vadd_vv_i32m2
+#define vdiv_vx_i32m8 __riscv_vdiv_vx_i32m8
+#define vle32_v_i32m1 __riscv_vle32_v_i32m1
+#define vmax_vx_i32m2 __riscv_vmax_vx_i32m2
+#define vmax_vx_i32m8 __riscv_vmax_vx_i32m8
+#define vmin_vx_i16m8 __riscv_vmin_vx_i16m8
+#define vmin_vx_i32m2 __riscv_vmin_vx_i32m2
+#define vmin_vx_i32m8 __riscv_vmin_vx_i32m8
+#define vmul_vx_i32m2 __riscv_vmul_vx_i32m2
+#define vmv_x_s_i32m1_i32 __riscv_vmv_x_s_i32m1_i32
+#define vnclip_wx_i16m4 __riscv_vnclip_wx_i16m4
+#define vnclip_wx_i8m2 __riscv_vnclip_wx_i8m2
+#define vredsum_vs_i32m2_i32m1 __riscv_vredsum_vs_i32m2_i32m1
+#define vse8_v_i8mf2 __riscv_vse8_v_i8mf2
+#define vsub_vx_i32m8_m __riscv_vsub_vx_i32m8_m
+#define vnclip_wx_i16m1 __riscv_vnclip_wx_i16m1
+#define vnclip_wx_i8mf2 __riscv_vnclip_wx_i8mf2
+#define vse16_v_i16m4 __riscv_vse16_v_i16m4
+#define vse8_v_i8m2 __riscv_vse8_v_i8m2
+#define vslide1up_vx_i32m4 __riscv_vslide1up_vx_i32m4
+#define vmin_vx_i32m4 __riscv_vmin_vx_i32m4
+#define vse32_v_i32m4 __riscv_vse32_v_i32m4
+#define vmax_vx_i32m4 __riscv_vmax_vx_i32m4
+#define vnclip_wx_i8m1 __riscv_vnclip_wx_i8m1
+#define vnclip_wx_i16m2 __riscv_vnclip_wx_i16m2
+#define vsse8_v_i8m1 __riscv_vsse8_v_i8m1
+#endif
+#endif
+
 #elif defined(USE_PEXT)
 #include <rvp_intrinsic.h>
 #endif
