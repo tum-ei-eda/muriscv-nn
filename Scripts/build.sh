@@ -84,14 +84,14 @@ fi
 #################### Check for Dependencies for Build ##########################
 ################################################################################
 if [ "${TOOLCHAIN}" == "LLVM" ];then
-     # Install LLVM 14 (which includes vector support)
+     # Install LLVM 16 (which includes vector support)
     if clang-14 --version &>/dev/null; then
-      echo "LLVM 14 appears to be installed."
+      echo "LLVM 16 appears to be installed."
     else
-      echo "No LLVM 14 installation found. Installing LLVM 14..."
+      echo "No LLVM 16 installation found. Installing LLVM 14..."
       wget https://apt.llvm.org/llvm.sh
       chmod +x llvm.sh
-      sudo ./llvm.sh 14
+      sudo ./llvm.sh 16
       rm llvm.sh
     fi 
     
