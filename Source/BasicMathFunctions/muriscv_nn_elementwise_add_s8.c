@@ -206,8 +206,8 @@ muriscv_nn_status muriscv_nn_elementwise_add_s8(const int8_t *input_1_vect,
     }
 
     loop_count = block_size & 0x3;
-
-#endif /* defined(USE_PEXT) */
+*/
+//#endif /* defined(USE_PEXT) */
 
     while (loop_count > 0)
     {
