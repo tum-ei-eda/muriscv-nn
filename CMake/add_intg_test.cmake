@@ -23,11 +23,11 @@ macro(add_muriscv_nn_intg_test TEST_NAME)
   if(DEFINED RISCV_ARCH)
     if(${SIMULATOR} STREQUAL "OVPsim")
       add_test(NAME ${TEST_NAME}
-        COMMAND ${CMAKE_SOURCE_DIR}/Sim/OVPsim/run.sh ./${TEST_NAME}.elf ${RISCV_ARCH} ${VLEN} 1
+        COMMAND ${CMAKE_SOURCE_DIR}/Sim/OVPsim/run.sh ./${TEST_NAME}.elf ${RISCV_ARCH} ${VLEN} ${ELEN} 1
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     elseif(${SIMULATOR} STREQUAL "Spike")
       add_test(NAME ${TEST_NAME}
-        COMMAND ${CMAKE_SOURCE_DIR}/Sim/Spike/run.sh ./${TEST_NAME}.elf ${RISCV_ARCH} ${VLEN}
+        COMMAND ${CMAKE_SOURCE_DIR}/Sim/Spike/run.sh ./${TEST_NAME}.elf ${RISCV_ARCH} ${VLEN} ${ELEN}
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     elseif(${SIMULATOR} STREQUAL "ETISS")
       add_test(NAME ${TEST_NAME}
