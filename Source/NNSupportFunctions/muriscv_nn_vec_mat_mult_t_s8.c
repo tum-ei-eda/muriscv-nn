@@ -43,15 +43,15 @@
  *
  * Refer header file for details.
  *
- * Used by muriscv_nn_fully_connected_s8() and muriscv_nn_svdf_s8()
+ * Used by muriscv_nn_fully_connected_s8() and muriscv_nn_svdf_s8().  Kernel sum has been moved into here, functional changes probably required
  *
  */
 muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
                                                const q7_t *rhs,
+                                               const int32_t *kernel_sum,
                                                const q31_t *bias,
                                                q7_t *dst,
                                                const int32_t lhs_offset,
-                                               const int32_t rhs_offset,
                                                const int32_t dst_offset,
                                                const int32_t dst_multiplier,
                                                const int32_t dst_shift,
@@ -61,8 +61,6 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
                                                const int32_t activation_max,
                                                const int32_t address_offset)
 {
-
-    (void)rhs_offset;
 
 #if defined(USE_VEXT)
 

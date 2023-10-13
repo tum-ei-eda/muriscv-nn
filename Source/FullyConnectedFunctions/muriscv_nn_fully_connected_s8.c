@@ -58,15 +58,25 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
     (void)fc_params->filter_offset;
 
     int32_t batch_cnt = input_dims->n;
+    
+    
+    //#if defined(USE_VEXT)
+    //if (ctx->buf == NULL)
+    //{
+    //    return (MURISCV_NN_ARG_ERROR);    //This condition causes error out with VEXT, why?
+    //}
+    //#endif
+    
+    const int32_t *kernel_sum = ctx->buf;
 
     while (batch_cnt)
     {
         muriscv_nn_vec_mat_mult_t_s8(input,
                                      kernel,
+                                     kernel_sum,
                                      bias,
                                      output,
                                      fc_params->input_offset,
-                                     0,
                                      fc_params->output_offset,
                                      quant_params->multiplier,
                                      quant_params->shift,

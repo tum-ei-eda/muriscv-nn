@@ -304,6 +304,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
  *
  * @param[in]      lhs             Input left-hand side vector
  * @param[in]      rhs             Input right-hand side matrix (transposed)
+ * @param[in]      kernel_sum
  * @param[in]      bias            Input bias
  * @param[out]     dst             Output vector
  * @param[in]      lhs_offset      Offset to be added to the input values of the left-hand side vector.
@@ -324,10 +325,10 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
  */
 muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
                                                const q7_t *rhs,
+                                               const int32_t *kernel_sum,
                                                const q31_t *bias,
                                                q7_t *dst,
                                                const int32_t lhs_offset,
-                                               const int32_t rhs_offset,
                                                const int32_t dst_offset,
                                                const int32_t dst_multiplier,
                                                const int32_t dst_shift,

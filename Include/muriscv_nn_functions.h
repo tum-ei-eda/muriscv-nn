@@ -835,6 +835,21 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
                                                 q7_t *output_data);
 
 /**
+ * @brief Calculate vector sums that may be required by muriscv_fully_connected_s8().
+ * @param[in, out]      vector_sum_buf              Buffer for vector sums
+ * @param[in]           vector_cols                 Number of vector columns
+ * @param[in]           vector_rows                 Number of vector rows
+ * @param[in]           vector_data                 Vector or weigths data
+ * @return              The function returns
+ *                         <code>MURISCV_NN_SUCCESS</code> - Successful operation
+ *                         <code>MURISCV_NN_ARG_ERROR</code> - If not for RISCV V-EXT
+ */
+muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
+                                      const int32_t vector_cols,
+                                      const int32_t vector_rows,
+                                      const int8_t *vector_data);
+
+/**
  * @brief Get the required buffer size for S8 basic fully-connected and
  * matrix multiplication layer function for TF Lite
  * @param[in]      filter_dims             dimension of filter
@@ -1568,50 +1583,62 @@ void muriscv_nn_concatenation_s8_w(const int8_t *input,
 /**
  * @brief s8 SVDF function with 8 bit state tensor and 8 bit time weights
  *
- * @param[in]   input_ctx Temporary scratch buffer
- * @param[in]   output_ctx Temporary output scratch buffer
- * @param[in]   svdf_params SVDF Parameters
- *              Range of svdf_params->input_offset  : [-128, 127]
- *              Range of svdf_params->output_offset  : [-128, 127]
- * @param[in]   input_quant_params Input quantization parameters
- * @param[in]   output_quant_params Output quantization parameters
- * @param[in]   input_dims Input tensor dimensions
- * @param[in]   input_data Pointer to input tensor
- * @param[in]   state_dims State tensor dimensions
- * @param[in]   state_data Pointer to state tensor
- * @param[in]   weights_feature_dims Weights (feature) tensor dimensions
- * @param[in]   weights_feature_data Pointer to the weights (feature) tensor
- * @param[in]   weights_time_dims Weights (time) tensor dimensions
- * @param[in]   weights_time_data Pointer to the weights (time) tensor
- * @param[in]   bias_dims Bias tensor dimensions
- * @param[in]   bias_data Pointer to bias tensor
- * @param[in]   output_dims Output tensor dimensions
- * @param[out]  output_data Pointer to the output tensor
+ * @param[in, out] ctx                Function context (e.g. temporary buffer). Check the function
+ *                                    definition file to see if an additional buffer is required.
+ *                                    Optional function muriscv_nn_fully_connected_s8_get_buffer_size() provides the buffer
+ *                                    size if an additional buffer is required.
+ *                                    The caller is expected to clear the buffer ,if applicable, for security reasons.
+
+ * @param[in, out] ctx                Function context that contains the additional buffer if required by the function.
+ *                                    arm_fully_connected_s8_get_buffer_size will return the buffer_size if required.
+ *                                    The caller is expected to clear the buffer ,if applicable, for security reasons.
+ * @param[in]   input_ctx             Temporary scratch buffer
+ *                                    The caller is expected to clear the buffer ,if applicable, for security reasons.
+ * @param[in]   output_ctx            Temporary output scratch buffer
+ *                                    The caller is expected to clear the buffer ,if applicable, for security reasons.
+ * @param[in]   svdf_params           SVDF Parameters
+ *                                    Range of svdf_params->input_offset  : [-128, 127]
+ *                                    Range of svdf_params->output_offset  : [-128, 127]
+ * @param[in]   input_quant_params    Input quantization parameters
+ * @param[in]   output_quant_params   Output quantization parameters
+ * @param[in]   input_dims            Input tensor dimensions
+ * @param[in]   input_data            Pointer to input tensor
+ * @param[in]   state_dims            State tensor dimensions
+ * @param[in]   state_data            Pointer to state tensor
+ * @param[in]   weights_feature_dims  Weights (feature) tensor dimensions
+ * @param[in]   weights_feature_data  Pointer to the weights (feature) tensor
+ * @param[in]   weights_time_dims     Weights (time) tensor dimensions
+ * @param[in]   weights_time_data     Pointer to the weights (time) tensor
+ * @param[in]   bias_dims             Bias tensor dimensions
+ * @param[in]   bias_data             Pointer to bias tensor
+ * @param[in]   output_dims           Output tensor dimensions
+ * @param[out]  output_data           Pointer to the output tensor
  *
- * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ * @return     The function returns either
+ *                  <code>ARM_CMSIS_NN_ARG_ERROR</code> if argument constraints fail. or,
+ *                  <code>ARM_CMSIS_NN_SUCCESS</code> on successful completion.
  *
  * @details
  *    1. Supported framework: TensorFlow Lite micro
- *    2. q7 is used as data type eventhough it is s8 data. It is done so to be consistent with existing APIs.
- *
  */
-muriscv_nn_status muriscv_nn_svdf_s8(const muriscv_nn_context *input_ctx,
-                                     const muriscv_nn_context *output_ctx,
-                                     const muriscv_nn_svdf_params *svdf_params,
-                                     const muriscv_nn_per_tensor_quant_params *input_quant_params,
-                                     const muriscv_nn_per_tensor_quant_params *output_quant_params,
-                                     const muriscv_nn_dims *input_dims,
-                                     const q7_t *input_data,
-                                     const muriscv_nn_dims *state_dims,
-                                     q7_t *state_data,
-                                     const muriscv_nn_dims *weights_feature_dims,
-                                     const q7_t *weights_feature_data,
-                                     const muriscv_nn_dims *weights_time_dims,
-                                     const q7_t *weights_time_data,
-                                     const muriscv_nn_dims *bias_dims,
-                                     const q31_t *bias_data,
-                                     const muriscv_nn_dims *output_dims,
-                                     q7_t *output_data);
+muriscv_nn_status muriscv_nn_svdf_s8(const muriscv_nn_context *ctx,
+                                const muriscv_nn_context *input_ctx,
+                                const muriscv_nn_context *output_ctx,
+                                const muriscv_nn_svdf_params *svdf_params,
+                                const muriscv_nn_per_tensor_quant_params *input_quant_params,
+                                const muriscv_nn_per_tensor_quant_params *output_quant_params,
+                                const muriscv_nn_dims *input_dims,
+                                const int8_t *input_data,
+                                const muriscv_nn_dims *state_dims,
+                                int8_t *state_data,
+                                const muriscv_nn_dims *weights_feature_dims,
+                                const int8_t *weights_feature_data,
+                                const muriscv_nn_dims *weights_time_dims,
+                                const int8_t *weights_time_data,
+                                const muriscv_nn_dims *bias_dims,
+                                const int32_t *bias_data,
+                                const muriscv_nn_dims *output_dims,
+                                int8_t *output_data);
 
 /**
  * @brief s8 SVDF function with 16 bit state tensor and 16 bit time weights
@@ -1729,6 +1756,34 @@ muriscv_nn_status muriscv_nn_lstm_unidirectional_s16_s8(muriscv_nn_lstm_context 
                                                    int8_t *output_state,
                                                    int16_t *cell_state,
                                                    int8_t *output_data);
+                                                   
+/**
+ * @brief Get size of additional buffer required by muriscv_nn_svdf_s8().
+ * @param[in]      filter_dims             dimension of filter
+ * @return         The function returns    required buffer size in bytes
+ *
+ */
+int32_t muriscv_nn_svdf_s8_get_buffer_size(const muriscv_nn_dims *filter_dims);
+
+/**
+ * @brief Get size of additional buffer required by muriscv_nn_svdf_s8() for processors with DSP extension.
+ *        Refer to muriscv_nn_svdf_s8_get_buffer_size() for function argument details.
+ *
+ * @note       Intended for compilation on Host. If compiling for an Arm target, use
+ *             muriscv_nn_svdf_s8_get_buffer_size().
+ *
+ */
+int32_t muriscv_nn_svdf_s8_get_buffer_size_dsp(const muriscv_nn_dims *filter_dims);
+
+/**
+ * @brief Get size of additional buffer required by muriscv_nn_svdf_s8() for Arm(R) Helium Architecture case.
+ *        Refer to muriscv_nn_svdf_s8_get_buffer_size() for function argument details.
+ *
+ * @note       Intended for compilation on Host. If compiling for an Arm target, use
+ *             muriscv_nn_svdf_s8_get_buffer_size().
+ *
+ */
+int32_t muriscv_nn_svdf_s8_get_buffer_size_mve(const muriscv_nn_dims *filter_dims);
 
 
 #ifdef __cplusplus

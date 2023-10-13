@@ -81,6 +81,13 @@ extern "C" {
 
 #define arm_lstm_unidirectional_s16_s8 muriscv_nn_lstm_unidirectional_s16_s8
 
+#define arm_vector_sum_s8 muriscv_nn_vector_sum_s8
+
+#define arm_svdf_s8_get_buffer_size muriscv_nn_svdf_s8_get_buffer_size
+#define arm_svdf_s8_get_buffer_size_dsp muriscv_nn_svdf_s8_get_buffer_size_dsp
+#define arm_svdf_s8_get_buffer_size_mve muriscv_nn_svdf_s8_get_buffer_size_mve
+
+
 #ifdef __cplusplus
 }
 #endif
