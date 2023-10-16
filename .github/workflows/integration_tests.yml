@@ -99,7 +99,7 @@ jobs:
             - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 512, sim: "Spike"}
 
     name: Spike Integration Tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3
 
