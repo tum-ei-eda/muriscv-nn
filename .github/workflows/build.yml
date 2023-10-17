@@ -15,7 +15,7 @@ on:
 
 jobs:
   build_x86:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
 
@@ -25,7 +25,7 @@ jobs:
         ./build.sh -t x86 -b Release
 
   build_llvm:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
 
@@ -68,7 +68,7 @@ jobs:
         ./build.sh -t LLVM -v -i -b Release
 
   build_gcc:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
 
