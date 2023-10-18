@@ -30,7 +30,7 @@ TESTS=(aww ic toy vww)
 BUILDS=(mlf mlf_vext mlf_pext)
 
 echo "Download and install TVM sources."
-python3.8 -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install tlcpack-nightly -f https://tlcpack.ai/wheels
 pip install -r requirements.txt

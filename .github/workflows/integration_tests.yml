@@ -83,7 +83,7 @@ jobs:
 #      working-directory: ./Integration/TFLM/tflite-micro
 #      run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.sim }}    
     
-  Spike_Integration_Tests:    
+  Spike_Integration_Tests_TFLM:    
     strategy:
         fail-fast: false
         matrix:
@@ -98,7 +98,7 @@ jobs:
             - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 512, sim: "Spike"}
             - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 512, sim: "Spike"}
             
-    name: Spike Integration Tests
+    name: TFLM Spike Integration Tests
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v3
@@ -161,4 +161,73 @@ jobs:
     - name: TFLM Integration Test for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.sim }}
+      
+  Spike_Integration_Tests_TVM:    
+    strategy:
+        fail-fast: false
+        matrix:
+          config:
+            - {vext_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gc", vlen: 0}
+            - {vext_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gc", vlen: 0}
+            - {vext_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0}
+            - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 64}
+            - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 64}
+            - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 128}
+            - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 128}
+            - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 512}
+            - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 512}
+            
+    name: TVM Spike Integration Tests
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Get date of last cache build
+      id: date
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
+        
+    - name: Download Cached GCC Binaries
+      id: cache-gcc
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: ./Toolchain
+          key: gcc-binaries-${{ steps.date.outputs.date }}
+          restore-keys: |
+            gcc-binaries-
+    
+    - name: Install Spike Dependencies
+      run: |
+        sudo apt-get install libboost-all-dev
+        sudo apt-get install device-tree-compiler
+    
+    - name: Download Spike Cache
+      id: cache-Spike
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-spike-binaries
+      with:
+          path: ./Sim/Spike/bin
+          key: spike-binaries-${{ steps.date.outputs.date }}
+          restore-keys: |
+            spike-binaries-
+   
+           
+    - name: TVM Integration Test AWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
+      working-directory: ./Integration/tvm
+      run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b aww
+      
+    - name: TVM Integration Test VWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
+      working-directory: ./Integration/tvm
+      run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b vww -s
+      
+    - name: TVM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
+      working-directory: ./Integration/tvm
+      run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b ic -s
+      
+    - name: TVM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
+      working-directory: ./Integration/tvm
+      run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b toy -s
+      
       
