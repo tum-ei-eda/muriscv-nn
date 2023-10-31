@@ -35,27 +35,30 @@ GCC_PREFIX=${TC_DIR}/rv32gc
 IMV_FLAGS=""
 SIM_FLAGS=""
 VLEN=""
+ELEN=""
 
-while getopts 't:vpib:s:l:h' flag; do
+while getopts 't:vpib:s:l:e:h' flag; do
   case "${flag}" in
     t) TOOLCHAIN="${OPTARG}" ;;
     v) USE_VEXT=ON
        GCC_PREFIX=${TC_DIR}/rv32gcv ;;
-    p) USE_PEXT=ON 
+    p) USE_PEXT=ON
        GCC_PREFIX=${TC_DIR}/rv32gcp ;;
-    i) USE_IMV=ON 
+    i) USE_IMV=ON
        GCC_PREFIX=${TC_DIR}/rv32imv ;;
     b) BUILD_TYPE="${OPTARG}" ;;
     s) SIM_FLAGS="-DSIMULATOR=${OPTARG}";;
     l) VLEN="-DVLEN=${OPTARG}";;
+    e) ELEN="-DELEN=${OPTARG}";;
     * | h) echo "Provide correct arguments.  Ex:  ./build.sh -t (GCC/LLVM/x86) -v -i -b (Release/Debug)"
        echo "-t : toolchain to use"
        echo "-v : enable/disable VEXT"
        echo "-p : enable/disable PEXT"
        echo "-i : enable/disable IMV"
-       echo "-b : build type" 
+       echo "-b : build type"
        echo "-s : simualtor target"
        echo "-l : Vector Length"
+       echo "-e : Element Width"
        exit 1;;
   esac
 done
@@ -145,19 +148,19 @@ elif [ "${TOOLCHAIN}" == "GCC" ];then
             ./download_rv32gc.sh
           )
         fi
-     fi  
-fi       
-  
+     fi
+fi
+
 
 ################################################################################
 ################## Build based on Desired Configuration ########################
-################################################################################  
-  
-rm -rf ${BUILD_DIR}
-mkdir ${BUILD_DIR}
+################################################################################
+
+# rm -rf ${BUILD_DIR}
+mkdir -p ${BUILD_DIR}
 echo $1
 echo ${TC_DIR}/$2
-cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN}
+cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN}
 make -j $(nproc) -C ${BUILD_DIR}
 
 exit 0
