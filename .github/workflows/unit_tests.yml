@@ -41,18 +41,18 @@ jobs:
           - {args: "-t GCC -s Spike"}
           - {args: "-t LLVM -s Spike"}
           - {args: "-t GCC -s Spike -p"}
-          - {args: "-t GCC -s Spike -v -l 64"}
-          - {args: "-t GCC -s Spike -v -l 128"}
-          - {args: "-t GCC -s Spike -v -l 512"}
-          - {args: "-t LLVM -s Spike -v -l 64"}
-          - {args: "-t LLVM -s Spike -v -l 128"}
-          - {args: "-t LLVM -s Spike -v -l 512"}
-          - {args: "-t GCC -s Spike -v -i -l 64"}
-          - {args: "-t GCC -s Spike -v -i -l 128"}
-          - {args: "-t GCC -s Spike -v -i -l 512"}
-          - {args: "-t LLVM -s Spike -v -i -l 64"}
-          - {args: "-t LLVM -s Spike -v -i -l 128"}
-          - {args: "-t LLVM -s Spike -v -i -l 512"}
+          - {args: "-t GCC -s Spike -v -l 64 -e 64"}
+          - {args: "-t GCC -s Spike -v -l 128 -e 64"}
+          - {args: "-t GCC -s Spike -v -l 512 -e 64"}
+          - {args: "-t LLVM -s Spike -v -l 64 -e 64"}
+          - {args: "-t LLVM -s Spike -v -l 128 -e 64"}
+          - {args: "-t LLVM -s Spike -v -l 512 -e 64"}
+          - {args: "-t GCC -s Spike -v -i -l 64 -e 64"}
+          - {args: "-t GCC -s Spike -v -i -l 128 -e 64"}
+          - {args: "-t GCC -s Spike -v -i -l 512 -e 64"}
+          - {args: "-t LLVM -s Spike -v -i -l 64 -e 64"}
+          - {args: "-t LLVM -s Spike -v -i -l 128 -e 64"}
+          - {args: "-t LLVM -s Spike -v -i -l 512 -e 64"}
             
             
     runs-on: ubuntu-20.04
@@ -106,18 +106,18 @@ jobs:
 #          - {args: "-t GCC -s OVPsim"}
 #          - {args: "-t LLVM -s OVPsim"}
 #          - {args: "-t GCC -s OVPsim -p"}
-#          - {args: "-t GCC -s OVPsim -v -l 64"}
-#          - {args: "-t GCC -s OVPsim -v -l 128"}
-#          - {args: "-t GCC -s OVPsim -v -l 512"}
-#          - {args: "-t LLVM -s OVPsim -v -l 64"}
-#          - {args: "-t LLVM -s OVPsim -v -l 128"}
-#          - {args: "-t LLVM -s OVPsim -v -l 512"}
-#          - {args: "-t GCC -s OVPsim -v -i -l 64"}
-#          - {args: "-t GCC -s OVPsim -v -i -l 128"}
-#          - {args: "-t GCC -s OVPsim -v -i -l 512"}
-#          - {args: "-t LLVM -s OVPsim -v -i -l 64"}
-#          - {args: "-t LLVM -s OVPsim -v -i -l 128"}
-#          - {args: "-t LLVM -s OVPsim -v -i -l 512"}
+#          - {args: "-t GCC -s OVPsim -v -l 64 -e 64"}
+#          - {args: "-t GCC -s OVPsim -v -l 128 -e 64"}
+#          - {args: "-t GCC -s OVPsim -v -l 512 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -l 64 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -l 128 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -l 512 -e 64"}
+#          - {args: "-t GCC -s OVPsim -v -i -l 64 -e 64"}
+#          - {args: "-t GCC -s OVPsim -v -i -l 128 -e 64"}
+#          - {args: "-t GCC -s OVPsim -v -i -l 512 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -i -l 64 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -i -l 128 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -i -l 512 -e 64"}
 #
 #    runs-on: ubuntu-20.04
 #    steps:
