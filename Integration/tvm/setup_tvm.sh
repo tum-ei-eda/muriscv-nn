@@ -32,7 +32,7 @@ BUILDS=(mlf mlf_vext mlf_pext)
 echo "Download and install TVM sources."
 python3 -m venv .venv
 source .venv/bin/activate
-pip install tlcpack-nightly -f https://tlcpack.ai/wheels
+pip install apache-tvm
 pip install -r requirements.txt
 pip install typing-extensions
 
@@ -48,7 +48,7 @@ for test in "${TESTS[@]}"; do
       TVMC_TARGET_ARGS="${TVMC_TARGET_ARGS} --target-cmsis-nn-mcpu cortex-m33"
     fi
 
-    tvmc compile ${test}/${test}.tflite \
+    python -m tvm.driver.tvmc compile ${test}/${test}.tflite \
       --verbose \
       --runtime crt \
       --executor aot \
