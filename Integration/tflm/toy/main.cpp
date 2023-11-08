@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "tensorflow/lite/micro/micro_error_reporter.h"
+#include "tensorflow/lite/micro/tflite_bridge/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
 #include "tensorflow/lite/schema/schema_generated.h"
@@ -27,7 +27,7 @@ int run_test()
     static tflite::MicroMutableOpResolver<1> resolver;
     resolver.AddFullyConnected();
 
-    tflite::MicroInterpreter interpreter(model, resolver, tensor_arena, tensor_arena_size, error_reporter);
+    tflite::MicroInterpreter interpreter(model, resolver, tensor_arena, tensor_arena_size);
 
     if (interpreter.AllocateTensors() != kTfLiteOk)
     {
