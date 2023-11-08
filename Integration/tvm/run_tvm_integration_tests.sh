@@ -76,6 +76,7 @@ fi
 
 if [ "${TOOLCHAIN}" == "LLVM" ]; then
   echo "*** Checking for LLVM ***"
+  cd ../../Toolchain
   if clang-15 --version &>/dev/null; then
       echo "LLVM 15 appears to be installed."
   else
