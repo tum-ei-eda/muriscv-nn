@@ -298,13 +298,40 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
                                               const int32_t dst_offset,
                                               const int32_t activation_min,
                                               const int32_t activation_max);
-
+/**
+ * @brief General Matrix-multiplication function with int8 input and int32 output.
+ *        This function assumes:
+ *        - LHS input matrix NOT transposed (nt)
+ *        - RHS input matrix transposed (t)
+ *
+ * @note  Dst/output buffer must be zeroed out before calling this function.
+ *
+ * @param[in]  lhs                Pointer to the LHS input matrix
+ * @param[in]  rhs                Pointer to the RHS input matrix
+ * @param[out] dst                Pointer to the output matrix with "m" rows and "n" columns
+ * @param[in]  lhs_rows           Number of LHS input rows
+ * @param[in]  rhs_rows           Number of LHS input columns/RHS input rows
+ * @param[in]  rhs_cols           Number of RHS input columns
+ * @param[in]  lhs_offset         Offset to be applied to the LHS input value
+ * @param[in]  dst_idx_offset     Offset between subsequent output results
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ */
+muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8_s32(const int8_t *lhs,
+                                                const int8_t *rhs,
+                                                int32_t *dst,
+                                                const int32_t lhs_rows,
+                                                const int32_t rhs_rows,
+                                                const int32_t rhs_cols,
+                                                const int32_t lhs_offset,
+                                                const int32_t dst_idx_offset);
 /**
  * @brief s8 Vector by Matrix (transposed) multiplication
  *
  * @param[in]      lhs             Input left-hand side vector
  * @param[in]      rhs             Input right-hand side matrix (transposed)
- * @param[in]      kernel_sum
+ * @param[in]      kernel_sum      Kernel sums of the kernels (rhs). See muriscv_nn_vector_sum_s8 for more info.
  * @param[in]      bias            Input bias
  * @param[out]     dst             Output vector
  * @param[in]      lhs_offset      Offset to be added to the input values of the left-hand side vector.
@@ -691,6 +718,30 @@ static inline void muriscv_nn_write_q7x4(q7_t *in, q31_t value) { memcpy(in, &va
 static inline void muriscv_nn_write_q7x4_fast(q7_t *in, q31_t value) 
 {
     *((uint32_t*)(in)) = value;
+}
+
+/**
+ * @brief           memset optimized for MVE TODO: update for RISCV-VEXT
+ * @param[in, out]  dst         Destination pointer
+ * @param[in]       val         Value to set
+ * @param[in]       block_size  Number of bytes to copy.
+ *
+ */
+static void muriscv_nn_memset_s8(int8_t *dst, const int8_t val, uint32_t block_size)  //supposed to be __STATIC_FORCEINLINE, TODO:
+{
+/*#if defined(ARM_MATH_MVEI)
+    __asm volatile("   vdup.8                  q0, %[set_val]             \n"
+                   "   wlstp.8                 lr, %[cnt], 1f             \n"
+                   "2:                                                    \n"
+                   "   vstrb.8                 q0, [%[in]], #16            \n"
+                   "   letp                    lr, 2b                     \n"
+                   "1:                                                    \n"
+                   : [in] "+r"(dst)
+                   : [cnt] "r"(block_size), [set_val] "r"(val)
+                   : "q0", "memory", "r14");
+#else*/
+    memset(dst, val, block_size);
+//#endif
 }
 
 // Macros for shortening quantization functions' names and avoid long lines

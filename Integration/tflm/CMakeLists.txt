@@ -26,7 +26,10 @@ option(USE_CMSIS_NN_WRAPPER "Build TensorFlow Lite Micro with CMSIS-NN wrapper" 
 # Needed to run TensorFlow code with RISC-V toolchain
 add_definitions(-DTF_LITE_USE_GLOBAL_MAX)
 add_definitions(-DTF_LITE_USE_GLOBAL_MIN)
+add_definitions(-DTF_LITE_STATIC_MEMORY)
 add_definitions(-DTF_LITE_USE_GLOBAL_CMATH_FUNCTIONS)
+add_definitions(-DTFLITE_EMULATE_FLOAT)
+#add_definitions(-DTF_LITE_STRIP_ERROR_STRINGS)
 
 # TODO(fabianpedd): Figure out if these flags are actually needed
 # -DTF_LITE_MCU_DEBUG_LOG
@@ -102,13 +105,15 @@ set(TFLM_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_utils.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_interpreter.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_allocation_info.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_string.cc
+# ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_string.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/mock_micro_graph.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/compatibility.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/flatbuffer_utils.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/tflite_bridge/micro_error_reporter.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_time.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_allocation_info.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_interpreter_graph.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_interpreter_context.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/arena_allocator/single_arena_buffer_allocator.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/arena_allocator/single_arena_buffer_allocator.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/arena_allocator/persistent_arena_buffer_allocator.h
@@ -118,9 +123,9 @@ set(TFLM_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/arena_allocator/recording_single_arena_buffer_allocator.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/arena_allocator/non_persistent_arena_buffer_allocator.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/arena_allocator/non_persistent_arena_buffer_allocator.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_string.h
+#  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_string.h
 #  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/all_ops_resolver.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_graph.cc
+#  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_graph.cc
 #  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/all_ops_resolver.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/recording_micro_interpreter.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_context.h
@@ -247,13 +252,14 @@ set(TFLM_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/log_softmax.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/cast.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/leaky_relu.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/transpose_conv.cc
+#  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/transpose_conv.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/pooling.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/elu.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/var_handle.cc
  # ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/unidirectional_sequence_lstm_test_config.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/transpose.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/logistic_common.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/kernels/reshape_common.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/debug_log.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_op_resolver.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_op_resolver.cc
@@ -357,6 +363,7 @@ set(TFLM_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/kernels/internal/portable_tensor_utils.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/kernels/internal/portable_tensor_utils.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/kernels/internal/cppmath.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/kernels/internal/common.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/kernels/padding.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/portable_type_to_tflitetype.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/builtin_op_data.h
@@ -410,9 +417,18 @@ target_include_directories(tflm PUBLIC
   ${CMAKE_SOURCE_DIR}/Include/CMSIS/NN
 )
 
-target_link_libraries(tflm PRIVATE
-  ${MURISCVNN_LIB}
-)
+if(${TOOLCHAIN} STREQUAL "LLVM")
+  target_link_libraries(tflm PRIVATE
+    ${MURISCVNN_LIB}
+    m
+    stdc++
+  )
+else()
+    target_link_libraries(tflm PRIVATE
+    ${MURISCVNN_LIB}
+  )
+endif()
+
 
 option(DISABLE_TFLM_AWW_INTG_TESTS "Enable tflm integration tests for aww model" OFF)
 option(DISABLE_TFLM_IC_INTG_TESTS "Enable tflm integration tests for ic model" OFF)

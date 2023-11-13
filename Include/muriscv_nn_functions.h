@@ -223,6 +223,92 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
 int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims);
 
 /**
+ * @brief Basic s8 transpose convolution function
+ * @param[in, out] ctx                   Function context that contains the additional buffer if required by the
+ *                                       function.
+ *                                       arm_transpose_conv_s8_get_buffer_size will return the buffer_size if required.
+ *                                       The caller is expected to clear the buffer, if applicable, for security
+ reasons.
+ * @param[in, out] output_ctx            Temporary scratch buffer.
+ *                                       The size required size is: output width * output height * output channel * 4
+ *                                       The caller is expected to clear the buffer, if applicable, for security
+ *                                        reasons.
+ * @param[in]      transpose_conv_params Convolution parameters (e.g. strides, dilations, pads,...).
+ *                                       Range of transpose_conv_params->input_offset  : [-127, 128]
+ *                                       Range of transpose_conv_params->output_offset : [-128, 127]
+ * @param[in]      quant_params          Per-channel quantization info.
+ *                                       It contains the multiplier and shift values to be applied to each out channel.
+ * @param[in]      input_dims            Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
+ * @param[in]      input_data            Input (activation) data pointer. Data type: int8
+ * @param[in]      filter_dims           Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK are the
+ *                                       spatial filter dimensions
+ * @param[in]      filter_data           Filter data pointer. Data type: int8
+ * @param[in]      bias_dims             Bias tensor dimensions. Format: [C_OUT]
+ * @param[in]      bias_data             Optional bias data pointer. Data type: int32
+ * @param[in]      output_dims           Output tensor dimensions. Format: [N, H, W, C_OUT]
+ * @param[out]     output_data           Output data pointer. Data type: int8
+
+ * @return     The function returns either
+ *                  <code>ARM_CMSIS_NN_ARG_ERROR</code> if argument constraints fail. or,
+ *                  <code>ARM_CMSIS_NN_SUCCESS</code> on successful completion.
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite micro
+ *    2. Additional memory is required for optimization. Refer to arguments 'ctx' and 'output_ctx' for details.
+ *
+ */
+muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
+                                          const muriscv_nn_context *output_ctx,
+                                          const muriscv_nn_transpose_conv_params *transpose_conv_params,
+                                          const muriscv_nn_per_channel_quant_params *quant_params,
+                                          const muriscv_nn_dims *input_dims,
+                                          const int8_t *input_data,
+                                          const muriscv_nn_dims *filter_dims,
+                                          const int8_t *filter_data,
+                                          const muriscv_nn_dims *bias_dims,
+                                          const int32_t *bias_data,
+                                          const muriscv_nn_dims *output_dims,
+                                          int8_t *output_data);
+
+/**
+ * @brief Get the required buffer size for s8 transpose conv function
+ *
+ * @param[in]       input_dims            Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
+ * @param[in]       filter_dims           Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK
+ *                                        are the spatial filter dimensions
+ * @param[in]       out_dims              Output tensor dimensions. Format: [N, H, W, C_OUT]
+ * @return          The function returns required buffer size(bytes)
+ *
+ */
+int32_t muriscv_nn_transpose_conv_s8_get_buffer_size(const muriscv_nn_dims *input_dims,
+                                              const muriscv_nn_dims *filter_dims,
+                                              const muriscv_nn_dims *out_dims);
+
+/**
+ * @brief Get size of additional buffer required by arm_transpose_conv_s8() for processors with DSP extension.
+ *        Refer to arm_transpose_conv_s8_get_buffer_size() for function argument details.
+ *
+ * @note       Intended for compilation on Host. If compiling for an Arm target, use
+ *             arm_transpose_conv_s8_get_buffer_size().
+ *
+ */
+int32_t muriscv_nn_transpose_conv_s8_get_buffer_size_dsp(const muriscv_nn_dims *input_dims,
+                                                  const muriscv_nn_dims *filter_dims,
+                                                  const muriscv_nn_dims *out_dims);
+
+/**
+ * @brief Get size of additional buffer required by arm_transpose_conv_s8() for Arm(R) Helium Architecture case.
+ *        Refer to arm_transpose_conv_s8_get_buffer_size() for function argument details.
+ *
+ * @note       Intended for compilation on Host. If compiling for an Arm target, use
+ *             arm_transpose_conv_s8_get_buffer_size().
+ *
+ */
+int32_t muriscv_nn_transpose_conv_s8_get_buffer_size_mve(const muriscv_nn_dims *input_dims,
+                                                  const muriscv_nn_dims *filter_dims,
+                                                  const muriscv_nn_dims *out_dims);
+
+/**
  * @brief Basic s16 convolution function
  * @param[in, out] ctx            Function context that contains the additional buffer if required by the function.
                                   muriscv_nn_convolve_s16_get_buffer_size will return the buffer_size if required
@@ -249,6 +335,8 @@ int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims
  *    3. Additional memory is required for optimization. Refer to argument 'ctx' for details.
  *
  */
+ 
+ 
 muriscv_nn_status muriscv_nn_convolve_s16(const muriscv_nn_context *ctx,
                                           const muriscv_nn_conv_params *conv_params,
                                           const muriscv_nn_per_channel_quant_params *quant_params,
@@ -1588,14 +1676,10 @@ void muriscv_nn_concatenation_s8_w(const int8_t *input,
  *                                    Optional function muriscv_nn_fully_connected_s8_get_buffer_size() provides the buffer
  *                                    size if an additional buffer is required.
  *                                    The caller is expected to clear the buffer ,if applicable, for security reasons.
-
- * @param[in, out] ctx                Function context that contains the additional buffer if required by the function.
- *                                    arm_fully_connected_s8_get_buffer_size will return the buffer_size if required.
- *                                    The caller is expected to clear the buffer ,if applicable, for security reasons.
  * @param[in]   input_ctx             Temporary scratch buffer
- *                                    The caller is expected to clear the buffer ,if applicable, for security reasons.
+ *                                    
  * @param[in]   output_ctx            Temporary output scratch buffer
- *                                    The caller is expected to clear the buffer ,if applicable, for security reasons.
+ *                                    
  * @param[in]   svdf_params           SVDF Parameters
  *                                    Range of svdf_params->input_offset  : [-128, 127]
  *                                    Range of svdf_params->output_offset  : [-128, 127]

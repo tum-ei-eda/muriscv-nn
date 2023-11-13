@@ -87,6 +87,11 @@ extern "C" {
 #define arm_svdf_s8_get_buffer_size_dsp muriscv_nn_svdf_s8_get_buffer_size_dsp
 #define arm_svdf_s8_get_buffer_size_mve muriscv_nn_svdf_s8_get_buffer_size_mve
 
+#define arm_transpose_conv_s8 muriscv_nn_transpose_conv_s8
+#define arm_transpose_conv_s8_get_buffer_size muriscv_nn_transpose_conv_s8_get_buffer_size
+#define arm_transpose_conv_s8_get_buffer_size_dsp muriscv_nn_transpose_conv_s8_get_buffer_size_dsp
+#define arm_transpose_conv_s8_get_buffer_size_mve muriscv_nn_transpose_conv_s8_get_buffer_size_mve
+
 
 #ifdef __cplusplus
 }
