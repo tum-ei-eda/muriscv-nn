@@ -54,8 +54,8 @@ jobs:
         source common.sh
         source $VENV_DIR/bin/activate
         export MLONMCU_HOME=$WORKSPACE_DIR
-        python gen_muriscnn_benchmarks.py -b tflmi -t spike --vlen 64 --post -p --parallel -f muriscvnn aww
-        
+        python gen_muriscnn_benchmarks.py -b tflmi -t spike --vlen 128 --post -p --parallel -f muriscvnn aww
+
     - name: Get current date
       id: date-today
       run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
