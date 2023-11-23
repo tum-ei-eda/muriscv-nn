@@ -87,24 +87,24 @@ fi
 #################### Check for Dependencies for Build ##########################
 ################################################################################
 if [ "${TOOLCHAIN}" == "LLVM" ];then
-     # Install LLVM 16 (which includes vector support)
-    if clang-14 --version &>/dev/null; then
-      echo "LLVM 16 appears to be installed."
+     # Install LLVM 17 (which includes vector support)
+    if clang-17 --version &>/dev/null; then
+      echo "LLVM 17 appears to be installed."
     else
-      echo "No LLVM 16 installation found. Installing LLVM 14..."
+      echo "No LLVM 17 installation found. Installing LLVM 17..."
       wget https://apt.llvm.org/llvm.sh
       chmod +x llvm.sh
-      sudo ./llvm.sh 16
+      sudo ./llvm.sh 17
       rm llvm.sh
-    fi 
-    
+    fi
+
     if [ "${USE_IMV}" == "ON" ];then
         IMV_FLAGS="-DRISCV_ARCH=rv32imzve32x -DRISCV_ABI=ilp32"
     fi
-    
+
 elif [ "${TOOLCHAIN}" == "GCC" ];then
     if [ "${USE_VEXT}" == "ON" ] && [ "${USE_IMV}" == "OFF" ] ;then
-       
+
        if [ -d ${TC_DIR_RV32GCV} ]; then
           echo "Found rv32gcv GCC compiler in the Toolchain directory."
         else
