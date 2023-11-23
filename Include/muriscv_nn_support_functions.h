@@ -26,14 +26,34 @@
 #ifdef __clang__
 #if __clang_major__ >= 16
 
+#if __clang_major__ >= 17
+#define vsmul_vx_i32m8(a, b, c) __riscv_vsmul_vx_i32m8(a, b, __RISCV_VXRM_RNU, c)
+#define vsmul_vx_i32m4(a, b, c) __riscv_vsmul_vx_i32m4(a, b, __RISCV_VXRM_RNU, c)
+#define vsmul_vv_i32m2(a, b, c) __riscv_vsmul_vv_i32m2(a, b, __RISCV_VXRM_RNU, c)
+#define vnclip_wx_i16m4(a, b, c) __riscv_vnclip_wx_i16m4(a, b, __RISCV_VXRM_RNU, c)
+#define vnclip_wx_i16m2(a, b, c) __riscv_vnclip_wx_i16m2(a, b, __RISCV_VXRM_RNU, c)
+#define vnclip_wx_i16m1(a, b, c) __riscv_vnclip_wx_i16m1(a, b, __RISCV_VXRM_RNU, c)
+#define vnclip_wx_i8m2(a, b, c) __riscv_vnclip_wx_i8m2(a, b, __RISCV_VXRM_RNU, c)
+#define vnclip_wx_i8m1(a, b, c) __riscv_vnclip_wx_i8m1(a, b, __RISCV_VXRM_RNU, c)
+#define vnclip_wx_i8mf2(a, b, c) __riscv_vnclip_wx_i8mf2(a, b, __RISCV_VXRM_RNU, c)
+#else
 #define vsmul_vx_i32m8 __riscv_vsmul_vx_i32m8
+#define vsmul_vx_i32m4 __riscv_vsmul_vx_i32m4
+#define vsmul_vv_i32m2 __riscv_vsmul_vv_i32m2
+#define vnclip_wx_i16m4 __riscv_vnclip_wx_i16m4
+#define vnclip_wx_i16m2 __riscv_vnclip_wx_i16m2
+#define vnclip_wx_i16m1 __riscv_vnclip_wx_i16m1
+#define vnclip_wx_i8m2 __riscv_vnclip_wx_i8m2
+#define vnclip_wx_i8m1 __riscv_vnclip_wx_i8m1
+#define vnclip_wx_i8mf2 __riscv_vnclip_wx_i8mf2
+#endif
+
 #define vand_vx_i32m8 __riscv_vand_vx_i32m8
 #define vmv_v_x_i32m8 __riscv_vmv_v_x_i32m8
 #define vsra_vx_i32m8 __riscv_vsra_vx_i32m8
 #define vmslt_vx_i32m8_b4 __riscv_vmslt_vx_i32m8_b4
 #define vadd_vx_i32m8_m __riscv_vadd_vx_i32m8_tum
 #define vmsgt_vv_i32m8_b4 __riscv_vmsgt_vv_i32m8_b4
-#define vsmul_vx_i32m4 __riscv_vsmul_vx_i32m4
 #define vand_vx_i32m4 __riscv_vand_vx_i32m4
 #define vmv_v_x_i32m4 __riscv_vmv_v_x_i32m4
 #define vsra_vx_i32m4 __riscv_vsra_vx_i32m4
@@ -43,7 +63,6 @@
 #define vmsgt_vv_i32m4_b8 __riscv_vmsgt_vv_i32m4_b8
 #define vreinterpret_v_i32m2_u32m2 __riscv_vreinterpret_v_i32m2_u32m2
 #define vneg_v_i32m2 __riscv_vneg_v_i32m2
-#define vsmul_vv_i32m2 __riscv_vsmul_vv_i32m2
 #define vsra_vv_i32m2 __riscv_vsra_vv_i32m2
 #define vsub_vx_i32m2 __riscv_vsub_vx_i32m2
 #define vsll_vv_i32m2 __riscv_vsll_vv_i32m2
@@ -100,21 +119,15 @@
 #define vmin_vx_i32m8 __riscv_vmin_vx_i32m8
 #define vmul_vx_i32m2 __riscv_vmul_vx_i32m2
 #define vmv_x_s_i32m1_i32 __riscv_vmv_x_s_i32m1_i32
-#define vnclip_wx_i16m4 __riscv_vnclip_wx_i16m4
-#define vnclip_wx_i8m2 __riscv_vnclip_wx_i8m2
 #define vredsum_vs_i32m2_i32m1(a, b, c, d) __riscv_vredsum_vs_i32m2_i32m1(b, c, d)
 #define vse8_v_i8mf2 __riscv_vse8_v_i8mf2
 #define vsub_vx_i32m8_m __riscv_vsub_vx_i32m8_tum
-#define vnclip_wx_i16m1 __riscv_vnclip_wx_i16m1
-#define vnclip_wx_i8mf2 __riscv_vnclip_wx_i8mf2
 #define vse16_v_i16m4 __riscv_vse16_v_i16m4
 #define vse8_v_i8m2 __riscv_vse8_v_i8m2
 #define vslide1up_vx_i32m4 __riscv_vslide1up_vx_i32m4
 #define vmin_vx_i32m4 __riscv_vmin_vx_i32m4
 #define vse32_v_i32m4 __riscv_vse32_v_i32m4
 #define vmax_vx_i32m4 __riscv_vmax_vx_i32m4
-#define vnclip_wx_i8m1 __riscv_vnclip_wx_i8m1
-#define vnclip_wx_i16m2 __riscv_vnclip_wx_i16m2
 #define vsse8_v_i8m1 __riscv_vsse8_v_i8m1
 #endif
 #endif
