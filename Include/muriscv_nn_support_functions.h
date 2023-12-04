@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2010-2022 Arm Limited or its affiliates.
  *
@@ -18,21 +19,34 @@
  * Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
  */
 
+
+
+
+
+
+
+
+
+
+
+
+
 #ifndef _MURISCV_NN_SUPPORT_FUNCTIONS_H
 #define _MURISCV_NN_SUPPORT_FUNCTIONS_H
 
+//MURISCV_NN NEW CODE  //Include this around any code unique to muRISCV-nn for auto-sync with CMSIS
 #if defined(USE_VEXT)
 #include <riscv_vector.h>
 #elif defined(USE_PEXT)
 #include <rvp_intrinsic.h>
 #endif
-
+#include "muriscv_nn_util.h"
 #include <stdbool.h>
 #include <string.h>
-
+//MURISCV_NN END OF NEW CODE
 #include "muriscv_nn_math_types.h"
 #include "muriscv_nn_types.h"
-#include "muriscv_nn_util.h"
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,20 +59,28 @@ extern "C" {
 #define MASK_IF_NON_ZERO(x) (x) != 0 ? ~0 : 0
 #define SELECT_USING_MASK(mask, a, b) ((mask) & (a)) ^ (~(mask) & (b))
 
+//MURISCV_NN NEW CODE
 #if defined(USE_PEXT)
-#define MAX(A, B) __rv_max(A, B)
-#define MIN(A, B) __rv_min(A, B)
+#define MAX_RV(A, B) __rv_max(A, B)
+#define MIN_RV(A, B) __rv_min(A, B)
 #else
-#define MAX(A, B) ((A) > (B) ? (A) : (B))
-#define MIN(A, B) ((A) < (B) ? (A) : (B))
+#define MAX_RV(A, B) ((A) > (B) ? (A) : (B))
+#define MIN_RV(A, B) ((A) < (B) ? (A) : (B))
 #endif
-
+//MURISCV_NN END OF NEW CODE
+//MURISCV_NN CUSTOM CODE
+#define MAX(A, B) MAX_RV(A, B)
+//MURISCV_NN CUSTOM CODE
+#define MIN(A, B) MIN_RV(A, B)
 #define CLAMP(x, h, l) MAX(MIN((x), (h)), (l))
 #define REDUCE_MULTIPLIER(_mult) ((_mult < 0x7FFF0000) ? ((_mult + (1 << 15)) >> 16) : 0x7FFF)
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief definition to pack four 8 bit values.
  */
+#define PACK_S8x4_32x1(v0, v1, v2, v3) PACK_Q7x4_32x1(v0, v1, v2, v3)
+//MURISCV_NN NEW CODE
 #if defined(USE_PEXT)
 #define PACK_Q7x4_32x1(v0, v1, v2, v3) ((__rv_packu((uint8_t)(v0), (uint8_t)(v2))) | ((__rv_packu((uint8_t)(v1), (uint8_t)(v3))) << 8))
 #else
@@ -66,7 +88,14 @@ extern "C" {
     ((((int32_t)(v0) << 0) & (int32_t)0x000000FF) | (((int32_t)(v1) << 8) & (int32_t)0x0000FF00) |                     \
      (((int32_t)(v2) << 16) & (int32_t)0x00FF0000) | (((int32_t)(v3) << 24) & (int32_t)0xFF000000))
 #endif
+//MURISCV_NN END OF NEW CODE
 
+/**
+ * @brief definition to pack two 16 bit values.
+ */
+#define PACK_Q15x2_32x1(v0, v1) (((int32_t)v0 & (int32_t)0xFFFF) | ((int32_t)v1 << 16))
+
+//MURISCV_NN NEW CODE
 /**
 * @brief These instructions are part of the rv32imv spec, but not currently supported by Vicuna (as of 06/2023). Attempting to use them results in an illegal instruction exception.
 */
@@ -85,11 +114,7 @@ static inline vint32m8_t vicuna_sext_i32m8(vint8m2_t input, size_t vl)
 }
 
 #endif
-
-/**
- * @brief definition to pack two 16 bit values.
- */
-#define PACK_Q15x2_32x1(v0, v1) (((int32_t)v0 & (int32_t)0xFFFF) | ((int32_t)v1 << 16))
+//MURISCV_NN END OF NEW CODE
 
 /**
  * @brief Union for SIMD access of q31/q15/q7 types
@@ -206,6 +231,7 @@ q15_t *muriscv_nn_mat_mult_kernel_s16(const q7_t *input_a,
                                       const int64_t *const output_bias,
                                       q15_t *out_0);
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief General Matrix-multiplication without requantization for one row & one column
  * @param[in]       row_elements  number of row elements
@@ -298,40 +324,13 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
                                               const int32_t dst_offset,
                                               const int32_t activation_min,
                                               const int32_t activation_max);
-/**
- * @brief General Matrix-multiplication function with int8 input and int32 output.
- *        This function assumes:
- *        - LHS input matrix NOT transposed (nt)
- *        - RHS input matrix transposed (t)
- *
- * @note  Dst/output buffer must be zeroed out before calling this function.
- *
- * @param[in]  lhs                Pointer to the LHS input matrix
- * @param[in]  rhs                Pointer to the RHS input matrix
- * @param[out] dst                Pointer to the output matrix with "m" rows and "n" columns
- * @param[in]  lhs_rows           Number of LHS input rows
- * @param[in]  rhs_rows           Number of LHS input columns/RHS input rows
- * @param[in]  rhs_cols           Number of RHS input columns
- * @param[in]  lhs_offset         Offset to be applied to the LHS input value
- * @param[in]  dst_idx_offset     Offset between subsequent output results
- *
- * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
- *
- */
-muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8_s32(const int8_t *lhs,
-                                                const int8_t *rhs,
-                                                int32_t *dst,
-                                                const int32_t lhs_rows,
-                                                const int32_t rhs_rows,
-                                                const int32_t rhs_cols,
-                                                const int32_t lhs_offset,
-                                                const int32_t dst_idx_offset);
+
 /**
  * @brief s8 Vector by Matrix (transposed) multiplication
  *
  * @param[in]      lhs             Input left-hand side vector
  * @param[in]      rhs             Input right-hand side matrix (transposed)
- * @param[in]      kernel_sum      Kernel sums of the kernels (rhs). See muriscv_nn_vector_sum_s8 for more info.
+ * @param[in]      kernel_sum
  * @param[in]      bias            Input bias
  * @param[out]     dst             Output vector
  * @param[in]      lhs_offset      Offset to be added to the input values of the left-hand side vector.
@@ -427,6 +426,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_svdf_s8(const q7_t *lhs,
                                                     const int32_t activation_min,
                                                     const int32_t activation_max);
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief Depthwise convolution of transposed rhs matrix with 4 lhs matrices. To be used in padded cases where
  *        the padding is -lhs_offset(Range: int8). Dimensions are the same for lhs and rhs.
@@ -468,6 +468,7 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_padded_s8(const q7_t *lhs,
                                                const int32_t *const output_bias,
                                                q7_t *out);
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief Depthwise convolution of transposed rhs matrix with 4 lhs matrices. To be used in non-padded cases.
  *        Dimensions are the same for lhs and rhs.
@@ -509,6 +510,7 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
                                         const int32_t *const output_bias,
                                         q7_t *out);
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief Matrix-multiplication function for convolution with per-channel requantization.
  * @param[in]       input_a     pointer to operand A
@@ -573,7 +575,8 @@ void muriscv_nn_softmax_common_s8(const int8_t *input,
  * Basic Math Functions for Neural Network Computation
  *
  */
-
+ 
+//MURISCV_NN NEW CODE
 /**
  @brief         Read 2 q15 elements and post increment pointer. Always uses memcpy for read, consistent speed, regardless of alignment
  @param[in]     in_q15   Pointer to pointer that holds address of input.
@@ -719,30 +722,7 @@ static inline void muriscv_nn_write_q7x4_fast(q7_t *in, q31_t value)
 {
     *((uint32_t*)(in)) = value;
 }
-
-/**
- * @brief           memset optimized for MVE TODO: update for RISCV-VEXT
- * @param[in, out]  dst         Destination pointer
- * @param[in]       val         Value to set
- * @param[in]       block_size  Number of bytes to copy.
- *
- */
-static void muriscv_nn_memset_s8(int8_t *dst, const int8_t val, uint32_t block_size)  //supposed to be __STATIC_FORCEINLINE, TODO:
-{
-/*#if defined(ARM_MATH_MVEI)
-    __asm volatile("   vdup.8                  q0, %[set_val]             \n"
-                   "   wlstp.8                 lr, %[cnt], 1f             \n"
-                   "2:                                                    \n"
-                   "   vstrb.8                 q0, [%[in]], #16            \n"
-                   "   letp                    lr, 2b                     \n"
-                   "1:                                                    \n"
-                   : [in] "+r"(dst)
-                   : [cnt] "r"(block_size), [set_val] "r"(val)
-                   : "q0", "memory", "r14");
-#else*/
-    memset(dst, val, block_size);
-//#endif
-}
+//MURISCV_NN END OF NEW CODE
 
 // Macros for shortening quantization functions' names and avoid long lines
 #define MUL_SAT(a, b) muriscv_nn_doubling_high_mult_no_sat((a), (b))
@@ -843,6 +823,7 @@ static inline q31_t muriscv_nn_requantize(const q31_t val, const q31_t multiplie
 #endif
 }
 
+//MURISCV_NN NEW CODE
 #if defined(USE_VEXT)
 
 // TODO(fabianpedd): Clean these muriscv_nn_requantize functions up and find a consitent naming scheme that respects
@@ -941,6 +922,7 @@ muriscv_nn_requantize_vint32m2(vint32m2_t val, vint32m2_t multiplier, vint32m2_t
     return result;
 }
 #endif
+//MURISCV_NN END OF NEW CODE
 
 /**
  * @brief           Requantize a given 64 bit value.
@@ -963,6 +945,7 @@ static inline q31_t muriscv_nn_requantize_s64(const q63_t val, const q31_t reduc
     return result;
 }
 
+//MURISCV_NN NEW CODE
 /**
  * @brief           memcpy optimized for RVV
  * @param[in, out]  dst         Destination pointer
@@ -1004,6 +987,7 @@ static inline void muriscv_nn_memset(int8_t *dst, const int8_t val, size_t block
     memset(dst, val, block_size);
 #endif
 }
+//MURISCV_NN END OF NEW CODE
 
 // @note The following functions are used only for softmax layer, scaled bits = 5 assumed
 
@@ -1224,6 +1208,68 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_s8(const int16_t *input_1_vect,
                                                const int32_t out_mult,
                                                const int32_t out_shift,
                                                const int32_t block_size);
+
+
+
+//MURISCV_NN CUSTOM CODE
+/**
+ * @brief           memcpy wrapper for int16
+ * @param[in, out]  dst         Destination pointer
+ * @param[in]       src         Source pointer.
+ * @param[in]       block_size  Number of bytes to copy.
+ *
+ */
+__STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src, uint32_t block_size)
+{
+    memcpy(dst, src, block_size);
+}
+
+//MURISCV_NN CUSTOM CODE
+/**
+ * @brief           memset optimized for MVE TODO: update for RISCV-VEXT
+ * @param[in, out]  dst         Destination pointer
+ * @param[in]       val         Value to set
+ * @param[in]       block_size  Number of bytes to copy.
+ *
+ */
+__STATIC_FORCEINLINE void muriscv_nn_memset_s8(int8_t *dst, const int8_t val, uint32_t block_size)  //supposed to be __STATIC_FORCEINLINE, TODO:
+{
+/*#if defined(ARM_MATH_MVEI)
+    __asm volatile("   vdup.8                  q0, %[set_val]             \n"
+                   "   wlstp.8                 lr, %[cnt], 1f             \n"
+                   "2:                                                    \n"
+                   "   vstrb.8                 q0, [%[in]], #16            \n"
+                   "   letp                    lr, 2b                     \n"
+                   "1:                                                    \n"
+                   : [in] "+r"(dst)
+                   : [cnt] "r"(block_size), [set_val] "r"(val)
+                   : "q0", "memory", "r14");
+#else*/
+    memset(dst, val, block_size);
+//#endif
+}
+
+//MURISCV_NN CUSTOM CODE
+/**
+ * @brief           memcpy optimized for RVV
+ * @param[in, out]  dst         Destination pointer
+ * @param[in]       src         Source pointer
+ * @param[in]       block_size  Number of bytes to copy
+ *
+ */
+__STATIC_FORCEINLINE void muriscv_nn_memcpy_s8(int8_t *dst, const int8_t *src, size_t block_size)
+{
+#if defined(USE_VEXT)
+    for (size_t vl; block_size > 0; block_size -= vl, src += vl, dst += vl)
+    {
+        vl = vsetvl_e8m8(block_size);
+        vint8m8_t vec_src = vle8_v_i8m8(src, vl);
+        vse8_v_i8m8(dst, vec_src, vl);
+    }
+#else
+    memcpy(dst, src, block_size);
+#endif
+}
 
 
 

@@ -1,15 +1,19 @@
 name: Build
 
 on:
+  
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
     - cron: '0 4 * * *'
 
   push:
-    branches: [ main ]
+    branches:
+      - 'master'
+      - 'sync'
   pull_request:
     branches: [ main ]
-
+    
+  workflow_call:
   workflow_dispatch:
 
 jobs:
