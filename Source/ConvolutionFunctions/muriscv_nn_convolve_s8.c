@@ -277,7 +277,6 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
                 uint16_t col_count = (input_ch * kernel_y * kernel_x) >> 2;
                 
                 
-                q31_t inA;
                 while (col_count)
                 {
                     q31_t inA = muriscv_nn_read_q7x4_ia_fast(&ker_a);
@@ -326,7 +325,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
     /* Return to application */
     return MURISCV_NN_SUCCESS;
 }
-
+/*
 int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
 {
     // TODO(fabianpedd): Check if this special buffer case makes sense in the vector case (im2col)?
@@ -340,7 +339,7 @@ int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims
 #else
     return (2 * input_dims->c * filter_dims->w * filter_dims->h) * (int32_t)sizeof(int16_t);
 #endif
-}
+}*/
 
 /**
  * @} end of NNConv group

@@ -100,7 +100,7 @@ muriscv_nn_status muriscv_nn_convolve_wrapper_s8(const muriscv_nn_context *ctx,
                                       output_data);
     }
 }
-
+/*
 int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size(const muriscv_nn_conv_params *conv_params,
                                                        const muriscv_nn_dims *input_dims,
                                                        const muriscv_nn_dims *filter_dims,
@@ -120,7 +120,7 @@ int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size(const muriscv_nn_conv_par
     {
         return muriscv_nn_convolve_s8_get_buffer_size(input_dims, filter_dims);
     }
-}
+}*/
 
 /**
  * @} end of NNConv group

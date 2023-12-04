@@ -418,20 +418,20 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
     return MURISCV_NN_SUCCESS;
 }
 
-int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(const muriscv_nn_dims *input_dims,
-                                                         const muriscv_nn_dims *filter_dims)
-{
-#if defined(USE_VEXT)
+//int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(const muriscv_nn_dims *input_dims,
+//                                                         const muriscv_nn_dims *filter_dims)
+//{
+//#if defined(USE_VEXT)
     /* The + 4 accounts for out of bounds read of the lhs buffers in the *_nt_t_* functions.  */
-    return (2 * input_dims->c * filter_dims->w * filter_dims->h) * (int32_t)sizeof(int16_t) + 4;
-#elif defined(USE_PEXT)
-    return (input_dims->c * filter_dims->w * filter_dims->h) * sizeof(int16_t);
-#else
-    (void)input_dims;
-    (void)filter_dims;
-    return 0;
-#endif
-}
+//    return (2 * input_dims->c * filter_dims->w * filter_dims->h) * (int32_t)sizeof(int16_t) + 4;
+//#elif defined(USE_PEXT)
+//    return (input_dims->c * filter_dims->w * filter_dims->h) * sizeof(int16_t);
+//#else
+//    (void)input_dims;
+//    (void)filter_dims;
+//    return 0;
+//#endif
+//}
 
 /**
  * @} end of NNConv group

@@ -109,7 +109,6 @@ muriscv_nn_status muriscv_nn_svdf_state_s16_s8(const muriscv_nn_context *input_c
                                                                   weight,
                                                                   res_ptr,
                                                                   -zp_in,
-                                                                  0,
                                                                   time_batches,
                                                                   multiplier_in,
                                                                   shift_in,

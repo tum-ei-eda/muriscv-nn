@@ -43,7 +43,7 @@
  * Used by muriscv_nn_convolve_1x1_s8_fast()
  *
  */
-muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
+muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,                      
                                               const q7_t *rhs,
                                               const q31_t *bias,
                                               q7_t *dst,
@@ -55,7 +55,8 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
                                               const int32_t lhs_offset,
                                               const int32_t dst_offset,
                                               const int32_t activation_min,
-                                              const int32_t activation_max)
+                                              const int32_t activation_max,
+                                              const int32_t lhs_cols_offset)
 {
 #if defined(USE_PEXT)
      // TODO(parkerjones): Find benchmark to test remaining edge cases for PEXT (and maybe implement V-Ext?)
