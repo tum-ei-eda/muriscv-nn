@@ -220,18 +220,22 @@ jobs:
            
     - name: TVM Integration Test AWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/tvm
+      if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b aww
       
     - name: TVM Integration Test VWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/tvm
+      if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b vww -s
       
     - name: TVM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/tvm
+      if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b ic -s
       
     - name: TVM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/tvm
+      if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b toy -s 
     
     
@@ -301,18 +305,22 @@ jobs:
     
     - name: TFLM Integration Test AWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/tflm
+      if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b aww
       
     - name: TFLM Integration Test VWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/tflm
+      if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b vww -s
       
     - name: TVM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/tflm
+      if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b ic -s
       
     - name: TVM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/tflm
+      if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -b toy -s
       
       
