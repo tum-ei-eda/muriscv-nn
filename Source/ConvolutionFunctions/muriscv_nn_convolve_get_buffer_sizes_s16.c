@@ -49,13 +49,13 @@ __STATIC_INLINE int32_t muriscv_nn_convolve_fast_s16_get_buffer_size_dsp(const m
 
 int32_t muriscv_nn_convolve_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
 {
-//#if defined(USE_PEXT) && !defined(USE_VEXT)
-//    return muriscv_nn_convolve_fast_s16_get_buffer_size_dsp(input_dims, filter_dims);
-//#else
+#if defined(USE_PEXT) && !defined(USE_VEXT)
+    return muriscv_nn_convolve_fast_s16_get_buffer_size_dsp(input_dims, filter_dims);
+#else
     (void)input_dims;
     (void)filter_dims;
     return 0;
-//#endif
+#endif
 }
 
 int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
@@ -78,15 +78,15 @@ int32_t muriscv_nn_convolve_wrapper_s16_get_buffer_size(const muriscv_nn_conv_pa
                                                  const muriscv_nn_dims *output_dims)
 {
 
-//#if defined(USE_PEXT) && !defined(USE_VEXT)
-//    return muriscv_nn_convolve_wrapper_s16_get_buffer_size_dsp(conv_params, input_dims, filter_dims, output_dims);
-//#else
+#if defined(USE_PEXT) && !defined(USE_VEXT)
+    return muriscv_nn_convolve_wrapper_s16_get_buffer_size_dsp(conv_params, input_dims, filter_dims, output_dims);
+#else
     (void)conv_params;
     (void)output_dims;
 
     // MVE and scalar implementation have same buffer requirements
     return muriscv_nn_convolve_s16_get_buffer_size(input_dims, filter_dims);
-//#endif
+#endif
 }
 
 int32_t muriscv_nn_convolve_wrapper_s16_get_buffer_size_dsp(const muriscv_nn_conv_params *conv_params,

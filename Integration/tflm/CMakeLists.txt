@@ -18,7 +18,7 @@
 
 add_library(tflm STATIC)
 
-option(TF_LITE_STATIC_MEMORY "Turn off static memory" OFF)
+#option(TF_LITE_STATIC_MEMORY "Turn off static memory" OFF)
 
 # Enables the CMSIS-NN wrappers (make sure to use the correct TFLM source tree!)
 option(USE_CMSIS_NN_WRAPPER "Build TensorFlow Lite Micro with CMSIS-NN wrapper" ON)
@@ -29,6 +29,8 @@ add_definitions(-DTF_LITE_USE_GLOBAL_MIN)
 add_definitions(-DTF_LITE_STATIC_MEMORY)
 add_definitions(-DTF_LITE_USE_GLOBAL_CMATH_FUNCTIONS)
 add_definitions(-DTFLITE_EMULATE_FLOAT)
+add_definitions(-fno-rtti)          #Needed for GCC to resolve virtual delete function scope issue
+add_definitions(-fno-exceptions)    #Needed for GCC to resolve virtual delete function scope issue
 #add_definitions(-DTF_LITE_STRIP_ERROR_STRINGS)
 
 # TODO(fabianpedd): Figure out if these flags are actually needed
