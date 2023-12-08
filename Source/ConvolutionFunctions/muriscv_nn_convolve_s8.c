@@ -59,11 +59,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
                                          q7_t *output_data)
 {
     (void)bias_dims;
-    printf("#CONVOLVE_S8 CALLED#\n");
-    
   
-    
-    
     if (ctx->buf == NULL && muriscv_nn_convolve_s8_get_buffer_size(input_dims, filter_dims) > 0)
     {
         return MURISCV_NN_ARG_ERROR;
