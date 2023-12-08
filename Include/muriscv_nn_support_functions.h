@@ -632,7 +632,6 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_svdf_s8(const int8_t *lhs,
                                                   const int32_t activation_min,
                                                   const int32_t activation_max);
 
-//MURISCV_NN CUSTOM CODE
 /**
  * @brief Depthwise convolution of transposed rhs matrix with 4 lhs matrices. To be used in padded cases where
  *        the padding is -lhs_offset(Range: int8). Dimensions are the same for lhs and rhs.
@@ -661,10 +660,11 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_svdf_s8(const int8_t *lhs,
  *                  - Output bias
  *                  - rhs
  */
-q7_t *muriscv_nn_depthwise_conv_nt_t_padded_s8(const q7_t *lhs,
-                                               const q7_t *rhs,
-                                               const int32_t lhs_offset,
-                                               const uint16_t num_ch,
+muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_padded_s8(const int8_t *lhs,
+                                               const int8_t *rhs,
+                                               const int32_t input_offset,
+                                               const int32_t active_ch,
+                                               const int32_t total_ch,
                                                const int32_t *out_shift,
                                                const int32_t *out_mult,
                                                const int32_t out_offset,
@@ -672,9 +672,8 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_padded_s8(const q7_t *lhs,
                                                const int32_t activation_max,
                                                const uint16_t row_x_col,
                                                const int32_t *const output_bias,
-                                               q7_t *out);
+                                               int8_t *out);
 
-//MURISCV_NN CUSTOM CODE
 /**
  * @brief Depthwise convolution of transposed rhs matrix with 4 lhs matrices. To be used in non-padded cases.
  *        Dimensions are the same for lhs and rhs.
@@ -703,18 +702,19 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_padded_s8(const q7_t *lhs,
  *                  - Output bias
  *                  - rhs
  */
-q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
-                                        const q7_t *rhs,
-                                        const int32_t lhs_offset,
-                                        const uint16_t num_ch,
-                                        const int32_t *out_shift,
-                                        const int32_t *out_mult,
-                                        const int32_t out_offset,
-                                        const int32_t activation_min,
-                                        const int32_t activation_max,
-                                        const uint16_t row_x_col,
-                                        const int32_t *const output_bias,
-                                        q7_t *out);
+muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_s8(const int8_t *lhs,
+                                                  const int8_t *rhs,
+                                                  const int32_t lhs_offset,
+                                                  const int32_t active_ch,
+                                                  const int32_t total_ch,
+                                                  const int32_t *out_shift,
+                                                  const int32_t *out_mult,
+                                                  const int32_t out_offset,
+                                                  const int32_t activation_min,
+                                                  const int32_t activation_max,
+                                                  const uint16_t row_x_col,
+                                                  const int32_t *const output_bias,
+                                                  int8_t *out);
 
 /**
  * @brief Depthwise convolution of transposed rhs matrix with 4 lhs matrices. To be used in non-padded cases.
