@@ -59,6 +59,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
                                          q7_t *output_data)
 {
     (void)bias_dims;
+    printf("#CONVOLVE_S8 CALLED#\n");
     
   
     
@@ -325,7 +326,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
     /* Return to application */
     return MURISCV_NN_SUCCESS;
 }
-/*
+
 int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
 {
     // TODO(fabianpedd): Check if this special buffer case makes sense in the vector case (im2col)?
@@ -339,7 +340,7 @@ int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims
 #else
     return (2 * input_dims->c * filter_dims->w * filter_dims->h) * (int32_t)sizeof(int16_t);
 #endif
-}*/
+}
 
 /**
  * @} end of NNConv group

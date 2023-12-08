@@ -55,15 +55,15 @@ int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_dsp(const muriscv_nn_di
 
 int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
 {
-//#if defined(USE_VEXT)
-//    return muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_mve(input_dims, filter_dims);
-//#elif defined(USE_PEXT)
-//    return muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_dsp(input_dims, filter_dims);
-//#else
+#if defined(USE_VEXT)
+    return muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_mve(input_dims, filter_dims);
+#elif defined(USE_PEXT)
+    return muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_dsp(input_dims, filter_dims);
+#else
     (void)input_dims;
     (void)filter_dims;
     return 0;
-//#endif
+#endif
 }
 
 int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size(const muriscv_nn_dw_conv_params *dw_conv_params,
@@ -76,13 +76,13 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size(const muriscv_nn_dw
     if (input_dims->c == output_dims->c && input_dims->n == 1 && dw_conv_params->dilation.w == 1 &&
         dw_conv_params->dilation.h == 1)
     {
-//#if !defined(USE_VEXT)
+#if !defined(USE_VEXT)
         if (filter_dims->w == 3 && filter_dims->h == 3 && dw_conv_params->padding.h <= 1 &&
             dw_conv_params->padding.w <= 1)
         {
             return size;
         }
-//#endif
+#endif
         size = muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(input_dims, filter_dims);
     }
 

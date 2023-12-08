@@ -52,7 +52,65 @@ int8_t *muriscv_nn_mat_mult_s8(const int8_t *input_row,
                            const int32_t *const bias,
                            int8_t *out)
 {
-//#if defined(USE_VEXT)
+#if defined(USE_VEXT)
+    //Our old implementation
+    (void)row_offset;
+
+    // TODO(fabianpedd): unroll the batch loop 4x similiar to how its done in
+    // the arm implementation. Use smaller groups (i8m1 and i16m2 for example).
+    // This should ideally be optimized to the respective memory available on
+    // a certain system (cache and/or RAM size).
+    for (uint16_t i_col_batch = 0; i_col_batch < col_batches; i_col_batch++)
+    {
+        for (uint16_t i_out_ch = 0; i_out_ch < output_ch; i_out_ch++)
+        {
+            const int8_t *ip_r0 = input_row + (i_out_ch * row_len);
+            const int8_t *ip_c0 = input_col + (i_col_batch * row_len);
+
+            size_t vl = vsetvl_e32m8(row_len);
+            vint32m8_t res_0 = vmv_v_x_i32m8(0, vl);
+
+            uint16_t row_len_cnt = row_len;
+            while (row_len_cnt > 0)
+            {
+                vl = vsetvl_e32m8(row_len_cnt);
+
+                vint32m8_t r0 = vsext_vf4_i32m8(vle8_v_i8m2(ip_r0, vl), vl);
+
+                vint32m8_t c0 = vsext_vf4_i32m8(vle8_v_i8m2(ip_c0, vl), vl);
+                c0 = vadd_vx_i32m8(c0, col_offset, vl);
+
+                res_0 = vmacc_vv_i32m8(res_0, r0, c0, vl);
+                ip_r0 += vl;
+                ip_c0 += vl;
+                row_len_cnt -= vl;
+            }
+
+            vl = vsetvl_e32m1(1);
+            vint32m1_t red_0 = vundefined_i32m1();
+            if (bias)
+            {
+                red_0 = vle32_v_i32m1(&bias[i_out_ch], vl);
+            }
+            else
+            {
+                red_0 = vmv_v_x_i32m1(0, vl);
+            }
+
+            vl = vsetvl_e32m8(row_len);
+            red_0 = vredsum_vs_i32m8_i32m1(red_0, res_0, red_0, vl);
+            q31_t acc_0 = vmv_x_s_i32m1_i32(red_0);
+
+            acc_0 = muriscv_nn_requantize(acc_0, output_mult[i_out_ch], output_shift[i_out_ch]);
+            acc_0 += out_offset;
+            acc_0 = MAX(acc_0, activation_min);
+            acc_0 = MIN(acc_0, activation_max);
+            out[i_out_ch] = (q7_t)acc_0;
+        }
+        out += output_ch;
+    }
+    return out;
+//    NEW ARM IMPLEMENTATION
 //    (void)row_offset;
 //    if (col_batches == 4)
 //    {
@@ -161,7 +219,7 @@ int8_t *muriscv_nn_mat_mult_s8(const int8_t *input_row,
 //    }
 //    return out;
 //
-//#else
+#else
     (void)input_row;
     (void)input_col;
     (void)output_ch;
@@ -177,5 +235,5 @@ int8_t *muriscv_nn_mat_mult_s8(const int8_t *input_row,
     (void)bias;
     (void)out;
     return NULL;
-//#endif
+#endif
 }

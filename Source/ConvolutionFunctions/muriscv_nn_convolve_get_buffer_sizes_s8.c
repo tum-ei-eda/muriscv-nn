@@ -60,25 +60,25 @@ __STATIC_INLINE int32_t muriscv_nn_convolve_1_x_n_s8_get_buffer_size_mve(const m
     return 0;
 }
 
-int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
-{
+//int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
+//{
 //#if defined(USE_VEXT)
-//    return muriscv_nn_convolve_s8_get_buffer_size_mve(input_dims, filter_dims);
+ //   return muriscv_nn_convolve_s8_get_buffer_size_mve(input_dims, filter_dims);
 //#else
-    const int32_t rhs_cols = filter_dims->w * filter_dims->h * input_dims->c;
-    const int32_t remainder = rhs_cols % 4;
-    const int32_t aligned_rhs_cols = remainder != 0 ? rhs_cols + 4 - remainder : rhs_cols;
-    return (2 * aligned_rhs_cols) * (int32_t)sizeof(int16_t);
+//    const int32_t rhs_cols = filter_dims->w * filter_dims->h * input_dims->c;
+//    const int32_t remainder = rhs_cols % 4;
+//    const int32_t aligned_rhs_cols = remainder != 0 ? rhs_cols + 4 - remainder : rhs_cols;
+//    return (2 * aligned_rhs_cols) * (int32_t)sizeof(int16_t);
 //#endif
-}
+//}
 
 int32_t muriscv_nn_convolve_1_x_n_s8_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
 {
-//#if !defined(USE_VEXT)
+#if !defined(USE_VEXT)
     return muriscv_nn_convolve_s8_get_buffer_size(input_dims, filter_dims);
-//#else
-//    return muriscv_nn_convolve_1_x_n_s8_get_buffer_size_mve(input_dims, filter_dims);
-//#endif
+#else
+    return muriscv_nn_convolve_1_x_n_s8_get_buffer_size_mve(input_dims, filter_dims);
+#endif
 }
 
 int32_t muriscv_nn_convolve_1x1_s8_fast_get_buffer_size(const muriscv_nn_dims *input_dims)
@@ -99,9 +99,9 @@ int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size(const muriscv_nn_conv_par
                                                 const muriscv_nn_dims *filter_dims,
                                                 const muriscv_nn_dims *output_dims)
 {
-//#if defined(USE_VEXT)
-//    return muriscv_nn_convolve_wrapper_s8_get_buffer_size_mve(conv_params, input_dims, filter_dims, output_dims);
-//#else
+#if defined(USE_VEXT)
+    return muriscv_nn_convolve_wrapper_s8_get_buffer_size_mve(conv_params, input_dims, filter_dims, output_dims);
+#else
     (void)output_dims;
     if ((conv_params->padding.w == 0) && (conv_params->padding.h == 0) && (filter_dims->w == 1) &&
         (filter_dims->h == 1) && (conv_params->dilation.w == 1 && conv_params->dilation.h == 1))
@@ -124,7 +124,7 @@ int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size(const muriscv_nn_conv_par
     {
         return muriscv_nn_convolve_s8_get_buffer_size(input_dims, filter_dims);
     }
-//#endif
+#endif
 }
 
 int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size_mve(const muriscv_nn_conv_params *conv_params,

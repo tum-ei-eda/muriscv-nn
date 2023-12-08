@@ -48,6 +48,7 @@ q7_t *muriscv_nn_mat_mult_s8(const q7_t *input_row,
                              const int32_t *const bias,
                              q7_t *out)
 {
+printf("##MAT_MULT_S8 CALLED##\n");
 #if defined(USE_VEXT)
 
     (void)row_offset;
