@@ -42,21 +42,21 @@
 
 int32_t muriscv_nn_avgpool_s8_get_buffer_size(const int output_x, const int ch_src)
 {
-//#if defined(USE_VEXT)
-//    return muriscv_nn_avgpool_s8_get_buffer_size_mve(output_x, ch_src);
-//#elif defined(USE_PEXT) && !defined(USE_VEXT)
-//    return muriscv_nn_avgpool_s8_get_buffer_size_dsp(output_x, ch_src);
-//#else
+#if defined(USE_VEXT)
+    return muriscv_nn_avgpool_s8_get_buffer_size_mve(output_x, ch_src);
+#elif defined(USE_PEXT) && !defined(USE_VEXT)
+    return muriscv_nn_avgpool_s8_get_buffer_size_dsp(output_x, ch_src);
+#else
     (void)output_x;
     (void)ch_src;
     return 0;
-//#endif
+#endif
 }
 
 int32_t muriscv_nn_avgpool_s8_get_buffer_size_dsp(const int output_x, const int ch_src)
 {
     (void)output_x;
-    return (ch_src * sizeof(int32_t));
+    return (ch_src * sizeof(int32_t));  //Our function originally used sizeof(int16_t)
 }
 
 int32_t muriscv_nn_avgpool_s8_get_buffer_size_mve(const int output_x, const int ch_src)

@@ -1,136 +1,3 @@
-diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/add.cc b/tensorflow/lite/micro/kernels/cmsis_nn/add.cc
-index 898410a3..02c44969 100644
---- a/tensorflow/lite/micro/kernels/cmsis_nn/add.cc
-+++ b/tensorflow/lite/micro/kernels/cmsis_nn/add.cc
-@@ -15,7 +15,7 @@ limitations under the License.
- 
- #include "tensorflow/lite/kernels/internal/reference/add.h"
- 
--#include "Include/arm_nnfunctions.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
- #include "tensorflow/lite/c/builtin_op_data.h"
- #include "tensorflow/lite/kernels/internal/quantization_util.h"
- #include "tensorflow/lite/kernels/internal/reference/integer_ops/add.h"
-diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/transpose_conv.cc b/tensorflow/lite/micro/kernels/cmsis_nn/transpose_conv.cc
-index 898410a3..02c44969 100644
---- a/tensorflow/lite/micro/kernels/cmsis_nn/transpose_conv.cc
-+++ b/tensorflow/lite/micro/kernels/cmsis_nn/transpose_conv.cc
-@@ -15,7 +15,7 @@ limitations under the License.
- 
- #include "tensorflow/lite/micro/kernels/transpose_conv.h"
- 
--#include "Include/arm_nnfunctions.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
- #include "tensorflow/lite/c/builtin_op_data.h"
- #include "tensorflow/lite/c/common.h"
- #include "tensorflow/lite/kernels/internal/common.h"
-diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/conv.cc b/tensorflow/lite/micro/kernels/cmsis_nn/conv.cc
-index b387c6d7..15c0e430 100644
---- a/tensorflow/lite/micro/kernels/cmsis_nn/conv.cc
-+++ b/tensorflow/lite/micro/kernels/cmsis_nn/conv.cc
-@@ -15,7 +15,8 @@ limitations under the License.
- 
- #include "tensorflow/lite/micro/kernels/conv.h"
- 
--#include "Include/arm_nnfunctions.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nn_types.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
- #include "tensorflow/lite/c/builtin_op_data.h"
- #include "tensorflow/lite/c/common.h"
- #include "tensorflow/lite/kernels/internal/common.h"
-diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/depthwise_conv.cc b/tensorflow/lite/micro/kernels/cmsis_nn/depthwise_conv.cc
-index 7b733b76..45911685 100644
---- a/tensorflow/lite/micro/kernels/cmsis_nn/depthwise_conv.cc
-+++ b/tensorflow/lite/micro/kernels/cmsis_nn/depthwise_conv.cc
-@@ -15,7 +15,7 @@ limitations under the License.
- 
- #include "tensorflow/lite/micro/kernels/depthwise_conv.h"
- 
--#include "Include/arm_nnfunctions.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
- #include "tensorflow/lite/c/builtin_op_data.h"
- #include "tensorflow/lite/c/common.h"
- #include "tensorflow/lite/kernels/internal/common.h"
-diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/fully_connected.cc b/tensorflow/lite/micro/kernels/cmsis_nn/fully_connected.cc
-index dbba5b27..3f2f23fc 100644
---- a/tensorflow/lite/micro/kernels/cmsis_nn/fully_connected.cc
-+++ b/tensorflow/lite/micro/kernels/cmsis_nn/fully_connected.cc
-@@ -15,7 +15,7 @@ limitations under the License.
- 
- #include "tensorflow/lite/micro/kernels/fully_connected.h"
- 
--#include "Include/arm_nnfunctions.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
- #include "tensorflow/lite/c/builtin_op_data.h"
- #include "tensorflow/lite/c/common.h"
- #include "tensorflow/lite/kernels/internal/common.h"
-diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/mul.cc b/tensorflow/lite/micro/kernels/cmsis_nn/mul.cc
-index 571d88ab..43c24521 100644
---- a/tensorflow/lite/micro/kernels/cmsis_nn/mul.cc
-+++ b/tensorflow/lite/micro/kernels/cmsis_nn/mul.cc
-@@ -15,7 +15,7 @@ limitations under the License.
- 
- #include "tensorflow/lite/kernels/internal/reference/mul.h"
- 
--#include "Include/arm_nnfunctions.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
- #include "tensorflow/lite/kernels/internal/quantization_util.h"
- #include "tensorflow/lite/kernels/internal/reference/integer_ops/mul.h"
- #include "tensorflow/lite/kernels/internal/reference/process_broadcast_shapes.h"
-diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/pooling.cc b/tensorflow/lite/micro/kernels/cmsis_nn/pooling.cc
-index d8311dbb..9b7f5850 100644
---- a/tensorflow/lite/micro/kernels/cmsis_nn/pooling.cc
-+++ b/tensorflow/lite/micro/kernels/cmsis_nn/pooling.cc
-@@ -14,7 +14,7 @@ limitations under the License.
- ==============================================================================*/
- #include "tensorflow/lite/kernels/internal/reference/pooling.h"
- 
--#include "Include/arm_nnfunctions.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
- #include "tensorflow/lite/c/builtin_op_data.h"
- #include "tensorflow/lite/c/common.h"
- #include "tensorflow/lite/kernels/internal/tensor_ctypes.h"
-diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/softmax.cc b/tensorflow/lite/micro/kernels/cmsis_nn/softmax.cc
-index f83a0902..77e0c375 100644
---- a/tensorflow/lite/micro/kernels/cmsis_nn/softmax.cc
-+++ b/tensorflow/lite/micro/kernels/cmsis_nn/softmax.cc
-@@ -15,7 +15,7 @@ limitations under the License.
- 
- #include "tensorflow/lite/micro/kernels/softmax.h"
- 
--#include "Include/arm_nnfunctions.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
- #include "tensorflow/lite/c/common.h"
- #include "tensorflow/lite/kernels/internal/common.h"
- #include "tensorflow/lite/kernels/internal/quantization_util.h"
-diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/svdf.cc b/tensorflow/lite/micro/kernels/cmsis_nn/svdf.cc
-index 97563887..a551f43f 100644
---- a/tensorflow/lite/micro/kernels/cmsis_nn/svdf.cc
-+++ b/tensorflow/lite/micro/kernels/cmsis_nn/svdf.cc
-@@ -15,7 +15,8 @@ limitations under the License.
- 
- #include "tensorflow/lite/micro/kernels/svdf.h"
- 
--#include "Include/arm_nnfunctions.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nn_types.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
- #include "tensorflow/lite/c/builtin_op_data.h"
- #include "tensorflow/lite/c/common.h"
- #include "tensorflow/lite/kernels/internal/common.h"
-diff --git a/tensorflow/lite/micro/kernels/cmsis_nn/unidirectional_sequence_lstm.cc b/tensorflow/lite/micro/kernels/cmsis_nn/unidirectional_sequence_lstm.cc
-index f66ce804..0130a63e 100644
---- a/tensorflow/lite/micro/kernels/cmsis_nn/unidirectional_sequence_lstm.cc
-+++ b/tensorflow/lite/micro/kernels/cmsis_nn/unidirectional_sequence_lstm.cc
-@@ -20,7 +20,8 @@ limitations under the License.
- #include <algorithm>
- #include <limits>
- 
--#include "Include/arm_nnfunctions.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nn_types.h"
-+#include "../../../Include/CMSIS/NN/Include/arm_nnfunctions.h"
- #include "tensorflow/lite/kernels/internal/quantization_util.h"
- #include "tensorflow/lite/kernels/kernel_util.h"
- #include "tensorflow/lite/micro/kernels/fully_connected.h"
 diff --git a/tensorflow/lite/micro/muriscv_nn/micro_time.cc b/tensorflow/lite/micro/muriscv_nn/micro_time.cc
 new file mode 100644
 index 00000000..8e75a0b7
@@ -207,10 +74,10 @@ index 00000000..6e2cbe32
 +
 +}  // namespace tflite
 diff --git a/tensorflow/lite/micro/tools/make/Makefile b/tensorflow/lite/micro/tools/make/Makefile
-index beffcec9..74585c01 100644
+index 08eb057e..64f34769 100644
 --- a/tensorflow/lite/micro/tools/make/Makefile
 +++ b/tensorflow/lite/micro/tools/make/Makefile
-@@ -133,8 +133,6 @@ endif
+@@ -134,8 +134,6 @@ endif
  
  CC_WARNINGS := \
    -Wsign-compare \
@@ -219,7 +86,7 @@ index beffcec9..74585c01 100644
    -Wunused-function \
    -Wswitch \
    -Wvla \
-@@ -144,6 +142,16 @@ CC_WARNINGS := \
+@@ -145,6 +143,16 @@ CC_WARNINGS := \
    -Wstrict-aliasing \
    -Wno-unused-parameter
  
@@ -236,43 +103,25 @@ index beffcec9..74585c01 100644
  ifneq ($(TOOLCHAIN), gcc)
    # GCC can be overly aggressive with shadow warnings, such as warning when a
    # lambda has variable with the same name as a non-captured variable from the
-@@ -189,7 +197,7 @@ ifeq ($(TOOLCHAIN), gcc)
+@@ -190,7 +198,6 @@ ifeq ($(TOOLCHAIN), gcc)
      # GCC on MacOS uses an LLVM backend so we avoid the additional linker flags
      # that are unsupported with LLVM.
      LDFLAGS += \
 -      -Wl,--fatal-warnings \
-+      #-Wl,--fatal-warnings \
        -Wl,--gc-sections
    endif
  endif
-@@ -292,13 +300,13 @@ MICRO_LITE_INTEGRATION_TESTS += $(shell find $(TENSORFLOW_ROOT)tensorflow/lite/m
- MICRO_LITE_GEN_MUTABLE_OP_RESOLVER_TEST += \
-   $(wildcard $(TENSORFLOW_ROOT)tensorflow/lite/micro/tools/gen_micro_mutable_op_resolver_test/person_detect/Makefile.inc)
- 
--MICRO_LITE_BENCHMARKS := $(wildcard $(TENSORFLOW_ROOT)tensorflow/lite/micro/tools/benchmarking/Makefile.inc)
-+MICRO_LITE_BENCHMARKS := $(wildcard $(TENSORFLOW_ROOT)tensorflow/lite/micro/benchmarks/Makefile.inc)
-
- MICRO_LITE_LAYER_BY_LAYER_OUTPUT := $(wildcard $(TENSORFLOW_ROOT)tensorflow/lite/micro/tools/Makefile.inc)
- 
- # TODO(b/152645559): move all benchmarks to benchmarks directory.
- MICROLITE_BENCHMARK_SRCS := \
--$(wildcard $(TENSORFLOW_ROOT)tensorflow/lite/micro/tools/benchmarking/*benchmark.cc)
-+$(wildcard $(TENSORFLOW_ROOT)tensorflow/lite/micro/benchmarks/*benchmark.cc)
- 
- CODEGEN_PREPROCESSOR_PATH := $(BINDIR)codegen_preprocessor
- 
-@@ -619,8 +627,8 @@ ifneq ($(OPTIMIZED_KERNEL_DIR),)
-   ifneq ($(RESULT), SUCCESS)
+@@ -639,7 +646,8 @@ ifneq ($(OPTIMIZED_KERNEL_DIR),)
      $(error Incorrect OPTIMIZED_KERNEL_DIR: $(RESULT))
    endif
--
+ 
 -  include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
 +  # No need for the cmsis_nn external libs makefile when using muRISCV-NN.
 +  #include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
    # Specialize for the optimized kernels
    MICROLITE_CC_KERNEL_SRCS := $(shell python3 $(MAKEFILE_DIR)/specialize_files.py \
  		--base_files "$(MICROLITE_CC_KERNEL_SRCS)" \
-@@ -818,6 +826,12 @@ ifeq ($(TOOLCHAIN), armclang)
+@@ -856,6 +864,12 @@ ifeq ($(TOOLCHAIN), armclang)
    $(BINDIR)%.bin: $(BINDIR)%
  		@mkdir -p $(dir $@)
  		$(FROMELF) --bin --output=$@ $<
@@ -287,10 +136,10 @@ index beffcec9..74585c01 100644
    $(BINDIR)%.bin: $(BINDIR)%
 diff --git a/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
 new file mode 100644
-index 00000000..6fd4b648
+index 00000000..3fc8d49c
 --- /dev/null
 +++ b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
-@@ -0,0 +1,90 @@
+@@ -0,0 +1,91 @@
 +# Copyright (C) 2023 Chair of Electronic Design Automation, TUM
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
@@ -328,7 +177,8 @@ index 00000000..6fd4b648
 +endif
 +THIRD_PARTY_CC_HDRS += $(call recursive_find,$(MURISCV_NN_PATH)/Include,*.h)
 +INCLUDES += \
-+  -I$(MURISCV_NN_PATH)/Include
++  -I$(MURISCV_NN_PATH)/Include \
++  -I$(MURISCV_NN_PATH)/Include/CMSIS/NN
 +
 +# Flags requied in order to compile with RISC-V toolchains
 +PLATFORM_FLAGS := \
