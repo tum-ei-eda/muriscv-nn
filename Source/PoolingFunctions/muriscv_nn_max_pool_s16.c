@@ -1,6 +1,5 @@
-// Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
 /*
- * SPDX-FileCopyrightText: Copyright 2022 Arm Limited and/or its affiliates <open-source-office@arm.com>
+ * Copyright (C) 2010-2021 Arm Limited or its affiliates.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -15,120 +14,190 @@
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
  */
 
-/* ----------------------------------------------------------------------
- * Project:      CMSIS NN Library
- * Title:        muriscv_nn_max_pool_s16.c
- * Description:  Pooling function implementations
- *
- * $Date:        26 October 2022
- * $Revision:    V.2.1.2
- *
- * Target Processor:  Cortex-M CPUs
- *
- * -------------------------------------------------------------------- */
+#if defined(USE_VEXT)
+#include <riscv_vector.h>
+#endif
 
 #include "muriscv_nn_functions.h"
 #include "muriscv_nn_support_functions.h"
 
+// static void compare_and_replace_if_larger(int16_t *base, const int16_t *target, int32_t length)
+// {
+//     q15_t *dst = base;
+//     const q15_t *src = target;
+//
+//     while (length--)
+//     {
+//         if (*src > *dst)
+//         {
+//             *dst++ = *src++;
+//         }
+//     }
+// }
+//
+// static void clamp_output(int16_t *source, int32_t length, const int16_t act_min, const int16_t act_max)
+// {
+//     while (length--)
+//     {
+//         int16_t comp = *source;
+//         comp = MAX(comp, act_min);
+//         comp = MIN(comp, act_max);
+//         *source++ = comp;
+//     }
+// }
+//
+// /**
+//  *  @ingroup groupNN
+//  */
+//
+// /**
+//  * @addtogroup Pooling
+//  * @{
+//  */
+//
+// /*
+//  * Optimized s16 max pooling function
+//  *
+//  * Refer to header file for details.
+//  *
+//  */
+//
+// muriscv_nn_status muriscv_nn_maxpool_s16(const muriscv_nn_context *ctx,
+//                                          const muriscv_nn_pool_params *pool_params,
+//                                          const muriscv_nn_dims *input_dims,
+//                                          const int16_t *src,
+//                                          const muriscv_nn_dims *filter_dims,
+//                                          const muriscv_nn_dims *output_dims,
+//                                          int16_t *dst)
+// {
+//     const int32_t input_y = input_dims->h;
+//     const int32_t input_x = input_dims->w;
+//     const int32_t output_y = output_dims->h;
+//     const int32_t output_x = output_dims->w;
+//     const int32_t stride_y = pool_params->stride.h;
+//     const int32_t stride_x = pool_params->stride.w;
+//     const int32_t kernel_y = filter_dims->h;
+//     const int32_t kernel_x = filter_dims->w;
+//     const int32_t pad_y = pool_params->padding.h;
+//     const int32_t pad_x = pool_params->padding.w;
+//     const int16_t act_min = pool_params->activation.min;
+//     const int16_t act_max = pool_params->activation.max;
+//     const int32_t channel_in = input_dims->c;
+//     (void)ctx;
+//     int16_t *dst_base = dst;
+//
+//     for (int i_y = 0, base_idx_y = -pad_y; i_y < output_y; base_idx_y += stride_y, i_y++)
+//     {
+//         for (int i_x = 0, base_idx_x = -pad_x; i_x < output_x; base_idx_x += stride_x, i_x++)
+//         {
+//             /* Condition for kernel start dimension: (base_idx_<x,y> + kernel_<x,y>_start) >= 0 */
+//             const int32_t ker_y_start = MAX(0, -base_idx_y);
+//             const int32_t ker_x_start = MAX(0, -base_idx_x);
+//
+//             /* Condition for kernel end dimension: (base_idx_<x,y> + kernel_<x,y>_end) < dim_src_<width,height> */
+//             const int32_t kernel_y_end = MIN(kernel_y, input_y - base_idx_y);
+//             const int32_t kernel_x_end = MIN(kernel_x, input_x - base_idx_x);
+//
+//             int count = 0;
+//
+//             for (int k_y = ker_y_start; k_y < kernel_y_end; k_y++)
+//             {
+//                 for (int k_x = ker_x_start; k_x < kernel_x_end; k_x++)
+//                 {
+//                     const int16_t *start = src + channel_in * (k_x + base_idx_x + (k_y + base_idx_y) * input_x);
+//
+//                     if (count == 0)
+//                     {
+//                         memcpy(dst, start, channel_in * sizeof(int16_t));
+//                         count++;
+//                     }
+//                     else
+//                     {
+//                         compare_and_replace_if_larger(dst, start, channel_in);
+//                     }
+//                 }
+//             }
+//             /* 'count' is expected to be non-zero here. */
+//             dst += channel_in;
+//         }
+//     }
+//
+//     clamp_output(dst_base, output_x * output_y * channel_in, act_min, act_max);
+//
+//     return MURISCV_NN_SUCCESS;
+// }
+
 static void compare_and_replace_if_larger(int16_t *base, const int16_t *target, int32_t length)
 {
-//#if defined(USE_VEXT)
-//    int32_t loop_count = (length + 7) / 8;
-//    for (int i = 0; i < loop_count; i++)
-//    {
-//        mve_pred16_t p = vctp16q((uint32_t)length);
-//        const int16x8_t op_1 = vldrhq_z_s16(base, p);
-//        const int16x8_t op_2 = vldrhq_z_s16(target, p);
-//        const int16x8_t max = vmaxq_s16(op_1, op_2);
-//        vstrhq_p_s16(base, max, p);
-//        base += 8;
-//        target += 8;
-//        length -= 8;
-//    }
-//#else
-    int16_t *dst = base;
-    const int16_t *src = target;
-    union muriscv_nn_word ref_max;
-    union muriscv_nn_word comp_max;
-    int32_t cnt = length >> 1;
+#if defined(USE_VEXT)
 
-    while (cnt > 0l)
+    /* We are operating on vl elements at a time. */
+    for (size_t cnt = length, vl = 0; cnt > 0; cnt -= vl, base += vl, target += vl)
     {
-        ref_max.word = muriscv_nn_read_s16x2(dst);
-        comp_max.word = muriscv_nn_read_q15x2_ia(&src);
+        /* Set the vl using 16bit elements and a vector grouping of 8. */
+        vl = vsetvl_e16m8(cnt);
 
-        if (comp_max.half_words[0] > ref_max.half_words[0])
-        {
-            ref_max.half_words[0] = comp_max.half_words[0];
-        }
-        if (comp_max.half_words[1] > ref_max.half_words[1])
-        {
-            ref_max.half_words[1] = comp_max.half_words[1];
-        }
+        /* Load the vector groups from memory. */
+        vint16m8_t op_1 = vle16_v_i16m8(base, vl);
+        vint16m8_t op_2 = vle16_v_i16m8(target, vl);
 
-        muriscv_nn_write_q15x2_ia(&dst, ref_max.word);
+        /* Apply max operation on whole vector group at once. */
+        vint16m8_t max = vmax_vv_i16m8(op_1, op_2, vl);
 
-        cnt--;
+        /* Store result back to memory. */
+        vse16_v_i16m8(base, max, vl);
     }
 
-    if (length & 0x1)
+#else /* defined(USE_VEXT) */
+
+    for (int32_t i = 0; i < length; i++)
     {
-        if (*src > *dst)
+        if (target[i] > base[i])
         {
-            *dst = *src;
+            base[i] = target[i];
         }
     }
-//#endif
+
+#endif /* defined(USE_VEXT) */
 }
 
 static void clamp_output(int16_t *source, int32_t length, const int16_t act_min, const int16_t act_max)
 {
-//#if defined(USE_VEXT)
-//    const int16x8_t min = vdupq_n_s16((int16_t)act_min);
-//    const int16x8_t max = vdupq_n_s16((int16_t)act_max);
-//
-//    int32_t loop_count = (length + 7) / 8;
-//    for (int i = 0; i < loop_count; i++)
-//    {
-//        mve_pred16_t p = vctp16q((uint32_t)length);
-//        length -= 8;
-//        const int16x8_t src = vldrhq_z_s16(source, p);
-//        int16x8_t res = vmaxq_x_s16(src, min, p);
-//        res = vminq_x_s16(res, max, p);
-//        vstrhq_p_s16(source, res, p);
-//        source += 8;
-//    }
-//#else
-    union muriscv_nn_word in;
-    int32_t cnt = length >> 1;
+#if defined(USE_VEXT)
 
-    while (cnt > 0l)
+    /* We are operating on vl elements at a time. */
+    for (size_t cnt = length, vl = 0; cnt > 0; cnt -= vl, source += vl)
     {
-        in.word = muriscv_nn_read_s16x2(source);
+        /* Set the vl using 16bit elements and a vector grouping of 8. */
+        vl = vsetvl_e16m8(cnt);
 
-        in.half_words[0] = MAX(in.half_words[0], act_min);
-        in.half_words[0] = MIN(in.half_words[0], act_max);
-        in.half_words[1] = MAX(in.half_words[1], act_min);
-        in.half_words[1] = MIN(in.half_words[1], act_max);
+        /* Load the vector group from memory. */
+        vint16m8_t val = vle16_v_i16m8(source, vl);
 
-        muriscv_nn_write_q15x2_ia(&source, in.word);
-        cnt--;
+        /* Apply activation on whole vector group at once. */
+        val = vmax_vx_i16m8(val, act_min, vl);
+        val = vmin_vx_i16m8(val, act_max, vl);
+
+        /* Store results back to memory. */
+        vse16_v_i16m8(source, val, vl);
     }
 
-    if (length & 0x1)
+#else /* defined(USE_VEXT) */
+
+    for (int32_t i = 0; i < length; i++)
     {
-        int16_t comp = *source;
-        comp = MAX(comp, act_min);
-        comp = MIN(comp, act_max);
-        *source = comp;
+        source[i] = MIN(MAX(source[i], act_min), act_max);
     }
-//#endif
+
+#endif /* defined(USE_VEXT) */
 }
 
 /**
- *  @ingroup Public
+ *  @ingroup groupNN
  */
 
 /**
@@ -144,12 +213,12 @@ static void clamp_output(int16_t *source, int32_t length, const int16_t act_min,
  */
 
 muriscv_nn_status muriscv_nn_max_pool_s16(const muriscv_nn_context *ctx,
-                                     const muriscv_nn_pool_params *pool_params,
-                                     const muriscv_nn_dims *input_dims,
-                                     const int16_t *src,
-                                     const muriscv_nn_dims *filter_dims,
-                                     const muriscv_nn_dims *output_dims,
-                                     int16_t *dst)
+                                         const muriscv_nn_pool_params *pool_params,
+                                         const muriscv_nn_dims *input_dims,
+                                         const int16_t *src,
+                                         const muriscv_nn_dims *filter_dims,
+                                         const muriscv_nn_dims *output_dims,
+                                         int16_t *dst)
 {
     const int32_t input_y = input_dims->h;
     const int32_t input_x = input_dims->w;
@@ -167,9 +236,9 @@ muriscv_nn_status muriscv_nn_max_pool_s16(const muriscv_nn_context *ctx,
     (void)ctx;
     int16_t *dst_base = dst;
 
-    for (int i_y = 0, base_idx_y = -pad_y; i_y < output_y; base_idx_y += stride_y, i_y++)
+    for (int32_t i_y = 0, base_idx_y = -pad_y; i_y < output_y; base_idx_y += stride_y, i_y++)
     {
-        for (int i_x = 0, base_idx_x = -pad_x; i_x < output_x; base_idx_x += stride_x, i_x++)
+        for (int32_t i_x = 0, base_idx_x = -pad_x; i_x < output_x; base_idx_x += stride_x, i_x++)
         {
             /* Condition for kernel start dimension: (base_idx_<x,y> + kernel_<x,y>_start) >= 0 */
             const int32_t ker_y_start = MAX(0, -base_idx_y);
@@ -179,11 +248,11 @@ muriscv_nn_status muriscv_nn_max_pool_s16(const muriscv_nn_context *ctx,
             const int32_t kernel_y_end = MIN(kernel_y, input_y - base_idx_y);
             const int32_t kernel_x_end = MIN(kernel_x, input_x - base_idx_x);
 
-            int count = 0;
+            int32_t count = 0;
 
-            for (int k_y = ker_y_start; k_y < kernel_y_end; k_y++)
+            for (int32_t k_y = ker_y_start; k_y < kernel_y_end; k_y++)
             {
-                for (int k_x = ker_x_start; k_x < kernel_x_end; k_x++)
+                for (int32_t k_x = ker_x_start; k_x < kernel_x_end; k_x++)
                 {
                     const int16_t *start = src + channel_in * (k_x + base_idx_x + (k_y + base_idx_y) * input_x);
 
