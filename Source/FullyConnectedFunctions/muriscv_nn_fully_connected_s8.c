@@ -53,7 +53,6 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
                                                 const muriscv_nn_dims *output_dims,
                                                 q7_t *output)
 {
-    printf("FULLY CONNECTED\n");
     (void)bias_dims;
     (void)ctx; // TODO(fabianpedd): Why is this not used? But allocated in the tests?!?
     (void)fc_params->filter_offset;
