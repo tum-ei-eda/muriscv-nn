@@ -53,11 +53,11 @@ int32_t muriscv_nn_fully_connected_s8_get_buffer_size_mve(const muriscv_nn_dims 
 
 int32_t muriscv_nn_fully_connected_s8_get_buffer_size(const muriscv_nn_dims *filter_dims)
 {
-//#if defined(USE_VEXT)
-//    return muriscv_nn_fully_connected_s8_get_buffer_size_mve(filter_dims);
-//#else
+#if defined(USE_VEXT)
+    return muriscv_nn_fully_connected_s8_get_buffer_size_mve(filter_dims);
+#else
     return muriscv_nn_fully_connected_s8_get_buffer_size_dsp(filter_dims);
-//#endif
+#endif
 }
 
 /**
