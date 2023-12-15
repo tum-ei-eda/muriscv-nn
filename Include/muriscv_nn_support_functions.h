@@ -1652,98 +1652,98 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
 }
 
 #if defined(USE_VEXT)
-/**
- * @brief           Vector saturating doubling high multiply returning high half.
- * @param[in]       m1        Multiplicand
- * @param[in]       m2        Multiplier
- * @return          Result of multiplication.
- *
- */
-__STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve(const int32x4_t m1, const int32_t m2)
-{
-    return vqrdmulhq_n_s32(m1, m2);
-}
-
-/**
- * @brief           Vector rounding divide by power of two.
- * @param[in]       dividend - Dividend vector
- * @param[in]       exponent - Divisor = power(2, exponent)
- *                             Range: [0, 31]
- * @return          Rounded result of division. Midpoint is rounded away from zero.
- *
- */
-__STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve(const int32x4_t dividend, const int32_t exponent)
-{
-    const int32x4_t shift = vdupq_n_s32(-exponent);
-    const int32x4_t fixup = vshrq_n_s32(vandq_s32(dividend, shift), 31);
-    const int32x4_t fixed_up_dividend = vqaddq_s32(dividend, fixup);
-    return vrshlq_s32(fixed_up_dividend, shift);
-}
-
-/**
- * @brief           Requantize a given vector.
- * @param[in]       val         Vector to be requantized
- * @param[in]       multiplier  multiplier
- * @param[in]       shift       shift
- *
- * @return          Returns (val * multiplier)/(2 ^ shift)
- *
- */
-__STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve(const int32x4_t val, const int32_t multiplier, const int32_t shift)
-{
-    #ifdef CMSIS_NN_USE_SINGLE_ROUNDING
-    const int right_shift = MIN(-1, shift);
-    const int left_shift = shift - right_shift;
-
-    const int32x4_t left_shift_dup = vdupq_n_s32(left_shift);
-    const int32x4_t right_shift_dup = vdupq_n_s32(right_shift);
-
-    int32x4_t result = vqdmulhq_n_s32(vshlq_s32(val, left_shift_dup), multiplier);
-    result = vrshlq_s32(result, right_shift_dup);
-
-    return result;
-    #else
-    return muriscv_nn_divide_by_power_of_two_mve(
-        muriscv_nn_doubling_high_mult_mve(vshlq_s32(val, vdupq_n_s32(LEFT_SHIFT(shift))), multiplier), RIGHT_SHIFT(shift));
-    #endif
-}
-
-__STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_32x4(const int32x4_t m1, const int32x4_t m2)
-{
-    return vqrdmulhq_s32(m1, m2);
-}
-
-__STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_32x4(const int32x4_t dividend, const int32x4_t exponent)
-{
-    const int32x4_t shift = -exponent;
-    const int32x4_t fixup = vshrq_n_s32(vandq_s32(dividend, shift), 31);
-    const int32x4_t fixed_up_dividend = vqaddq_s32(dividend, fixup);
-    return vrshlq_s32(fixed_up_dividend, shift);
-}
-
-__STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_32x4(const int32x4_t val,
-                                                       const int32x4_t multiplier,
-                                                       const int32x4_t shift)
-{
-    #ifdef CMSIS_NN_USE_SINGLE_ROUNDING
-    const int32x4_t right_shift = vminq_s32(vdupq_n_s32(-1), shift);
-    const int32x4_t left_shift = vqsubq_s32(shift, right_shift);
-
-    int32x4_t result = vqdmulhq_s32(vshlq_s32(val, left_shift), multiplier);
-    result = vrshlq_s32(result, right_shift);
-
-    return result;
-    #else
-    const int32x4_t zz = vdupq_n_s32(0);
-    const mve_pred16_t p = vcmpgtq_n_s32(shift, 0);
-
-    const int32x4_t left_shift = vpselq_s32(shift, zz, p);
-    const int32x4_t right_shift = -vpselq_s32(zz, shift, p);
-
-    return muriscv_nn_divide_by_power_of_two_mve_32x4(muriscv_nn_doubling_high_mult_mve_32x4(vshlq_s32(val, left_shift), multiplier),
-                                               right_shift);
-    #endif
-}
+// /**
+//  * @brief           Vector saturating doubling high multiply returning high half.
+//  * @param[in]       m1        Multiplicand
+//  * @param[in]       m2        Multiplier
+//  * @return          Result of multiplication.
+//  *
+//  */
+// __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve(const int32x4_t m1, const int32_t m2)
+// {
+//     return vqrdmulhq_n_s32(m1, m2);
+// }
+//
+// /**
+//  * @brief           Vector rounding divide by power of two.
+//  * @param[in]       dividend - Dividend vector
+//  * @param[in]       exponent - Divisor = power(2, exponent)
+//  *                             Range: [0, 31]
+//  * @return          Rounded result of division. Midpoint is rounded away from zero.
+//  *
+//  */
+// __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve(const int32x4_t dividend, const int32_t exponent)
+// {
+//     const int32x4_t shift = vdupq_n_s32(-exponent);
+//     const int32x4_t fixup = vshrq_n_s32(vandq_s32(dividend, shift), 31);
+//     const int32x4_t fixed_up_dividend = vqaddq_s32(dividend, fixup);
+//     return vrshlq_s32(fixed_up_dividend, shift);
+// }
+//
+// /**
+//  * @brief           Requantize a given vector.
+//  * @param[in]       val         Vector to be requantized
+//  * @param[in]       multiplier  multiplier
+//  * @param[in]       shift       shift
+//  *
+//  * @return          Returns (val * multiplier)/(2 ^ shift)
+//  *
+//  */
+// __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve(const int32x4_t val, const int32_t multiplier, const int32_t shift)
+// {
+//     #ifdef CMSIS_NN_USE_SINGLE_ROUNDING
+//     const int right_shift = MIN(-1, shift);
+//     const int left_shift = shift - right_shift;
+//
+//     const int32x4_t left_shift_dup = vdupq_n_s32(left_shift);
+//     const int32x4_t right_shift_dup = vdupq_n_s32(right_shift);
+//
+//     int32x4_t result = vqdmulhq_n_s32(vshlq_s32(val, left_shift_dup), multiplier);
+//     result = vrshlq_s32(result, right_shift_dup);
+//
+//     return result;
+//     #else
+//     return muriscv_nn_divide_by_power_of_two_mve(
+//         muriscv_nn_doubling_high_mult_mve(vshlq_s32(val, vdupq_n_s32(LEFT_SHIFT(shift))), multiplier), RIGHT_SHIFT(shift));
+//     #endif
+// }
+//
+// __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_32x4(const int32x4_t m1, const int32x4_t m2)
+// {
+//     return vqrdmulhq_s32(m1, m2);
+// }
+//
+// __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_32x4(const int32x4_t dividend, const int32x4_t exponent)
+// {
+//     const int32x4_t shift = -exponent;
+//     const int32x4_t fixup = vshrq_n_s32(vandq_s32(dividend, shift), 31);
+//     const int32x4_t fixed_up_dividend = vqaddq_s32(dividend, fixup);
+//     return vrshlq_s32(fixed_up_dividend, shift);
+// }
+//
+// __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_32x4(const int32x4_t val,
+//                                                        const int32x4_t multiplier,
+//                                                        const int32x4_t shift)
+// {
+//     #ifdef CMSIS_NN_USE_SINGLE_ROUNDING
+//     const int32x4_t right_shift = vminq_s32(vdupq_n_s32(-1), shift);
+//     const int32x4_t left_shift = vqsubq_s32(shift, right_shift);
+//
+//     int32x4_t result = vqdmulhq_s32(vshlq_s32(val, left_shift), multiplier);
+//     result = vrshlq_s32(result, right_shift);
+//
+//     return result;
+//     #else
+//     const int32x4_t zz = vdupq_n_s32(0);
+//     const mve_pred16_t p = vcmpgtq_n_s32(shift, 0);
+//
+//     const int32x4_t left_shift = vpselq_s32(shift, zz, p);
+//     const int32x4_t right_shift = -vpselq_s32(zz, shift, p);
+//
+//     return muriscv_nn_divide_by_power_of_two_mve_32x4(muriscv_nn_doubling_high_mult_mve_32x4(vshlq_s32(val, left_shift), multiplier),
+//                                                right_shift);
+//     #endif
+// }
 #endif
 
 // @note The following functions are used only for softmax layer, scaled bits = 5 assumed
