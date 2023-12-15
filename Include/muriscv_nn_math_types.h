@@ -62,6 +62,16 @@ typedef float float32_t;
 typedef double float64_t;
 
 /**
+ * @brief 32x4 vector type definition.
+ */
+typedef uint32_t int32x4_t;
+
+/**
+ * @brief 16_bit vector type definition
+ */
+typedef uint16_t mve_pred16_t;
+
+/**
  * @brief Add typedefs for min and max values.
  */
 #define F64_MAX ((float64_t)DBL_MAX)
@@ -87,6 +97,14 @@ typedef double float64_t;
 #define Q31_ABSMIN ((q31_t)0)
 #define Q15_ABSMIN ((q15_t)0)
 #define Q7_ABSMIN ((q7_t)0)
+
+
+#define NN_Q31_MAX ((int32_t)(0x7FFFFFFFL))
+#define NN_Q15_MAX ((int16_t)(0x7FFF))
+#define NN_Q7_MAX ((int8_t)(0x7F))
+#define NN_Q31_MIN ((int32_t)(0x80000000L))
+#define NN_Q15_MIN ((int16_t)(0x8000))
+#define NN_Q7_MIN ((int8_t)(0x80))
 
 /**
  * @brief Error status returned by some functions in the library.

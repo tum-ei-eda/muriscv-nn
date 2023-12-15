@@ -113,8 +113,9 @@ muriscv_nn_status muriscv_nn_avgpool_s8(const muriscv_nn_context *ctx,
     {
         for (int32_t i_x = 0; i_x < output_x; i_x++)
         {
-
-#if defined(USE_VEXT)
+        
+//Vicuna does not currently support the vector divide operation.  Need to use scalar avgpool for now
+#if defined(USE_VEXT) && !defined(SIM_VICUNA)
 
             /* TODO(fabianpedd): These boundary checks for zero padding ensure
              * that we do not access elements outside the array. Here, in the
@@ -219,7 +220,7 @@ muriscv_nn_status muriscv_nn_avgpool_s8(const muriscv_nn_context *ctx,
     return MURISCV_NN_SUCCESS;
 }
 
-int32_t muriscv_nn_avgpool_s8_get_buffer_size(const int output_x, const int ch_src)
+/*int32_t muriscv_nn_avgpool_s8_get_buffer_size(const int output_x, const int ch_src)
 {
     (void)output_x;
 
@@ -229,7 +230,7 @@ int32_t muriscv_nn_avgpool_s8_get_buffer_size(const int output_x, const int ch_s
     (void)ch_src;
     return 0;
 #endif
-}
+}*/
 /**
  * @} end of Pooling group
  */

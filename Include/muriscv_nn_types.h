@@ -82,19 +82,31 @@ typedef struct
 /** MURISCV-NN object for the convolution layer parameters */
 typedef struct
 {
-    int32_t input_offset;  /**< Zero value for the input tensor */
-    int32_t output_offset; /**< Zero value for the output tensor */
+    int32_t input_offset;  /**< Negative of the Zero value for the input tensor */
+    int32_t output_offset; /**< negative of the Zero value for the output tensor */
     muriscv_nn_tile stride;
     muriscv_nn_tile padding;
     muriscv_nn_tile dilation;
     muriscv_nn_activation activation;
 } muriscv_nn_conv_params;
 
+/** MURISCV-NN object for the transpose convolution layer parameters */
+typedef struct
+{
+    int32_t input_offset;  /**< The negative of the zero value for the input tensor */
+    int32_t output_offset; /**< The negative of the zero value for the output tensor */
+    muriscv_nn_tile stride;
+    muriscv_nn_tile padding;
+    muriscv_nn_tile padding_offsets;
+    muriscv_nn_tile dilation;
+    muriscv_nn_activation activation;
+} muriscv_nn_transpose_conv_params;
+
 /** MURISCV-NN object for Depthwise convolution layer parameters */
 typedef struct
 {
-    int32_t input_offset;  /**< Zero value for the input tensor */
-    int32_t output_offset; /**< Zero value for the output tensor */
+    int32_t input_offset;  /**< negative of the Zero value for the input tensor */
+    int32_t output_offset; /**< negative of the Zero value for the output tensor */
     int32_t ch_mult;       /**< Channel Multiplier. ch_mult * in_ch = out_ch */
     muriscv_nn_tile stride;
     muriscv_nn_tile padding;

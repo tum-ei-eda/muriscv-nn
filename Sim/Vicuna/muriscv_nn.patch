@@ -1,0 +1,26 @@
+diff --git a/sw/link.ld b/sw/link.ld
+index b041a6d..5c63a74 100644
+--- a/sw/link.ld
++++ b/sw/link.ld
+@@ -12,7 +12,7 @@ __DYNAMIC = 0;
+ MEMORY
+ {
+     boot : ORIGIN = 0x00000000, LENGTH = 0x00002000 /*   8 kB */
+-    ram  : ORIGIN = 0x00002000, LENGTH = 0x0003E000 /* 248 kB */
++    ram  : ORIGIN = 0x00002000, LENGTH = 0x0006F000 /* 454 kB */
+ }
+ 
+ STACK_LEN = 0x4000; /* 16 kB */
+diff --git a/sw/lld_link.ld b/sw/lld_link.ld
+index 05e0c6f..847262d 100644
+--- a/sw/lld_link.ld
++++ b/sw/lld_link.ld
+@@ -12,7 +12,7 @@ __DYNAMIC = 0;
+ MEMORY
+ {
+     boot : ORIGIN = 0x00000000, LENGTH = 0x00002000 /*   8 kB */
+-    ram  : ORIGIN = 0x00002000, LENGTH = 0x0003E000 /* 248 kB */
++    ram  : ORIGIN = 0x00002000, LENGTH = 0x0006F000 /* 454 kB */
+ }
+ 
+ STACK_LEN = 0x4000; /* 16 kB */

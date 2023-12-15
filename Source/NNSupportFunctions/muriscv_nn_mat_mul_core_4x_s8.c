@@ -53,7 +53,6 @@ int8_t *muriscv_nn_mat_mul_core_4x_s8(const int32_t row_elements,
                                       const int32_t *bias,
                                       int8_t *output)
 {
-
 #if defined(USE_VEXT)
 
     for (int i = 0; i < out_ch; i++)

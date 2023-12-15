@@ -102,27 +102,6 @@ muriscv_nn_status muriscv_nn_convolve_wrapper_s16(const muriscv_nn_context *ctx,
     // #endif
 }
 
-int32_t muriscv_nn_convolve_wrapper_s16_get_buffer_size(const muriscv_nn_conv_params *conv_params,
-                                                        const muriscv_nn_dims *input_dims,
-                                                        const muriscv_nn_dims *filter_dims,
-                                                        const muriscv_nn_dims *output_dims)
-{
-    (void)conv_params;
-    (void)output_dims;
-
-    // #if defined(USE_PEXT) && !defined(USE_VEXT)
-    //     if (filter_dims->w * filter_dims->h * input_dims->c < 512 &&
-    //         (conv_params->dilation.w == 1 && conv_params->dilation.h == 1))
-    //     {
-    //         return muriscv_nn_convolve_fast_s16_get_buffer_size(input_dims, filter_dims);
-    //     }
-    //
-    //     return muriscv_nn_convolve_s16_get_buffer_size(input_dims, filter_dims);
-    // #else
-    return muriscv_nn_convolve_s16_get_buffer_size(input_dims, filter_dims);
-    // #endif
-}
-
 /**
  * @} end of NNConv group
  */

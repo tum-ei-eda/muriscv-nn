@@ -18,5 +18,14 @@
 
 include(add_intg_test)
 
-add_subdirectory(tflm)
-add_subdirectory(tvm)
+option(DISABLE_TFLM_INTG_TESTS "Enable tflm integration tests" OFF)
+option(DISABLE_TVM_INTG_TESTS "Enable tvm integration tests" OFF)
+
+if(NOT DISABLE_TFLM_INTG_TESTS)
+    add_subdirectory(tflm)
+endif()
+if(NOT DISABLE_TVM_INTG_TESTS)
+    add_subdirectory(tvm)
+endif()
+
+

@@ -29,19 +29,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Download and setup Vicuna."
 if [ ! -d "vicuna" ]; then
-  git clone git@github.com:vproc/vicuna.git
+  git clone https://github.com/vproc/vicuna.git
   cd vicuna
   git submodule update --init --recursive
+  git apply ../muriscv_nn.patch
   cd -
 fi
 
 echo "Download and setup Verilator."
 if [ ! -d "verilator" ]; then
-  git clone https://github.com/verilator/verilator
+  git clone https://github.com/verilator/verilator.git
   cd verilator
   git checkout tags/v4.210
   autoconf
   ./configure --prefix ${SCRIPT_DIR}/verilator/install
-  make all
-  make install
+  make all -j$(nproc)
+  make install 
 fi

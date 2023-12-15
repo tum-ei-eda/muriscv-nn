@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
  */
 
 #if defined(USE_VEXT)
@@ -43,22 +43,23 @@
  *
  */
 
-q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
-                                        const q7_t *rhs,
-                                        const int32_t input_offset,
-                                        const uint16_t num_ch,
-                                        const int32_t *out_shift,
-                                        const int32_t *out_mult,
-                                        const int32_t out_offset,
-                                        const int32_t activation_min,
-                                        const int32_t activation_max,
-                                        const uint16_t row_x_col,
-                                        const int32_t *const output_bias,
-                                        q7_t *out)
+muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
+                                                  const q7_t *rhs,
+                                                  const int32_t input_offset,
+                                                  const int32_t active_ch,
+                                                  const int32_t total_ch,
+                                                  const int32_t *out_shift,
+                                                  const int32_t *out_mult,
+                                                  const int32_t out_offset,
+                                                  const int32_t activation_min,
+                                                  const int32_t activation_max,
+                                                  const uint16_t row_x_col,
+                                                  const int32_t *const output_bias,
+                                                  q7_t *out)
 {
 #if defined(USE_VEXT)
     const int32_t *bias = output_bias;
-    int32_t num_ch_to_process = num_ch, offset = 0;
+    int32_t num_ch_to_process = active_ch, offset = 0;
     while (num_ch_to_process > 0)
     {
         size_t vl = vsetvl_e32m2(num_ch_to_process);
@@ -74,9 +75,9 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
 
         const int8_t *rhs_0 = rhs + offset;
         const int8_t *lhs_0 = lhs + offset;
-        const int8_t *lhs_1 = lhs + row_x_col * num_ch + offset;
-        const int8_t *lhs_2 = lhs + (row_x_col * num_ch * 2) + offset;
-        const int8_t *lhs_3 = lhs + (row_x_col * num_ch * 3) + offset;
+        const int8_t *lhs_1 = lhs + row_x_col * CH_IN_BLOCK_MVE + offset;
+        const int8_t *lhs_2 = lhs + (row_x_col * CH_IN_BLOCK_MVE * 2) + offset;
+        const int8_t *lhs_3 = lhs + (row_x_col * CH_IN_BLOCK_MVE * 3) + offset;
         offset += vl;
 
         vint32m2_t ker_sum = vmv_v_x_i32m2(0, vl);
@@ -98,11 +99,11 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
             ip = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_3, vl), vl);
             out_3 = vmacc_vv_i32m2(out_3, ip, ker, vl);
 
-            rhs_0 += num_ch;
-            lhs_0 += num_ch;
-            lhs_1 += num_ch;
-            lhs_2 += num_ch;
-            lhs_3 += num_ch;
+            rhs_0 += total_ch;
+            lhs_0 += CH_IN_BLOCK_MVE;
+            lhs_1 += CH_IN_BLOCK_MVE;
+            lhs_2 += CH_IN_BLOCK_MVE;
+            lhs_3 += CH_IN_BLOCK_MVE;
         }
 
         ker_sum = vmul_vx_i32m2(ker_sum, input_offset, vl);
@@ -126,29 +127,30 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
         out_1 = vadd_vx_i32m2(out_1, out_offset, vl);
         out_1 = vmax_vx_i32m2(out_1, activation_min, vl);
         out_1 = vmin_vx_i32m2(out_1, activation_max, vl);
-        vse8_v_i8mf2(out + num_ch, vnclip_wx_i8mf2(vnclip_wx_i16m1(out_1, 0, vl), 0, vl), vl);
+        vse8_v_i8mf2(out + total_ch, vnclip_wx_i8mf2(vnclip_wx_i16m1(out_1, 0, vl), 0, vl), vl);
 
         out_2 = muriscv_nn_requantize_vint32m2(out_2, mult, shift, vl);
         out_2 = vadd_vx_i32m2(out_2, out_offset, vl);
         out_2 = vmax_vx_i32m2(out_2, activation_min, vl);
         out_2 = vmin_vx_i32m2(out_2, activation_max, vl);
-        vse8_v_i8mf2(out + 2 * num_ch, vnclip_wx_i8mf2(vnclip_wx_i16m1(out_2, 0, vl), 0, vl), vl);
+        vse8_v_i8mf2(out + 2 * total_ch, vnclip_wx_i8mf2(vnclip_wx_i16m1(out_2, 0, vl), 0, vl), vl);
 
         out_3 = muriscv_nn_requantize_vint32m2(out_3, mult, shift, vl);
         out_3 = vadd_vx_i32m2(out_3, out_offset, vl);
         out_3 = vmax_vx_i32m2(out_3, activation_min, vl);
         out_3 = vmin_vx_i32m2(out_3, activation_max, vl);
-        vse8_v_i8mf2(out + 3 * num_ch, vnclip_wx_i8mf2(vnclip_wx_i16m1(out_3, 0, vl), 0, vl), vl);
+        vse8_v_i8mf2(out + 3 * total_ch, vnclip_wx_i8mf2(vnclip_wx_i16m1(out_3, 0, vl), 0, vl), vl);
 
         out += vl;
         num_ch_to_process -= vl;
     }
-    return out + 3 * num_ch;
+    return MURISCV_NN_SUCCESS;
 #else
     (void)lhs;
     (void)rhs;
     (void)input_offset;
-    (void)num_ch;
+    (void)active_ch;
+    (void)total_ch;
     (void)out_shift;
     (void)out_mult;
     (void)out_offset;
@@ -157,7 +159,7 @@ q7_t *muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
     (void)row_x_col;
     (void)output_bias;
     (void)out;
-    return NULL;
+    return MURISCV_NN_NO_IMPL_ERROR;
 #endif
 }
 

@@ -22,6 +22,9 @@ message(STATUS "CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CM
 # Choose a simulator to run on.
 set(SIMULATOR "Spike" CACHE STRING "Specify the simulator.")
 set_property(CACHE SIMULATOR PROPERTY STRINGS OVPsim Spike ETISS Vicuna)
+if(${SIMULATOR} STREQUAL "Vicuna")
+  set(SIM_VICUNA "ON")
+endif()
 
 # Choose which toolchain you want to use, either GCC or LLVM (or x86 for native build)
 set(TOOLCHAIN "GCC" CACHE STRING "Specify which toolchain to use.")
@@ -40,13 +43,14 @@ option(USE_PEXT "Use the RISC-V P Packed Extension" OFF)
 # - rv32imzve32x / ilp32 -> integer only and embedded vector support (GCC only supports rv32imv!)
 if(${SIMULATOR} STREQUAL "Vicuna") # Vicuna only supports a reduced set of extensions
   if(USE_VEXT)
-    set(RISCV_ARCH "rv32imv" CACHE STRING "march argument to the compiler, using the vector extension")
+    set(RISCV_ARCH "rv32imzve32x" CACHE STRING "march argument to the compiler, using the vector extension")
   elseif(USE_PEXT)
     message(FATAL_ERROR "Vicuna does not support packed instructions.")
   else()
     set(RISCV_ARCH "rv32im" CACHE STRING "march argument to the compiler, using only scalar instructions")
   endif()
   set(RISCV_ABI "ilp32" CACHE STRING "mabi argument to the compiler")
+  set(RISCV_CMODEL "medany" CACHE STRING "mcmodel argument to the compiler")
 else() # All other (instruction level) simulator support the full RISC-V ISA
   if(USE_VEXT)
     set(RISCV_ARCH "rv32gcv" CACHE STRING "march argument to the compiler, using the vector extension")
@@ -56,6 +60,7 @@ else() # All other (instruction level) simulator support the full RISC-V ISA
     set(RISCV_ARCH "rv32gc" CACHE STRING "march argument to the compiler, using only scalar instructions")
   endif()
   set(RISCV_ABI "ilp32d" CACHE STRING "mabi argument to the compiler")
+  set(RISCV_CMODEL "medlow" CACHE STRING "mcmodel argument to the compiler")
 endif()
 
 # Tell CMake about our processor
@@ -114,7 +119,7 @@ add_definitions(-DSIM_${SIMULATOR_UP})
 
 # Set build mode, Debug by default
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug)
+  set(CMAKE_BUILD_TYPE Release)
 endif()
 
 # Set some compiler options for easier debug or faster builds

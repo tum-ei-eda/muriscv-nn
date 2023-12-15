@@ -70,7 +70,7 @@ void maxpool_int16_muriscv_nn_maxpool_s16(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate_s16(output, maxpool_int16_output_ref, MAXPOOL_INT16_DST_SIZE));
@@ -111,7 +111,7 @@ void maxpool_int16_1_muriscv_nn_maxpool_s16(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate_s16(output, maxpool_int16_1_output_ref, MAXPOOL_INT16_1_DST_SIZE));
@@ -152,7 +152,7 @@ void maxpool_int16_2_muriscv_nn_maxpool_s16(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate_s16(output, maxpool_int16_2_output_ref, MAXPOOL_INT16_2_DST_SIZE));

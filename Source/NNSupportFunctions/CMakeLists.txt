@@ -15,16 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
+# Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
 #
 
 target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_nt_t_padded_s8.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_nt_t_s8.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mul_core_1x_s8.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mul_core_4x_s8.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_kernel_s8_s16.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_nt_t_s8.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_s8.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mult_t_s8.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mult_t_s16.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mult_t_svdf_s8.c
@@ -32,4 +30,10 @@ target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_d
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_lstm_step_s8_s16.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_lstm_update_cell_state_s16.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_lstm_update_output_s8_s16.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mul_result_acc_s8.c)
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mul_result_acc_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_nt_t_s4.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vec_mat_mult_t_s4.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_s8_to_s16_unordered_with_offset.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_q7_to_q15_with_offset.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mul_kernel_s16.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_nt_t_s16.c)

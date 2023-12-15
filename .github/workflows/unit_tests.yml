@@ -1,19 +1,24 @@
 name: Unit Tests
 
 on:
+
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
     - cron: '0 4 * * *'
 
   push:
-    branches: [ "master" ]
+    branches:
+      - 'master'
+      - 'sync'
   pull_request:
     branches: [ "master" ]
+
+  workflow_call:
   workflow_dispatch:
 
 jobs:
   Test_x86:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
 
@@ -55,7 +60,7 @@ jobs:
           - {args: "-t LLVM -s Spike -v -i -l 512 -e 64"}
 
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
 

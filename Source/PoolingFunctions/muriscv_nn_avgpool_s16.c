@@ -156,12 +156,12 @@ muriscv_nn_status muriscv_nn_avgpool_s16(const muriscv_nn_context *ctx,
     return MURISCV_NN_SUCCESS;
 }
 
-int32_t muriscv_nn_avgpool_s16_get_buffer_size(const int output_x, const int ch_src)
+/*int32_t muriscv_nn_avgpool_s16_get_buffer_size(const int output_x, const int ch_src)
 {
     (void)output_x;
     (void)ch_src;
     return 0;
-}
+}*/
 /**
  * @} end of Pooling group
  */
