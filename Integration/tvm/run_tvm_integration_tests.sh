@@ -25,6 +25,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 USE_PEXT=OFF
 USE_VEXT=OFF
 VLEN=1024
+ELEN=64
 RV_ARCH=rv32gc
 BENCHMARK=NONE
 TOOLCHAIN=GCC
@@ -33,7 +34,7 @@ SKIP_BUILD=OFF
 
 
 #Parse Input Args
-while getopts 'pvl:b:t:sh' flag; do
+while getopts 'pvl:b:t:se:h' flag; do
   case "${flag}" in
     p) USE_PEXT=ON 
        RV_ARCH=rv32gcp ;;
@@ -45,6 +46,7 @@ while getopts 'pvl:b:t:sh' flag; do
           echo "Set VLEN to 1024 to make Spike not error when VEXT is not used"
           VLEN=1024
         fi  ;;
+    e) ELEN="${OPTARG}" ;;
     b) BENCHMARK="${OPTARG}" ;;
     t) TOOLCHAIN="${OPTARG}" ;;
     * | h) echo "Add -p to compile with rv32gcp"
@@ -77,13 +79,13 @@ fi
 if [ "${TOOLCHAIN}" == "LLVM" ]; then
   echo "*** Checking for LLVM ***"
   cd ../../Toolchain
-  if clang-15 --version &>/dev/null; then
-      echo "LLVM 15 appears to be installed."
+  if clang-17 --version &>/dev/null; then
+      echo "LLVM 17 appears to be installed."
   else
-    echo "No LLVM 15 installation found. Installing LLVM 15..."
+    echo "No LLVM 17 installation found. Installing LLVM 17..."
     wget https://apt.llvm.org/llvm.sh
     chmod +x llvm.sh
-    sudo ./llvm.sh 15
+    sudo ./llvm.sh 17
     rm llvm.sh
   fi 
 
@@ -129,7 +131,7 @@ fi
 
 echo "*** Running with Spike ***"
 cd ../Sim/Spike
-./run.sh $(pwd)/../../build/Integration/tvm/${BENCHMARK}/${BENCHMARK}_tvm.elf ${RV_ARCH} ${VLEN}
+./run.sh $(pwd)/../../build/Integration/tvm/${BENCHMARK}/${BENCHMARK}_tvm.elf ${RV_ARCH} ${VLEN} ${ELEN}
 
 
 

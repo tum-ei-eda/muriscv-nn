@@ -34,7 +34,7 @@ SKIP_BUILD=OFF
 
 
 #Parse Input Args
-while getopts 'pvl:b:t:sh' flag; do
+while getopts 'pvl:b:t:se:h' flag; do
   case "${flag}" in
     p) USE_PEXT=ON
        RV_ARCH=rv32gcp ;;
@@ -80,13 +80,13 @@ fi
 if [ "${TOOLCHAIN}" == "LLVM" ]; then
   echo "*** Checking for LLVM ***"
   cd ../../Toolchain
-  if clang-15 --version &>/dev/null; then
-      echo "LLVM 15 appears to be installed."
+  if clang-17 --version &>/dev/null; then
+      echo "LLVM 17 appears to be installed."
   else
-    echo "No LLVM 15 installation found. Installing LLVM 15..."
+    echo "No LLVM 17 installation found. Installing LLVM 17..."
     wget https://apt.llvm.org/llvm.sh
     chmod +x llvm.sh
-    sudo ./llvm.sh 15
+    sudo ./llvm.sh 17
     rm llvm.sh
   fi
 

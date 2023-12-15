@@ -156,7 +156,7 @@ fi
 ################## Build based on Desired Configuration ########################
 ################################################################################
 
-# rm -rf ${BUILD_DIR}
+rm -rf ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}
 echo $1
 echo ${TC_DIR}/$2
