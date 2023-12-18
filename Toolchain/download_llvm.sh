@@ -19,10 +19,18 @@
 
 set -e
 
-# Downloads the "full" version of the rv32imv GCC toolchain
-# to be used as a standalone compiler!
-# wget https://syncandshare.lrz.de/dl/fi9JTZmQHEhNqWEjijgLg5P4/rv32imv.tar.xz
-# mkdir -p rv32imv
-# tar -xvf rv32imv.tar.xz -C rv32imv
-# rm rv32imv.tar.xz
-./download_helper.sh rv32imv/ GCC vext 2022.11.12 rv32imv_ilp32
+VERSION=${1:-"17"}
+
+if [[ "$VERSION" == "15" ]]
+then
+    ./download_helper.sh llvm/ LLVM default 15.0.7 llvm15
+elif [[ "$VERSION" == "16" ]]
+then
+    ./download_helper.sh llvm/ LLVM default 16.0.6 llvm16
+elif [[ "$VERSION" == "17" ]]
+then
+    ./download_helper.sh llvm/ LLVM default 17.0.6 llvm17
+elif [[ "$VERSION" == "dev" ]]
+then
+    ./download_helper.sh llvm/ LLVM default 2024.01.15 llvmdev
+fi
