@@ -7,22 +7,22 @@ from datetime import date
 today = date.today()
 
 
-with open("aww-benchmark-tflmi-" + str(today) + "/out.csv", newline="") as file:
+with open("aww-benchmark-tflmi-gcc-" + str(today) + "/out.csv", newline="") as file:
     aww_tflmi_csv = list(csv.reader(file))
-with open("vww-benchmark-tflmi-" + str(today) + "/out.csv", newline="") as file:
+with open("vww-benchmark-tflmi-gcc-" + str(today) + "/out.csv", newline="") as file:
     vww_tflmi_csv = list(csv.reader(file))
-with open("resnet-benchmark-tflmi-" + str(today) + "/out.csv", newline="") as file:
+with open("resnet-benchmark-tflmi-gcc-" + str(today) + "/out.csv", newline="") as file:
     resnet_tflmi_csv = list(csv.reader(file))
-with open("toycar-benchmark-tflmi-" + str(today) + "/out.csv", newline="") as file:
+with open("toycar-benchmark-tflmi-gcc-" + str(today) + "/out.csv", newline="") as file:
     toycar_tflmi_csv = list(csv.reader(file))
 
-with open("aww-benchmark-tvmaot-" + str(today) + "/out.csv", newline="") as file:
+with open("aww-benchmark-tvmaot-gcc-" + str(today) + "/out.csv", newline="") as file:
     aww_tvmaot_csv = list(csv.reader(file))
-with open("vww-benchmark-tvmaot-" + str(today) + "/out.csv", newline="") as file:
+with open("vww-benchmark-tvmaot-gcc-" + str(today) + "/out.csv", newline="") as file:
     vww_tvmaot_csv = list(csv.reader(file))
-with open("resnet-benchmark-tvmaot-" + str(today) + "/out.csv", newline="") as file:
+with open("resnet-benchmark-tvmaot-gcc-" + str(today) + "/out.csv", newline="") as file:
     resnet_tvmaot_csv = list(csv.reader(file))
-with open("toycar-benchmark-tvmaot-" + str(today) + "/out.csv", newline="") as file:
+with open("toycar-benchmark-tvmaot-gcc-" + str(today) + "/out.csv", newline="") as file:
     toycar_tvmaot_csv = list(csv.reader(file))
 
 
