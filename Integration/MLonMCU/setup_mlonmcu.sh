@@ -165,7 +165,8 @@ pip install git+https://github.com/tum-ei-eda/mlonmcu.git@${MLONMCU_REF}
 if [[ "$PREBUILT_TVM" -eq 1 ]]
 then
     # pip install "tlcpack-nightly==$TLCPACK_VERSION" -f https://tlcpack.ai/wheels
-    pip install "tlcpack-nightly" -f https://tlcpack.ai/wheels
+    # pip install "tlcpack-nightly" -f https://tlcpack.ai/wheels
+    pip install "apache-tvm>=0.12.0" --pre
 fi
 
 
