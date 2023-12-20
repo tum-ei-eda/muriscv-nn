@@ -70,7 +70,7 @@ jobs:
     - name: Archive Benchmark Results
       uses: actions/upload-artifact@v3
       with:
-          name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{toolchain}}-${{ steps.date-today.outputs.date }}
+          name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{matrix.toolchain}}-${{ steps.date-today.outputs.date }}
           path: ./Integration/MLonMCU/out.csv
 
 
