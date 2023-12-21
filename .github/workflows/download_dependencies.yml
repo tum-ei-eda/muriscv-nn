@@ -25,8 +25,7 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
-          # key: gcc-binaries-${{ steps.date.outputs.date }}
-          key: gcc-binaries-2023-12-20
+          key: gcc-binaries-${{ steps.date.outputs.date }}
 
 
 
@@ -38,8 +37,3 @@ jobs:
            # ./download_rv32gcv.sh
            # ./download_rv32imv.sh
            ./download_llvm.sh
-
-
-
-
-
