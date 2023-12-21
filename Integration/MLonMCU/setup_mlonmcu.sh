@@ -56,6 +56,9 @@ while getopts ':h-:' 'OPTKEY'; do
             'local-gcc')
                 LOCAL_GCC=1
                 ;;
+            'local-llvm')
+                LOCAL_LLVM=1
+                ;;
             'prebuilt-tvm')
                 PREBUILT_TVM=1
                 ;;
@@ -127,8 +130,35 @@ then
     fi
 fi
 
-
 if [[ "$LOCAL_GCC" -eq 1 ]]
+then
+    if [[ "$ENABLE_DEFAULT" -eq 1 ]]
+    then
+        if [[ ! -d $SCRIPT_DIR/../../Toolchain/rv32gc/ ]]
+        then
+            echo "Could not find local rv32gc installation in $SCRIPT_DIR/../../Toolchain/. Please download it first!" >&2
+            exit 1
+        fi
+    fi
+    if [[ "$ENABLE_PEXT" -eq 1 ]]
+    then
+        if [[ ! -d $SCRIPT_DIR/../../Toolchain/rv32gcp/ ]]
+        then
+            echo "Could not find local rv32gcp installation in $SCRIPT_DIR/../../Toolchain/. Please download it first!" >&2
+            exit 1
+        fi
+    fi
+    if [[ "$ENABLE_VEXT" -eq 1 ]]
+    then
+        if [[ ! -d $SCRIPT_DIR/../../Toolchain/rv32gcv/ ]]
+        then
+            echo "Could not find local rv32gcv installation in $SCRIPT_DIR/../../Toolchain/. Please download it first!" >&2
+            exit 1
+        fi
+    fi
+fi
+
+if [[ "$LOCAL_LLVM" -eq 1 ]]
 then
     if [[ ! -d $SCRIPT_DIR/../../Toolchain/llvm/ ]]
     then

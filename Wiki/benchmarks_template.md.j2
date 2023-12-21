@@ -38,7 +38,7 @@
 ### {{model_descriptions[model_name]}} (`{{model_name}}`)
 
 |  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | {% if "tvm" in backend_name %} Layout | {% endif%} Kernels    | Extensions |
-| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | ---------- | ---------- |
+| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | {% if "tvm" in backend_name %} ------ | {% endif %} ---------- | ---------- |
 {% for x in model_data %}| {{x["Run Cycles"]}} | {{ x["Run Cycles (rel.)"] | round3 }} | {{x["Total ROM"]}} | {{ x["Total ROM (rel.)"] | round3 }} | {{x["Total RAM"]}} | {{ x["Total RAM (rel.)"] | round3 }} | {{x["ROM read-only"]}} | {{x["ROM code"]}} | {{x["VLEN"]}} | {% if "tvm" in backend_name %} {{x["Layout"]}} | {% endif %}{{x["Kernels"]}} | {{x["Extensions"]}} |
 {% endfor %}
 {% endfor %}
