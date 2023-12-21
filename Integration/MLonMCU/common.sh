@@ -52,9 +52,12 @@ export ENABLE_ETISS=0
 
 # RISC-V GCC
 export LOCAL_GCC=1
+export LOCAL_LLVM=1
 export ENABLE_DEFAULT=1
 export ENABLE_PEXT=1
 export ENABLE_VEXT=1
+export ENABLE_GCC=1
+export ENABLE_LLVM=1
 
 # LLVM
 # Not supported

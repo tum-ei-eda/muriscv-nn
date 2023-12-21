@@ -112,9 +112,16 @@ targets:
 postprocesses:
   use: []
 toolchains:
+{% if enable_gcc | int %}
   gcc: true
-  # llvm: true
+{% else %}
+  gcc: false
+{% endif %}
+{% if enable_llvm | int %}
+  llvm: true
+{% else %}
   llvm: false
+{% endif %}
 vars:
   # general
   runs_per_stage: true
@@ -129,6 +136,8 @@ vars:
 {% endif %}
 
   # toolchain
+{% if enable_gcc | int %}
+{% if local_gcc | int %}
   # riscv_gcc.name: "riscv64-unknown-elf"
   riscv_gcc.install_dir_default: "{{ home_dir }}/../../../Toolchain/rv32gc"
 {% if enable_vext | int %}
@@ -136,6 +145,13 @@ vars:
 {% endif %}
 {% if enable_pext | int %}
   riscv_gcc.install_dir_pext: "{{ home_dir }}/../../../Toolchain/rv32gcp"
+{% endif %}
+{% endif %}
+{% endif %}
+{% if enable_llvm | int %}
+{% if local_llvm | int %}
+  llvm.install_dir: "{{ home_dir }}/../../../Toolchain/llvm"
+{% endif %}
 {% endif %}
 
   # simulators
@@ -153,4 +169,3 @@ vars:
   spike.pk: "{{ home_dir }}/../../../Sim/Spike/bin/pk"
 {% endif %}
   muriscvnn.lib: ""  # Will not be used
-  llvm.dl_url: "https://syncandshare.lrz.de/dl/fi3U4poNbe5DuUgqRsosK4/llvm16.tar.xz"
