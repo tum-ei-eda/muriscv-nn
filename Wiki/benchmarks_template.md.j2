@@ -29,85 +29,19 @@
 - Benchmarks generated using [MLonMCU](https://github.com/tum-ei-eda/mlonmcu) deployment tool with minimal efforts.
 - Memory metrics are reported in Bytes
 
-### Frameworks
+{% for framework_name, framework_data in data.items() %}
+{% for toolchain_name, toolchain_data in framework_data.items() %}
+{% for backend_name, backend_data in toolchain_data.items() %}
+## Results (Framework: {{framework_name}}, Toolchain: {{toolchain_name}}, Backend: {{backend_name}})
 
-Benchmarks exist for integration with TensorFlow Lite for Microcontrollers (TFLM) and TVM.
+{% for model_name, model_data in backend_data.items() %}
+### {{model_descriptions[model_name]}} (`{{model_name}}`)
 
-## TFLite for Microcontrollers
-
-Comparing reference kernel implementations (`Default`) with `cmsis-nn` optimized kernels and linkage with `libmuriscvnn.a`.
-
-
-### Audio Wake Words (`aww`)
-
-|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
+|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | {% if "tvm" in backend_name %} Layout | {% endif%} Kernels    | Extensions |
 | --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | ---------- | ---------- |
-{% for x in aww_tflmi_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{ x[8] | round3 }} | {{x[4]}} | {{ x[9] | round3 }} | {{x[5]}} | {{ x[10] | round3 }} | {{x[6]}} | {{x[7]}} | {{x[11]}} |  {{x[12]}} | {{x[13]}} |
-{% endif %}{% endfor %} 
-
-### Visual Wake Words (`vww`)
-
-|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
-| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | ---------- | ---------- |
-{% for x in vww_tflmi_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{ x[8] | round3 }} | {{x[4]}} | {{ x[9] | round3 }} | {{x[5]}} | {{ x[10] | round3 }} | {{x[6]}} | {{x[7]}} | {{x[11]}} |  {{x[12]}} | {{x[13]}} |
-{% endif %}{% endfor %} 
-
-
-### Image Classification (`resnet`)
-
-|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
-| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | ---------- | ---------- |
-{% for x in resnet_tflmi_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{ x[8] | round3 }} | {{x[4]}} | {{ x[9] | round3 }} | {{x[5]}} | {{ x[10] | round3 }} | {{x[6]}} | {{x[7]}} | {{x[11]}} |  {{x[12]}} | {{x[13]}} |
-{% endif %}{% endfor %} 
-
-### Anomaly Detection (`toycar`)
-
-|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | Kernels    | Extensions |
-| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | ---------- | ---------- |
-{% for x in toycar_tflmi_data %}{% if x[1] == "tflmi" %}| {{x[3]}} | {{ x[8] | round3 }} | {{x[4]}} | {{ x[9] | round3 }} | {{x[5]}} | {{ x[10] | round3 }} | {{x[6]}} | {{x[7]}} | {{x[11]}} |  {{x[12]}} | {{x[13]}} |
-{% endif %}{% endfor %} 
-
-## TVM
-
-Using CMSIS-NN BYOC feature and linkage with `libmuriscvnn.a`.
-
-Extension mapping:
-- `VEXT -> cortex-m55`
-- `PEXT -> cortex-m7`
-
-Used data/kernel layouts:
-- Untuned: `NHWC` (TFLite default)
-- Tuned: `NCHW` (Converted using TVM)
-
-### Audio Wake Words (`aww`)
-
-|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN |  Layout   | Kernels    | Extensions |
-| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
-{% for x in aww_tvmaot_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{ x[8] | round3 }} | {{x[4]}} | {{ x[9] | round3 }} | {{x[5]}} | {{ x[10] | round3 }} | {{x[6]}} | {{x[7]}} | {{x[12]}} | {{x[11]}} | {{x[13]}} | {{x[14]}} |
-{% endif %}{% endfor %} 
-
-### Visual Wake Words (`vww`)
-
-|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN |  Layout   | Kernels    | Extensions |
-| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
-{% for x in vww_tvmaot_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{ x[8] | round3 }} | {{x[4]}} | {{ x[9] | round3 }} | {{x[5]}} | {{ x[10] | round3 }} | {{x[6]}} | {{x[7]}} | {{x[12]}} | {{x[11]}} | {{x[13]}} | {{x[14]}} |
-{% endif %}{% endfor %} 
-
-### Image Classification (`resnet`)
-
-|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN |  Layout   | Kernels    | Extensions |
-| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
-{% for x in resnet_tvmaot_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{ x[8] | round3 }} | {{x[4]}} | {{ x[9] | round3 }} | {{x[5]}} | {{ x[10] | round3 }} | {{x[6]}} | {{x[7]}} | {{x[12]}} | {{x[11]}} | {{x[13]}} | {{x[14]}} |
-{% endif %}{% endfor %}
-
-### Anomaly Detection (`toycar`)
-
-|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN |  Layout   | Kernels    | Extensions |
-| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | --------- | ---------- | ---------- |
-{% for x in toycar_tvmaot_data %}{% if x[1] == "tvmaot" %}| {{x[3]}} | {{ x[8] | round3 }} | {{x[4]}} | {{ x[9] | round3 }} | {{x[5]}} | {{ x[10] | round3 }} | {{x[6]}} | {{x[7]}} | {{x[12]}} | {{x[11]}} | {{x[13]}} | {{x[14]}} |
-{% endif %}{% endfor %}
-
-
-## Code size compared to CMSIS-NN
-
-**WIP**
+{% for x in model_data %}| {{x["Run Cycles"]}} | {{ x["Run Cycles (rel.)"] | round3 }} | {{x["Total ROM"]}} | {{ x["Total ROM (rel.)"] | round3 }} | {{x["Total RAM"]}} | {{ x["Total RAM (rel.)"] | round3 }} | {{x["ROM read-only"]}} | {{x["ROM code"]}} | {{x["VLEN"]}} | {% if "tvm" in backend_name %} {{x["Layout"]}} | {% endif %}{{x["Kernels"]}} | {{x["Extensions"]}} |
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
