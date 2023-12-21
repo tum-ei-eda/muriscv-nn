@@ -89,8 +89,7 @@ jobs:
 
       - name: Download dependencies
         run: |
-          pip install numpy
-          pip install -U Jinja2
+          pip install -r Wiki/requirements.txt
 
       - name: Get current date
         id: date-today
@@ -100,7 +99,7 @@ jobs:
         working-directory: ./Wiki
         run: |
           source ../Integration/MLonMCU/common.sh
-          python3 create_wiki.py
+          python3 create_wiki.py */*.csv --split
 
       - name: Clone Wiki Repo
         uses: actions/checkout@v2
@@ -112,10 +111,12 @@ jobs:
         working-directory: ./Wiki-repo
         run: |
           ls
-          cp ../Wiki/Benchmarks-${{ steps.date-today.outputs.date }}.md Benchmarks-${{ steps.date-today.outputs.date }}.md
+          cp ../Wiki/*.md .
+          cp ../Wiki/*.csv .
           ls
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add Benchmarks-${{ steps.date-today.outputs.date }}.md
+          git add *.md
+          git add *.csv
           git commit -m "Added Benchmarks on ${{ steps.date-today.outputs.date }}"
           git push origin master

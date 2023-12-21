@@ -321,7 +321,7 @@ def gen_features(backend, features, validate=False, auto_vectorize=False):
     return ret
 
 
-def gen_config(backend, backend_config, features, vlen, toolchain, enable_postprocesses=False, baseline=None):
+def gen_config(backend, backend_config, features, vlen, toolchain, enable_postprocesses=False, baseline=None, scalar_default_only=False):
     ret = {}
     ret["mlif.toolchain"] = toolchain
     ret.update(DEFAULT_CONFIG)
@@ -329,20 +329,21 @@ def gen_config(backend, backend_config, features, vlen, toolchain, enable_postpr
     ret.update(backend_config)
     if enable_postprocesses:
             ret.update(POSTPROCESS_CONFIG)
+    if "pext" in features:
+        assert "vext" not in features
+        assert vlen == 0
+        if "muriscvnn" in features or "muriscvnnbyoc" in features:
             if backend == "tvmaot":
-                ret["compare_rows.baseline"] = 4
-    if "muriscvnn" in features or "muriscvnnbyoc" in features:
-        for feature in features:
-            if feature == "pext":
-                assert vlen == 0
-                if backend == "tvmaot":
-                    ret["muriscvnnbyoc.mcpu"] = "cortex-m33"
-            elif feature == "vext":
-                if backend == "tvmaot":
-                    ret["muriscvnnbyoc.mcpu"] = "cortex-m55"
-                ret["vext.vlen"] = vlen
-            # else:
-            # assert vlen == 0
+                ret["muriscvnnbyoc.mcpu"] = "cortex-m33"
+    if "vext" in features:
+        assert "pext" not in features
+        if "muriscvnn" in features or "muriscvnnbyoc" in features:
+            if backend == "tvmaot":
+                ret["muriscvnnbyoc.mcpu"] = "cortex-m55"
+        if not scalar_default_only or "muriscvnn" in features or "muriscvnnbyoc" in features:
+            ret["vext.vlen"] = vlen
+    # else:
+    # assert vlen == 0
     if "cmsisnnbyoc" in features:
         assert backend == "tvmaot"
         if "arm_mvei" in features:
@@ -418,7 +419,7 @@ def benchmark(args):
                                             # print("vl", vlen)
                                             # input("9")
                                             config = gen_config(
-                                                backend, backend_config, features, vlen, toolchain=toolchain, enable_postprocesses=args.post, baseline=args.baseline
+                                                backend, backend_config, features, vlen, toolchain=toolchain, enable_postprocesses=args.post, baseline=args.baseline, scalar_default_only=scalar_default_only
                                             )
                                             config.update(user_config)  # TODO
                                             # resolve_missing_configs(config, features, target, context)

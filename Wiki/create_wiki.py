@@ -87,18 +87,23 @@ BACKEND_DESCS = {
 if args.split:
     for framework_name, framework_data in data.items():
         for toolchain_name, toolchain_data in framework_data.items():
-            filename = f"Benchmarks-" + date + "-" + framework_name.upper() + "-" + toolchain_name.upper() + ".md"
+            filename = f"Benchmarks-" + date + "-" + framework_name.upper() + "-" + toolchain_name.upper()
             # print("data", {framework_name: {toolchain_name: toolchain_data}})
+            data2 = {framework_name: {toolchain_name: toolchain_data}}
+            df2 = df[(df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name)]
             content = template.render(
-                data={framework_name: {toolchain_name: toolchain_data}},
+                data=data2,
                 model_descriptions=MODEL_DESCS,
                 backend_descriptions=BACKEND_DESCS,
+                filename=filename,
             )
-            with open(filename, mode="w", encoding="utf-8") as message:
+            with open(filename + ".md", mode="w", encoding="utf-8") as message:
                 message.write(content)
-                print(f"... wrote {filename}")
+                print(f"... wrote {filename}.md")
+            df2.to_csv(filename + ".csv")
+            print(f"... wrote {filename}.csv")
 else:
-    filename = f"Benchmarks-" + date + ".md"
+    filename = f"Benchmarks-" + date
     # data2 = {}
     # for framework_name, framework_data in data.items():
     #     for toolchain_name, toolchain_data in framework_data.items():
@@ -108,7 +113,10 @@ else:
         data=data,
         model_descriptions=MODEL_DESCS,
         backend_descriptions=BACKEND_DESCS,
+        filename=filename,
     )
     with open(filename, mode="w", encoding="utf-8") as message:
         message.write(content)
-        print(f"... wrote {filename}")
+        print(f"... wrote {filename}.md")
+    df.to_csv(filename + ".csv")
+    print(f"... wrote {filename}.csv")
