@@ -25,4 +25,4 @@ set -e
 wget https://syncandshare.lrz.de/dl/fi3U4poNbe5DuUgqRsosK4/llvm16.tar.xz
 mkdir -p llvm
 tar -xvf llvm16.tar.xz -C llvm
-rm llvm.tar.xz
+rm llvm16.tar.xz
