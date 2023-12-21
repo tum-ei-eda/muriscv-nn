@@ -1,2 +1,3 @@
 pandas
-jinja2
+numpy
+Jinja2
