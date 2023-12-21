@@ -50,9 +50,9 @@ template = environment.get_template("benchmarks_template.md.j2")
 
 data = {}
 
-for framework_name, framework_df in df.groupby("Toolchain"):
+for framework_name, framework_df in df.groupby("Framework"):
     data[framework_name] = {}
-    for toolchain_name, toolchain_df in framework_df.groupby("Framework"):
+    for toolchain_name, toolchain_df in framework_df.groupby("Toolchain"):
         data[framework_name][toolchain_name] = {}
         for backend_name, backend_df in toolchain_df.groupby("Backend"):
             data[framework_name][toolchain_name][backend_name] = {}
