@@ -92,6 +92,11 @@ if args.split:
             # print("data", {framework_name: {toolchain_name: toolchain_data}})
             data2 = {framework_name: {toolchain_name: toolchain_data}}
             df2 = df[(df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name)]
+            print("fn", framework_name)
+            print("tn", toolchain_name)
+            print("flt", (df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name))
+            print("df2", df2)
+            # input("123")
             content = template.render(
                 data=data2,
                 model_descriptions=MODEL_DESCS,
@@ -116,7 +121,7 @@ else:
         backend_descriptions=BACKEND_DESCS,
         filename=filename,
     )
-    with open(filename, mode="w", encoding="utf-8") as message:
+    with open(filename + ".md", mode="w", encoding="utf-8") as message:
         message.write(content)
         print(f"... wrote {filename}.md")
     df.to_csv(filename + ".csv")
