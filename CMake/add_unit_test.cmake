@@ -70,6 +70,23 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
             add_test(NAME ${TEST_NAME}
                      COMMAND ${CMAKE_SOURCE_DIR}/Sim/Vicuna/run.sh "$<TARGET_FILE:${TEST_NAME}>.path"
                      WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        elseif(${SIMULATOR} STREQUAL "Ara")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T ${TEST_NAME}.elf.ld")
+            target_link_options(${TEST_NAME} PRIVATE "-nostartfiles")
+            target_link_libraries(${TEST_NAME} PRIVATE ara_crt)
+            # ADD_CUSTOM_COMMAND(OUTPUT ${TEST_NAME}.ld PRE_LINK
+            ADD_CUSTOM_COMMAND(TARGET ${TEST_NAME} PRE_LINK
+                COMMAND chmod +x ${ARA_DIR}/apps/common/script/align_sections.sh
+                COMMAND cp ${ARA_DIR}/apps/common/arch.link.ld $<TARGET_FILE:${TEST_NAME}>.ld
+                COMMAND ${ARA_DIR}/apps/common/script/align_sections.sh ${ARA_NR_LANES} $<TARGET_FILE:${TEST_NAME}>.ld
+            )
+            ADD_CUSTOM_TARGET(${TEST_NAME}_my_linkerscript DEPENDS ${TEST_NAME}.ld)
+            # ADD_DEPENDENCIES(${TEST_NAME} ${TEST_NAME}_my_linkerscript)
+            set_target_properties(${TARGET_NAME} PROPERTIES LINK_DEPENDS ${TEST_NAME}.ld)
+
+            add_test(NAME ${TEST_NAME}
+                     COMMAND ${CMAKE_SOURCE_DIR}/Sim/Ara/run.sh "$<TARGET_FILE:${TEST_NAME}>"
+                     WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
         else()
             message(FATAL_ERROR "Could not add test for specified simulator ${SIMULATOR}!")
         endif()
@@ -84,6 +101,9 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
         set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT 2)
     elseif(${SIMULATOR} STREQUAL "Vicuna")
         # TODO(fabianpedd): Vicuna needs extra time since its RTL
+        set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT 10000)
+    elseif(${SIMULATOR} STREQUAL "Ara")
+        # TODO(fabianpedd): Ara needs extra time since its RTL
         set_tests_properties(${TEST_NAME} PROPERTIES TIMEOUT 10000)
     else()
         # Tests should not take longer than 15 seconds

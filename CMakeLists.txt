@@ -21,7 +21,7 @@ message(STATUS "CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CM
 
 # Choose a simulator to run on.
 set(SIMULATOR "Spike" CACHE STRING "Specify the simulator.")
-set_property(CACHE SIMULATOR PROPERTY STRINGS OVPsim Spike ETISS Vicuna)
+set_property(CACHE SIMULATOR PROPERTY STRINGS OVPsim Spike ETISS Vicuna Ara)
 if(${SIMULATOR} STREQUAL "Vicuna")
   set(SIM_VICUNA "ON")
 endif()

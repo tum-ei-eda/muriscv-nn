@@ -19,3 +19,6 @@
 if(${SIMULATOR} STREQUAL "Vicuna")
   add_subdirectory(Vicuna)
 endif()
+if(${SIMULATOR} STREQUAL "Ara")
+  add_subdirectory(Ara)
+endif()
