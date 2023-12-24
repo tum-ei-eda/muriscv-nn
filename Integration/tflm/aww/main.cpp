@@ -8,13 +8,15 @@
 #include "aww_data/aww_model_data.h"
 #include "aww_data/aww_model_settings.h"
 #include "aww_data/aww_output_data_ref.h"
-#include "tensorflow/lite/micro/micro_error_reporter.h"
+#include "tensorflow/lite/micro/tflite_bridge/micro_error_reporter.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
 #include "tensorflow/lite/schema/schema_generated.h"
 
 constexpr size_t tensor_arena_size = 256 * 1024;
 alignas(16) uint8_t tensor_arena[tensor_arena_size];
+
+//commit before array.h added - 6f2828619641503942f2bd69ddee006ff7823130
 
 int run_test()
 {
@@ -31,7 +33,7 @@ int run_test()
     resolver.AddReshape();
     resolver.AddSoftmax();
 
-    tflite::MicroInterpreter interpreter(model, resolver, tensor_arena, tensor_arena_size, error_reporter);
+    tflite::MicroInterpreter interpreter(model, resolver, tensor_arena, tensor_arena_size);
 
     if (interpreter.AllocateTensors() != kTfLiteOk)
     {

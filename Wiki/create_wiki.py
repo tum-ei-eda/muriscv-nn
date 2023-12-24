@@ -1,31 +1,38 @@
-from jinja2 import FileSystemLoader, pass_eval_context
-import jinja2
-import csv
 import os
+import argparse
 from datetime import date
 
+import pandas as pd
+import jinja2
+from jinja2 import FileSystemLoader
+# pass_eval_context
+
 today = date.today()
+date = str(today)
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("files", nargs="+", help="CSV file paths")
+parser.add_argument("--split", action="store_true", help="Split wiki into multiple pages")
+parser.add_argument("--date", type=str, default=None, help="Override used date")
+
+args = parser.parse_args()
+
+if args.date:
+    date = args.date
 
 
-with open("aww-benchmark-tflmi-" + str(today) + "/out.csv", newline="") as file:
-    aww_tflmi_csv = list(csv.reader(file))
-with open("vww-benchmark-tflmi-" + str(today) + "/out.csv", newline="") as file:
-    vww_tflmi_csv = list(csv.reader(file))
-with open("resnet-benchmark-tflmi-" + str(today) + "/out.csv", newline="") as file:
-    resnet_tflmi_csv = list(csv.reader(file))
-with open("toycar-benchmark-tflmi-" + str(today) + "/out.csv", newline="") as file:
-    toycar_tflmi_csv = list(csv.reader(file))
+df = pd.DataFrame()
 
-with open("aww-benchmark-tvmaot-" + str(today) + "/out.csv", newline="") as file:
-    aww_tvmaot_csv = list(csv.reader(file))
-with open("vww-benchmark-tvmaot-" + str(today) + "/out.csv", newline="") as file:
-    vww_tvmaot_csv = list(csv.reader(file))
-with open("resnet-benchmark-tvmaot-" + str(today) + "/out.csv", newline="") as file:
-    resnet_tvmaot_csv = list(csv.reader(file))
-with open("toycar-benchmark-tvmaot-" + str(today) + "/out.csv", newline="") as file:
-    toycar_tvmaot_csv = list(csv.reader(file))
+for fname in args.files:
+    temp_df = pd.read_csv(fname)
 
+    df = pd.concat([df, temp_df])
 
+df.fillna("-", inplace=True)
+df["Framework"] = df["Backend"].apply(lambda x: "tvm" if "tvm" in x else "tflm")
+
+# print("df", df)
 def env_var(value, key):
     return os.getenv(key, value)
 
@@ -39,20 +46,83 @@ environment = jinja2.Environment(loader=FileSystemLoader("./"))
 environment.filters["env_var"] = env_var
 environment.filters["round3"] = round3
 
-template = environment.get_template("benchmarks_template.md")
+template = environment.get_template("benchmarks_template.md.j2")
 
+data = {}
 
-filename = f"Benchmarks-" + str(today) + ".md"
-content = template.render(
-    aww_tflmi_data=aww_tflmi_csv,
-    vww_tflmi_data=vww_tflmi_csv,
-    resnet_tflmi_data=resnet_tflmi_csv,
-    toycar_tflmi_data=toycar_tflmi_csv,
-    aww_tvmaot_data=aww_tvmaot_csv,
-    vww_tvmaot_data=vww_tvmaot_csv,
-    resnet_tvmaot_data=resnet_tvmaot_csv,
-    toycar_tvmaot_data=toycar_tvmaot_csv,
-)
-with open(filename, mode="w", encoding="utf-8") as message:
-    message.write(content)
-    print(f"... wrote {filename}")
+for framework_name, framework_df in df.groupby("Framework"):
+    data[framework_name] = {}
+    for toolchain_name, toolchain_df in framework_df.groupby("Toolchain"):
+        data[framework_name][toolchain_name] = {}
+        for backend_name, backend_df in toolchain_df.groupby("Backend"):
+            data[framework_name][toolchain_name][backend_name] = {}
+            for model_name, model_df in backend_df.groupby("Model"):
+                data[framework_name][toolchain_name][backend_name][model_name] = model_df.to_dict("records")
+# data = {
+#     "tflmi": {
+#         "aww": aww_tflmi_df.to_dict("records"),
+#         "vww": vww_tflmi_df.to_dict("records"),
+#         "vww": vww_tflmi_df.to_dict("records"),
+#         "toycar": toycar_tflmi_df.to_dict("records"),
+#     },
+#     "tvmaot": {
+#         "aww": aww_tvmaot_df.to_dict("records"),
+#         "vww": vww_tvmaot_df.to_dict("records"),
+#         "vww": vww_tvmaot_df.to_dict("records"),
+#         "toycar": toycar_tvmaot_df.to_dict("records"),
+#     },
+# }
+
+MODEL_DESCS = {
+    "aww": "Audio Wake Words",
+    "vww": "Visual Wake Words",
+    "resnet": "Image Classification",
+    "toycar": "Anomaly Detection",
+}
+
+BACKEND_DESCS = {
+    "tfmli": "Tensorflow Lite for Microcontrollers",
+    "tvmaot": "TVM",
+}
+
+if args.split:
+    for framework_name, framework_data in data.items():
+        for toolchain_name, toolchain_data in framework_data.items():
+            filename = f"Benchmarks-" + date + "-" + framework_name.upper() + "-" + toolchain_name.upper()
+            # print("data", {framework_name: {toolchain_name: toolchain_data}})
+            data2 = {framework_name: {toolchain_name: toolchain_data}}
+            df2 = df[(df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name)]
+            print("fn", framework_name)
+            print("tn", toolchain_name)
+            print("flt", (df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name))
+            print("df2", df2)
+            # input("123")
+            content = template.render(
+                data=data2,
+                model_descriptions=MODEL_DESCS,
+                backend_descriptions=BACKEND_DESCS,
+                filename=filename,
+            )
+            with open(filename + ".md", mode="w", encoding="utf-8") as message:
+                message.write(content)
+                print(f"... wrote {filename}.md")
+            df2.to_csv(filename + ".csv")
+            print(f"... wrote {filename}.csv")
+else:
+    filename = f"Benchmarks-" + date
+    # data2 = {}
+    # for framework_name, framework_data in data.items():
+    #     for toolchain_name, toolchain_data in framework_data.items():
+    #         data2.update(toolchain_data)
+    # print("data", data)
+    content = template.render(
+        data=data,
+        model_descriptions=MODEL_DESCS,
+        backend_descriptions=BACKEND_DESCS,
+        filename=filename,
+    )
+    with open(filename + ".md", mode="w", encoding="utf-8") as message:
+        message.write(content)
+        print(f"... wrote {filename}.md")
+    df.to_csv(filename + ".csv")
+    print(f"... wrote {filename}.csv")

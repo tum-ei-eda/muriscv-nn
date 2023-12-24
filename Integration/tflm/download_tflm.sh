@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM.
+# Copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -25,7 +25,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Download TFLM sources."
 if [ ! -d "tflite-micro" ]; then
-  git clone git@github.com:tensorflow/tflite-micro.git
+  git clone https://github.com/tensorflow/tflite-micro.git
   cd tflite-micro
 else
   cd tflite-micro
@@ -33,7 +33,7 @@ else
 fi
 
 echo "Generate TFLM source tree."
-python3 tensorflow/lite/micro/tools/project_generation/create_tflm_tree.py .. --makefile_options=OPTIMIZED_KERNEL_DIR=cmsis_nn
+python3 tensorflow/lite/micro/tools/project_generation/create_tflm_tree.py .. --makefile_options="OPTIMIZED_KERNEL_DIR=cmsis_nn"
 
 # Use this command to build the source tree without the CMSIS-NN wrapper (also disable USE_CMSIS_NN_WRAPPER in CMakeLists.txt!)
 # python3 tensorflow/lite/micro/tools/project_generation/create_tflm_tree.py ..

@@ -80,11 +80,11 @@ muriscv_nn_status muriscv_nn_fully_connected_s16(const muriscv_nn_context *ctx,
     return MURISCV_NN_SUCCESS;
 }
 
-int32_t muriscv_nn_fully_connected_s16_get_buffer_size(const muriscv_nn_dims *filter_dims)
+/*int32_t muriscv_nn_fully_connected_s16_get_buffer_size(const muriscv_nn_dims *filter_dims)
 {
     (void)filter_dims;
     return 0;
-}
+}*/
 
 /**
  * @} end of FC group

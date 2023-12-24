@@ -16,20 +16,20 @@
 # limitations under the License.
 #
 
-option(ENABLE_TVM_AWW_INTG_TESTS "Enable tvm integration tests for aww model" ON)
-option(ENABLE_TVM_IC_INTG_TESTS "Enable tvm integration tests for ic model" ON)
-option(ENABLE_TVM_TOY_INTG_TESTS "Enable tvm integration tests for toy model" ON)
-option(ENABLE_TVM_vWW_INTG_TESTS "Enable tvm integration tests for vww model" ON)
+option(DISABLE_TVM_AWW_INTG_TESTS "Enable tvm integration tests for aww model" OFF)
+option(DISABLE_TVM_IC_INTG_TESTS "Enable tvm integration tests for ic model" OFF)
+option(DISABLE_TVM_TOY_INTG_TESTS "Enable tvm integration tests for toy model" OFF)
+option(DISABLE_TVM_VWW_INTG_TESTS "Enable tvm integration tests for vww model" OFF)
 
-if(ENABLE_TVM_AWW_INTG_TESTS)
+if(NOT DISABLE_TVM_AWW_INTG_TESTS)
     add_subdirectory(aww)
 endif()
-if(ENABLE_TVM_IC_INTG_TESTS)
+if(NOT DISABLE_TVM_IC_INTG_TESTS)
     add_subdirectory(ic)
 endif()
-if(ENABLE_TVM_TOY_INTG_TESTS)
+if(NOT DISABLE_TVM_TOY_INTG_TESTS)
     add_subdirectory(toy)
 endif()
-if(ENABLE_TVM_VWW_INTG_TESTS)
+if(NOT DISABLE_TVM_VWW_INTG_TESTS)
     add_subdirectory(vww)
 endif()

@@ -21,6 +21,9 @@
 **/build*/
 **/b/
 
+### CMSIS from AutoSync ###
+Scripts/CMSIS_NN
+
 # Simulators
 Sim/OVPsim/bin/*
 !Sim/OVPsim/bin/download.sh

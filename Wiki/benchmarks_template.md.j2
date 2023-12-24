@@ -1,0 +1,51 @@
+## Setup
+
+### Simulator
+
+- Spike ([`riscv-isa-sim `](https://github.com/riscv-software-src/riscv-isa-sim)) (ISS, CPI=1)
+
+### Toolchains
+
+- **Scalar:** Self compiled on `master` branch of [riscv-gnu-toolchain](https://github.com/riscv-collab/riscv-gnu-toolchain)
+- **Packed:** Self compiled using patches found in https://github.com/riscv-collab/riscv-gcc/pull/258 and https://github.com/riscvarchive/riscv-binutils-gdb/pull/257
+- **Vector:** Self compiled using this working-branch: [`riscv-gcc-rvv-next`](https://github.com/riscv-collab/riscv-gcc/tree/riscv-gcc-rvv-next)
+
+### Models
+
+- [MLPerfTiny](https://github.com/mlcommons/tiny) Benchmark
+
+### Package Versions
+
+- MLonMCU : {{ "default" | env_var('MLIF_REF') }}
+- TFLM :  {{ "default" | env_var('TFLM_REF') }}
+- TVM : {% if "default" | env_var('PREBUILT_TVM') == '1' %} Nightly Pre-Build {% else %} {{ "default" | env_var('TVM_REF') }} {% endif %}
+- Spike : {{ "default" | env_var('SPIKE_REF') }}
+- Spike PK : {{ "default" | env_var('SPIKEPK_REF') }}
+
+
+### Miscellaneous
+
+- Used `-Os` flag for compilation.
+- Benchmarks generated using [MLonMCU](https://github.com/tum-ei-eda/mlonmcu) deployment tool with minimal efforts.
+- Memory metrics are reported in Bytes
+
+{% for framework_name, framework_data in data.items() %}
+{% for toolchain_name, toolchain_data in framework_data.items() %}
+{% for backend_name, backend_data in toolchain_data.items() %}
+## Results (Framework: {{framework_name}}, Toolchain: {{toolchain_name}}, Backend: {{backend_name}})
+
+{% for model_name, model_data in backend_data.items() %}
+### {{model_descriptions[model_name]}} (`{{model_name}}`)
+
+|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | {% if "tvm" in backend_name %} Layout | {% endif%} Kernels    | Extensions |
+| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | {% if "tvm" in backend_name %} ------ | {% endif %} ---------- | ---------- |
+{% for x in model_data %}| {{x["Run Cycles"]}} | {{ x["Run Cycles (rel.)"] | round3 }} | {{x["Total ROM"]}} | {{ x["Total ROM (rel.)"] | round3 }} | {{x["Total RAM"]}} | {{ x["Total RAM (rel.)"] | round3 }} | {{x["ROM read-only"]}} | {{x["ROM code"]}} | {{x["VLEN"]}} | {% if "tvm" in backend_name %} {{x["Layout"]}} | {% endif %}{{x["Kernels"]}} | {{x["Extensions"]}} |
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+
+## Original data
+
+Click [here]({{filename}}.csv) to download the raw files for this benchmark.

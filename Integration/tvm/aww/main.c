@@ -9,9 +9,13 @@
 #include "tvm/runtime/crt/error_codes.h"
 #include "tvmgen_default.h"
 
+#if defined(SIM_VICUNA)
 #include <uart.h>
 #include <runtime.h>
 #define printf uart_printf
+#endif
+
+
 
 
 
@@ -19,7 +23,9 @@ void TVMLogf(const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
-    //vfprintf(stdout, msg, args);
+#if !defined(SIM_VICUNA)
+    vfprintf(stdout, msg, args);//Vicuna does not currently support this print statement to the UART device
+#endif
     va_end(args);
 }
 
@@ -46,7 +52,8 @@ int run_test()
         int8_t output_data[256] = {0}; // TODO(fabianpedd): Make this precise by using defines for the array sizes
         struct tvmgen_default_outputs tvmgen_default_outputs = {output_data};
 
-
+#if defined(SIM_VICUNA)
+        //These prints and CSR Reads are for benchmarking on Vicuna
         printf("Beginning Run\n");
 
         uint32_t timerBefore;
@@ -54,13 +61,15 @@ int run_test()
 
         uint32_t instBefore;
         uint32_t instAfter;
-        
+
         __asm__ volatile("csrr %0, cycle;" : "=r" (timerBefore)  );
         __asm__ volatile("csrr %0, minstret;" : "=r" (instBefore)  );
 
+#endif
 
         int ret_val = tvmgen_default_run(&tvmgen_default_inputs, &tvmgen_default_outputs);
 
+#if defined(SIM_VICUNA)
         __asm__ volatile("csrr %0, cycle;" : "=r" (timerAfter)  );
         __asm__ volatile("csrr %0, minstret;" : "=r" (instAfter)  );
 
@@ -68,8 +77,10 @@ int run_test()
         printf("Value After  : %d\n", timerAfter);
         printf("Total Cycles : %d\n\n", abs(timerAfter - timerBefore));
 
-        printf("Total Instructions  : %d\n\n", abs(instAfter - instBefore));
-
+        printf("RetInst Before : %d\n", instBefore);
+        printf("RetInst After  : %d\n", instAfter);
+        printf("Total RetInst  : %d\n\n", abs(instAfter - instBefore));
+#endif
 
 
 

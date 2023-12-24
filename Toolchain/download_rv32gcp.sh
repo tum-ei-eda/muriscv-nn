@@ -21,7 +21,9 @@ set -e
 
 # Downloads the "full" version of the rv32gcp GCC toolchain
 # to be used as a standalone compiler!
-wget https://syncandshare.lrz.de/dl/fiNvP4mzVQ8uDvgT9Yf2bqNk/rv32gcp.tar.xz
-mkdir -p rv32gcp
-tar -xvf rv32gcp.tar.xz -C rv32gcp
-rm rv32gcp.tar.xz
+# wget https://syncandshare.lrz.de/dl/fiEWVnVB583VkX9FCNVPyZ/rv32gcp.tar.xz
+# wget https://syncandshare.lrz.de/dl/fiNvP4mzVQ8uDvgT9Yf2bqNk/rv32gcp.tar.xz
+# mkdir -p rv32gcp
+# tar -xvf rv32gcp.tar.xz -C rv32gcp
+# rm rv32gcp.tar.xz
+./download_helper.sh rv32gcp/ GCC pext 2022.04.28 rv32gcp_ilp32d

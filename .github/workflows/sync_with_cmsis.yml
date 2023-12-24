@@ -1,0 +1,53 @@
+name: CMSIS-NN AutoSync
+
+on:
+  schedule:
+    # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
+    - cron: '0 7 * * SAT'
+  workflow_dispatch:
+
+jobs:
+  AutoSync:
+    runs-on: ubuntu-22.04    
+    steps:
+    
+    - uses: actions/checkout@v3
+      with:
+        persist-credentials: false
+            
+    - name: Switch to the AutoSync branch.  If it doesnt exist, create it
+      env:
+        github_key: ${{ secrets.CMSIS_SYNC_KEY }}
+      run: | 
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git remote set-url origin https://x-access-token:${{ secrets.github_key }}@github.com/$GITHUB_REPOSITORY
+        git checkout sync || git checkout -b sync
+
+    - name: Download dependencies
+      run: |
+        pip install GitPython
+        pip install numpy
+        
+    - name: Run Sync Script
+      working-directory: ./Scripts
+      run: python3 CMSIS_NN_sync.py
+
+    - name: Add and count changed files
+      working-directory: ./
+      run: |
+        git add --all
+        echo "NUM_CHANGED=$(echo git diff --cached --numstat | wc -l)" >> $GITHUB_ENV
+
+    - name: Create Commit
+      working-directory: ./
+      if: ${{ env.NUM_CHANGED }} != '0'
+      run: |
+        git commit -m "Automated Sync from CMSIS-NN"
+
+    - name: Push changes
+      if: ${{ env.NUM_CHANGED }} != '0'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.CMSIS_SYNC_KEY }}
+        branch: sync

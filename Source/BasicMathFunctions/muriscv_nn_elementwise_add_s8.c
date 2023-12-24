@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
  */
 
 #if defined(USE_VEXT)
@@ -61,9 +61,7 @@ muriscv_nn_status muriscv_nn_elementwise_add_s8(const int8_t *input_1_vect,
                                                 const int32_t out_activation_max,
                                                 const int32_t block_size)
 {
-
     size_t loop_count = block_size;
-
 #if defined(USE_VEXT)
 
     /* Set fixedpoint rounding to round-to-nearest-up */
@@ -115,99 +113,91 @@ muriscv_nn_status muriscv_nn_elementwise_add_s8(const int8_t *input_1_vect,
     }
 
 #else /* defined(USE_VEXT) */
-
 #if defined(USE_PEXT)
     
-    int32_t offset_1_packed = ((input_1_offset & 0x000FFL) << 24U) | ((input_1_offset & 0x000FFL) << 16U) | ((input_1_offset & 0x000FFL) << 8U) | (input_1_offset & 0x000FFL);
-    int32_t offset_2_packed = ((input_2_offset & 0x000FFL) << 24U) | ((input_2_offset & 0x000FFL) << 16U) | ((input_2_offset & 0x000FFL) << 8U) | (input_2_offset & 0x000FFL);
+    //Should be using __rv_pack() here.  RVP intrinsics are wrong, invert packu and pack
+    //Assumes that all offsets are int8_t
+    int32_t input_1_offset_packed = __rv_packu(input_1_offset, input_1_offset);
+    int32_t input_2_offset_packed = __rv_packu(input_2_offset, input_2_offset);
     
-    int32_t out_offset_packed = ((out_offset & 0x000FFL) << 24U) | ((out_offset & 0x000FFL) << 16U) | ((out_offset & 0x000FFL) << 8U) | (out_offset & 0x000FFL);
-    
-    int32_t out_activation_max_packed = ((out_activation_max & 0x000FFL) << 24U) | ((out_activation_max & 0x000FFL) << 16U) | ((out_activation_max & 0x000FFL) << 8U) | (out_activation_max & 0x000FFL);
-    int32_t out_activation_min_packed = ((out_activation_min & 0x000FFL) << 24U) | ((out_activation_min & 0x000FFL) << 16U) | ((out_activation_min & 0x000FFL) << 8U) | (out_activation_min & 0x000FFL);
+    int32_t out_offset_packed = __rv_packu(out_offset, out_offset);
+    int32_t out_activation_max_packed = __rv_packu(out_activation_max, out_activation_max);
+    int32_t out_activation_min_packed = __rv_packu(out_activation_min, out_activation_min);
     
     loop_count = block_size >> 2;
     
 
     while (loop_count > 0)
     {
-        /* Load vec 1 */
-        
-        
         int32_t input_packed = muriscv_nn_read_q7x4_ia_fast(&input_1_vect);
-        
-        input_packed = __rv_add8(input_packed, offset_1_packed);
-        int32_t a1 = __rv_zunpkd810(input_packed);
-        int32_t b1 = __rv_zunpkd832(input_packed);
-        
-               
-        /* Load vec 2 */
+        int32_t input_upper_1 = __rv_sunpkd832(input_packed);
+        input_upper_1 = __rv_kadd16(input_upper_1, input_1_offset_packed);
+        int32_t input_lower_1 = __rv_sunpkd810(input_packed);
+        input_lower_1 = __rv_kadd16(input_lower_1, input_1_offset_packed);
+
         input_packed = muriscv_nn_read_q7x4_ia_fast(&input_2_vect);
-        input_packed = __rv_add8(input_packed, offset_2_packed);
-        int32_t a2 = __rv_zunpkd810(input_packed);
-        int32_t b2 = __rv_zunpkd832(input_packed);
-       
-        
+        int32_t input_upper_2 = __rv_sunpkd832(input_packed);
+        input_upper_2 = __rv_kadd16(input_upper_2, input_2_offset_packed);
+        int32_t input_lower_2 = __rv_sunpkd810(input_packed);
+        input_lower_2 = __rv_kadd16(input_lower_2, input_2_offset_packed);
 
-        /* Sum 1 */
-        int32_t input_1 = (a1 & 0x0FFFF) << left_shift; 
-        input_1 = muriscv_nn_requantize(input_1, input_1_mult, input_1_shift);
-        int32_t input_2 = (a2 & 0x0FFFF) << left_shift;
-        input_2 = muriscv_nn_requantize(input_2, input_2_mult, input_2_shift);
-           
-        int32_t sum =  input_1 + input_2;
-        sum = muriscv_nn_requantize(sum, out_mult, out_shift);
-        int8_t r1 = (q7_t)sum;
 
-        /* Sum 2 */
-        
-        input_1 = ((a1 >> 16) & 0x0FFFF) << left_shift;
-        input_1 = muriscv_nn_requantize(input_1, input_1_mult, input_1_shift);
-        input_2 = ((a2 >> 16) & 0x0FFFF) << left_shift;
-        input_2 = muriscv_nn_requantize(input_2, input_2_mult, input_2_shift);
+        int32_t input_1_1 = ((input_lower_1 & 0xFFFF)) << left_shift;
+        int32_t input_1_2 = ((input_lower_2 & 0xFFFF)) << left_shift;
 
-        sum = input_1 + input_2;
-        sum = muriscv_nn_requantize(sum, out_mult, out_shift);
-        int8_t r2 = (q7_t)sum;
+        int32_t input_2_1 = (((input_lower_1 >> 16) & 0xFFFF)) << left_shift;
+        int32_t input_2_2 = (((input_lower_2 >> 16) & 0xFFFF)) << left_shift;
 
-        /* Sum 3 */
-        
-        input_1 = (b1 & 0x0FFFF) << left_shift;
-        input_1 = muriscv_nn_requantize(input_1, input_1_mult, input_1_shift);
-        input_2 = (b2 & 0x0FFFF) << left_shift;
-        input_2 = muriscv_nn_requantize(input_2, input_2_mult, input_2_shift);
+        int32_t input_3_1 = ((input_upper_1 & 0xFFFF)) << left_shift;
+        int32_t input_3_2 = ((input_upper_2 & 0xFFFF)) << left_shift;
 
-        sum = input_1 + input_2;
-        sum = muriscv_nn_requantize(sum, out_mult, out_shift);
-        int8_t r3 = (q7_t)sum;
+        int32_t input_4_1 = (((input_upper_1 >> 16) & 0xFFFF)) << left_shift;
+        int32_t input_4_2 = (((input_upper_2 >> 16) & 0xFFFF)) << left_shift;
 
-        /* Sum 4 */
-        
-        input_1 = ((b1 >> 16) & 0x0FFFF) << left_shift;
-        input_1 = muriscv_nn_requantize(input_1, input_1_mult, input_1_shift);
-        input_2 = ((b2 >> 16) & 0x0FFFF) << left_shift;
-        input_2 = muriscv_nn_requantize(input_2, input_2_mult, input_2_shift);
+        input_1_1 = muriscv_nn_requantize(input_1_1, input_1_mult, input_1_shift);
+        input_1_2 = muriscv_nn_requantize(input_1_2, input_2_mult, input_2_shift);
 
-        sum = input_1 + input_2;
-        sum = muriscv_nn_requantize(sum, out_mult, out_shift);
-        int8_t r4 = (q7_t)sum;
+        input_2_1 = muriscv_nn_requantize(input_2_1, input_1_mult, input_1_shift);
+        input_2_2 = muriscv_nn_requantize(input_2_2, input_2_mult, input_2_shift);
+
+        input_3_1 = muriscv_nn_requantize(input_3_1, input_1_mult, input_1_shift);
+        input_3_2 = muriscv_nn_requantize(input_3_2, input_2_mult, input_2_shift);
+
+        input_4_1 = muriscv_nn_requantize(input_4_1, input_1_mult, input_1_shift);
+        input_4_2 = muriscv_nn_requantize(input_4_2, input_2_mult, input_2_shift);
+
+        int32_t sum_1 = input_1_1 + input_1_2;
+        int32_t sum_2 = input_2_1 + input_2_2;
+        int32_t sum_3 = input_3_1 + input_3_2;
+        int32_t sum_4 = input_4_1 + input_4_2;
+
+        sum_1 = muriscv_nn_requantize(sum_1, out_mult, out_shift);
+        sum_3 = muriscv_nn_requantize(sum_3, out_mult, out_shift);
+
+        int32_t sum_1_3_packed = __rv_packu(sum_1, sum_3);
         
-        int32_t packed_out = PACK_Q7x4_32x1(r1, r2, r3, r4);
+        sum_1_3_packed = __rv_kadd16(sum_1_3_packed, out_offset_packed);
+        sum_1_3_packed = __rv_smax16(sum_1_3_packed, out_activation_min_packed);
+        sum_1_3_packed = __rv_smin16(sum_1_3_packed, out_activation_max_packed);
+
+        sum_2 = muriscv_nn_requantize(sum_2, out_mult, out_shift);
+        sum_4 = muriscv_nn_requantize(sum_4, out_mult, out_shift);
+
+        int32_t sum_2_4_packed = __rv_packu(sum_2, sum_4);
         
-        
-        packed_out = __rv_add8(packed_out, out_offset_packed);
-        
-        packed_out = __rv_smax8(packed_out, out_activation_min_packed);
-        packed_out = __rv_smin8(packed_out, out_activation_max_packed);
-        
+        sum_2_4_packed = __rv_kadd16(sum_2_4_packed, out_offset_packed);
+        sum_2_4_packed = __rv_smax16(sum_2_4_packed, out_activation_min_packed);
+        sum_2_4_packed = __rv_smin16(sum_2_4_packed, out_activation_max_packed);
+
+        int32_t packed_out = (sum_1_3_packed & 0x00FF00FF) | ((sum_2_4_packed & 0x00FF00FF) << 8);
         muriscv_nn_write_q7x4_ia(&output, packed_out);
 
+        /* Decrement loop counter */
         loop_count--;
     }
 
     loop_count = block_size & 0x3;
-
-#endif /* defined(USE_PEXT) */
+#endif /* defined(USE_PEXT) */ 
 
     while (loop_count > 0)
     {

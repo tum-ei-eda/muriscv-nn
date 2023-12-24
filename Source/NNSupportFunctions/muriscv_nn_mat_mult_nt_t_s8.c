@@ -43,7 +43,7 @@
  * Used by muriscv_nn_convolve_1x1_s8_fast()
  *
  */
-muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
+muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,                      
                                               const q7_t *rhs,
                                               const q31_t *bias,
                                               q7_t *dst,
@@ -55,7 +55,8 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
                                               const int32_t lhs_offset,
                                               const int32_t dst_offset,
                                               const int32_t activation_min,
-                                              const int32_t activation_max)
+                                              const int32_t activation_max,
+                                              const int32_t lhs_cols_offset)
 {
 #if defined(USE_PEXT)
      // TODO(parkerjones): Find benchmark to test remaining edge cases for PEXT (and maybe implement V-Ext?)
@@ -244,19 +245,58 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
             res11 = muriscv_nn_requantize(res11, dst_multipliers[rhs_rows_idx + 1], dst_shifts[rhs_rows_idx + 1]);
             res12 = muriscv_nn_requantize(res12, dst_multipliers[rhs_rows_idx + 2], dst_shifts[rhs_rows_idx + 2]);
             res13 = muriscv_nn_requantize(res13, dst_multipliers[rhs_rows_idx + 3], dst_shifts[rhs_rows_idx + 3]);
-           
+
+
+            // THIS SECTION HAS ERROR, REWRITE SCALAR
+
+            //add offset
+            res00 += dst_offset;
+            res01 += dst_offset;
+            res02 += dst_offset;
+            res03 += dst_offset;
+            res10 += dst_offset;
+            res11 += dst_offset;
+            res12 += dst_offset;
+            res13 += dst_offset;
+
+            //clamp the result
+            res00 = MAX(res00, activation_min);
+            res00 = MIN(res00, activation_max);
+            res01 = MAX(res01, activation_min);
+            res01 = MIN(res01, activation_max);
+            res02 = MAX(res02, activation_min);
+            res02 = MIN(res02, activation_max);
+            res03 = MAX(res03, activation_min);
+            res03 = MIN(res03, activation_max);
+            res10 = MAX(res10, activation_min);
+            res10 = MIN(res10, activation_max);
+            res11 = MAX(res11, activation_min);
+            res11 = MIN(res11, activation_max);
+            res12 = MAX(res12, activation_min);
+            res12 = MIN(res12, activation_max);
+            res13 = MAX(res13, activation_min);
+            res13 = MIN(res13, activation_max);
+
+
+
+
+
             int32_t packed_out_0 = PACK_Q7x4_32x1(res00, res01, res02, res03);
             int32_t packed_out_1 = PACK_Q7x4_32x1(res10, res11, res12, res13);
-            
+
+            //OLD SIMD CODE
+            // Clamp the result
+            //packed_out_0 = __rv_smax8(packed_out_0, activation_min_packed);
+            //packed_out_0 = __rv_smin8(packed_out_0, activation_max_packed);
+            //packed_out_1 = __rv_smax8(packed_out_1, activation_min_packed);
+            //packed_out_1 = __rv_smin8(packed_out_1, activation_max_packed);
+
+            /* 
             // Add offset
             packed_out_0 = __rv_add8(packed_out_0, dst_offset_packed);
-            packed_out_1 = __rv_add8(packed_out_1, dst_offset_packed); 
-
-            // Clamp the result
-            packed_out_0 = __rv_smax8(packed_out_0, activation_min_packed);
-            packed_out_0 = __rv_smin8(packed_out_0, activation_max_packed);
-            packed_out_1 = __rv_smax8(packed_out_1, activation_min_packed);
-            packed_out_1 = __rv_smin8(packed_out_1, activation_max_packed);     
+            packed_out_1 = __rv_add8(packed_out_1, dst_offset_packed); */
+            
+            
 
             //when not word aligned, write with memcpy.  Improvment possible, need benchmark that utilizes the unaligned case to test
             if(rhs_rows % 4)
@@ -349,14 +389,37 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
             res02 = muriscv_nn_requantize(res02, dst_multipliers[rhs_rows_idx + 2], dst_shifts[rhs_rows_idx + 2]);
             res03 = muriscv_nn_requantize(res03, dst_multipliers[rhs_rows_idx + 3], dst_shifts[rhs_rows_idx + 3]);
 
-            int32_t packed_out_0 = PACK_Q7x4_32x1(res00, res01, res02, res03);
-            
-            // Add offset
-            packed_out_0 = __rv_add8(packed_out_0, dst_offset_packed);
 
-            // Clamp the result
-            packed_out_0 = __rv_smax8(packed_out_0, activation_min_packed);
-            packed_out_0 = __rv_smin8(packed_out_0, activation_max_packed);
+            // THIS SECTION HAS ERROR, REWRITE IN SCALAR
+
+            //add offset
+            res00 += dst_offset;
+            res01 += dst_offset;
+            res02 += dst_offset;
+            res03 += dst_offset;
+
+            //clamp the result
+            res00 = MAX(res00, activation_min);
+            res00 = MIN(res00, activation_max);
+            res01 = MAX(res01, activation_min);
+            res01 = MIN(res01, activation_max);
+            res02 = MAX(res02, activation_min);
+            res02 = MIN(res02, activation_max);
+            res03 = MAX(res03, activation_min);
+            res03 = MIN(res03, activation_max);
+
+            int32_t packed_out_0 = PACK_Q7x4_32x1(res00, res01, res02, res03);
+                        //OLD SIMD CODE
+                        //packed_out_0 = __rv_add8(packed_out_0, dst_offset_packed);
+                        
+                        // Clamp the result
+
+                        
+
+                        //packed_out_0 = __rv_smax8(packed_out_0, activation_min_packed);
+                        //packed_out_0 = __rv_smin8(packed_out_0, activation_max_packed);
+
+
 
             //check alignement and write
             if(rhs_rows % 4)

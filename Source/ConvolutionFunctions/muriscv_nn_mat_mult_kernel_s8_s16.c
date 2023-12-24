@@ -47,7 +47,6 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
 {
     // TODO(fabianpedd): Check if vectorization makes sense here?
 
-
 #if !defined(USE_VEXT)
     /* set up the second output pointers */
     q7_t *out_1 = out_0 + output_ch;
@@ -220,37 +219,76 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
         } /* while over col_count */
         
 
-        #if defined(USE_PEXT)
+        #if defined(USE_PEXT)          //SAME ISSUE AS OTHER USES OF ADD8 for offset  TODO:  Change to Add16
+                                       //Investigate why this didnt occur before?  ADD8 Saturation?
         ch_0_out_0 = muriscv_nn_requantize(ch_0_out_0, *out_mult, *out_shift);
+        ch_0_out_0 += out_offset;
         ch_0_out_1 = muriscv_nn_requantize(ch_0_out_1, *out_mult, *out_shift);
+        ch_0_out_1 += out_offset;
         out_mult++;
         out_shift++;
 
         ch_1_out_0 = muriscv_nn_requantize(ch_1_out_0, *out_mult, *out_shift);
+        ch_1_out_0 += out_offset;
         ch_1_out_1 = muriscv_nn_requantize(ch_1_out_1, *out_mult, *out_shift);
+        ch_1_out_1 += out_offset;
         out_mult++;
         out_shift++;
 
         ch_2_out_0 = muriscv_nn_requantize(ch_2_out_0, *out_mult, *out_shift);
+        ch_2_out_0 += out_offset;
         ch_2_out_1 = muriscv_nn_requantize(ch_2_out_1, *out_mult, *out_shift);
+        ch_2_out_1 += out_offset;
         out_mult++;
         out_shift++;
 
         ch_3_out_0 = muriscv_nn_requantize(ch_3_out_0, *out_mult, *out_shift);
+        ch_3_out_0 += out_offset;
         ch_3_out_1 = muriscv_nn_requantize(ch_3_out_1, *out_mult, *out_shift);
+        ch_3_out_1 += out_offset;
         out_mult++;
         out_shift++;
+        
+        
+        ch_0_out_0 = MAX(ch_0_out_0, activation_min);
+        ch_0_out_0 = MIN(ch_0_out_0, activation_max);
+        
+        
+        ch_0_out_1 = MAX(ch_0_out_1, activation_min);
+        ch_0_out_1 = MIN(ch_0_out_1, activation_max);
+        
+        
+        ch_1_out_0 = MAX(ch_1_out_0, activation_min);
+        ch_1_out_0 = MIN(ch_1_out_0, activation_max);
+        
+        
+        ch_1_out_1 = MAX(ch_1_out_1, activation_min);
+        ch_1_out_1 = MIN(ch_1_out_1, activation_max);
+        
+        ch_2_out_0 = MAX(ch_2_out_0, activation_min);
+        ch_2_out_0 = MIN(ch_2_out_0, activation_max);
+        
+        ch_2_out_1 = MAX(ch_2_out_1, activation_min);
+        ch_2_out_1 = MIN(ch_2_out_1, activation_max);
+        
+        ch_3_out_0 = MAX(ch_3_out_0, activation_min);
+        ch_3_out_0 = MIN(ch_3_out_0, activation_max);
+        
+        ch_3_out_1 = MAX(ch_3_out_1, activation_min);
+        ch_3_out_1 = MIN(ch_3_out_1, activation_max);
+
+
 
         uint32_t packed_out = PACK_Q7x4_32x1(ch_0_out_0, ch_1_out_0, ch_2_out_0, ch_3_out_0);
-        packed_out = __rv_add8(packed_out, out_offset_s8x4);
-        packed_out = __rv_smax8(packed_out, activation_min_s8x4);
-        packed_out = __rv_smin8(packed_out, activation_max_s8x4);
+        //packed_out = __rv_add8(packed_out, out_offset_s8x4);
+        //packed_out = __rv_smax8(packed_out, activation_min_s8x4);
+        //packed_out = __rv_smin8(packed_out, activation_max_s8x4);
         muriscv_nn_write_q7x4_ia(&out_0, packed_out);
 
         packed_out = PACK_Q7x4_32x1(ch_0_out_1, ch_1_out_1, ch_2_out_1, ch_3_out_1);
-        packed_out = __rv_add8(packed_out, out_offset_s8x4);
-        packed_out = __rv_smax8(packed_out, activation_min_s8x4);
-        packed_out = __rv_smin8(packed_out, activation_max_s8x4);
+        //packed_out = __rv_add8(packed_out, out_offset_s8x4);
+        //packed_out = __rv_smax8(packed_out, activation_min_s8x4);
+        //packed_out = __rv_smin8(packed_out, activation_max_s8x4);
         muriscv_nn_write_q7x4_ia(&out_1, packed_out);
 
 

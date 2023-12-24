@@ -136,19 +136,20 @@ muriscv_nn_status muriscv_nn_convolve_1x1_s8_fast(const muriscv_nn_context *ctx,
                                 conv_params->input_offset,
                                 conv_params->output_offset,
                                 conv_params->activation.min,
-                                conv_params->activation.max);
+                                conv_params->activation.max,
+                                0);//Need to properly use this new feature
 
 #endif
 
     /* Return to application */
     return MURISCV_NN_SUCCESS;
 }
-
+/*
 int32_t muriscv_nn_convolve_1x1_s8_fast_get_buffer_size(const muriscv_nn_dims *input_dims)
 {
     (void)input_dims;
     return 0;
-}
+}*/
 
 /**
  * @} end of NNConv group

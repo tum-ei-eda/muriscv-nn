@@ -162,7 +162,7 @@ static inline void clamp_output(int8_t *source, int32_t length, const int32_t ac
  *
  */
 
-muriscv_nn_status muriscv_nn_maxpool_s8(const muriscv_nn_context *ctx,
+muriscv_nn_status muriscv_nn_max_pool_s8(const muriscv_nn_context *ctx,
                                         const muriscv_nn_pool_params *pool_params,
                                         const muriscv_nn_dims *input_dims,
                                         const q7_t *src,

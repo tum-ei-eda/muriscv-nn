@@ -46,7 +46,6 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_svdf_s8(const q7_t *lhs,
                                                     const q7_t *rhs,
                                                     q15_t *dst,
                                                     const int32_t lhs_offset,
-                                                    const int32_t rhs_offset,
                                                     const int32_t dst_offset,
                                                     const int32_t dst_multiplier,
                                                     const int32_t dst_shift,
@@ -57,7 +56,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_svdf_s8(const q7_t *lhs,
 {
     // TODO(fabianpedd): Implement vector and packed accleration
 
-    (void)rhs_offset;
+    //(void)rhs_offset;
     if (rhs_cols < 0 || (Q31_MAX - rhs_cols) < 16 || dst_offset < 0)
     {
         return MURISCV_NN_ARG_ERROR;
@@ -122,7 +121,8 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_svdf_s8(const q7_t *lhs,
 
         for (int32_t rhs_cols_idx = 0; rhs_cols_idx < rhs_cols; ++rhs_cols_idx)
         {
-            q31_t rhs_value0 = (int8_t)rhs_ptr[0] + rhs_offset;
+            //q31_t rhs_value0 = (int8_t)rhs_ptr[0] + rhs_offset;
+            q31_t rhs_value0 = (int8_t)rhs_ptr[0];
             q31_t lhs_value = (int8_t)lhs_ptr[0] + lhs_offset;
 
             res00 += lhs_value * rhs_value0;

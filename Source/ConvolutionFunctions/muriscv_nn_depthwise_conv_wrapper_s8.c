@@ -108,7 +108,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_wrapper_s8(const muriscv_nn_context 
     /* Return to application */
     return status;
 }
-
+/*
 int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size(const muriscv_nn_dw_conv_params *dw_conv_params,
                                                              const muriscv_nn_dims *input_dims,
                                                              const muriscv_nn_dims *filter_dims,
@@ -124,7 +124,7 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size(const muriscv_nn_dw
     }
 
     return size;
-}
+}*/
 
 /**
  * @} end of NNConv group

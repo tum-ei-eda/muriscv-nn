@@ -142,14 +142,6 @@ muriscv_nn_status muriscv_nn_convolve_s16(const muriscv_nn_context *ctx,
     /* Return to application */
     return MURISCV_NN_SUCCESS;
 }
-
-int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
-{
-    (void)input_dims;
-    (void)filter_dims;
-    return 0;
-}
-
 /**
  * @} end of NNConv group
  */

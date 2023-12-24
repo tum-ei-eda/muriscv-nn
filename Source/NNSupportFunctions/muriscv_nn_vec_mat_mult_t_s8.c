@@ -22,6 +22,10 @@
 #include <riscv_vector.h>
 #endif
 
+#if defined(USE_PEXT)
+#include <rvp_intrinsic.h>
+#endif
+
 #include "muriscv_nn_functions.h"
 #include "muriscv_nn_support_functions.h"
 
@@ -39,15 +43,15 @@
  *
  * Refer header file for details.
  *
- * Used by muriscv_nn_fully_connected_s8() and muriscv_nn_svdf_s8()
+ * Used by muriscv_nn_fully_connected_s8() and muriscv_nn_svdf_s8().  Kernel sum has been moved into here, functional changes probably required
  *
  */
 muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
                                                const q7_t *rhs,
+                                               const int32_t *kernel_sum,
                                                const q31_t *bias,
                                                q7_t *dst,
                                                const int32_t lhs_offset,
-                                               const int32_t rhs_offset,
                                                const int32_t dst_offset,
                                                const int32_t dst_multiplier,
                                                const int32_t dst_shift,
@@ -58,9 +62,6 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
                                                const int32_t address_offset)
 {
 
-    (void)rhs_offset;
-
-// #if (defined(USE_VEXT) && SIMULATOR != Vicuna)
 #if defined(USE_VEXT)
 
     /* At some point in time there might be implementations with the Zvediv extension.
@@ -137,17 +138,18 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 
 #elif defined(USE_PEXT) /* defined(USE_VEXT) */
 
-    const uint32_t lhs_offset_s8x4 = (__rv_packu(lhs_offset, lhs_offset)) | ((__rv_packu(lhs_offset, lhs_offset)) << 8);
-
+    //const uint32_t lhs_offset_s8x4 = (__rv_packu(lhs_offset, lhs_offset)) | ((__rv_packu(lhs_offset, lhs_offset)) << 8);
+    const uint32_t lhs_offset_s16x2 = (__rv_packu(lhs_offset, lhs_offset));
+    //const uint32_t lhs_offset_s8x4 = (lhs_offset & 0x000000FF) | (lhs_offset << 8) & 0x0000FF00 | (lhs_offset << 16) & 0x00FF0000 | (lhs_offset << 24) & 0xFF000000;
     const int32_t row_loop_cnt = rhs_rows >> 2;
-    
+
     for (int32_t i = 0; i < row_loop_cnt; i++)
     {
         int32_t acc_0 = 0;
         int32_t acc_1 = 0;
         int32_t acc_2 = 0;
         int32_t acc_3 = 0;
-        
+
         if (bias)
         {
             acc_0 = *bias++;
@@ -159,12 +161,12 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         const int32_t col_loop_cnt = rhs_cols >> 2;
 
         const int8_t *lhs_ptr = lhs;
-        
+
         const int8_t *rhs_ptr_0 = rhs;
         const int8_t *rhs_ptr_1 = rhs + rhs_cols;
         const int8_t *rhs_ptr_2 = rhs_ptr_1 + rhs_cols;
         const int8_t *rhs_ptr_3 = rhs_ptr_2 + rhs_cols;
-        
+
         rhs += 4 * rhs_cols;
 
 
@@ -172,36 +174,115 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         // This 'for (int j = 0; j < col_loop_cnt; j++)'
         // adds a couple of instructions compared to the zero
         // comparison currently used.
+
         for (int j = col_loop_cnt; j != 0; j--)
         {
-            int32_t lhs_packed = *(int32_t *)lhs_ptr;
-            lhs_packed = __rv_add8(lhs_offset_s8x4, lhs_packed);
+            q31_t rhs_val_0, rhs_val_1, rhs_val_2, rhs_val_3;
 
+            //int32_t lhs_packed = *(int32_t *)lhs_ptr;
+            //lhs_packed = __rv_add8(lhs_offset_s8x4, lhs_packed);
+
+            //q31_t lhs_val_0 = (*lhs_ptr++);
+            //lhs_val_0 += lhs_offset;
+            //q31_t lhs_val_1 = (*lhs_ptr++);
+            //lhs_val_1 += lhs_offset;
+            //q31_t lhs_val_2 = (*lhs_ptr++);
+            //lhs_val_2 += lhs_offset;
+            //q31_t lhs_val_3 = (*lhs_ptr++);
+            //lhs_val_3 += lhs_offset;
+
+            int32_t lhs_packed = *(int32_t *)lhs_ptr;
+            int32_t lhs_32 = __rv_sunpkd832(lhs_packed);
+            int32_t lhs_10 = __rv_sunpkd810(lhs_packed);
+            lhs_32 = __rv_add16(lhs_32, lhs_offset_s16x2);
+            lhs_10 = __rv_add16(lhs_10, lhs_offset_s16x2);
+
+
+
+
+            //dont think i can use smaqa here, unsure how this worked before...  Possibly undefined behavior in simulators
+            //Valid input range for LHS is signed with values < -128, cannot fit in 8 bit int.  TODO:  Rewrite this using the 16 bit SIMD instructions.
             /* Accumulate first rhs row */
+            //int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
+            //acc_0 = __rv_smaqa_su(acc_0, rhs_packed, lhs_packed);
+
+
+            //rhs_val_0 = *rhs_ptr_0++;
+            //rhs_val_1 = *rhs_ptr_0++;
+            //rhs_val_2 = *rhs_ptr_0++;
+            //rhs_val_3 = *rhs_ptr_0++;
+            //acc_0 = acc_0 + lhs_val_0*rhs_val_0 + lhs_val_1*rhs_val_1 + lhs_val_2*rhs_val_2 + lhs_val_3*rhs_val_3;
+
+
             int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
-            acc_0 = __rv_smaqa_su(acc_0, rhs_packed, lhs_packed);
+            int32_t rhs_32 = __rv_sunpkd832(rhs_packed);
+            int32_t rhs_10 = __rv_sunpkd810(rhs_packed);
+
+            acc_0 = __rv_kmada(acc_0, rhs_32, lhs_32);
+            acc_0 = __rv_kmada(acc_0, rhs_10, lhs_10);
+
 
             /* Accumulate second rhs row */
-            rhs_packed = *(int32_t *)rhs_ptr_1;       
-            acc_1 = __rv_smaqa_su(acc_1, rhs_packed, lhs_packed);
-            
+            //rhs_packed = *(int32_t *)rhs_ptr_1;
+            //acc_1 = __rv_smaqa_su(acc_1, rhs_packed, lhs_packed);
+            //rhs_val_0 = *rhs_ptr_1++;
+            //rhs_val_1 = *rhs_ptr_1++;
+            //rhs_val_2 = *rhs_ptr_1++;
+            //rhs_val_3 = *rhs_ptr_1++;
+            //acc_1 = acc_1+ lhs_val_0*rhs_val_0 + lhs_val_1*rhs_val_1 + lhs_val_2*rhs_val_2 + lhs_val_3*rhs_val_3;
+
+
+            rhs_packed = *(int32_t *)rhs_ptr_1;
+            rhs_32 = __rv_sunpkd832(rhs_packed);
+            rhs_10 = __rv_sunpkd810(rhs_packed);
+
+            acc_1 = __rv_kmada(acc_1, rhs_32, lhs_32);
+            acc_1 = __rv_kmada(acc_1, rhs_10, lhs_10);
+
             /* Accumulate third rhs row */
-            rhs_packed = *(int32_t *)rhs_ptr_2;       
-            acc_2 = __rv_smaqa_su(acc_2, rhs_packed, lhs_packed);
-            
+
+            //rhs_packed = *(int32_t *)rhs_ptr_2;
+            //acc_2 = __rv_smaqa_su(acc_2, rhs_packed, lhs_packed);
+            //rhs_val_0 = *rhs_ptr_2++;
+            //rhs_val_1 = *rhs_ptr_2++;
+            //rhs_val_2 = *rhs_ptr_2++;
+            //rhs_val_3 = *rhs_ptr_2++;
+            //acc_2 = acc_2 + lhs_val_0*rhs_val_0 + lhs_val_1*rhs_val_1 + lhs_val_2*rhs_val_2 + lhs_val_3*rhs_val_3;
+
+
+            rhs_packed = *(int32_t *)rhs_ptr_2;
+            rhs_32 = __rv_sunpkd832(rhs_packed);
+            rhs_10 = __rv_sunpkd810(rhs_packed);
+
+            acc_2 = __rv_kmada(acc_2, rhs_32, lhs_32);
+            acc_2 = __rv_kmada(acc_2, rhs_10, lhs_10);
+
             /* Accumulate fourth rhs row */
-            rhs_packed = *(int32_t *)rhs_ptr_3;        
-            acc_3 = __rv_smaqa_su(acc_3, rhs_packed, lhs_packed);
-            
-            
+            //rhs_packed = *(int32_t *)rhs_ptr_3;
+            //acc_3 = __rv_smaqa_su(acc_3, rhs_packed, lhs_packed);
+            //rhs_val_0 = *rhs_ptr_3++;
+            //rhs_val_1 = *rhs_ptr_3++;
+            //rhs_val_2 = *rhs_ptr_3++;
+            //rhs_val_3 = *rhs_ptr_3++;
+            //acc_3 = acc_3 + lhs_val_0*rhs_val_0 + lhs_val_1*rhs_val_1 + lhs_val_2*rhs_val_2 + lhs_val_3*rhs_val_3;
+
+
+            rhs_packed = *(int32_t *)rhs_ptr_3;
+            rhs_32 = __rv_sunpkd832(rhs_packed);
+            rhs_10 = __rv_sunpkd810(rhs_packed);
+
+            acc_3 = __rv_kmada(acc_3, rhs_32, lhs_32);
+            acc_3 = __rv_kmada(acc_3, rhs_10, lhs_10);
+
+
             rhs_ptr_0 += 4;
             rhs_ptr_1 += 4;
             rhs_ptr_2 += 4;
             rhs_ptr_3 += 4;
-            
+
             lhs_ptr += 4;
         }
-        
+
         for (int k = 0; k < rhs_cols % 4; k++)
         {
             q31_t lhs_value = *lhs_ptr + lhs_offset;
@@ -211,19 +292,19 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 
             rhs_value = *rhs_ptr_1;
             acc_1 += lhs_value * rhs_value;
-            
+
             rhs_value = *rhs_ptr_2;
             acc_2 += lhs_value * rhs_value;
 
             rhs_value = *rhs_ptr_3;
             acc_3 += lhs_value * rhs_value;
-            
+
 
             ++rhs_ptr_0;
             ++rhs_ptr_1;
             ++rhs_ptr_2;
             ++rhs_ptr_3;
-            
+
             ++lhs_ptr;
         }
 
@@ -276,16 +357,33 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         // comparison currently used.
         for (int j = col_loop_cnt; j != 0; j--)
         {
-            int32_t lhs_packed = *(int32_t *)lhs_ptr;
-            lhs_packed = __rv_add8(lhs_offset_s8x4, lhs_packed);
+            q31_t rhs_val_0, rhs_val_1, rhs_val_2, rhs_val_3;
 
+            //int32_t lhs_packed = *(int32_t *)lhs_ptr;
+            //lhs_packed = __rv_add8(lhs_offset_s8x4, lhs_packed);
+
+            q31_t lhs_val_0 = (*lhs_ptr++);
+            lhs_val_0 += lhs_offset;
+            q31_t lhs_val_1 = (*lhs_ptr++);
+            lhs_val_1 += lhs_offset;
+            q31_t lhs_val_2 = (*lhs_ptr++);
+            lhs_val_2 += lhs_offset;
+            q31_t lhs_val_3 = (*lhs_ptr++);
+            lhs_val_3 += lhs_offset;
+
+            //dont think i can use smaqa here, unsure how this worked before...  Possibly undefined behavior in simulators
             /* Accumulate first rhs row */
-            int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
-            
-            acc_0 = __rv_smaqa_su(acc_0, rhs_packed, lhs_packed);
+            //int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
+            //acc_0 = __rv_smaqa_su(acc_0, rhs_packed, lhs_packed);
 
-            rhs_ptr_0 += 4;
-            lhs_ptr += 4;
+            rhs_val_0 = *rhs_ptr_0++;
+            rhs_val_1 = *rhs_ptr_0++;
+            rhs_val_2 = *rhs_ptr_0++;
+            rhs_val_3 = *rhs_ptr_0++;
+            acc_0 = acc_0 + lhs_val_0*rhs_val_0 + lhs_val_1*rhs_val_1 + lhs_val_2*rhs_val_2 + lhs_val_3*rhs_val_3;
+
+            //rhs_ptr_0 += 4;
+            //lhs_ptr += 4;
         }
 
         for (int k = 0; k < rhs_cols % 4; k++)

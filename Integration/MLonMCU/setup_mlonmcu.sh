@@ -38,6 +38,12 @@ while getopts ':h-:' 'OPTKEY'; do
             'enable-pext')
                 ENABLE_PEXT=1
                 ;;
+            'enable-gcc')
+                ENABLE_GCC=1
+                ;;
+            'enable-llvm')
+                ENABLE_LLVM=1
+                ;;
             'local-etiss')
                 LOCAL_ETISS=1
                 ;;
@@ -49,6 +55,9 @@ while getopts ':h-:' 'OPTKEY'; do
                 ;;
             'local-gcc')
                 LOCAL_GCC=1
+                ;;
+            'local-llvm')
+                LOCAL_LLVM=1
                 ;;
             'prebuilt-tvm')
                 PREBUILT_TVM=1
@@ -121,7 +130,6 @@ then
     fi
 fi
 
-
 if [[ "$LOCAL_GCC" -eq 1 ]]
 then
     if [[ "$ENABLE_DEFAULT" -eq 1 ]]
@@ -150,6 +158,15 @@ then
     fi
 fi
 
+if [[ "$LOCAL_LLVM" -eq 1 ]]
+then
+    if [[ ! -d $SCRIPT_DIR/../../Toolchain/llvm/ ]]
+    then
+        echo "Could not find local llvm installation in $SCRIPT_DIR/../../Toolchain/. Please download it first!" >&2
+        exit 1
+    fi
+fi
+
 ################
 # Setup Python #
 ################
@@ -165,7 +182,8 @@ pip install git+https://github.com/tum-ei-eda/mlonmcu.git@${MLONMCU_REF}
 if [[ "$PREBUILT_TVM" -eq 1 ]]
 then
     # pip install "tlcpack-nightly==$TLCPACK_VERSION" -f https://tlcpack.ai/wheels
-    pip install "tlcpack-nightly" -f https://tlcpack.ai/wheels
+    # pip install "tlcpack-nightly" -f https://tlcpack.ai/wheels
+    pip install "apache-tvm>=0.12.0" --pre
 fi
 
 
@@ -176,7 +194,7 @@ fi
 # Initialize an environment from template
 
 
-TEMPLATE_ARGS="-c enable_tflm=$ENABLE_TFLM enable_tvm=$ENABLE_TVM enable_spike=$ENABLE_SPIKE enable_etiss=$ENABLE_ETISS enable_ovpsim=$ENABLE_OVPSIM enable_default=$ENABLE_DEFAULT enable_pext=$ENABLE_PEXT enable_vext=$ENABLE_VEXT local_etiss=$LOCAL_ETISS local_spike=$LOCAL_SPIKE local_ovpsim=$LOCAL_OVPSIM mlif_ref=$MLIF_REF tflm_ref=$TFLM_REF tvm_ref=$TVM_REF etiss_ref=$ETISS_REF spike_ref=$SPIKE_REF spikepk_ref=$SPIKEPK_REF prebuilt_tvm=$PREBUILT_TVM"
+TEMPLATE_ARGS="-c enable_tflm=$ENABLE_TFLM enable_tvm=$ENABLE_TVM enable_spike=$ENABLE_SPIKE enable_etiss=$ENABLE_ETISS enable_ovpsim=$ENABLE_OVPSIM enable_default=$ENABLE_DEFAULT enable_pext=$ENABLE_PEXT enable_vext=$ENABLE_VEXT local_etiss=$LOCAL_ETISS local_spike=$LOCAL_SPIKE local_ovpsim=$LOCAL_OVPSIM mlif_ref=$MLIF_REF tflm_ref=$TFLM_REF tvm_ref=$TVM_REF etiss_ref=$ETISS_REF spike_ref=$SPIKE_REF spikepk_ref=$SPIKEPK_REF prebuilt_tvm=$PREBUILT_TVM enable_gcc=$ENABLE_GCC enable_llvm=$ENABLE_LLVM local_gcc=$LOCAL_GCC local_llvm=$LOCAL_LLVM"
 echo "TEMPLATE_ARGS=$TEMPLATE_ARGS"
 
 

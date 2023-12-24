@@ -22,6 +22,9 @@ message(STATUS "CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CM
 # Choose a simulator to run on.
 set(SIMULATOR "Spike" CACHE STRING "Specify the simulator.")
 set_property(CACHE SIMULATOR PROPERTY STRINGS OVPsim Spike ETISS Vicuna)
+if(${SIMULATOR} STREQUAL "Vicuna")
+  set(SIM_VICUNA "ON")
+endif()
 
 # Choose which toolchain you want to use, either GCC or LLVM (or x86 for native build)
 set(TOOLCHAIN "GCC" CACHE STRING "Specify which toolchain to use.")
@@ -71,6 +74,7 @@ set(CMAKE_SYSTEM_NAME Generic)
 # simply a convenient option to configure the unit tests.
 # HINT: Because spike only supports VLEN >= 64 we do not allow for VLEN=32.
 set(VLEN "1024" CACHE STRING "Specify the vector length. ONLY used to configure the simulator for tests.")
+set(ELEN "64" CACHE STRING "Specify the max vector element width.")  # TODO: adjust compiler flags accordingly
 set_property(CACHE VLEN PROPERTY STRINGS 32 64 128 256 512 1024)
 
 # Enable tests by default
@@ -115,7 +119,7 @@ add_definitions(-DSIM_${SIMULATOR_UP})
 
 # Set build mode, Debug by default
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug)
+  set(CMAKE_BUILD_TYPE Release)
 endif()
 
 # Set some compiler options for easier debug or faster builds

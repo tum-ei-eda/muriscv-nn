@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <math.h>
+
 #include "toy_data/toy_input_data.h"
 #include "toy_data/toy_model_settings.h"
 #include "toy_data/toy_output_data_ref.h"
@@ -9,11 +11,21 @@
 #include "tvm/runtime/crt/error_codes.h"
 #include "tvmgen_default.h"
 
+#if defined(SIMULATOR)
+    #if (SIMULATOR==Vicuna)
+#include <uart.h>
+#include <runtime.h>
+#define printf uart_printf
+    #endif
+#endif
+
 void TVMLogf(const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
-    vfprintf(stdout, msg, args);
+#if !defined(SIM_VICUNA)
+    vfprintf(stdout, msg, args);//Vicuna does not currently support this print statement to the UART device
+#endif
     va_end(args);
 }
 
@@ -42,6 +54,8 @@ int run_test()
         struct tvmgen_default_outputs tvmgen_default_outputs = {output_data};
 
 
+#if defined(SIM_VICUNA)
+        //These prints and CSR Reads are for benchmarking on Vicuna
         printf("Beginning Run\n");
 
         uint32_t timerBefore;
@@ -52,17 +66,23 @@ int run_test()
 
         __asm__ volatile("csrr %0, cycle;" : "=r" (timerBefore)  );
         __asm__ volatile("csrr %0, minstret;" : "=r" (instBefore)  );
+#endif
 
-        printf("A\n");
-        ret_val = tvmgen_default_run(&tvmgen_default_inputs, &tvmgen_default_outputs);
-        printf("B\n");
+        int ret_val = tvmgen_default_run(&tvmgen_default_inputs, &tvmgen_default_outputs);
 
+#if defined(SIM_VICUNA)
         __asm__ volatile("csrr %0, cycle;" : "=r" (timerAfter)  );
         __asm__ volatile("csrr %0, minstret;" : "=r" (instAfter)  );
 
-        printf("Total Cycles  : %d\n\n", abs(timerAfter - timerBefore));
+        printf("Value Before : %d\n", timerBefore);
+        printf("Value After  : %d\n", timerAfter);
+        printf("Total Cycles : %d\n\n", abs(timerAfter - timerBefore));
 
-        printf("Total Instructions  : %d\n\n", abs(instAfter - instBefore));
+        printf("RetInst Before : %d\n", instBefore);
+        printf("RetInst After  : %d\n", instAfter);
+        printf("Total RetInst  : %d\n\n", abs(instAfter - instBefore));
+#endif
+
 
         if (ret_val)
         {
@@ -72,7 +92,7 @@ int run_test()
         uint32_t sum = 0;
         for (size_t j = 0; j < toy_input_data_len[i]; j++)
         {
-            sum += pow((int8_t)toy_input_data[i][j] - output_data[j], 2);
+            sum += ((int8_t)toy_input_data[i][j] - output_data[j]) * ((int8_t)toy_input_data[i][j] - output_data[j]);
         }
         sum /= toy_input_data_len[i];
 
