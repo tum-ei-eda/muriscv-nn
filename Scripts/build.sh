@@ -31,13 +31,14 @@ source config.sh
 USE_VEXT=OFF
 USE_PEXT=OFF
 USE_IMV=OFF
+USE_64=OFF
 GCC_PREFIX=${TC_DIR}/rv32gc
 IMV_FLAGS=""
 SIM_FLAGS=""
 VLEN=""
 ELEN=""
 
-while getopts 't:vpib:s:l:e:h' flag; do
+while getopts 't:vpidb:s:l:e:h' flag; do
   case "${flag}" in
     t) TOOLCHAIN="${OPTARG}" ;;
     v) USE_VEXT=ON
@@ -46,6 +47,8 @@ while getopts 't:vpib:s:l:e:h' flag; do
        GCC_PREFIX=${TC_DIR}/rv32gcp ;;
     i) USE_IMV=ON
        GCC_PREFIX=${TC_DIR}/rv32imv ;;
+    d) USE_64=ON
+       GCC_PREFIX=${TC_DIR}/rv64gcv ;;
     b) BUILD_TYPE="${OPTARG}" ;;
     s) SIM_FLAGS="-DSIMULATOR=${OPTARG}";;
     l) VLEN="-DVLEN=${OPTARG}";;
@@ -55,6 +58,7 @@ while getopts 't:vpib:s:l:e:h' flag; do
        echo "-v : enable/disable VEXT"
        echo "-p : enable/disable PEXT"
        echo "-i : enable/disable IMV"
+       echo "-i : enable/disable 64GCV"
        echo "-b : build type"
        echo "-s : simualtor target"
        echo "-l : Vector Length"

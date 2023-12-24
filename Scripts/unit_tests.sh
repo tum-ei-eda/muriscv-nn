@@ -32,13 +32,14 @@ source config.sh
 USE_VEXT=OFF
 USE_PEXT=OFF
 USE_IMV=OFF
+USE_64=OFF
 BUILD_FLAGS=""
 SIM_FLAGS=""
 SIM=""
 VLEN=""
 ELEN=""
 
-while getopts 't:vpis:l:e:h' flag; do
+while getopts 't:vpids:l:e:h' flag; do
   case "${flag}" in
     t) TOOLCHAIN="${OPTARG}" ;;
     v) USE_VEXT=ON
@@ -47,6 +48,8 @@ while getopts 't:vpis:l:e:h' flag; do
        BUILD_FLAGS="${BUILD_FLAGS} -p" ;;
     i) USE_IMV=ON
        BUILD_FLAGS="${BUILD_FLAGS} -i" ;;
+    d) USE_64=ON
+       BUILD_FLAGS="${BUILD_FLAGS} -d" ;;
     s) SIM="${OPTARG}"
        SIM_FLAGS="-s ${SIM}" ;;
     l) VLEN="-l ${OPTARG}";;
