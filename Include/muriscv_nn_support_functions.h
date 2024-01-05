@@ -37,9 +37,7 @@
 //MURISCV_NN NEW CODE  //Include this around any code unique to muRISCV-nn for auto-sync with CMSIS
 #if defined(USE_VEXT)
 #include <riscv_vector.h>
-#ifdef __clang__
-#if __clang_major__ >= 16
-
+#if (__clang_major__ >= 16) || (__GNUC__ >= 13)
 #if __clang_major__ >= 17
 #define vsmul_vx_i32m8(a, b, c) __riscv_vsmul_vx_i32m8(a, b, __RISCV_VXRM_RNU, c)
 #define vsmul_vx_i32m4(a, b, c) __riscv_vsmul_vx_i32m4(a, b, __RISCV_VXRM_RNU, c)
@@ -143,7 +141,6 @@
 #define vse32_v_i32m4 __riscv_vse32_v_i32m4
 #define vmax_vx_i32m4 __riscv_vmax_vx_i32m4
 #define vsse8_v_i8m1 __riscv_vsse8_v_i8m1
-#endif
 #endif
 
 #elif defined(USE_PEXT)
