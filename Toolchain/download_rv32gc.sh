@@ -25,4 +25,4 @@ set -e
 # mkdir -p rv32gc
 # tar -xvf rv32gc.tar.xz -C rv32gc
 # rm rv32gc.tar.xz
-./download_helper.sh rv32gc/ GCC default 2023.12.14 rv32gc_ilp32d
+./download_helper.sh rv32gc/ GCC default 2023.11.27 rv32gc_ilp32d

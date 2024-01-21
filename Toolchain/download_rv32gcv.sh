@@ -25,4 +25,5 @@ set -e
 # mkdir -p rv32gcv
 # tar -xvf rv32gcv.tar.xz -C rv32gcv
 # rm rv32gcv.tar.xz
-./download_helper.sh rv32gcv/ GCC vext 2022.11.12 rv32gcv_ilp32d
+# ./download_helper.sh rv32gcv/ GCC vext 2022.11.12 rv32gcv_ilp32d
+./download_helper.sh rv32gcv/ GCC default 2023.11.27 rv32gcv_ilp32d

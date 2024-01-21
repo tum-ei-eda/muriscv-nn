@@ -23,14 +23,14 @@ VERSION=${1:-"17"}
 
 if [[ "$VERSION" == "15" ]]
 then
-    ./download_helper.sh llvm/ LLVM default 15.0.7 llvm15
+    ./download_helper.sh llvm/ LLVM default 15.0.7 llvm
 elif [[ "$VERSION" == "16" ]]
 then
-    ./download_helper.sh llvm/ LLVM default 16.0.6 llvm16
+    ./download_helper.sh llvm/ LLVM default 16.0.6 llvm
 elif [[ "$VERSION" == "17" ]]
 then
-    ./download_helper.sh llvm/ LLVM default 17.0.6 llvm17
+    ./download_helper.sh llvm/ LLVM default 17.0.6 llvm
 elif [[ "$VERSION" == "dev" ]]
 then
-    ./download_helper.sh llvm/ LLVM default 2024.01.15 llvmdev
+    ./download_helper.sh llvm/ LLVM default 2024.01.15 llvm
 fi
