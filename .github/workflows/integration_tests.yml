@@ -115,9 +115,12 @@ jobs:
         pip3 install Wave
         pip3 install numpy
 
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
+    - name: Get dates
+      id: dates
+      run: |
+        echo "::set-output name=today::$(date +'%Y-%m-%d')"
+        echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
+        echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -126,8 +129,10 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
+          key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
+            gcc-binaries-${{ steps.dates.outputs.yesterday }}
+            gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
 
     - name: Install Spike Dependencies
@@ -142,8 +147,10 @@ jobs:
           cache-name: cache-spike-binaries
       with:
           path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
+          key: spike-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
+            spike-binaries-${{ steps.dates.outputs.yesterday }}
+            spike-binaries-${{ steps.dates.outputs.date }}
             spike-binaries-
 
     - name: Download TFLM
@@ -186,9 +193,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
+    - name: Get dates
+      id: dates
+      run: |
+        echo "::set-output name=today::$(date +'%Y-%m-%d')"
+        echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
+        echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -197,8 +207,10 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
+          key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
+            gcc-binaries-${{ steps.dates.outputs.yesterday }}
+            gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
 
     - name: Install Spike Dependencies
@@ -213,8 +225,10 @@ jobs:
           cache-name: cache-spike-binaries
       with:
           path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
+          key: spike-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
+            spike-binaries-${{ steps.dates.outputs.yesterday }}
+            spike-binaries-${{ steps.dates.outputs.date }}
             spike-binaries-
 
 
@@ -259,9 +273,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
+    - name: Get dates
+      id: dates
+      run: |
+        echo "::set-output name=today::$(date +'%Y-%m-%d')"
+        echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
+        echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -270,8 +287,10 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
+          key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
+            gcc-binaries-${{ steps.dates.outputs.yesterday }}
+            gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
 
     - name: Install Spike Dependencies
@@ -286,8 +305,10 @@ jobs:
           cache-name: cache-spike-binaries
       with:
           path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
+          key: spike-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
+            spike-binaries-${{ steps.dates.outputs.yesterday }}
+            spike-binaries-${{ steps.dates.outputs.date }}
             spike-binaries-
 
 
