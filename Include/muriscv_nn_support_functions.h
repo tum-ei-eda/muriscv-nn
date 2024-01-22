@@ -1650,8 +1650,8 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
 }
 
 #if defined(USE_VEXT)
-//MURISCV_NN CUSTOM CODE
- /**
+ //MURISCV_NN CUSTOM CODE
+ /*
   * @brief           Vector saturating doubling high multiply returning high half.
   * @param[in]       m1        Multiplicand
   * @param[in]       m2        Multiplier
@@ -1665,7 +1665,7 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
  }
 
 //MURISCV_NN CUSTOM CODE
- /**
+ /*
   * @brief           Vector rounding divide by power of two.
   * @param[in]       dividend - Dividend vector
   * @param[in]       exponent - Divisor = power(2, exponent)
@@ -1683,7 +1683,7 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
  }
 
 //MURISCV_NN CUSTOM CODE
- /**
+ /*
   * @brief           Requantize a given vector.
   * @param[in]       val         Vector to be requantized
   * @param[in]       multiplier  multiplier
