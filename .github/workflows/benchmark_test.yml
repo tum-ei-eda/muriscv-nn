@@ -33,12 +33,12 @@ jobs:
 
     - name: Get yesterdays date
       id: yesterday
-      run: echo "::set-output name=yesterday::$(date +'%Y-%m-%d') -d "yesterday")"
+      run: echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
 
 
     - name: Get date of last cache build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
