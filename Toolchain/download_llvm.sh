@@ -19,10 +19,18 @@
 
 set -e
 
-# Downloads the "lite" version of the rv32gcv GCC toolchain to be used in
-# conjunction with LLVM. In order to reduce size it only contains headers
-# and libraries, no binaries!
-wget https://syncandshare.lrz.de/dl/fi3U4poNbe5DuUgqRsosK4/llvm16.tar.xz
-mkdir -p llvm
-tar -xvf llvm16.tar.xz -C llvm
-rm llvm16.tar.xz
+VERSION=${1:-"17"}
+
+if [[ "$VERSION" == "15" ]]
+then
+    ./download_helper.sh llvm/ LLVM default 15.0.7 llvm
+elif [[ "$VERSION" == "16" ]]
+then
+    ./download_helper.sh llvm/ LLVM default 16.0.6 llvm
+elif [[ "$VERSION" == "17" ]]
+then
+    ./download_helper.sh llvm/ LLVM default 17.0.6 llvm
+elif [[ "$VERSION" == "dev" ]]
+then
+    ./download_helper.sh llvm/ LLVM default 2024.01.15 llvm
+fi

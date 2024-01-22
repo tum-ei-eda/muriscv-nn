@@ -1,19 +1,19 @@
 name: Build Spike
 
-on:  
+on:
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
     - cron: '0 7 * * SAT'
-    
+
   workflow_dispatch:
 
 jobs:
   Build_Spike:
     runs-on: ubuntu-22.04
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Get current date
       id: date
       run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
@@ -28,7 +28,7 @@ jobs:
           key: gcc-binaries-${{ steps.date.outputs.date }}
           restore-keys: |
             gcc-binaries-
-          
+
     - name: Setup Spike Cache
       id: cache-Spike
       uses: actions/cache@v3
@@ -37,14 +37,14 @@ jobs:
       with:
           path: ./Sim/Spike/bin
           key: spike-binaries-${{ steps.date.outputs.date }}
-          
+
     - name: Install BOOST
       run: sudo apt-get install libboost-all-dev
 
     - name: Clone Spike Repo
       working-directory: ./Sim/Spike
       run: git clone https://github.com/riscv-software-src/riscv-isa-sim.git
-      
+
     - name: Build Spike
       working-directory: ./Sim/Spike/riscv-isa-sim
       run: |
@@ -57,11 +57,11 @@ jobs:
         ../configure --prefix=$RISCV
         make
         sudo make install
-        
+
     - name: Clone PK Repo
       working-directory: ./Sim/Spike
       run: git clone https://github.com/riscv-software-src/riscv-pk.git
-      
+
     - name: Build PK for ilp32d
       working-directory: ./Sim/Spike/riscv-pk
       run: |
@@ -70,17 +70,17 @@ jobs:
         echo $PATH
         mkdir build
         cd build
-        ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv --with-abi=ilp32d
+        ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv_zicsr_zifencei --with-abi=ilp32d
         make
         sudo make install
-        
+
     - name: Copy Spike and PK binaries to correct location
       working-directory: ./Sim/Spike/bin
       run: |
         cp ../riscv-isa-sim/build/spike spike
         cp ../riscv-pk/build/pk pk_ilp32d
         ls
-        
+
     - name: Build PK for ilp32
       working-directory: ./Sim/Spike/riscv-pk
       run: |
@@ -90,13 +90,12 @@ jobs:
         echo $PATH
         mkdir build
         cd build
-        ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32imv --with-abi=ilp32
+        ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32imv_zicsr_zifencei --with-abi=ilp32
         make
         sudo make install
-        
+
     - name: PK Binary to correct location
       working-directory: ./Sim/Spike/bin
       run: |
         cp ../riscv-pk/build/pk pk_ilp32
         ls
-

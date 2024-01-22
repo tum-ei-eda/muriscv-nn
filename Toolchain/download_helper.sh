@@ -38,7 +38,7 @@ archive=$lib.$ext
 
 URL=https://syncandshare.lrz.de/dl/fiWBtDLWz17RBc1Yd4VDW7/$toolchain/$mode/$version/$dist/$release/$archive
 echo "URL=$URL"
-wget $URL
+wget --progress=dot:giga $URL
 mkdir -p $dest
 tar -xvf $archive -C $dest
 rm $archive

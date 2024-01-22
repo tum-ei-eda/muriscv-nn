@@ -28,6 +28,7 @@ jobs:
         ./unit_tests.sh -t x86
 
   Test_Spike:
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -120,7 +121,7 @@ jobs:
 #          - {args: "-t LLVM -s OVPsim -v -i -l 128 -e 64"}
 #          - {args: "-t LLVM -s OVPsim -v -i -l 512 -e 64"}
 #
-#    runs-on: ubuntu-20.04
+#    runs-on: ubuntu-22.04
 #    steps:
 #    - uses: actions/checkout@v2
 #

@@ -7,11 +7,9 @@ on:
     - cron: '0 4 * * *'
 
   push:
-    branches:
-      - 'master'
-      - 'sync'
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
   workflow_call:
   workflow_dispatch:
