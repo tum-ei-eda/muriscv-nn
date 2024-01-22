@@ -46,7 +46,7 @@
 
 muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_padded_s8(const int8_t *lhs,
                                                          const int8_t *rhs,
-                                                         const int32_t input_offset,
+                                                         const int32_t lhs_offset,
                                                          const int32_t active_ch,
                                                          const int32_t total_ch,
                                                          const int32_t *out_shift,
@@ -86,19 +86,19 @@ muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_padded_s8(const int8_t *lhs,
             vint32m2_t ker = vsext_vf4_i32m2(vle8_v_i8mf2(rhs_0, vl), vl);
 
             vint32m2_t ip_0 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_0, vl), vl);
-            ip_0 = vadd_vx_i32m2(ip_0, input_offset, vl);
+            ip_0 = vadd_vx_i32m2(ip_0, lhs_offset, vl);
             out_0 = vmacc_vv_i32m2(out_0, ip_0, ker, vl);
 
             vint32m2_t ip_1 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_1, vl), vl);
-            ip_1 = vadd_vx_i32m2(ip_1, input_offset, vl);
+            ip_1 = vadd_vx_i32m2(ip_1, lhs_offset, vl);
             out_1 = vmacc_vv_i32m2(out_1, ip_1, ker, vl);
 
             vint32m2_t ip_2 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_2, vl), vl);
-            ip_2 = vadd_vx_i32m2(ip_2, input_offset, vl);
+            ip_2 = vadd_vx_i32m2(ip_2, lhs_offset, vl);
             out_2 = vmacc_vv_i32m2(out_2, ip_2, ker, vl);
 
             vint32m2_t ip_3 = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_3, vl), vl);
-            ip_3 = vadd_vx_i32m2(ip_3, input_offset, vl);
+            ip_3 = vadd_vx_i32m2(ip_3, lhs_offset, vl);
             out_3 = vmacc_vv_i32m2(out_3, ip_3, ker, vl);
 
             rhs_0 += total_ch;
@@ -144,7 +144,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_padded_s8(const int8_t *lhs,
 #else
     (void)lhs;
     (void)rhs;
-    (void)input_offset;
+    (void)lhs_offset;
     (void)active_ch;
     (void)total_ch;
     (void)out_shift;

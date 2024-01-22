@@ -137,6 +137,7 @@ muriscv_nn_status muriscv_nn_convolve_1x1_s8_fast(const muriscv_nn_context *ctx,
                                 conv_params->output_offset,
                                 conv_params->activation.min,
                                 conv_params->activation.max,
+                                0, //TODO: row_address_offset, CMSIS uses for vector acceleration
                                 0);//Need to properly use this new feature
 
 #endif

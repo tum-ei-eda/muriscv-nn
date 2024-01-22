@@ -56,6 +56,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const q7_t *lhs,
                                               const int32_t dst_offset,
                                               const int32_t activation_min,
                                               const int32_t activation_max,
+                                              const int32_t row_address_offset, //CURRENTLY UNUSED, CMSIS USES FOR VECTOR ACCELERATION
                                               const int32_t lhs_cols_offset)
 {
 #if defined(USE_PEXT)
