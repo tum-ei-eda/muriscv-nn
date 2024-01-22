@@ -114,8 +114,8 @@ elif [ "${TOOLCHAIN}" == "GCC" ];then
             ./download_rv32gcv.sh
           )
         fi
-            
-     elif [ "${USE_PEXT}" == "ON" ];then   
+
+     elif [ "${USE_PEXT}" == "ON" ];then
        if [ -d ${TC_DIR_RV32GCP} ]; then
           echo "Found rv32gcp GCC compiler in the Toolchain directory."
         else
@@ -124,7 +124,7 @@ elif [ "${TOOLCHAIN}" == "GCC" ];then
             cd ${TC_DIR}
             ./download_rv32gcp.sh
           )
-        fi 
+        fi
     elif [ "${USE_IMV}" == "ON" ];then
     # Download rv32imv GCC
         if [ -d ${TC_DIR_RV32IMV} ]; then
@@ -137,7 +137,7 @@ elif [ "${TOOLCHAIN}" == "GCC" ];then
           )
         fi
         IMV_FLAGS="-DRISCV_ARCH=rv32imv -DRISCV_ABI=ilp32"
-              
+
      else
         if [ -d ${TC_DIR_RV32GC} ]; then
           echo "Found rv32gc GCC compiler in the Toolchain directory."
@@ -156,7 +156,7 @@ fi
 ################## Build based on Desired Configuration ########################
 ################################################################################
 
-# rm -rf ${BUILD_DIR}
+rm -rf ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}
 echo $1
 echo ${TC_DIR}/$2
