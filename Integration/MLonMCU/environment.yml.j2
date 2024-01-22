@@ -150,7 +150,8 @@ vars:
 {% endif %}
 {% if enable_llvm | int %}
 {% if local_llvm | int %}
-  llvm.install_dir: "{{ home_dir }}/../../../Toolchain/llvm"
+  # llvm.install_dir: "{{ home_dir }}/../../../Toolchain/llvm"
+  llvm.install_dir: "{{ home_dir }}/../../../Toolchain/llvm/llvm"
 {% endif %}
 {% endif %}
 
