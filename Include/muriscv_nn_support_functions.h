@@ -1658,7 +1658,7 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
   * @return          Result of multiplication.
   *
   */
- __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve(const int32x4_t m1, const int32_t m2)
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve(const int32x4_t m1, const int32_t m2)
  {
      //return vqrdmulhq_n_s32(m1, m2);
      return 0;
@@ -1673,7 +1673,7 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
   * @return          Rounded result of division. Midpoint is rounded away from zero.
   *
   */
- __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve(const int32x4_t dividend, const int32_t exponent)
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve(const int32x4_t dividend, const int32_t exponent)
  {
      //const int32x4_t shift = vdupq_n_s32(-exponent);
      //const int32x4_t fixup = vshrq_n_s32(vandq_s32(dividend, shift), 31);
@@ -1692,7 +1692,7 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
   * @return          Returns (val * multiplier)/(2 ^ shift)
   *
   */
- __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve(const int32x4_t val, const int32_t multiplier, const int32_t shift)
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve(const int32x4_t val, const int32_t multiplier, const int32_t shift)
  {
      //#ifdef CMSIS_NN_USE_SINGLE_ROUNDING
      //const int right_shift = MIN(-1, shift);
@@ -1713,14 +1713,14 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
  }
 
 //MURISCV_NN CUSTOM CODE
- __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_32x4(const int32x4_t m1, const int32x4_t m2)
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_32x4(const int32x4_t m1, const int32x4_t m2)
  {
      //return vqrdmulhq_s32(m1, m2);
      return 0;
  }
 
 //MURISCV_NN CUSTOM CODE
- __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_32x4(const int32x4_t dividend, const int32x4_t exponent)
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_32x4(const int32x4_t dividend, const int32x4_t exponent)
  {
      //const int32x4_t shift = -exponent;
      //const int32x4_t fixup = vshrq_n_s32(vandq_s32(dividend, shift), 31);
@@ -1730,7 +1730,7 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
  }
 
 //MURISCV_NN CUSTOM CODE
- __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_32x4(const int32x4_t val,
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_32x4(const int32x4_t val,
                                                         const int32x4_t multiplier,
                                                         const int32x4_t shift)
  {
