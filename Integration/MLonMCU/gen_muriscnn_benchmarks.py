@@ -217,6 +217,8 @@ DEFAULT_CONFIG = {
     "mlif.optimize": "s",
     "mlif.fuse_ld": "none",
     "run.export_optional": True,
+    "mlif.verbose_makefile": True,
+    "mlif.print_outputs": True,
 }
 
 BACKEND_DEFAULT_CONFIG = {
