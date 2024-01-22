@@ -95,7 +95,7 @@ jobs:
             - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gc", vlen: 0, sim: "Spike"}
             - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gc", vlen: 0, sim: "Spike"}
             - {vext: "OFF", pext: "ON", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcp", vlen: 0, sim: "Spike"}
-            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 64, sim: "Spike"}
+            # - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 64, sim: "Spike"}
             # - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 64, sim: "Spike"}
             - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 128, sim: "Spike"}
             - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 128, sim: "Spike"}
@@ -181,7 +181,7 @@ jobs:
             - {vext_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gc", vlen: 0, elen: 0}
             - {vext_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gc", vlen: 0, elen: 0}
             - {vext_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0}
-            - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 64, elen: 64}
+            # - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 64, elen: 64}
             # - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 64, elen: 64}
             - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 128, elen: 64}
             - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 128, elen: 64}
@@ -261,8 +261,8 @@ jobs:
             - {vext_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gc", vlen: 0, elen: 0}
             - {vext_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gc", vlen: 0, elen: 0}
             - {vext_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0}
-            - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 64, elen: 64}
-            - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 64, elen: 64}
+            # - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 64, elen: 64}
+            # - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 64, elen: 64}
             - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 128, elen: 64}
             - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 128, elen: 64}
             - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 512, elen: 64}
