@@ -29,6 +29,8 @@ jobs:
       with:
         commit-message: |
               Automated Sync with CMSIS-NN
+        title: Automated Sync with CMSIS-NN
         branch: sync
+        token: ${{ secrets.CMSIS_SYNC_KEY }}
 
       
