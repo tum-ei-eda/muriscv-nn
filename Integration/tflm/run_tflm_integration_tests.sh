@@ -25,6 +25,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 USE_PEXT=OFF
 USE_VEXT=OFF
 VLEN=1024
+ELEN=64
 RV_ARCH=rv32gc
 BENCHMARK=NONE
 TOOLCHAIN=GCC
@@ -33,23 +34,25 @@ SKIP_BUILD=OFF
 
 
 #Parse Input Args
-while getopts 'pvl:b:t:sh' flag; do
+while getopts 'pvl:b:t:se:h' flag; do
   case "${flag}" in
-    p) USE_PEXT=ON 
+    p) USE_PEXT=ON
        RV_ARCH=rv32gcp ;;
-  ``v) USE_VEXT=ON 
+  ``v) USE_VEXT=ON
        RV_ARCH=rv32gcv ;;
     s) SKIP_BUILD=ON ;;
-    l) VLEN="${OPTARG}" 
+    l) VLEN="${OPTARG}"
         if [ "${VLEN}" == 0 ]; then
           echo "Set VLEN to 1024 to make Spike not error when VEXT is not used"
           VLEN=1024
         fi  ;;
+    e) ELEN="${OPTARG}" ;;
     b) BENCHMARK="${OPTARG}" ;;
     t) TOOLCHAIN="${OPTARG}" ;;
     * | h) echo "Add -p to compile with rv32gcp"
            echo "Add -v to compile with rv32gcv"
            echo "Specify VLEN with -l {VLEN}"
+           echo "Specify ELEN with -l {ELEN}"
            echo "Use -b {aww/vww/toy/ic} to select tvm benchmark to run"
            echo "Use -t {GCC/LLVM} to select toolchain.  PEXT is only supported with GCC"
            exit 1 ;;
@@ -77,22 +80,22 @@ fi
 if [ "${TOOLCHAIN}" == "LLVM" ]; then
   echo "*** Checking for LLVM ***"
   cd ../../Toolchain
-  if clang-15 --version &>/dev/null; then
-      echo "LLVM 15 appears to be installed."
+  if clang-17 --version &>/dev/null; then
+      echo "LLVM 17 appears to be installed."
   else
-    echo "No LLVM 15 installation found. Installing LLVM 15..."
+    echo "No LLVM 17 installation found. Installing LLVM 17..."
     wget https://apt.llvm.org/llvm.sh
     chmod +x llvm.sh
-    sudo ./llvm.sh 15
+    sudo ./llvm.sh 17
     rm llvm.sh
-  fi 
+  fi
 
 else
   echo "*** Checking for GCC Binaries ***"
   cd ../../Toolchain
 
   if [ ! -d ./${RV_ARCH} ]; then
-      
+
       echo "MISSING ${RV_ARCH} in Toolchains folder.  Downloading prebuilt GCC with script now."
       ./download_${RV_ARCH}.sh
   fi
@@ -129,15 +132,4 @@ fi
 
 echo "*** Running with Spike ***"
 cd ../Sim/Spike
-./run.sh $(pwd)/../../build/Integration/tflm/${BENCHMARK}/${BENCHMARK}_tflm.elf ${RV_ARCH} ${VLEN}
-
-
-
-
-
-
-
-
-
-
-
+./run.sh $(pwd)/../../build/Integration/tflm/${BENCHMARK}/${BENCHMARK}_tflm.elf ${RV_ARCH} ${VLEN} ${ELEN}

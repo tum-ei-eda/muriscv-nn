@@ -35,27 +35,30 @@ GCC_PREFIX=${TC_DIR}/rv32gc
 IMV_FLAGS=""
 SIM_FLAGS=""
 VLEN=""
+ELEN=""
 
-while getopts 't:vpib:s:l:h' flag; do
+while getopts 't:vpib:s:l:e:h' flag; do
   case "${flag}" in
     t) TOOLCHAIN="${OPTARG}" ;;
     v) USE_VEXT=ON
        GCC_PREFIX=${TC_DIR}/rv32gcv ;;
-    p) USE_PEXT=ON 
+    p) USE_PEXT=ON
        GCC_PREFIX=${TC_DIR}/rv32gcp ;;
-    i) USE_IMV=ON 
+    i) USE_IMV=ON
        GCC_PREFIX=${TC_DIR}/rv32imv ;;
     b) BUILD_TYPE="${OPTARG}" ;;
     s) SIM_FLAGS="-DSIMULATOR=${OPTARG}";;
     l) VLEN="-DVLEN=${OPTARG}";;
+    e) ELEN="-DELEN=${OPTARG}";;
     * | h) echo "Provide correct arguments.  Ex:  ./build.sh -t (GCC/LLVM/x86) -v -i -b (Release/Debug)"
        echo "-t : toolchain to use"
        echo "-v : enable/disable VEXT"
        echo "-p : enable/disable PEXT"
        echo "-i : enable/disable IMV"
-       echo "-b : build type" 
+       echo "-b : build type"
        echo "-s : simualtor target"
        echo "-l : Vector Length"
+       echo "-e : Element Width"
        exit 1;;
   esac
 done
@@ -84,24 +87,24 @@ fi
 #################### Check for Dependencies for Build ##########################
 ################################################################################
 if [ "${TOOLCHAIN}" == "LLVM" ];then
-     # Install LLVM 15 (which includes vector support)
-    if clang-15 --version &>/dev/null; then
-      echo "LLVM 15 appears to be installed."
+     # Install LLVM 17 (which includes vector support)
+    if clang-17 --version &>/dev/null; then
+      echo "LLVM 17 appears to be installed."
     else
-      echo "No LLVM 15 installation found. Installing LLVM 15..."
+      echo "No LLVM 17 installation found. Installing LLVM 17..."
       wget https://apt.llvm.org/llvm.sh
       chmod +x llvm.sh
-      sudo ./llvm.sh 15
+      sudo ./llvm.sh 17
       rm llvm.sh
-    fi 
-    
+    fi
+
     if [ "${USE_IMV}" == "ON" ];then
         IMV_FLAGS="-DRISCV_ARCH=rv32imzve32x -DRISCV_ABI=ilp32"
     fi
-    
+
 elif [ "${TOOLCHAIN}" == "GCC" ];then
     if [ "${USE_VEXT}" == "ON" ] && [ "${USE_IMV}" == "OFF" ] ;then
-       
+
        if [ -d ${TC_DIR_RV32GCV} ]; then
           echo "Found rv32gcv GCC compiler in the Toolchain directory."
         else
@@ -111,8 +114,8 @@ elif [ "${TOOLCHAIN}" == "GCC" ];then
             ./download_rv32gcv.sh
           )
         fi
-            
-     elif [ "${USE_PEXT}" == "ON" ];then   
+
+     elif [ "${USE_PEXT}" == "ON" ];then
        if [ -d ${TC_DIR_RV32GCP} ]; then
           echo "Found rv32gcp GCC compiler in the Toolchain directory."
         else
@@ -121,7 +124,7 @@ elif [ "${TOOLCHAIN}" == "GCC" ];then
             cd ${TC_DIR}
             ./download_rv32gcp.sh
           )
-        fi 
+        fi
     elif [ "${USE_IMV}" == "ON" ];then
     # Download rv32imv GCC
         if [ -d ${TC_DIR_RV32IMV} ]; then
@@ -134,7 +137,7 @@ elif [ "${TOOLCHAIN}" == "GCC" ];then
           )
         fi
         IMV_FLAGS="-DRISCV_ARCH=rv32imv -DRISCV_ABI=ilp32"
-              
+
      else
         if [ -d ${TC_DIR_RV32GC} ]; then
           echo "Found rv32gc GCC compiler in the Toolchain directory."
@@ -145,19 +148,19 @@ elif [ "${TOOLCHAIN}" == "GCC" ];then
             ./download_rv32gc.sh
           )
         fi
-     fi  
-fi       
-  
+     fi
+fi
+
 
 ################################################################################
 ################## Build based on Desired Configuration ########################
-################################################################################  
-  
+################################################################################
+
 rm -rf ${BUILD_DIR}
-mkdir ${BUILD_DIR}
+mkdir -p ${BUILD_DIR}
 echo $1
 echo ${TC_DIR}/$2
-cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN}
+cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN}
 make -j $(nproc) -C ${BUILD_DIR}
 
 exit 0

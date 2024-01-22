@@ -1,18 +1,18 @@
 name: Unit Tests
 
 on:
-  
+
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
     - cron: '0 4 * * *'
-    
+
   push:
     branches:
       - 'master'
       - 'sync'
   pull_request:
     branches: [ "master" ]
-    
+
   workflow_call:
   workflow_dispatch:
 
@@ -20,8 +20,8 @@ jobs:
   Test_x86:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v2  
-          
+    - uses: actions/checkout@v2
+
     - name: Download GCC Cache
       id: cache-GCC
       uses: actions/cache@v3
@@ -32,7 +32,7 @@ jobs:
           key: gcc-binaries-${{ steps.date.outputs.date }}
           restore-keys: |
             gcc-binaries-
-        
+
     - name: Run Scalar Tests on x86
       working-directory: ./Scripts
       run: |
@@ -46,28 +46,28 @@ jobs:
           - {args: "-t GCC -s Spike"}
           - {args: "-t LLVM -s Spike"}
           - {args: "-t GCC -s Spike -p"}
-          - {args: "-t GCC -s Spike -v -l 64"}
-          - {args: "-t GCC -s Spike -v -l 128"}
-          - {args: "-t GCC -s Spike -v -l 512"}
-          - {args: "-t LLVM -s Spike -v -l 64"}
-          - {args: "-t LLVM -s Spike -v -l 128"}
-          - {args: "-t LLVM -s Spike -v -l 512"}
-          - {args: "-t GCC -s Spike -v -i -l 64"}
-          - {args: "-t GCC -s Spike -v -i -l 128"}
-          - {args: "-t GCC -s Spike -v -i -l 512"}
-          - {args: "-t LLVM -s Spike -v -i -l 64"}
-          - {args: "-t LLVM -s Spike -v -i -l 128"}
-          - {args: "-t LLVM -s Spike -v -i -l 512"}
-            
-            
+          - {args: "-t GCC -s Spike -v -l 64 -e 64"}
+          - {args: "-t GCC -s Spike -v -l 128 -e 64"}
+          - {args: "-t GCC -s Spike -v -l 512 -e 64"}
+          # - {args: "-t LLVM -s Spike -v -l 64 -e 64"}  # LLVM 17 does not fully support VLEN=64
+          - {args: "-t LLVM -s Spike -v -l 128 -e 64"}
+          - {args: "-t LLVM -s Spike -v -l 512 -e 64"}
+          - {args: "-t GCC -s Spike -v -i -l 64 -e 64"}
+          - {args: "-t GCC -s Spike -v -i -l 128 -e 64"}
+          - {args: "-t GCC -s Spike -v -i -l 512 -e 64"}
+          # - {args: "-t LLVM -s Spike -v -i -l 64 -e 64"}  # LLVM 17 does not fully support VLEN=64
+          - {args: "-t LLVM -s Spike -v -i -l 128 -e 64"}
+          - {args: "-t LLVM -s Spike -v -i -l 512 -e 64"}
+
+
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v2  
-    
+    - uses: actions/checkout@v2
+
     - name: Get date of last cache build
       id: date
       run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-    
+
     - name: Download Spike Cache
       id: cache-Spike
       uses: actions/cache@v3
@@ -78,7 +78,7 @@ jobs:
           key: spike-binaries-${{ steps.date.outputs.date }}
           restore-keys: |
             spike-binaries-
-          
+
     - name: Download GCC Cache
       id: cache-GCC
       uses: actions/cache@v3
@@ -89,12 +89,12 @@ jobs:
           key: gcc-binaries-${{ steps.date.outputs.date }}
           restore-keys: |
             gcc-binaries-
-          
+
     - name: Install Spike Dependencies
       run: |
         sudo apt-get install libboost-all-dev
         sudo apt-get install device-tree-compiler
-        
+
     - name: Run Unit Tests on Spike
       if: success() || failure()
       working-directory: ./Scripts
@@ -111,27 +111,27 @@ jobs:
 #          - {args: "-t GCC -s OVPsim"}
 #          - {args: "-t LLVM -s OVPsim"}
 #          - {args: "-t GCC -s OVPsim -p"}
-#          - {args: "-t GCC -s OVPsim -v -l 64"}
-#          - {args: "-t GCC -s OVPsim -v -l 128"}
-#          - {args: "-t GCC -s OVPsim -v -l 512"}
-#          - {args: "-t LLVM -s OVPsim -v -l 64"}
-#          - {args: "-t LLVM -s OVPsim -v -l 128"}
-#          - {args: "-t LLVM -s OVPsim -v -l 512"}
-#          - {args: "-t GCC -s OVPsim -v -i -l 64"}
-#          - {args: "-t GCC -s OVPsim -v -i -l 128"}
-#          - {args: "-t GCC -s OVPsim -v -i -l 512"}
-#          - {args: "-t LLVM -s OVPsim -v -i -l 64"}
-#          - {args: "-t LLVM -s OVPsim -v -i -l 128"}
-#          - {args: "-t LLVM -s OVPsim -v -i -l 512"}
+#          - {args: "-t GCC -s OVPsim -v -l 64 -e 64"}
+#          - {args: "-t GCC -s OVPsim -v -l 128 -e 64"}
+#          - {args: "-t GCC -s OVPsim -v -l 512 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -l 64 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -l 128 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -l 512 -e 64"}
+#          - {args: "-t GCC -s OVPsim -v -i -l 64 -e 64"}
+#          - {args: "-t GCC -s OVPsim -v -i -l 128 -e 64"}
+#          - {args: "-t GCC -s OVPsim -v -i -l 512 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -i -l 64 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -i -l 128 -e 64"}
+#          - {args: "-t LLVM -s OVPsim -v -i -l 512 -e 64"}
 #
 #    runs-on: ubuntu-20.04
 #    steps:
-#    - uses: actions/checkout@v2  
-#    
+#    - uses: actions/checkout@v2
+#
 #    - name: Get date of last cache build
 #      id: date
 #      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-#          
+#
 #    - name: Download GCC Cache
 #      id: cache-GCC
 #      uses: actions/cache@v3
@@ -142,7 +142,7 @@ jobs:
 #          key: gcc-binaries-${{ steps.date.outputs.date }}
 #          restore-keys: |
 #            gcc-binaries-
-#        
+#
 #    - name: Run Unit Tests on OVPsim
 #      working-directory: ./Scripts
 #      run: |

@@ -191,7 +191,7 @@ muriscv_nn_status muriscv_nn_convolve_1_x_n_s8(const muriscv_nn_context *ctx,
     /* Return to application */
     return status;
 }
-
+/*
 int32_t muriscv_nn_convolve_1_x_n_s8_get_buffer_size(const muriscv_nn_dims *input_dims,
                                                      const muriscv_nn_dims *filter_dims)
 {
@@ -202,7 +202,7 @@ int32_t muriscv_nn_convolve_1_x_n_s8_get_buffer_size(const muriscv_nn_dims *inpu
     (void)filter_dims;
     return 0;
 #endif
-}
+}*/
 
 /**
  * @} end of NNConv group

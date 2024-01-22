@@ -15,8 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+# Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
 #
 
 target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_svdf_s8.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_svdf_state_s16_s8.c)
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_svdf_state_s16_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_svdf_get_buffer_sizes_s8.c)

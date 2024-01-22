@@ -21,19 +21,20 @@
 # $1 - path to binary file
 # $2 - arch string, i.e. rv32gc or rv32gcv or rv32gcp
 # $3 - VLEN, from 64 to 1024 (only applicable if arch string is rv32gcv)
+# $3 - ELEN, either 32 or 64 (only applicable if arch string is rv32gcv)
 # Example call to invoke Spike:
-# ./run.sh my_binary.elf rv32gcv 256
+# ./run.sh my_binary.elf rv32gcv 256 64
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [[ $2 == "rv32gcv" || $2 == "rv32gcp" || $2 == "rv32gc" ]]; then
-  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm --varch=vlen:$3,elen:32 $SCRIPT_DIR/bin/pk_ilp32d $1
+  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm --varch=vlen:$3,elen:$4 $SCRIPT_DIR/bin/pk_ilp32d $1
 elif [[ $2 == "rv32imv" || $2 == "rv32im" ]]; then
-  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm --varch=vlen:$3,elen:32 $SCRIPT_DIR/bin/pk_ilp32 $1
+  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm --varch=vlen:$3,elen:$4 $SCRIPT_DIR/bin/pk_ilp32 $1
 elif [[ "rv32imzve32x" ]]; then
-  $SCRIPT_DIR/bin/spike --isa="rv32imv_zicntr_zihpm" --varch=vlen:$3,elen:32 $SCRIPT_DIR/bin/pk_ilp32 $1
+  $SCRIPT_DIR/bin/spike --isa="rv32imv_zicntr_zihpm" --varch=vlen:$3,elen:$4 $SCRIPT_DIR/bin/pk_ilp32 $1
 else
   echo "Unsupported arch string $2"
 fi

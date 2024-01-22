@@ -75,7 +75,7 @@ void maxpooling_muriscv_nn_maxpool_s8(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate(output, maxpooling_output_ref, MAXPOOLING_DST_SIZE));
@@ -116,7 +116,7 @@ void maxpooling_1_muriscv_nn_maxpool_s8(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate(output, maxpooling_1_output_ref, MAXPOOLING_1_DST_SIZE));
@@ -157,7 +157,7 @@ void maxpooling_2_muriscv_nn_maxpool_s8(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate(output, maxpooling_2_output_ref, MAXPOOLING_2_DST_SIZE));
@@ -198,7 +198,7 @@ void maxpooling_3_muriscv_nn_maxpool_s8(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate(output, maxpooling_3_output_ref, MAXPOOLING_3_DST_SIZE));
@@ -239,7 +239,7 @@ void maxpooling_4_muriscv_nn_maxpool_s8(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate(output, maxpooling_4_output_ref, MAXPOOLING_4_DST_SIZE));
@@ -280,7 +280,7 @@ void maxpooling_5_muriscv_nn_maxpool_s8(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate(output, maxpooling_5_output_ref, MAXPOOLING_5_DST_SIZE));
@@ -321,7 +321,7 @@ void maxpooling_6_muriscv_nn_maxpool_s8(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate(output, maxpooling_6_output_ref, MAXPOOLING_6_DST_SIZE));
@@ -362,7 +362,7 @@ void maxpooling_7_muriscv_nn_maxpool_s8(void)
     for (int i = 0; i < REPEAT_NUM; i++)
     {
         muriscv_nn_status result =
-            muriscv_nn_maxpool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+            muriscv_nn_max_pool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
         TEST_ASSERT_EQUAL(expected, result);
         TEST_ASSERT_TRUE(validate(output, maxpooling_7_output_ref, MAXPOOLING_7_DST_SIZE));

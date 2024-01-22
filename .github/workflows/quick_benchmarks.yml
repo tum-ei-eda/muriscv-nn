@@ -9,22 +9,22 @@ jobs:
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-20.04
-    
+
     steps:
-    
+
     - uses: actions/checkout@v3
-    
+
     - name: Install TFLM dependencies
       run: |
         sudo apt-get install python3-setuptools
         pip3 install wheel
         pip3 install Pillow
         pip3 install Wave
-        
+
     - name: Get date of last cache build
       id: date
       run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-        
+
     - name: Download Cached GCC Binaries
       id: cache-gcc
       uses: actions/cache@v3
@@ -35,36 +35,36 @@ jobs:
           key: gcc-binaries-${{ steps.date.outputs.date }}
           restore-keys: |
             gcc-binaries-
-            
+
     - name: Install Spike Dependencies
       run: |
         sudo apt-get install libboost-all-dev
         sudo apt-get install device-tree-compiler
-      
+
     - name: Setup MLonMCU
       working-directory: ./Integration/MLonMCU
       run: |
         export PREBUILD_TVM=true
         python3 -m pip install --user virtualenv
         ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --local-spike
-        
+
     - name: Run Benchmarks
       working-directory: ./Integration/MLonMCU
       run: |
         source common.sh
         source $VENV_DIR/bin/activate
         export MLONMCU_HOME=$WORKSPACE_DIR
-        python gen_muriscnn_benchmarks.py -b tflmi -t spike --vlen 64 --post -p --parallel -f muriscvnn aww
-        
+        python gen_muriscnn_benchmarks.py -b tflmi -t spike --vlen 128 --post -p --parallel -f muriscvnn aww
+
     - name: Get current date
       id: date-today
       run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-        
-        
+
+
     - name: Archive Benchmark Results
       uses: actions/upload-artifact@v3
       with:
           name: quick-benchmarks-${{ steps.date-today.outputs.date }}
           path: ./Integration/MLonMCU/out.csv
 
-        
+

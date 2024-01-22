@@ -18,18 +18,22 @@ export VENV_DIR=$SCRIPT_DIR/venv
 ########################################
 
 # MLonMCU
-export MLONMCU_REF=37d887dfbc2c33f5a8ee8748ec8b837c7507ee1c
-export MLIF_REF=2ab749d3747c04f3b01973ef955bda5be0964f0f
+# export MLONMCU_REF=3ec39b1881535d7a0727b5afd6b78d816b556b73
+export MLONMCU_REF=main
+# export MLIF_REF=c7b0e7364c232666ebd5a17476181e3ff9a71d70
+export MLIF_REF=main
 
 # TFLM
-export TFLM_REF=f050eec7e32a0895f7658db21a4bdbd0975087a5
+# export TFLM_REF=47f77ab6876f66a2d5e4b7f0266e374b4260181e
+export TFLM_REF=main
 export ENABLE_TFLM=0
 
 # TVM
-export TVM_REF=76b9ce9b1f7d2b7e64b4b9c9d456a02b8a010473
+# export TVM_REF=3df798d422c559132cf551b358d6259d96ee41b4
+export TVM_REF=main
 export ENABLE_TVM=0
-# TLCPACK_VERSION="0.10.0"
 export PREBUILT_TVM=1
+export PREBUILT_TVM_VERSION="0.12.0"
 
 # Spike
 export SPIKE_REF=0bc176b3fca43560b9e8586cdbc41cfde073e17a
@@ -48,9 +52,12 @@ export ENABLE_ETISS=0
 
 # RISC-V GCC
 export LOCAL_GCC=1
+export LOCAL_LLVM=1
 export ENABLE_DEFAULT=1
 export ENABLE_PEXT=1
 export ENABLE_VEXT=1
+export ENABLE_GCC=1
+export ENABLE_LLVM=1
 
 # LLVM
 # Not supported

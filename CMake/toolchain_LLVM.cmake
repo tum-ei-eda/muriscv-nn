@@ -22,20 +22,11 @@
 set(RISCV_GCC_PREFIX "/opt/riscv" CACHE PATH "Install location of GCC RISC-V toolchain.")
 set(RISCV_GCC_BASENAME "riscv32-unknown-elf" CACHE STRING "Base name of the toolchain executables.")
 
-# set(CMAKE_C_COMPILER clang-14)
-# set(CMAKE_CXX_COMPILER clang-14)
-# set(CMAKE_ASM_COMPILER clang-14)
-# set(CMAKE_C_COMPILER clang-16)
-# set(CMAKE_CXX_COMPILER clang-16)
-# set(CMAKE_ASM_COMPILER clang-16)
-set(CMAKE_C_COMPILER clang-15)
-set(CMAKE_CXX_COMPILER clang-15)
-set(CMAKE_ASM_COMPILER clang-15)
-# set(CMAKE_C_LINKER lld-14) # TODO(fabianpedd): doesnt work, need to use -fuse-ld=lld-14 instead
-
-set(CMAKE_OBJCOPY llvm-objcopy-15)  
-set(CMAKE_OBJDUMP llvm-objdump-15)
-
+set(CMAKE_C_COMPILER clang-17)
+set(CMAKE_CXX_COMPILER clang-17)
+set(CMAKE_ASM_COMPILER clang-17)
+set(CMAKE_OBJCOPY llvm-objcopy-17)
+set(CMAKE_OBJDUMP llvm-objdump-17)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --target=riscv32 -march=${RISCV_ARCH} -mabi=${RISCV_ABI} -mcmodel=${RISCV_CMODEL}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --gcc-toolchain=${RISCV_GCC_PREFIX} --sysroot=${RISCV_GCC_PREFIX}/${RISCV_GCC_BASENAME}")

@@ -21,9 +21,10 @@
 # $1 - path to binary file
 # $2 - arch string, i.e. rv32gc or rv32gcv or rv32gcp
 # $3 - VLEN, from 64 to 1024 (only applicable if arch string is rv32gcv)
-# $4 - enable floating point and vector unit by default, either 0 or 1 (only applicable if arch string is rv32gcv)
+# $3 - ELEN, either 32 or 64
+# $5 - enable floating point and vector unit by default, either 0 or 1 (only applicable if arch string is rv32gcv)
 # Example call to invoke OVPsim:
-# ./run.sh my_binary.elf rv32gcv 256 0
+# ./run.sh my_binary.elf rv32gcv 256 64 0
 
 set -e
 
@@ -37,9 +38,9 @@ if [[ $2 == "rv32gcv" ]]; then
     --override riscvOVPsim/cpu/unaligned=T \
     --override riscvOVPsim/cpu/vector_version=1.0 \
     --override riscvOVPsim/cpu/VLEN=$3 \
-    --override riscvOVPsim/cpu/ELEN=32 \
-    --override riscvOVPsim/cpu/mstatus_FS=$4 \
-    --override riscvOVPsim/cpu/mstatus_VS=$4
+    --override riscvOVPsim/cpu/ELEN=$4 \
+    --override riscvOVPsim/cpu/mstatus_FS=$5 \
+    --override riscvOVPsim/cpu/mstatus_VS=$5
   # --trace
   # --port 3333
   # --gdbconsole
@@ -52,7 +53,7 @@ elif [[ $2 == "rv32gcp" ]]; then
     --override riscvOVPsim/cpu/dsp_version=0.9.6 \
     --override riscvOVPsim/cpu/bitmanip_version=0.94 \
     --override riscvOVPsim/cpu/unaligned=T \
-    --override riscvOVPsim/cpu/mstatus_FS=$4
+    --override riscvOVPsim/cpu/mstatus_FS=$5
 
 elif [[ $2 == "rv32gc" ]]; then
   $SCRIPT_DIR/bin/riscvOVPsimPlus \
@@ -60,7 +61,7 @@ elif [[ $2 == "rv32gc" ]]; then
     --variant RVB32I \
     --override riscvOVPsim/cpu/add_Extensions=MAFDC \
     --override riscvOVPsim/cpu/unaligned=T \
-    --override riscvOVPsim/cpu/mstatus_FS=$4
+    --override riscvOVPsim/cpu/mstatus_FS=$5
 
 elif [[ $2 == "rv32imv" || $2 == "rv32imzve32x" ]]; then
   $SCRIPT_DIR/bin/riscvOVPsimPlus \
@@ -70,8 +71,8 @@ elif [[ $2 == "rv32imv" || $2 == "rv32imzve32x" ]]; then
     --override riscvOVPsim/cpu/unaligned=T \
     --override riscvOVPsim/cpu/vector_version=1.0 \
     --override riscvOVPsim/cpu/VLEN=$3 \
-    --override riscvOVPsim/cpu/ELEN=32 \
-    --override riscvOVPsim/cpu/mstatus_VS=$4
+    --override riscvOVPsim/cpu/ELEN=$4 \
+    --override riscvOVPsim/cpu/mstatus_VS=$5
 
 elif [[ $2 == "rv32im" ]]; then
   $SCRIPT_DIR/bin/riscvOVPsimPlus \
