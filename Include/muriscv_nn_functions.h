@@ -117,6 +117,7 @@
 #include "muriscv_nn_types.h"
 
 #define USE_INTRINSIC
+
 //MURISCV_NN NEW CODE
 // Include the Vicuna C runtime when running on Vicuna
 #ifdef SIM_VICUNA
