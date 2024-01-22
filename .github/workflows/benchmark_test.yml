@@ -11,8 +11,11 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        benchmark: [aww, vww, resnet, toycar]
-        backend: [tvmaot, tflmi]
+        # benchmark: [aww, vww, resnet, toycar]
+        # backend: [tvmaot, tflmi]
+        # toolchain: [gcc, llvm]
+        benchmark: [toycar]
+        backend: [tflmi]
         toolchain: [gcc, llvm]
 
     steps:
@@ -27,18 +30,12 @@ jobs:
         pip3 install Wave
 
 
-    - name: Get current date
-      id: today
-      run: echo "::set-output name=today::$(date +'%Y-%m-%d')"
-
-    - name: Get yesterdays date
-      id: yesterday
-      run: echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
-
-
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
+    - name: Get dates
+      id: dates
+      run: |
+        echo "::set-output name=today::$(date +'%Y-%m-%d')"
+        echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
+        echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -47,11 +44,25 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
-          key: gcc-binaries-${{ steps.today.outputs.today }}
+          key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
-            gcc-binaries-${{ steps.yesterday.outputs.yesterday }}
-            gcc-binaries-${{ steps.date.outputs.date }}
+            gcc-binaries-${{ steps.dates.outputs.yesterday }}
+            gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
+
+    - name: TEST
+      run: |
+        ls Toolchain/
+        ls Toolchain/rv32gc
+        ls Toolchain/rv32gcp
+        ls Toolchain/rv32gcv
+        ls Toolchain/rv32imv
+        ls Toolchain/llvm
+        ./Toolchain/rv32gc/bin/riscv32-unknown-elf-gcc --version
+        ./Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version
+        ./Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version
+        ./Toolchain/rv32imv/bin/riscv32-unknown-elf-gcc --version
+        ./Toolchain/llvm/bin/clang --version
 
     - name: Install Spike Dependencies
       run: |
@@ -75,15 +86,10 @@ jobs:
         export MLONMCU_HOME=$WORKSPACE_DIR
         python gen_muriscnn_benchmarks.py -b ${{matrix.backend}} -t spike --vlen 64 --vlen 1024 --post -p --parallel 4 -f muriscvnn -f vext -f pext --autotuned --toolchain ${{matrix.toolchain}} --scalar-default-only --baseline $([[ "${{matrix.backend}}" == *"tvm"* ]] &&  echo 4 || echo 1) ${{matrix.benchmark}}
 
-    - name: Get current date
-      id: date-today
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
-
-
     - name: Archive Benchmark Results
       uses: actions/upload-artifact@v3
       with:
-          name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{matrix.toolchain}}-${{ steps.date-today.outputs.date }}
+          name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{matrix.toolchain}}-${{ steps.dates.outputs.today }}
           path: ./Integration/MLonMCU/out.csv
 
 
