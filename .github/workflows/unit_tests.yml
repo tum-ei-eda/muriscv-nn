@@ -17,17 +17,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Download GCC Cache
-      id: cache-GCC
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-gcc-binaries
-      with:
-          path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            gcc-binaries-
-
     - name: Run Scalar Tests on x86
       working-directory: ./Scripts
       run: |
@@ -59,20 +48,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-
-    - name: Download Spike Cache
-      id: cache-Spike
-      uses: actions/cache@v3
-      env:
-          cache-name: cache-spike-binaries
-      with:
-          path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
-          restore-keys: |
-            spike-binaries-
+    - name: Get dates
+      id: dates
+      run: |
+        echo "::set-output name=today::$(date +'%Y-%m-%d')"
+        echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
+        echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
     - name: Download GCC Cache
       id: cache-GCC
@@ -81,9 +62,24 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
+          key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
+            gcc-binaries-${{ steps.dates.outputs.yesterday }}
+            gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
+
+    - name: Download Spike Cache
+      id: cache-Spike
+      uses: actions/cache@v3
+      env:
+          cache-name: cache-spike-binaries
+      with:
+          path: ./Sim/Spike/bin
+          key: spike-binaries-${{ steps.dates.outputs.today }}
+          restore-keys: |
+            spike-binaries-${{ steps.dates.outputs.yesterday }}
+            spike-binaries-${{ steps.dates.outputs.date }}
+            spike-binaries-
 
     - name: Install Spike Dependencies
       run: |

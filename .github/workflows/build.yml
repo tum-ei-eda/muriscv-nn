@@ -1,6 +1,7 @@
 name: Build
 
 on:
+
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
     - cron: '0 4 * * *'
@@ -17,21 +18,25 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
-   
+
     - name: Build Scalar x86
       working-directory: ./Scripts
       run: |
         ./build.sh -t x86 -b Release
-  
+
   build_llvm:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-    
+
+    - name: Get dates
+      id: dates
+      run: |
+        echo "::set-output name=today::$(date +'%Y-%m-%d')"
+        echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
+        echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
+
+
     - name: Download Cached GCC Binaries
       id: cache-gcc
       uses: actions/cache@v3
@@ -39,36 +44,41 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
+          key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
-            gcc-binaries-   
-    
+            gcc-binaries-${{ steps.dates.outputs.yesterday }}
+            gcc-binaries-${{ steps.dates.outputs.date }}
+            gcc-binaries-
+
     - name: Build Scalar LLVM
       working-directory: ./Scripts
       run: |
         ./build.sh -t LLVM -b Release
-    
+
     - name: Build Vector LLVM
       if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./build.sh -t LLVM -v -b Release
-        
+
     - name: Build Vector LLVM with IMV
       if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./build.sh -t LLVM -v -i -b Release
-        
+
   build_gcc:
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Get date of last cache build
-      id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
-    
+
+    - name: Get dates
+      id: dates
+      run: |
+        echo "::set-output name=today::$(date +'%Y-%m-%d')"
+        echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
+        echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
+
     - name: Download Cached GCC Binaries
       id: cache-gcc
       uses: actions/cache@v3
@@ -76,27 +86,29 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
-          key: gcc-binaries-${{ steps.date.outputs.date }}
+          key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
-            gcc-binaries-        
+            gcc-binaries-${{ steps.dates.outputs.yesterday }}
+            gcc-binaries-${{ steps.dates.outputs.date }}
+            gcc-binaries-
 
     - name: Build Scalar GCC
       working-directory: ./Scripts
       run: |
         ./build.sh -t GCC -b Release
-        
+
     - name: Build Vector GCC
       if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./build.sh -t GCC -v -b Release
-        
+
     - name: Build Vector GCC with IMV
       if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./build.sh -t GCC -v -i -b Release
-        
+
     - name: Build Packed GCC
       if: success() || failure()
       working-directory: ./Scripts
