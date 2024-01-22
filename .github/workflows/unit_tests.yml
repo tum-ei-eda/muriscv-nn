@@ -50,7 +50,6 @@ jobs:
           - {args: "-t LLVM -s Spike -v -i -l 512 -e 64"}
 
 
-    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
 
