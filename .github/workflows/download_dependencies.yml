@@ -32,8 +32,8 @@ jobs:
     - name: Download GCC Binaries
       working-directory: ./Toolchain
       run: |
-           ./download_rv32gc.sh
-           ./download_rv32gcp.sh
-           ./download_rv32gcv.sh
-           ./download_rv32imv.sh
+           # ./download_rv32gc.sh
+           # ./download_rv32gcp.sh
+           # ./download_rv32gcv.sh
+           # ./download_rv32imv.sh
            ./download_llvm.sh

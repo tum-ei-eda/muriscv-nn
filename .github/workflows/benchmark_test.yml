@@ -38,7 +38,7 @@ jobs:
       with:
           path: ./Toolchain
           # key: gcc-binaries-${{ steps.date.outputs.date }}
-          key: gcc-binaries-2023-12-22
+          key: gcc-binaries-2023-12-21
           restore-keys: |
             gcc-binaries-
 
