@@ -13,8 +13,10 @@ cmsis_filename_prefixes = ["arm_nn_","arm_nn", "arm_"]
 
 cmsis_varnames = ["arm_cmsis_nn_", "arm_nn_", "arm_nn" ,"arm_", "cmsis_nn_"]
 cmsis_errornames = ["ARM_CMSIS_NN_"]
-cmsis_commentnames = ["cmsis-nn", "CMSIS NN", "_ARM_NN", "ARM_NN_"]
-muriscv_commentnames = ["muriscv-nn", "MURISCV NN", "_MURISCV_NN_", "MURISCV_NN_"]
+
+#Translations between cmsis comments/headers to muriscv
+cmsis_commentnames = ["cmsis-nn", "CMSIS NN", "_ARM_NN", "ARM_NN_", "ARM_NN"]
+muriscv_commentnames = ["muriscv-nn", "MURISCV NN", "_MURISCV_NN_", "MURISCV_NN_", "MURISCV_NN"]
 
 cmsis_include_files = ["arm_nnfunctions.h", "arm_nntypes.h", "arm_nnsupportfunctions.h", "arm_nn_math_types.h"]
 muriscv_include_files = ["muriscv_nn_functions.h", "muriscv_nn_types.h", "muriscv_nn_support_functions.h", "muriscv_nn_math_types.h"]
@@ -243,6 +245,8 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
         newline = newline.replace("SUPPORTFUNCTIONS", "SUPPORT_FUNCTIONS")
         newline = newline.replace("ARM_MATH_MVEI", "USE_VEXT")
         newline = newline.replace("ARM_MATH_DSP", "USE_PEXT")
+        newline = newline.replace("ARM_MATH_DSP", "USE_PEXT")
+        newline = newline.replace("CMSIS_NN_USE_SINGLE_ROUNDING", "MURISCV_NN_USE_SINGLE_ROUNDING")
         for var_name in cmsis_varnames:
             newline = newline.replace(var_name, "muriscv_nn_")
         for error_name in cmsis_errornames:
