@@ -66,7 +66,8 @@ if [ $# -eq 0 ]
     TARGET_ARCH=$5           # rv32gcv for vector support
     GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/$5
     VLEN=$6               # Vector length parameter passed to simulator
-    SIMULATOR=$7            # Spike/OVPsim
+    ELEN=$7
+    SIMULATOR=$8            # Spike/OVPsim
 
 fi
 
@@ -74,6 +75,7 @@ fi
 #If VEXT is disabled, set VLEN to 1024 to prevent simulator complaints
 if [ ${USE_VEXT} == OFF ]; then
     VLEN='1024'
+    ELEN='64'
 fi
 
 cd ${TFLM_PATH}

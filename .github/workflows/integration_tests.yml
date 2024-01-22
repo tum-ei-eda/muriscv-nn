@@ -92,15 +92,15 @@ jobs:
         fail-fast: false
         matrix:
           config:
-            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gc", vlen: 0, sim: "Spike"}
-            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gc", vlen: 0, sim: "Spike"}
-            - {vext: "OFF", pext: "ON", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcp", vlen: 0, sim: "Spike"}
-            # - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 64, sim: "Spike"}
-            # - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 64, sim: "Spike"}
-            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 128, sim: "Spike"}
-            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 128, sim: "Spike"}
-            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 512, sim: "Spike"}
-            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 512, sim: "Spike"}
+            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
+            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
+            - {vext: "OFF", pext: "ON", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcp", vlen: 0, elen: 64, sim: "Spike"}
+            # - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 64, elen: 64, sim: "Spike"}
+            # - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 64, elen: 64, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
 
     name: TFLM Built-In Tests - Spike
     runs-on: ubuntu-22.04
@@ -171,7 +171,7 @@ jobs:
 
     - name: TFLM Integration Test for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.sim }}
+      run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.elen }} ${{ matrix.config.sim }}
 
   TVM_Integration_Tests_Spike:
     strategy:
