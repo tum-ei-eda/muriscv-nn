@@ -27,8 +27,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define _ARM_NNFUNCTIONS_H
- _MURISCV_NN_FUNCTIONS_H
+#define ARM_NNFUNCTIONS_H
+ MURISCV_NNFUNCTIONS_H
 
 #define USE_INTRINSIC
  USE_INTRINSIC

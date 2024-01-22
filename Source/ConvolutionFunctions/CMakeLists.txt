@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
+# Modifications copyright (C) 2024 Chair of Electronic Design Automation, TUM
 #
 
 target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_1_x_n_s8.c
@@ -51,4 +51,5 @@ target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_s4_opt.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_kernel_s8_s16.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_get_buffer_sizes_s8.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_wrapper_s4.c)
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_wrapper_s4.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_kernel_row_offset_s8_s16.c)
