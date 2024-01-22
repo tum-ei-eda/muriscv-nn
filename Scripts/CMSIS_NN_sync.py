@@ -217,6 +217,26 @@ def get_function_blocks(file):
             functions.append([name[1], func_block_ptr, func_block, custom])
             custom = False
 
+        #Function with no comment header.  Terminates with } at index 0  in line
+        elif "__STATIC_FORCEINLINE" in file[ptr_file]:
+            func_block = []
+            func_block_ptr = ptr_file
+            while not((file[ptr_file][0] == "}")):
+                func_block.append(file[ptr_file])
+                ptr_file+=1
+
+            name = func_block[0].replace('(', ' ')
+            name = name.split(' ')[2]
+            if(custom):
+                func_block.insert(0,custom_code_line)
+                func_block_ptr-=1
+
+            functions.append([name, func_block_ptr, func_block, custom])
+            custom = False
+
+
+            
+
 
             
         else:
