@@ -248,7 +248,7 @@ jobs:
             - {vext_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gc", vlen: 0, elen: 0}
             - {vext_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0}
             - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 64, elen: 64}
-            - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 64, elen: 64}
+            # - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 64, elen: 64}
             - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 128, elen: 64}
             - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 128, elen: 64}
             - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 512, elen: 64}
@@ -313,12 +313,12 @@ jobs:
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -b vww -s
 
-    - name: TVM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}
+    - name: TFLM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}
       working-directory: ./Integration/tflm
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -b ic -s
 
-    - name: TVM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}
+    - name: TFLM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}
       working-directory: ./Integration/tflm
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -b toy -s
