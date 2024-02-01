@@ -14,15 +14,6 @@ jobs:
     - uses: actions/checkout@v3
       with:
         persist-credentials: false
-            
-    - name: Switch to the AutoSync branch.  If it doesnt exist, create it
-      env:
-        github_key: ${{ secrets.CMSIS_SYNC_KEY }}
-      run: | 
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git remote set-url origin https://x-access-token:${{ secrets.github_key }}@github.com/$GITHUB_REPOSITORY
-        git checkout sync || git checkout -b sync
 
     - name: Download dependencies
       run: |
@@ -33,21 +24,13 @@ jobs:
       working-directory: ./Scripts
       run: python3 CMSIS_NN_sync.py
 
-    - name: Add and count changed files
-      working-directory: ./
-      run: |
-        git add --all
-        echo "NUM_CHANGED=$(echo git diff --cached --numstat | wc -l)" >> $GITHUB_ENV
-
-    - name: Create Commit
-      working-directory: ./
-      if: ${{ env.NUM_CHANGED }} != '0'
-      run: |
-        git commit -m "Automated Sync from CMSIS-NN"
-
-    - name: Push changes
-      if: ${{ env.NUM_CHANGED }} != '0'
-      uses: ad-m/github-push-action@master
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
       with:
-        github_token: ${{ secrets.CMSIS_SYNC_KEY }}
+        commit-message: |
+              Automated Sync with CMSIS-NN
+        title: Automated Sync with CMSIS-NN
         branch: sync
+        token: ${{ secrets.CMSIS_SYNC_KEY }}
+
+      

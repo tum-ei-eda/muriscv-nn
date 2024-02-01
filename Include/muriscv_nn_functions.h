@@ -1,6 +1,6 @@
-// Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
+// Modifications copyright (C) 2024 Chair of Electronic Design Automation, TUM
 /*
- * SPDX-FileCopyrightText: Copyright 2010-2023 Arm Limited and/or its affiliates <open-source-office@arm.com>
+ * SPDX-FileCopyrightText: Copyright 2010-2024 Arm Limited and/or its affiliates <open-source-office@arm.com>
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,87 +22,11 @@
  * Title:        muriscv_nn_functions.h
  * Description:  Public header file for MURISCV NN Library
  *
- * $Date:        10 November 2023
- * $Revision:    V.12.4.0
-
+ * $Date:        11 January 2024
+ * $Revision:    V.12.6.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
-
-/**
-   \mainpage MURISCV NN Software Library
-   *
-   * \tableofcontents
-   * \section Introduction
-   *
-   *
-   * This user manual describes the MURISCV NN software library,
-   * a collection of efficient neural network kernels developed to maximize the
-   * performance and minimize the memory footprint of neural networks on Arm Cortex-M processors.
-   *
-   * The library is divided into a number of functions each covering a specific category:
-   * - \ref NNConv
-   * - \ref Acti
-   * - \ref FC
-   * - \ref SVDF
-   * - \ref Pooling
-   * - \ref Softmax
-   * - \ref groupElementwise
-   * - \ref LSTM
-   *
-   * \section Processors Supported Processors
-   *
-   * CMSIS-NN targets Cortex-M processors with typically three different implementations for each function. Each
-   * targets a different group of processors.
-   *  - Processors without Single Instruction Multiple Data(SIMD) capability (e.g, Cortex-M0)
-   *  - Processors with DSP extension (e.g Cortex-M4)
-   *  - Processors with Arm M-Profile Vector Extension(MVE) instructions (e.g Cortex-M55)
-   * The right implementation is picked through feature flags and the user does not have to explicit set it.
-   *
-   * \section Framework Quantization Specification
-   * The library follows the [int8](https://www.tensorflow.org/lite/performance/quantization_spec) and int16
-   *  quantization specification of TensorFlow Lite for Microcontrollers.
-   * \section Overview Block Diagram
-   *
-   * \image html CMSIS-NN-OVERVIEW.PNG
-   *
-   * \section Examples
-   *
-   *
-   * An example image recognition application using TensorFlow Flow Lite for Microcontrollers as an inference engine
-   * and CMSIS-NN as the optimized library can be found in the Examples directory.
-   *
-   * \section Macros Pre-processor Macros
-   *
-   * \subsection Feature Feature flag based
-   * The macros below are defined in a build system based on feature flags for a chosen processor or architecture
-   * input to a compiler.
-   * These tie in to the classification in \ref Macros.
-   *
-   * For a CMSIS-NN file compiled as *armclang -mcpu=cortex-m4 --target=arm-arm-none-eabi -I<CMSIS Core Include>
-   * -Ofast -O file.c* , USE_PEXT is enabled as Cortex-M4 has the DSP extension as a feature.
-   *
-   * - `USE_PEXT`  - Selects code for processors with DSP extension.
-   *
-   * - `USE_VEXT`  - Selects code for processors which supports MVE instructions.
-   *
-   * \subsection MiscFlags User Set
-   * - `ARM_MATH_AUTOVECTORIZE`
-   *  Applicable when USE_VEXT is active to let the compiler auto vectorize functions, if available, that uses
-   inline
-   *  assembly. This has to be explicitly set at compile time.
-   *
-   * \section Inclusive Inclusive Language
-   * This product confirms to Arm’s inclusive language policy and, to the best of our knowledge,
-   * does not contain any non-inclusive language. If you find something that concerns you, email terms@arm.com.
-   *
-   * \section Copyright Copyright Notice
-   *
-   *
-   * SPDX-FileCopyrightText: Copyright 2010-2023 Arm Limited and/or its affiliates <open-source-office@arm.com>
-   *
-   *
-   */
 
 /**
  * @defgroup Public Public
@@ -110,20 +34,20 @@
  * TensorFlow Lite framework.
  */
 
-#ifndef _MURISCV_NN_FUNCTIONS_H
-#define _MURISCV_NN_FUNCTIONS_H
+#ifndef MURISCV_NNFUNCTIONS_H
+#define MURISCV_NNFUNCTIONS_H
 
 #include "muriscv_nn_math_types.h"
 #include "muriscv_nn_types.h"
 
 #define USE_INTRINSIC
+
 //MURISCV_NN NEW CODE
 // Include the Vicuna C runtime when running on Vicuna
 #ifdef SIM_VICUNA
 #include "crt/vicuna_crt.h"
 #endif
 //MURISCV_NN END OF NEW CODE
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -448,8 +372,10 @@ muriscv_nn_status muriscv_nn_convolve_s4(const muriscv_nn_context *ctx,
  *                                It contains the multiplier and shift values to be applied to each output channel
  * @param[in]      input_dims     Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
  * @param[in]      input_data     Input (activation) data pointer. Data type: int8
- * @param[in]      filter_dims    Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK are the
- *                                spatial filter dimensions
+ * @param[in]      filter_dims    Filter tensor dimensions. Format: [C_OUT, HK, WK, CK] where HK, WK and CK are the
+ *                                spatial filter dimensions. CK != C_IN is used for grouped convolution, in which
+ *                                case the required conditions are C_IN = N * CK and C_OUT = N * M for N groups of
+ *                                size M.
  * @param[in]      filter_data    Filter data pointer. Data type: int8
  * @param[in]      bias_dims      Bias tensor dimensions. Format: [C_OUT]
  * @param[in]      bias_data      Optional bias data pointer. Data type: int32
@@ -1916,7 +1842,6 @@ void muriscv_nn_activation_s16(const int16_t *input,
  *                              The caller is expected to clear the buffer, if applicable, for security reasons.
  * @param[in]      pool_params  Pooling parameters
  * @param[in]      input_dims   Input (activation) tensor dimensions. Format: [H, W, C_IN]
- *                              Argument 'N' is not used.
  * @param[in]      input_data   Input (activation) data pointer. Data type: int8
  * @param[in]      filter_dims  Filter tensor dimensions. Format: [H, W]
  *                              Argument N and C are not used.
@@ -1924,8 +1849,10 @@ void muriscv_nn_activation_s16(const int16_t *input,
  *                              Argument N is not used.
  *                              C_OUT equals C_IN.
  * @param[in, out] output_data Output data pointer. Data type: int8
- * @return                     The function returns
- *                             <code>MURISCV_NN_SUCCESS</code> - Successful operation
+ *
+ * @return     The function returns either
+ *                  <code>MURISCV_NN_ARG_ERROR</code> if argument constraints fail. or,
+ *                  <code>MURISCV_NN_SUCCESS</code> on successful completion.
  *
  * @details
  *    - Supported Framework: TensorFlow Lite
@@ -1978,7 +1905,6 @@ int32_t muriscv_nn_avgpool_s8_get_buffer_size_mve(const int dim_dst_width, const
  *                              The caller is expected to clear the buffer, if applicable, for security reasons.
  * @param[in]      pool_params  Pooling parameters
  * @param[in]      input_dims   Input (activation) tensor dimensions. Format: [H, W, C_IN]
- *                              Argument 'N' is not used.
  * @param[in]      input_data   Input (activation) data pointer. Data type: int16
  * @param[in]      filter_dims  Filter tensor dimensions. Format: [H, W]
  *                              Argument N and C are not used.
@@ -1986,6 +1912,7 @@ int32_t muriscv_nn_avgpool_s8_get_buffer_size_mve(const int dim_dst_width, const
  *                              Argument N is not used.
  *                              C_OUT equals C_IN.
  * @param[in, out] output_data  Output data pointer. Data type: int16
+ *
  * @return                        The function returns
  *                                    <code>MURISCV_NN_SUCCESS</code> - Successful operation
  *                                    <code>MURISCV_NN_ARG_ERROR</code> - In case of invalid arguments
@@ -2041,7 +1968,6 @@ int32_t muriscv_nn_avgpool_s16_get_buffer_size_mve(const int dim_dst_width, cons
  *                              The caller is expected to clear the buffer, if applicable, for security reasons.
  * @param[in]      pool_params  Pooling parameters
  * @param[in]      input_dims   Input (activation) tensor dimensions. Format: [H, W, C_IN]
- *                              Argument 'N' is not used.
  * @param[in]      input_data   Input (activation) data pointer. The input tensor must not
  *                              overlap with the output tensor. Data type: int8
  * @param[in]      filter_dims  Filter tensor dimensions. Format: [H, W]
@@ -2050,8 +1976,10 @@ int32_t muriscv_nn_avgpool_s16_get_buffer_size_mve(const int dim_dst_width, cons
  *                              Argument N is not used.
  *                              C_OUT equals C_IN.
  * @param[in, out] output_data    Output data pointer. Data type: int8
- * @return                        The function returns
- *                                    <code>MURISCV_NN_SUCCESS</code> - Successful operation
+ *
+ * @return     The function returns either
+ *                  <code>MURISCV_NN_ARG_ERROR</code> if argument constraints fail. or,
+ *                  <code>MURISCV_NN_SUCCESS</code> on successful completion.
  *
  * @details
  *    - Supported Framework: TensorFlow Lite
@@ -2075,7 +2003,6 @@ muriscv_nn_status muriscv_nn_max_pool_s8(const muriscv_nn_context *ctx,
  *                              The caller is expected to clear the buffer, if applicable, for security reasons.
  * @param[in]      pool_params  Pooling parameters
  * @param[in]      input_dims   Input (activation) tensor dimensions. Format: [H, W, C_IN]
- *                              Argument 'N' is not used.
  * @param[in]      src          Input (activation) data pointer. The input tensor must not
  *                              overlap with the output tensor. Data type: int16
  * @param[in]      filter_dims  Filter tensor dimensions. Format: [H, W]
@@ -2084,8 +2011,10 @@ muriscv_nn_status muriscv_nn_max_pool_s8(const muriscv_nn_context *ctx,
  *                              Argument N is not used.
  *                              C_OUT equals C_IN.
  * @param[in, out] dst          Output data pointer. Data type: int16
- * @return                        The function returns
- *                                    <code>MURISCV_NN_SUCCESS</code> - Successful operation
+ *
+ * @return     The function returns either
+ *                  <code>MURISCV_NN_ARG_ERROR</code> if argument constraints fail. or,
+ *                  <code>MURISCV_NN_SUCCESS</code> on successful completion.
  *
  * @details
  *    - Supported Framework: TensorFlow Lite
@@ -2613,4 +2542,4 @@ int32_t muriscv_nn_svdf_s8_get_buffer_size_mve(const muriscv_nn_dims *filter_dim
 }
 #endif
 
-#endif
+#endif /* MURISCV_NNFUNCTIONS_H */

@@ -16,10 +16,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-#
+
+SKIP_INSTALL=OFF;
+
+while getopts 's' flag; do
+  case "${flag}" in
+    s) SKIP_INSTALL=ON ;;
+ esac
+done
+
+
 #Install Dependencies
-sudo apt-get install libboost-all-dev
-sudo apt-get install device-tree-compiler
+
+if [ "${SKIP_INSTALL}" == OFF ]; then
+    echo "Downloading dependencies"
+    sudo apt-get install libboost-all-dev
+    sudo apt-get install device-tree-compiler
+fi
 
 export PATH_ORIG=$PATH
 

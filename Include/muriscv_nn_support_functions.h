@@ -1,6 +1,6 @@
-// Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
+// Modifications copyright (C) 2024 Chair of Electronic Design Automation, TUM
 /*
- * SPDX-FileCopyrightText: Copyright 2010-2023 Arm Limited and/or its affiliates <open-source-office@arm.com>
+ * SPDX-FileCopyrightText: Copyright 2010-2024 Arm Limited and/or its affiliates <open-source-office@arm.com>
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,18 +22,19 @@
  * Title:        muriscv_nn_support_functions.h
  * Description:  Public header file of support functions for MURISCV NN Library
  *
- * $Date:        13 November 2023
- * $Revision:    V.17.6.0
+ * $Date:        11 January 2024
+ * $Revision:    V.17.7.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
 
-#ifndef _MURISCV_NN_SUPPORT_FUNCTIONS_H_
-#define _MURISCV_NN_SUPPORT_FUNCTIONS_H_
+#ifndef MURISCV_NNSUPPORT_FUNCTIONS_H
+#define MURISCV_NNSUPPORT_FUNCTIONS_H
 
 #include "Internal/muriscv_nn_compiler.h"
 #include "muriscv_nn_math_types.h"
 #include "muriscv_nn_types.h"
+
 //MURISCV_NN NEW CODE  //Include this around any code unique to muRISCV-nn for auto-sync with CMSIS
 #if defined(USE_VEXT)
 #include <riscv_vector.h>
@@ -150,7 +151,6 @@
 #include <stdbool.h>
 #include <string.h>
 //MURISCV_NN END OF NEW CODE
-
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -232,6 +232,20 @@ static inline vint32m8_t vicuna_sext_i32m8(vint8m2_t input, size_t vl)
 #endif
 //MURISCV_NN END OF NEW CODE
 /**
+ * @defgroup groupSupport Private
+ *
+ * Internal Support functions. Not intended to be called direclty by a CMSIS-NN user.
+ *
+ */
+
+/**
+ * @defgroup genPrivTypes Structure Types
+ * @ingroup groupSupport
+ * @brief Data structure types used by private functions.
+ * @{
+ */
+
+/**
  * @brief Union for SIMD access of q31/s16/s8 types
  */
 union muriscv_nn_word
@@ -260,10 +274,7 @@ union muriscv_nn_long_long
 };
 
 /**
- * @defgroup groupSupport Private
- *
- * Internal Support functions. Not intended to be called direclty by a CMSIS-NN user.
- *
+ * @} // end group groupPrivTypes
  */
 
 /**
@@ -555,6 +566,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s4(const int8_t *lhs,
  * @param[in]  dst_offset         Offset to be applied the output result
  * @param[in]  activation_min     Minimum value to clamp down the output. Range : int8
  * @param[in]  activation_max     Maximum value to clamp up the output. Range : int8
+ * @param[in]  row_address_offset Address offset between rows in output. NOTE: Only used for MVEI extension.
  * @param[in]  lhs_cols_offset    Column offset between subsequent lhs_rows
  *
  * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
@@ -573,6 +585,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const int8_t *lhs,
                                             const int32_t dst_offset,
                                             const int32_t activation_min,
                                             const int32_t activation_max,
+                                            const int32_t row_address_offset,
                                             const int32_t lhs_cols_offset);
 
 /**
@@ -745,13 +758,14 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_svdf_s8(const int8_t *lhs,
  * @param[in]      lhs             Input left-hand side matrix
  * @param[in]      rhs             Input right-hand side matrix (transposed)
  * @param[in]      lhs_offset      LHS matrix offset(input offset). Range: -127 to 128
- * @param[in]      num_ch          Number of channels in LHS/RHS
+ * @param[in]      active_ch       Subset of total_ch processed
+ * @param[in]      total_ch        Number of channels in LHS/RHS
  * @param[in]      out_shift       Per channel output shift. Length of vector is equal to number of channels
  * @param[in]      out_mult        Per channel output multiplier. Length of vector is equal to number of channels
  * @param[in]      out_offset      Offset to be added to the output values. Range: -127 to 128
  * @param[in]      activation_min  Minimum value to clamp the output to. Range: int8
  * @param[in]      activation_max  Maximum value to clamp the output to. Range: int8
- * @param[in]      row_x_col       (row_dimension * col_dimension) of LHS/RHS matrix
+ * @param[in]       row_x_col       (row_dimension * col_dimension) of LHS/RHS matrix
  * @param[in]      output_bias     Per channel output bias. Length of vector is equal to number of channels
  * @param[in]      out             Output pointer
  *
@@ -767,18 +781,18 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_svdf_s8(const int8_t *lhs,
  *                  - rhs
  */
 muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_padded_s8(const int8_t *lhs,
-                                               const int8_t *rhs,
-                                               const int32_t input_offset,
-                                               const int32_t active_ch,
-                                               const int32_t total_ch,
-                                               const int32_t *out_shift,
-                                               const int32_t *out_mult,
-                                               const int32_t out_offset,
-                                               const int32_t activation_min,
-                                               const int32_t activation_max,
-                                               const uint16_t row_x_col,
-                                               const int32_t *const output_bias,
-                                               int8_t *out);
+                                                         const int8_t *rhs,
+                                                         const int32_t lhs_offset,
+                                                         const int32_t active_ch,
+                                                         const int32_t total_ch,
+                                                         const int32_t *out_shift,
+                                                         const int32_t *out_mult,
+                                                         const int32_t out_offset,
+                                                         const int32_t activation_min,
+                                                         const int32_t activation_max,
+                                                         const uint16_t row_x_col,
+                                                         const int32_t *const output_bias,
+                                                         int8_t *out);
 
 /**
  * @brief Depthwise convolution of transposed rhs matrix with 4 lhs matrices. To be used in non-padded cases.
@@ -787,7 +801,8 @@ muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_padded_s8(const int8_t *lhs,
  * @param[in]      lhs             Input left-hand side matrix
  * @param[in]      rhs             Input right-hand side matrix (transposed)
  * @param[in]      lhs_offset      LHS matrix offset(input offset). Range: -127 to 128
- * @param[in]      num_ch          Number of channels in LHS/RHS
+ * @param[in]      active_ch       Subset of total_ch processed
+ * @param[in]      total_ch        Number of channels in LHS/RHS
  * @param[in]      out_shift       Per channel output shift. Length of vector is equal to number of channels.
  * @param[in]      out_mult        Per channel output multiplier. Length of vector is equal to number of channels.
  * @param[in]      out_offset      Offset to be added to the output values. Range: -127 to 128
@@ -1427,6 +1442,47 @@ q7_t *muriscv_nn_mat_mult_kernel_s8_s16(const q7_t *input_a,
                                         q7_t *out_0);
 
 /**
+ * @brief Matrix-multiplication function for convolution with per-channel requantization, supporting an address offset
+ * between rows.
+ * @param[in]       input_a            pointer to operand A
+ * @param[in]       input_b            pointer to operand B, always consists of 2 vectors.
+ * @param[in]       output_ch          number of rows of A
+ * @param[in]       out_shift          pointer to per output channel requantization shift parameter.
+ * @param[in]       out_mult           pointer to per output channel requantization multiplier parameter.
+ * @param[in]       out_offset         output tensor offset.
+ * @param[in]       activation_min     minimum value to clamp the output to. Range : int8
+ * @param[in]       activation_max     maximum value to clamp the output to. Range : int8
+ * @param[in]       num_col_a          number of columns of A
+ * @param[in]       aligned_num_col_a  number of columns of A aligned by 4
+ * @param[in]       output_bias        per output channel bias. Range : int32
+ * @param[in]       row_address_offset address offset between rows in the output
+ * @param[in,out]   out_0              pointer to output
+ * @return     The function returns one of the two
+ *              1. The incremented output pointer for a successful operation or
+ *              2. NULL if implementation is not available.
+ *
+ * @details   This function does the matrix multiplication of weight matrix for all output channels
+ *            with 2 columns from im2col and produces two elements/output_channel. The outputs are
+ *            clamped in the range provided by activation min and max.
+ *
+ *            This function is slighly less performant than muriscv_nn_mat_mult_kernel_s8_s16, but allows support for
+ * grouped convolution. Supported framework: TensorFlow Lite micro.
+ */
+int8_t *muriscv_nn_mat_mult_kernel_row_offset_s8_s16(const int8_t *input_a,
+                                                 const int16_t *input_b,
+                                                 const uint16_t output_ch,
+                                                 const int32_t *out_shift,
+                                                 const int32_t *out_mult,
+                                                 const int32_t out_offset,
+                                                 const int16_t activation_min,
+                                                 const int16_t activation_max,
+                                                 const int32_t num_col_a,
+                                                 const int32_t aligned_num_col_a,
+                                                 const int32_t *const output_bias,
+                                                 const int32_t row_address_offset,
+                                                 int8_t *out_0);
+
+/**
  * @brief Common softmax function for s8 input and s8 or s16 output
  * @param[in]  input          Pointer to the input tensor
  * @param[in]  num_rows       Number of rows in the input tensor
@@ -1577,7 +1633,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_divide_by_power_of_two(const int32_t div
  */
 __STATIC_FORCEINLINE int32_t muriscv_nn_requantize(const int32_t val, const int32_t multiplier, const int32_t shift)
 {
-#ifdef CMSIS_NN_USE_SINGLE_ROUNDING
+#ifdef MURISCV_NN_USE_SINGLE_ROUNDING
     const int64_t total_shift = 31 - shift;
     const int64_t new_val = val * (int64_t)multiplier;
 
@@ -1649,98 +1705,110 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
 }
 
 #if defined(USE_VEXT)
-// /**
-//  * @brief           Vector saturating doubling high multiply returning high half.
-//  * @param[in]       m1        Multiplicand
-//  * @param[in]       m2        Multiplier
-//  * @return          Result of multiplication.
-//  *
-//  */
-// __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve(const int32x4_t m1, const int32_t m2)
-// {
-//     return vqrdmulhq_n_s32(m1, m2);
-// }
-//
-// /**
-//  * @brief           Vector rounding divide by power of two.
-//  * @param[in]       dividend - Dividend vector
-//  * @param[in]       exponent - Divisor = power(2, exponent)
-//  *                             Range: [0, 31]
-//  * @return          Rounded result of division. Midpoint is rounded away from zero.
-//  *
-//  */
-// __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve(const int32x4_t dividend, const int32_t exponent)
-// {
-//     const int32x4_t shift = vdupq_n_s32(-exponent);
-//     const int32x4_t fixup = vshrq_n_s32(vandq_s32(dividend, shift), 31);
-//     const int32x4_t fixed_up_dividend = vqaddq_s32(dividend, fixup);
-//     return vrshlq_s32(fixed_up_dividend, shift);
-// }
-//
-// /**
-//  * @brief           Requantize a given vector.
-//  * @param[in]       val         Vector to be requantized
-//  * @param[in]       multiplier  multiplier
-//  * @param[in]       shift       shift
-//  *
-//  * @return          Returns (val * multiplier)/(2 ^ shift)
-//  *
-//  */
-// __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve(const int32x4_t val, const int32_t multiplier, const int32_t shift)
-// {
-//     #ifdef CMSIS_NN_USE_SINGLE_ROUNDING
-//     const int right_shift = MIN(-1, shift);
-//     const int left_shift = shift - right_shift;
-//
-//     const int32x4_t left_shift_dup = vdupq_n_s32(left_shift);
-//     const int32x4_t right_shift_dup = vdupq_n_s32(right_shift);
-//
-//     int32x4_t result = vqdmulhq_n_s32(vshlq_s32(val, left_shift_dup), multiplier);
-//     result = vrshlq_s32(result, right_shift_dup);
-//
-//     return result;
-//     #else
-//     return muriscv_nn_divide_by_power_of_two_mve(
-//         muriscv_nn_doubling_high_mult_mve(vshlq_s32(val, vdupq_n_s32(LEFT_SHIFT(shift))), multiplier), RIGHT_SHIFT(shift));
-//     #endif
-// }
-//
-// __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_32x4(const int32x4_t m1, const int32x4_t m2)
-// {
-//     return vqrdmulhq_s32(m1, m2);
-// }
-//
-// __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_32x4(const int32x4_t dividend, const int32x4_t exponent)
-// {
-//     const int32x4_t shift = -exponent;
-//     const int32x4_t fixup = vshrq_n_s32(vandq_s32(dividend, shift), 31);
-//     const int32x4_t fixed_up_dividend = vqaddq_s32(dividend, fixup);
-//     return vrshlq_s32(fixed_up_dividend, shift);
-// }
-//
-// __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_32x4(const int32x4_t val,
-//                                                        const int32x4_t multiplier,
-//                                                        const int32x4_t shift)
-// {
-//     #ifdef CMSIS_NN_USE_SINGLE_ROUNDING
-//     const int32x4_t right_shift = vminq_s32(vdupq_n_s32(-1), shift);
-//     const int32x4_t left_shift = vqsubq_s32(shift, right_shift);
-//
-//     int32x4_t result = vqdmulhq_s32(vshlq_s32(val, left_shift), multiplier);
-//     result = vrshlq_s32(result, right_shift);
-//
-//     return result;
-//     #else
-//     const int32x4_t zz = vdupq_n_s32(0);
-//     const mve_pred16_t p = vcmpgtq_n_s32(shift, 0);
-//
-//     const int32x4_t left_shift = vpselq_s32(shift, zz, p);
-//     const int32x4_t right_shift = -vpselq_s32(zz, shift, p);
-//
-//     return muriscv_nn_divide_by_power_of_two_mve_32x4(muriscv_nn_doubling_high_mult_mve_32x4(vshlq_s32(val, left_shift), multiplier),
-//                                                right_shift);
-//     #endif
-// }
+//MURISCV_NN CUSTOM CODE
+/**
+ * @brief           Vector saturating doubling high multiply returning high half.
+ * @param[in]       m1        Multiplicand
+ * @param[in]       m2        Multiplier
+ * @return          Result of multiplication.
+ *
+ */
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve(const int32x4_t m1, const int32_t m2)
+{
+     //return vqrdmulhq_n_s32(m1, m2);
+     return 0;
+}
+
+//MURISCV_NN CUSTOM CODE
+/**
+ * @brief           Vector rounding divide by power of two.
+ * @param[in]       dividend - Dividend vector
+ * @param[in]       exponent - Divisor = power(2, exponent)
+ *                             Range: [0, 31]
+ * @return          Rounded result of division. Midpoint is rounded away from zero.
+ *
+ */
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve(const int32x4_t dividend, const int32_t exponent)
+{
+     //const int32x4_t shift = vdupq_n_s32(-exponent);
+     //const int32x4_t fixup = vshrq_n_s32(vandq_s32(dividend, shift), 31);
+     //const int32x4_t fixed_up_dividend = vqaddq_s32(dividend, fixup);
+     //return vrshlq_s32(fixed_up_dividend, shift);
+     return 0;
+}
+
+//MURISCV_NN CUSTOM CODE
+/**
+ * @brief           Requantize a given vector.
+ * @param[in]       val         Vector to be requantized
+ * @param[in]       multiplier  multiplier
+ * @param[in]       shift       shift
+ *
+ * @return          Returns (val * multiplier)/(2 ^ shift)
+ *
+ */
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve(const int32x4_t val, const int32_t multiplier, const int32_t shift)
+{
+     //#ifdef CMSIS_NN_USE_SINGLE_ROUNDING
+     //const int right_shift = MIN(-1, shift);
+     //const int left_shift = shift - right_shift;
+
+     //const int32x4_t left_shift_dup = vdupq_n_s32(left_shift);
+     //const int32x4_t right_shift_dup = vdupq_n_s32(right_shift);
+
+     //int32x4_t result = vqdmulhq_n_s32(vshlq_s32(val, left_shift_dup), multiplier);
+     //result = vrshlq_s32(result, right_shift_dup);
+
+     //return result;
+     //#else
+     //return muriscv_nn_divide_by_power_of_two_mve(
+     //    muriscv_nn_doubling_high_mult_mve(vshlq_s32(val, vdupq_n_s32(LEFT_SHIFT(shift))), multiplier), RIGHT_SHIFT(shift));
+     //#endif
+     return 0;
+}
+
+//MURISCV_NN CUSTOM CODE
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_32x4(const int32x4_t m1, const int32x4_t m2)
+{
+     //return vqrdmulhq_s32(m1, m2);
+     return 0;
+}
+
+//MURISCV_NN CUSTOM CODE
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_32x4(const int32x4_t dividend, const int32x4_t exponent)
+{
+     //const int32x4_t shift = -exponent;
+     //const int32x4_t fixup = vshrq_n_s32(vandq_s32(dividend, shift), 31);
+     //const int32x4_t fixed_up_dividend = vqaddq_s32(dividend, fixup);
+     //return vrshlq_s32(fixed_up_dividend, shift);
+     return 0;
+}
+
+//MURISCV_NN CUSTOM CODE
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_32x4(const int32x4_t val,
+                                                        const int32x4_t multiplier,
+                                                        const int32x4_t shift)
+{
+     //#ifdef CMSIS_NN_USE_SINGLE_ROUNDING
+     //const int32x4_t right_shift = vminq_s32(vdupq_n_s32(-1), shift);
+     //const int32x4_t left_shift = vqsubq_s32(shift, right_shift);
+
+     //int32x4_t result = vqdmulhq_s32(vshlq_s32(val, left_shift), multiplier);
+     //result = vrshlq_s32(result, right_shift);
+
+     //return result;
+     //#else
+     //const int32x4_t zz = vdupq_n_s32(0);
+     //const mve_pred16_t p = vcmpgtq_n_s32(shift, 0);
+
+     //const int32x4_t left_shift = vpselq_s32(shift, zz, p);
+     //const int32x4_t right_shift = -vpselq_s32(zz, shift, p);
+
+     //return muriscv_nn_divide_by_power_of_two_mve_32x4(muriscv_nn_doubling_high_mult_mve_32x4(vshlq_s32(val, left_shift), multiplier),
+     //                                           right_shift);
+     //#endif
+     return 0;
+}
 #endif
 
 // @note The following functions are used only for softmax layer, scaled bits = 5 assumed
@@ -1991,4 +2059,4 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_s8(const int16_t *input_1_vect,
 }
 #endif
 
-#endif
+#endif /* MURISCV_NNSUPPORT_FUNCTIONS_H */
