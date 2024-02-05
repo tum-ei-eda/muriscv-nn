@@ -70,7 +70,7 @@ muriscv_nn_status muriscv_nn_elementwise_add_s8(const int8_t *input_1_vect,
     while (loop_count > 0)
     {
         /* Determine vector length */
-        size_t vl = vsetvl_e8m2(loop_count);
+        volatile size_t vl = vsetvl_e8m2(loop_count);
 
         /* Load vectors */
         vint8m2_t input_1_raw = vle8_v_i8m2(input_1_vect, vl);
