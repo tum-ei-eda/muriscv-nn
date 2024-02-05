@@ -64,7 +64,7 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16(const int16_t *input_1_vect,
     while (loop_count > 0)
     {
         /* Determine vector length */
-        size_t vl = vsetvl_e16m4(loop_count);
+        volatile size_t vl = vsetvl_e16m4(loop_count);
 
         /* Load vectors */
         vint16m4_t in1 = vle16_v_i16m4(input_1_vect, vl);
