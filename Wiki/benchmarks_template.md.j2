@@ -32,14 +32,14 @@
 {% for framework_name, framework_data in data.items() %}
 {% for toolchain_name, toolchain_data in framework_data.items() %}
 {% for backend_name, backend_data in toolchain_data.items() %}
-## Results (Framework: {{framework_name}}, Toolchain: {{toolchain_name}}, Backend: {{backend_name}})
+## Results (Framework: {{framework_name}}, Backend: {{backend_name}}, Toolchain: {{toolchain_name}})
 
 {% for model_name, model_data in backend_data.items() %}
 ### {{model_descriptions[model_name]}} (`{{model_name}}`)
 
-|  Cycles   | Cycles(Relative) | Total ROM | Total ROM(Relative) | Total RAM | Total RAM(Relative) | ROM read-only | ROM code | VLEN | {% if "tvm" in backend_name %} Layout | {% endif%} Kernels    | Extensions |
+|  Cycles (rel.) | Total ROM (rel.) | Total RAM | Total (rel.) | ROM read-only | ROM code | VLEN | {% if "tvm" in backend_name %} Layout | {% endif%} Kernels    | Extensions | Auto-Vectorization |
 | --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | {% if "tvm" in backend_name %} ------ | {% endif %} ---------- | ---------- |
-{% for x in model_data %}| {{x["Run Cycles"]}} | {{ x["Run Cycles (rel.)"] | round3 }} | {{x["Total ROM"]}} | {{ x["Total ROM (rel.)"] | round3 }} | {{x["Total RAM"]}} | {{ x["Total RAM (rel.)"] | round3 }} | {{x["ROM read-only"]}} | {{x["ROM code"]}} | {{x["VLEN"]}} | {% if "tvm" in backend_name %} {{x["Layout"]}} | {% endif %}{{x["Kernels"]}} | {{x["Extensions"]}} |
+{% for x in model_data %}| {{x["Run Cycles"]}} ({{x["Run Cycles (rel.)"] | round3 }}) | {{x["Total ROM"]}} ({{ x["Total ROM (rel.)"] | round3 }}) | {{x["Total RAM"]}} ({{ x["Total RAM (rel.)"] | round3 }}) | {{x["ROM read-only"]}} | {{x["ROM code"]}} | {{x["VLEN"]}} | {% if "tvm" in backend_name %} {{x["Layout"]}} | {% endif %}{{x["Kernels"]}} | {{x["Extensions"]}} | - |
 {% endfor %}
 {% endfor %}
 {% endfor %}
