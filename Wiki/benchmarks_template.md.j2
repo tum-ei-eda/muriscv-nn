@@ -2,25 +2,45 @@
 
 ### Simulator
 
+{% if "spike" in target_names %}
 - Spike ([`riscv-isa-sim `](https://github.com/riscv-software-src/riscv-isa-sim)) (ISS, CPI=1)
+{% endif %}
 
 ### Toolchains
 
-- **Scalar:** Self compiled on `master` branch of [riscv-gnu-toolchain](https://github.com/riscv-collab/riscv-gnu-toolchain)
-- **Packed:** Self compiled using patches found in https://github.com/riscv-collab/riscv-gcc/pull/258 and https://github.com/riscvarchive/riscv-binutils-gdb/pull/257
-- **Vector:** Self compiled using this working-branch: [`riscv-gcc-rvv-next`](https://github.com/riscv-collab/riscv-gcc/tree/riscv-gcc-rvv-next)
+{% if "gcc" in toolchain_names %}
+- RISC-V GCC:
+  - **Scalar:** TODO: version & url
+  - **Vector:** TODO: version & url
+  - **Packed:** Self compiled using patches found in https://github.com/riscv-collab/riscv-gcc/pull/258 and https://github.com/riscvarchive/riscv-binutils-gdb/pull/257
+{% endif %}
+{% if "llvm" in toolchain_names %}
+- LLVM/Clang:
+  - TODO: Version
+  - Linker: lld (TODO)
+  - RISC-V GCC for Headers, libc,...
+{% endif %}
 
 ### Models
 
+{% if "aww" in model_names or "vww" in model_names or "resnet" in model_names or "toycar" in model_names %}
 - [MLPerfTiny](https://github.com/mlcommons/tiny) Benchmark
+{% endif %}
+- TODO: others!
 
 ### Package Versions
 
 - MLonMCU : {{ "default" | env_var('MLIF_REF') }}
+{% if "tflm" in framework_names %}
 - TFLM :  {{ "default" | env_var('TFLM_REF') }}
+{% endif %}
+{% if "tvm" in framework_names %}
 - TVM : {% if "default" | env_var('PREBUILT_TVM') == '1' %} Nightly Pre-Build {% else %} {{ "default" | env_var('TVM_REF') }} {% endif %}
+{% endif %}
+{% if "spike" in target_names %}
 - Spike : {{ "default" | env_var('SPIKE_REF') }}
 - Spike PK : {{ "default" | env_var('SPIKEPK_REF') }}
+{% endif %}
 
 
 ### Miscellaneous
@@ -37,9 +57,9 @@
 {% for model_name, model_data in backend_data.items() %}
 ### {{model_descriptions[model_name]}} (`{{model_name}}`)
 
-|  Cycles (rel.) | Total ROM (rel.) | Total RAM | Total (rel.) | ROM read-only | ROM code | VLEN | {% if "tvm" in backend_name %} Layout | {% endif%} Kernels    | Extensions | Auto-Vectorization |
-| --------- | ---------------- |---------- | ------------------- |---------- | ------------------- | ------------- | -------- | ---- | {% if "tvm" in backend_name %} ------ | {% endif %} ---------- | ---------- |
-{% for x in model_data %}| {{x["Run Cycles"]}} ({{x["Run Cycles (rel.)"] | round3 }}) | {{x["Total ROM"]}} ({{ x["Total ROM (rel.)"] | round3 }}) | {{x["Total RAM"]}} ({{ x["Total RAM (rel.)"] | round3 }}) | {{x["ROM read-only"]}} | {{x["ROM code"]}} | {{x["VLEN"]}} | {% if "tvm" in backend_name %} {{x["Layout"]}} | {% endif %}{{x["Kernels"]}} | {{x["Extensions"]}} | - |
+|  Cycles (Speedup) | Total ROM (rel.) | Total RAM (rel.) | ROM read-only | ROM code | VLEN | {% if "tvm" in backend_name %} Layout | {% endif%} Kernels    | Extensions | Auto-Vectorization |
+| --------------:|-----------------:| ----------------:| -------------:| --------:| ----:| {% if "tvm" in backend_name %} ------ | {% endif %} ---------- | ---------- | -------------------|
+{% for x in model_data %}| `{{x["Run Cycles"]}}` ({{(1.0/x["Run Cycles (rel.)"]) | round(1) }}x) | `{{x["Total ROM"]}}` ({{ x["Total ROM (rel.)"] | round3 }}) | `{{x["Total RAM"]}}` ({{ x["Total RAM (rel.)"] | round3 }}) | `{{x["ROM read-only"]}}` | `{{x["ROM code"]}}` | {{x["VLEN"]}} | {% if "tvm" in backend_name %} {{x["Layout"]}} | {% endif %}{{x["Kernels"]}} | {{x["Extensions"]}} | - |
 {% endfor %}
 {% endfor %}
 {% endfor %}

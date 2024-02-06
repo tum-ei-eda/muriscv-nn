@@ -50,14 +50,25 @@ template = environment.get_template("benchmarks_template.md.j2")
 
 data = {}
 
+framework_names = []
+backend_names = []
+toolchain_names = []
+model_names = []
+target_names = ["spike"]  # TODO: allow-multiple targets
+
 for framework_name, framework_df in df.groupby("Framework"):
+    framework_names.append(framework_name)
     data[framework_name] = {}
     for toolchain_name, toolchain_df in framework_df.groupby("Toolchain"):
+        toolchain_names.append(toolchain_name)
         data[framework_name][toolchain_name] = {}
         for backend_name, backend_df in toolchain_df.groupby("Backend"):
+            backend_names.append(backend_name)
             data[framework_name][toolchain_name][backend_name] = {}
             for model_name, model_df in backend_df.groupby("Model"):
                 data[framework_name][toolchain_name][backend_name][model_name] = model_df.to_dict("records")
+                model_names.append(model_name)
+
 # data = {
 #     "tflmi": {
 #         "aww": aww_tflmi_df.to_dict("records"),
@@ -102,6 +113,11 @@ if args.split:
                 model_descriptions=MODEL_DESCS,
                 backend_descriptions=BACKEND_DESCS,
                 filename=filename,
+                framework_names=[framework_name],
+                backend_names=backend_names,
+                toolchain_names=[toolchain_name],
+                model_names=model_names,
+                target_names=target_names
             )
             with open(filename + ".md", mode="w", encoding="utf-8") as message:
                 message.write(content)
@@ -120,6 +136,11 @@ else:
         model_descriptions=MODEL_DESCS,
         backend_descriptions=BACKEND_DESCS,
         filename=filename,
+        framework_names=framework_names,
+        backend_names=backend_names,
+        toolchain_names=toolchain_names,
+        model_names=model_names,
+        target_names=target_names
     )
     with open(filename + ".md", mode="w", encoding="utf-8") as message:
         message.write(content)
