@@ -16,7 +16,8 @@ jobs:
         # toolchain: [gcc, llvm]
         benchmark: [toycar]
         backend: [tflmi]
-        toolchain: [gcc, llvm]
+        # toolchain: [gcc, llvm]
+        toolchain: [llvm]
 
     steps:
 
