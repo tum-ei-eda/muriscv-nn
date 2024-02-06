@@ -11,11 +11,8 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        # benchmark: [aww, vww, resnet, toycar]
-        # backend: [tvmaot, tflmi]
-        # toolchain: [gcc, llvm]
-        benchmark: [toycar]
-        backend: [tflmi]
+        benchmark: [aww, vww, resnet, toycar]
+        backend: [tvmaot, tflmi]
         # toolchain: [gcc, llvm]
         toolchain: [llvm]
 
