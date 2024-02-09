@@ -91,7 +91,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         const q7_t *lhs_ptr = &lhs[0];
         const q7_t *rhs_ptr = &rhs[0];
 
-        size_t vl = vsetvl_e32m8(rhs_cols);
+        volatile size_t vl = vsetvl_e32m8(rhs_cols);
         vint32m8_t result = vmv_v_x_i32m8(0, vl);
 
         int32_t rhs_cols_cnt = rhs_cols;
