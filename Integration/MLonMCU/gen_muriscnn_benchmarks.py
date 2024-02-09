@@ -24,35 +24,60 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
     def post_session(self, report):
         """Called at the end of a session."""
         df = report.post_df.copy()
+        df["Backend"] = report.pre_df["Backend"]
         df["Kernels"] = df.apply(
             lambda row: "muRISCV-NN"
             if row.get("feature_muriscvnn") or row.get("feature_muriscvnnbyoc")
             else (
                 "CMSIS-NN"
                 if row.get("feature_cmsisnn") or row.get("feature_cmsisnnbyoc")
-                else ("Autotuned" if row.get("feature_autotuned") else "Default")
+                # else ("Autotuned" if row.get("feature_autotuned") else "Default")
+                else ("TVM" if "tvm" in row.get("Backend") else ("TFLM" if "tflm" in row.get("Backend") else "Unknown"))
             ),
             axis=1,
         )
         # TODO: allow combinations
-        df["Extensions"] = df.apply(
-            lambda row: "VEXT+PEXT"
+        # print("dfA", df["config_muriscvnn.use_vext"])
+        # print("dfB", df["config_muriscvnn.use_pext"])
+        # input("A")
+        df["Mode"] = df.apply(
+            lambda row: ("Autotuned" if row.get("feature_autotuned") else ("Fallback" if "tvm" in row.get("Backend") else ("Reference" if "tflm" in row.get("Backend") else "-")))
+            if not (row.get("feature_muriscvnn") or row.get("feature_muriscvnnbyoc"))
+            else (
+                "Vector"
+                if row.get("config_muriscvnn.use_vext") == 1 or row.get("config_muriscvnnbyoc.use_vext") == 1
+                else (
+                    "Packed"
+                    if row.get("config_muriscvnn.use_pext") == 1 or row.get("config_muriscvnnbyoc.use_pext") == 1
+                    else "Scalar"
+                )
+            ),
+            axis=1,
+        )
+        if "config_tvmaot.desired_layout" in df.columns:
+            df["Layout"] = df["config_tvmaot.desired_layout"].fillna("NHWC")
+        df["AutoVectorize"] = df.apply(lambda row: "Loop+SLP" if row.get("config_auto_vectorize.loop") and row.get("config_auto_vectorize.slp") else ("Loop" if row.get("config_auto_vectorize.loop") else ("SLP" if row.get("config_auto_vectorize.slp") else "-")), axis=1)
+        # print("df[AV]", df["AutoVectorize"])
+        # input("123")
+        df["Arch"] = df.apply(
+            lambda row: "RV32GCPV"
             if row.get("feature_vext") and row.get("feature_pext")
             else (
-                "VEXT"
+                "RV32GCV"
                 if row.get("feature_vext")
                 else (
-                    "PEXT"
+                    "RV32GCP"
                     if row.get("feature_pext")
                     else (
                         "MVEI+DSP"
                         if row.get("feature_arm_mvei") and row.get("feature_arm_dsp")
-                        else ("MVEI" if row.get("feature_arm_mvei") else ("DSP" if row.get("feature_arm_dsp") else ""))
+                        else ("MVEI" if row.get("feature_arm_mvei") else ("DSP" if row.get("feature_arm_dsp") else "RV32GC"))
                     )
                 )
             ),
             axis=1,
         )
+        del df["Backend"]
         report.post_df = df
 
 
@@ -218,7 +243,7 @@ DEFAULT_CONFIG = {
     "mlif.fuse_ld": "none",
     "run.export_optional": True,
     "mlif.verbose_makefile": True,
-    "mlif.print_outputs": True,
+    "mlif.print_outputs": False,
 }
 
 BACKEND_DEFAULT_CONFIG = {
@@ -281,13 +306,19 @@ POSTPROCESS_CONFIG = {
         # "Comment",
         # "Validation",
         "Kernels",
-        "Extensions",
+        # "Extensions",
+        "Arch",
         "VLEN",
         "Layout",
         "Toolchain",
         "AutoVectorize",
-        "Loop",
-        "SLP",
+        # "Loop",
+        # "SLP",
+        # "USE_PEXT",
+        # "USE_VEXT",
+        "Mode",
+        "Optimize",
+        "Linker",
         # TODO: unrolling?
     ],
     "rename_cols.mapping": {
@@ -295,9 +326,15 @@ POSTPROCESS_CONFIG = {
         "config_ovpsim.vlen": "VLEN",
         "config_tvmaot.desired_layout": "Layout",
         "config_mlif.toolchain": "Toolchain",
-        "config_auto_vectorize.loop": "Loop",
-        "config_auto_vectorize.slp": "SLP",
-        "feature_auto_vectorize": "AutoVectorize",
+        # "config_auto_vectorize.loop": "Loop",
+        # "config_auto_vectorize.slp": "SLP",
+        # "config_muriscvnn.use_vext": "USE_VEXT",
+        # "config_muriscvnnbyoc.use_vext": "USE_VEXT",
+        # "config_muriscvnn.use_pext": "USE_PEXT",
+        # "config_muriscvnnbyoc.use_pext": "USE_PEXT",
+        # "feature_auto_vectorize": "AutoVectorize",
+        "config_mlif.optimize": "Optimize",
+        "config_mlif.fuse_ld": "Linker",
     },
     "filter_cols.drop_nan": True,
     "compare_rows.to_compare": None,  # Figure out automatically (All metrics, expects those filtered out later)
@@ -328,7 +365,7 @@ def gen_features(backend, features, validate=False, auto_vectorize=False):
     return ret
 
 
-def gen_config(backend, backend_config, features, vlen, toolchain, enable_postprocesses=False, baseline=None, scalar_default_only=False, loop=True, slp=True):
+def gen_config(backend, backend_config, features, vlen, toolchain, enable_postprocesses=False, baseline=None, scalar_default_only=False, loop=True, slp=True, use_vext="AUTO", use_pext="AUTO"):
     ret = {}
     ret["mlif.toolchain"] = toolchain
     ret.update(DEFAULT_CONFIG)
@@ -336,13 +373,13 @@ def gen_config(backend, backend_config, features, vlen, toolchain, enable_postpr
     ret.update(backend_config)
     if enable_postprocesses:
             ret.update(POSTPROCESS_CONFIG)
-    if "pext" in features:
+    if "pext" in features and use_pext != 0:
         assert "vext" not in features
         assert vlen == 0
         if "muriscvnn" in features or "muriscvnnbyoc" in features:
             if backend == "tvmaot":
                 ret["muriscvnnbyoc.mcpu"] = "cortex-m33"
-    if "vext" in features:
+    if "vext" in features and use_vext != 0:
         assert "pext" not in features
         if "muriscvnn" in features or "muriscvnnbyoc" in features:
             if backend == "tvmaot":
@@ -361,6 +398,10 @@ def gen_config(backend, backend_config, features, vlen, toolchain, enable_postpr
         ret["compare_rows.baseline"] = baseline
     ret["auto_vectorize.loop"] = loop
     ret["auto_vectorize.slp"] = slp
+    ret["muriscvnn.use_vext"] = use_vext
+    ret["muriscvnn.use_pext"] = use_pext
+    ret["muriscvnnbyoc.use_vext"] = use_vext
+    ret["muriscvnnbyoc.use_pext"] = use_pext
     return ret
 
 
@@ -423,35 +464,44 @@ def benchmark(args):
                                         if "vext" in features:
                                             vlens = args.vlen
                                         features = gen_features(backend, features, validate=args.validate, auto_vectorize=True)
-                                        avs = [(0,0)]
-                                        if enable_auto_vectorize:
+                                        cfg = [(None, None)]
+                                        if "muriscvnn" in features or "muriscvnnbyoc" in features:
                                             if "vext" in features:
-                                                avs.append((1, 1))
+                                                cfg = [(0, 0), (1, 0)]
+                                            elif "pext" in features:
+                                                cfg = [(0, 0), (0, 1)]
+                                            else:
+                                                cfg = [(0, 0)]
+                                        for use_vext, use_pext in cfg:
+                                            avs = [(0,0)]
+                                            if enable_auto_vectorize:
+                                                if "vext" in features:
+                                                    avs.append((1, 1))
 
-                                        # print("fff", features)
-                                        for vlen in vlens:
-                                            for av in avs:
-                                                loop, slp = av
-                                                # print("vl", vlen)
-                                                # input("9")
-                                                config = gen_config(
-                                                    backend, backend_config, features, vlen, toolchain=toolchain, enable_postprocesses=args.post, baseline=args.baseline, scalar_default_only=scalar_default_only, loop=loop, slp=slp,
-                                                )
-                                                config.update(user_config)  # TODO
-                                                # resolve_missing_configs(config, features, target, context)
-                                                run = session.create_run(config=config)
-                                                run.add_features_by_name(features, context=context)
-                                                run.add_platform_by_name(PLATFORM, context=context)
-                                                run.add_frontend_by_name(FRONTEND, context=context)
-                                                run.add_model_by_name(model, context=context)
-                                                run.add_backend_by_name(backend, context=context)
-                                                run.add_target_by_name(target, context=context)
-                                                if args.post:
-                                                    run.add_postprocesses_by_name(POSTPROCESSES_0)
-                                                    run.add_postprocess(CustomPostprocess(), append=True)
-                                                    run.add_postprocesses_by_name(POSTPROCESSES_1, append=True)
-                                                    if args.baseline is not None:
-                                                        run.add_postprocess_by_name("compare_rows", append=True)
+                                            # print("fff", features)
+                                            for vlen in vlens:
+                                                for av in avs:
+                                                    loop, slp = av
+                                                    # print("vl", vlen)
+                                                    # input("9")
+                                                    config = gen_config(
+                                                        backend, backend_config, features, vlen, toolchain=toolchain, enable_postprocesses=args.post, baseline=args.baseline, scalar_default_only=scalar_default_only, loop=loop, slp=slp, use_vext=use_vext, use_pext=use_pext,
+                                                    )
+                                                    config.update(user_config)  # TODO
+                                                    # resolve_missing_configs(config, features, target, context)
+                                                    run = session.create_run(config=config)
+                                                    run.add_features_by_name(features, context=context)
+                                                    run.add_platform_by_name(PLATFORM, context=context)
+                                                    run.add_frontend_by_name(FRONTEND, context=context)
+                                                    run.add_model_by_name(model, context=context)
+                                                    run.add_backend_by_name(backend, context=context)
+                                                    run.add_target_by_name(target, context=context)
+                                                    if args.post:
+                                                        run.add_postprocesses_by_name(POSTPROCESSES_0)
+                                                        run.add_postprocess(CustomPostprocess(), append=True)
+                                                        run.add_postprocesses_by_name(POSTPROCESSES_1, append=True)
+                                                        if args.baseline is not None:
+                                                            run.add_postprocess_by_name("compare_rows", append=True)
             if args.noop:
                 stage = RunStage.LOAD
             else:
@@ -614,7 +664,7 @@ def main():
         set_log_level(logging.DEBUG)
     else:
         set_log_level(logging.INFO)
-    print("args", args)
+    # print("args", args)
     benchmark(args)
 
 
