@@ -67,7 +67,7 @@ int8_t *muriscv_nn_mat_mult_s8(const int8_t *input_row,
             const int8_t *ip_r0 = input_row + (i_out_ch * row_len);
             const int8_t *ip_c0 = input_col + (i_col_batch * row_len);
 
-            size_t vl = vsetvl_e32m8(row_len);
+            volatile size_t vl = vsetvl_e32m8(row_len);
             vint32m8_t res_0 = vmv_v_x_i32m8(0, vl);
 
             uint16_t row_len_cnt = row_len;
