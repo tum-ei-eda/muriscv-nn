@@ -286,12 +286,17 @@ POSTPROCESS_CONFIG = {
         "Layout",
         "Toolchain",
         "AutoVectorize",
+        "Loop",
+        "SLP",
+        # TODO: unrolling?
     ],
     "rename_cols.mapping": {
         "config_spike.vlen": "VLEN",
         "config_ovpsim.vlen": "VLEN",
         "config_tvmaot.desired_layout": "Layout",
         "config_mlif.toolchain": "Toolchain",
+        "config_auto_vectorize.loop": "Loop",
+        "config_auto_vectorize.slp": "SLP",
         "feature_auto_vectorize": "AutoVectorize",
     },
     "filter_cols.drop_nan": True,
@@ -323,7 +328,7 @@ def gen_features(backend, features, validate=False, auto_vectorize=False):
     return ret
 
 
-def gen_config(backend, backend_config, features, vlen, toolchain, enable_postprocesses=False, baseline=None, scalar_default_only=False):
+def gen_config(backend, backend_config, features, vlen, toolchain, enable_postprocesses=False, baseline=None, scalar_default_only=False, loop=True, slp=True):
     ret = {}
     ret["mlif.toolchain"] = toolchain
     ret.update(DEFAULT_CONFIG)
@@ -354,6 +359,8 @@ def gen_config(backend, backend_config, features, vlen, toolchain, enable_postpr
             ret["cmsisnnbyoc.mcpu"] = "cortex-m33"
     if baseline is not None:
         ret["compare_rows.baseline"] = baseline
+    ret["auto_vectorize.loop"] = loop
+    ret["auto_vectorize.slp"] = slp
     return ret
 
 
@@ -415,29 +422,36 @@ def benchmark(args):
                                         vlens = [0]
                                         if "vext" in features:
                                             vlens = args.vlen
-                                        features = gen_features(backend, features, validate=args.validate, auto_vectorize=enable_auto_vectorize)
+                                        features = gen_features(backend, features, validate=args.validate, auto_vectorize=True)
+                                        avs = [(0,0)]
+                                        if enable_auto_vectorize:
+                                            if "vext" in features:
+                                                avs.append((1, 1))
+
                                         # print("fff", features)
                                         for vlen in vlens:
-                                            # print("vl", vlen)
-                                            # input("9")
-                                            config = gen_config(
-                                                backend, backend_config, features, vlen, toolchain=toolchain, enable_postprocesses=args.post, baseline=args.baseline, scalar_default_only=scalar_default_only
-                                            )
-                                            config.update(user_config)  # TODO
-                                            # resolve_missing_configs(config, features, target, context)
-                                            run = session.create_run(config=config)
-                                            run.add_features_by_name(features, context=context)
-                                            run.add_platform_by_name(PLATFORM, context=context)
-                                            run.add_frontend_by_name(FRONTEND, context=context)
-                                            run.add_model_by_name(model, context=context)
-                                            run.add_backend_by_name(backend, context=context)
-                                            run.add_target_by_name(target, context=context)
-                                            if args.post:
-                                                run.add_postprocesses_by_name(POSTPROCESSES_0)
-                                                run.add_postprocess(CustomPostprocess(), append=True)
-                                                run.add_postprocesses_by_name(POSTPROCESSES_1, append=True)
-                                                if args.baseline is not None:
-                                                    run.add_postprocess_by_name("compare_rows", append=True)
+                                            for av in avs:
+                                                loop, slp = av
+                                                # print("vl", vlen)
+                                                # input("9")
+                                                config = gen_config(
+                                                    backend, backend_config, features, vlen, toolchain=toolchain, enable_postprocesses=args.post, baseline=args.baseline, scalar_default_only=scalar_default_only, loop=loop, slp=slp,
+                                                )
+                                                config.update(user_config)  # TODO
+                                                # resolve_missing_configs(config, features, target, context)
+                                                run = session.create_run(config=config)
+                                                run.add_features_by_name(features, context=context)
+                                                run.add_platform_by_name(PLATFORM, context=context)
+                                                run.add_frontend_by_name(FRONTEND, context=context)
+                                                run.add_model_by_name(model, context=context)
+                                                run.add_backend_by_name(backend, context=context)
+                                                run.add_target_by_name(target, context=context)
+                                                if args.post:
+                                                    run.add_postprocesses_by_name(POSTPROCESSES_0)
+                                                    run.add_postprocess(CustomPostprocess(), append=True)
+                                                    run.add_postprocesses_by_name(POSTPROCESSES_1, append=True)
+                                                    if args.baseline is not None:
+                                                        run.add_postprocess_by_name("compare_rows", append=True)
             if args.noop:
                 stage = RunStage.LOAD
             else:
