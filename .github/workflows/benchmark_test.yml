@@ -13,8 +13,7 @@ jobs:
       matrix:
         benchmark: [aww, vww, resnet, toycar]
         backend: [tvmaot, tflmi]
-        # toolchain: [gcc, llvm]
-        toolchain: [llvm]
+        toolchain: [gcc, llvm]
 
     steps:
 
