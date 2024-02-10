@@ -506,12 +506,14 @@ def benchmark(args):
                 stage = RunStage.LOAD
             else:
                 stage = RunStage.RUN
-            session.process_runs(until=stage, num_workers=args.parallel, progress=args.progress, context=context)
+            success = session.process_runs(until=stage, num_workers=args.parallel, progress=args.progress, context=context)
             report = session.get_reports()
         report_file = args.output
         report.export(report_file)
         print()
         print(report.df)
+        if args.fail:
+            assert success
 
 
 def main():
@@ -645,6 +647,11 @@ def main():
         "--noop",
         action="store_true",
         help="Skip processing runs. (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--fail",
+        action="store_true",
+        help="Fail on error (default: %(default)s)",
     )
     args = parser.parse_args()
     if not args.backend:
