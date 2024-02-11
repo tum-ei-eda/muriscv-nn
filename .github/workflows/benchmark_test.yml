@@ -81,7 +81,7 @@ jobs:
         source $VENV_DIR/bin/activate
         export MLONMCU_HOME=$WORKSPACE_DIR
         cat $MLONMCU_HOME/environment.yml
-        python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t spike --vlen 128 --vlen 1024 --post -p --parallel 4 -f muriscvnn -f vext -f pext --autotuned --toolchain ${{matrix.toolchain}} -f auto_vectorize --baseline $([[ "${{matrix.backend}}" == *"tvm"* ]] &&  echo 4 || echo 1) ${{matrix.benchmark}} --fail
+        python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t spike --vlen 128 --vlen 1024 --post -p --parallel 4 -f muriscvnn -f vext -f pext --autotuned --toolchain ${{matrix.toolchain}} -f auto_vectorize --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in; tvm*-gcc); echo -n "16" ;; tvm*-llvm); echo -n "12" ;; tflm*-gcc) ; echo -n "4" ;; tflm*-llvm) echo -n "3" ;; *) ; echo -n "?" ;; esac) ${{matrix.benchmark}} --fail
 
     - name: Archive Benchmark Results
       uses: actions/upload-artifact@v4
