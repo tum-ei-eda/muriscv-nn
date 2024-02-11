@@ -56,7 +56,7 @@ muriscv_nn_status muriscv_nn_mat_mul_core_1x_s8(int32_t row_elements,
     int8_t *col_ptr = (int8_t *)col_base;
     int32_t loop_cnt = row_elements;
 
-    size_t vl = vsetvl_e32m8(row_elements);
+    volatile size_t vl = vsetvl_e32m8(row_elements);
     vint32m8_t acc = vmv_v_x_i32m8(0, vl);
     vint32m8_t sum = vmv_v_x_i32m8(0, vl);
 

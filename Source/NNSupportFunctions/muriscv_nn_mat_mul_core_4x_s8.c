@@ -63,7 +63,7 @@ int8_t *muriscv_nn_mat_mul_core_4x_s8(const int32_t row_elements,
         const int8_t *ip_row_2 = row_base + (2 * offset);
         const int8_t *ip_row_3 = row_base + (3 * offset);
 
-        size_t vl = vsetvl_e32m2(row_elements);
+        volatile size_t vl = vsetvl_e32m2(row_elements);
         vint32m2_t sum_tmp_v = vmv_v_x_i32m2(0, vl);
         vint32m2_t acc_n0_v = vmv_v_x_i32m2(0, vl);
         vint32m2_t acc_n1_v = vmv_v_x_i32m2(0, vl);
