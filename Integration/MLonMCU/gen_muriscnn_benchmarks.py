@@ -379,13 +379,14 @@ def gen_config(backend, backend_config, features, vlen, toolchain, enable_postpr
         if "muriscvnn" in features or "muriscvnnbyoc" in features:
             if backend == "tvmaot":
                 ret["muriscvnnbyoc.mcpu"] = "cortex-m33"
-    if "vext" in features and use_vext != 0:
-        assert "pext" not in features
-        if "muriscvnn" in features or "muriscvnnbyoc" in features:
-            if backend == "tvmaot":
-                ret["muriscvnnbyoc.mcpu"] = "cortex-m55"
-        if not scalar_default_only or "muriscvnn" in features or "muriscvnnbyoc" in features:
-            ret["vext.vlen"] = vlen
+    if "vext" in features:
+        if use_vext != 0:
+            assert "pext" not in features
+            if "muriscvnn" in features or "muriscvnnbyoc" in features:
+                if backend == "tvmaot":
+                    ret["muriscvnnbyoc.mcpu"] = "cortex-m55"
+        # if not scalar_default_only or "muriscvnn" in features or "muriscvnnbyoc" in features:
+        ret["vext.vlen"] = vlen
     # else:
     # assert vlen == 0
     if "cmsisnnbyoc" in features:
