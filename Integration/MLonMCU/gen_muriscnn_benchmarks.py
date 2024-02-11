@@ -320,6 +320,7 @@ POSTPROCESS_CONFIG = {
         "Optimize",
         "Linker",
         # TODO: unrolling?
+        "Baseline",
     ],
     "rename_cols.mapping": {
         "config_spike.vlen": "VLEN",
@@ -335,6 +336,7 @@ POSTPROCESS_CONFIG = {
         # "feature_auto_vectorize": "AutoVectorize",
         "config_mlif.optimize": "Optimize",
         "config_mlif.fuse_ld": "Linker",
+        "config_compare_rows.baseline": "Baseline",
     },
     "filter_cols.drop_nan": True,
     "compare_rows.to_compare": None,  # Figure out automatically (All metrics, expects those filtered out later)
