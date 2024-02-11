@@ -477,7 +477,11 @@ def benchmark(args):
                                             avs = [(0,0)]
                                             if enable_auto_vectorize:
                                                 if "vext" in features:
-                                                    avs.append((1, 1))
+                                                    # avs.append((1, 1))
+                                                    if use_vext:
+                                                        avs = [(0, 0)]
+                                                    else:
+                                                        avs = [(1, 1)]
 
                                             # print("fff", features)
                                             for vlen in vlens:
