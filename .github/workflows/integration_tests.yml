@@ -38,7 +38,7 @@ jobs:
 #    runs-on: ubuntu-22.04
 #
 #    steps:
-#    - uses: actions/checkout@v3
+#    - uses: actions/checkout@v4
 #
 #    - name: Install TFLM dependencies
 #      run: |
@@ -54,7 +54,7 @@ jobs:
 #
 #    - name: Download Cached GCC Binaries
 #      id: cache-gcc
-#      uses: actions/cache@v3
+#      uses: actions/cache@v4
 #      env:
 #          cache-name: cache-gcc-binaries
 #      with:
@@ -105,7 +105,7 @@ jobs:
     name: TFLM Built-In Tests - Spike
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install TFLM dependencies
       run: |
@@ -124,7 +124,7 @@ jobs:
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -142,7 +142,7 @@ jobs:
 
     - name: Download Spike Cache
       id: cache-Spike
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
           cache-name: cache-spike-binaries
       with:
@@ -194,7 +194,7 @@ jobs:
     name: TVM Integration Tests - Spike
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Get dates
       id: dates
@@ -205,7 +205,7 @@ jobs:
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -223,7 +223,7 @@ jobs:
 
     - name: Download Spike Cache
       id: cache-Spike
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
           cache-name: cache-spike-binaries
       with:
@@ -274,7 +274,7 @@ jobs:
     name: TFLM Integration Tests - Spike
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Get dates
       id: dates
@@ -285,7 +285,7 @@ jobs:
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -303,7 +303,7 @@ jobs:
 
     - name: Download Spike Cache
       id: cache-Spike
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
           cache-name: cache-spike-binaries
       with:

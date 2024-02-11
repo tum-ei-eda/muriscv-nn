@@ -20,7 +20,7 @@ jobs:
   Test_x86:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Run Scalar Tests on x86
       working-directory: ./Scripts
@@ -51,7 +51,7 @@ jobs:
 
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Get dates
       id: dates
@@ -62,7 +62,7 @@ jobs:
 
     - name: Download GCC Cache
       id: cache-GCC
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -75,7 +75,7 @@ jobs:
 
     - name: Download Spike Cache
       id: cache-Spike
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
           cache-name: cache-spike-binaries
       with:
@@ -122,7 +122,7 @@ jobs:
 #
 #    runs-on: ubuntu-22.04
 #    steps:
-#    - uses: actions/checkout@v2
+#    - uses: actions/checkout@v4
 #
 #    - name: Get date of last cache build
 #      id: date
@@ -130,7 +130,7 @@ jobs:
 #
 #    - name: Download GCC Cache
 #      id: cache-GCC
-#      uses: actions/cache@v3
+#      uses: actions/cache@v4
 #      env:
 #          cache-name: cache-gcc-binaries
 #      with:

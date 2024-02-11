@@ -8,10 +8,10 @@ on:
 
 jobs:
   AutoSync:
-    runs-on: ubuntu-22.04    
+    runs-on: ubuntu-22.04
     steps:
-    
-    - uses: actions/checkout@v3
+
+    - uses: actions/checkout@v4
       with:
         persist-credentials: false
 
@@ -19,7 +19,7 @@ jobs:
       run: |
         pip install GitPython
         pip install numpy
-        
+
     - name: Run Sync Script
       working-directory: ./Scripts
       run: python3 CMSIS_NN_sync.py
@@ -33,4 +33,4 @@ jobs:
         branch: sync
         token: ${{ secrets.CMSIS_SYNC_KEY }}
 
-      
+

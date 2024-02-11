@@ -12,7 +12,7 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install TFLM dependencies
       run: |
@@ -27,7 +27,7 @@ jobs:
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -62,9 +62,7 @@ jobs:
 
 
     - name: Archive Benchmark Results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
           name: quick-benchmarks-${{ steps.date-today.outputs.date }}
           path: ./Integration/MLonMCU/out.csv
-
-

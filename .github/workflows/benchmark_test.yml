@@ -15,7 +15,7 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install TFLM dependencies
       run: |
@@ -34,7 +34,7 @@ jobs:
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -84,7 +84,7 @@ jobs:
         python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t spike --vlen 128 --vlen 1024 --post -p --parallel 4 -f muriscvnn -f vext -f pext --autotuned --toolchain ${{matrix.toolchain}} -f auto_vectorize --baseline $([[ "${{matrix.backend}}" == *"tvm"* ]] &&  echo 4 || echo 1) ${{matrix.benchmark}} --fail
 
     - name: Archive Benchmark Results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
           name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{matrix.toolchain}}-${{ steps.dates.outputs.today }}
           path: ./Integration/MLonMCU/out.csv
@@ -96,7 +96,7 @@ jobs:
 
     steps:
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Download Artifacts
         uses: actions/download-artifact@v3
@@ -118,7 +118,7 @@ jobs:
           python3 create_wiki.py */*.csv --split
 
       - name: Clone Wiki Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: ${{github.repository}}.wiki
           path: Wiki-repo
