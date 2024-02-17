@@ -126,7 +126,7 @@ extern "C" {
 #define arm_concatenation_s8_w muriscv_nn_concatenation_s8_w
 #define arm_svdf_s8 muriscv_nn_svdf_s8
 #define arm_svdf_state_s16_s8 muriscv_nn_svdf_state_s16_s8
-#define arm_lstm_unidirectional_s16_s8 muriscv_nn_lstm_unidirectional_s16_s8
+#define arm_lstm_unidirectional_s8 muriscv_nn_lstm_unidirectional_s8
 #define arm_svdf_s8_get_buffer_size muriscv_nn_svdf_s8_get_buffer_size
 #define arm_svdf_s8_get_buffer_size_dsp muriscv_nn_svdf_s8_get_buffer_size_dsp
 #define arm_svdf_s8_get_buffer_size_mve muriscv_nn_svdf_s8_get_buffer_size_mve
