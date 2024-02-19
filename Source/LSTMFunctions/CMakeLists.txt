@@ -19,6 +19,4 @@
 #
 
 
-target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_lstm_unidirectional_s16_s8.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_lstm_unidirectional_s8_s16.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_lstm_unidirectional_s8.c)
+target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_lstm_unidirectional_s8.c)

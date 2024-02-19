@@ -161,7 +161,7 @@ muriscv_nn_status muriscv_nn_elementwise_mul_acc_s16(const int16_t *input_1_vect
     }
 //#endif // #if defined(USE_VEXT)
 //    return MURISCV_NN_SUCCESS;
-//}
+}
 //
 ///**
 // * @} end of Doxygen group

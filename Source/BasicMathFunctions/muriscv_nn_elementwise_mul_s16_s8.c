@@ -21,7 +21,7 @@
  * Title:        arm_elementwise_mul_s16_s8.c
  * Description:  Elementwise multiplication of 16 bit input with 8 bit output
  *
- * $Date:        20 January 2023
+ * $Date:        19 February 2024
  * $Revision:    V.1.2.0
  *
  * Target :  Arm(R) M-Profile Architecture
@@ -51,7 +51,10 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_s8(const int16_t *input_1_vect,
                                                const int32_t out_offset,
                                                const int32_t out_mult,
                                                const int32_t out_shift,
-                                               const int32_t block_size)
+                                               const int32_t block_size,
+                                               const int32_t batch_size,
+                                               const int32_t batch_offset)
+
 {
     int32_t loop_count = block_size;
 
