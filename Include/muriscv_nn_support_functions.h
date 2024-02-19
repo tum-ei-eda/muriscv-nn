@@ -22,8 +22,8 @@
  * Title:        muriscv_nn_support_functions.h
  * Description:  Public header file of support functions for MURISCV NN Library
  *
- * $Date:        11 January 2024
- * $Revision:    V.17.7.0
+ * $Date:        31 January 2024
+ * $Revision:    V.18.1.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
@@ -1355,6 +1355,44 @@ __STATIC_FORCEINLINE const int8_t *read_and_pad(const int8_t *source, int32_t *o
 }
 
 /**
+ * @brief read and expand one s8 word into two s16 words with ordering and addition.
+ */
+__STATIC_FORCEINLINE void read_pad_and_add_s8(const int8_t *source, int32_t *out1, int32_t *out2, const uint32_t add)
+{
+    int32_t inA = muriscv_nn_read_s8x4(source);
+    int32_t inAbuf1 = SXTAB16_RORn(add, (uint32_t)inA, 8);
+    int32_t inAbuf2 = SXTAB16(add, inA);
+
+    #ifndef ARM_MATH_BIG_ENDIAN
+    *out2 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
+    *out1 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
+    #else
+    *out1 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
+    *out2 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
+    #endif
+}
+
+/**
+ * @brief read and expand two bytes into one word with ordering.
+ */
+__STATIC_FORCEINLINE void read_and_pad_s8x2(const int8_t *source, int32_t *out)
+{
+    int16_t in = muriscv_nn_read_s8x2(source);
+    int32_t inA = (in & 0x00FF) | ((in & 0xFF00) << 8);
+    *out = SXTB16(inA);
+}
+
+/**
+ * @brief read and expand two bytes into one word with ordering and addition.
+ */
+__STATIC_FORCEINLINE void read_pad_and_add_s8x2(const int8_t *source, int32_t *out, const uint32_t add)
+{
+    int16_t in = muriscv_nn_read_s8x2(source);
+    int32_t inA = (in & 0x00FF) | ((in & 0xFF00) << 8);
+    *out = SXTAB16(add, inA);
+}
+
+/**
  * @brief read and expand one s8 word into two s16 words with no additional ordering.
  */
 __STATIC_FORCEINLINE const int8_t *read_and_pad_reordered(const int8_t *source, int32_t *out1, int32_t *out2)
@@ -1897,142 +1935,77 @@ __STATIC_FORCEINLINE void muriscv_nn_write_s8x2_ia(int8_t **dst, int16_t src)
 /**
  * @brief Update LSTM function for an iteration step
  *
- * param[in]    input                           Input data
- * param[in]    input_to_input_weight           Input to input gate weights
- * param[in]    input_to_forget_weight          Input to forget gate weights
- * param[in]    input_to_cell_weight            Input to cell gate weights
- * param[in]    input_to_output_weight          Input to output weights
- * param[in]    recurrent_to_input_weight       Recurrent signal to input weights
- * param[in]    recurrent_to_forget_weight      Recurrent signal to forget gate weights
- * param[in]    recurrent_to_cell_weight        Recurrent signal to cell gate weighst
- * param[in]    recurrent_to_output_weight      Recurrent signal to output weights
- * param[in]    lstm                            LSTM parameters
- * param[in]    n_batch                         Batch size
- * param[in]    n_cell                          Cell size
- * param[in]    n_input                         Input size
- * param[in]    n_output                        Output size
- * param[out]   output_state                    Output state
- * param[out]   cell_state                      Internal state
- * param[out]   output                          Output signal
- * param[in] *scratch_buffers                   Struct containing scratch buffers
+ * @param[in]   data_in                         Data input pointervoid
+ * @param[in]   hidden_in                       Hidden state/ recurrent input pointer
+ * @param[out]  hidden_out                      Hidden state/ recurrent output pointer
+ * @param[in]   params                          Struct containg all information about the lstm operator, see
+ * muriscv_nn_types.
+ * @param[in]   buffers                         Struct containg pointers to all temporary scratch buffers needed for the
+ * lstm operator, see muriscv_nn_types.
+ * @param[in]   batch_offset                    Number of timesteps between consecutive batches.
+ * E.g for params->timing_major = true, all batches for t=0 are stored sequentially, so batch offset = 1.
+ * For params->time major = false, all time steps are stored continously before the next batch, so
+ * batch offset = params->time_steps.
+ * @return                                      The function returns MURISCV_NN_SUCCESS
+
  */
-muriscv_nn_status muriscv_nn_lstm_step_s8_s16(const int8_t *input,
-                                            const int8_t *input_to_input_weight,
-                                            const int8_t *input_to_forget_weight,
-                                            const int8_t *input_to_cell_weight,
-                                            const int8_t *input_to_output_weight,
-                                            const int8_t *recurrent_to_input_weight,
-                                            const int8_t *recurrent_to_forget_weight,
-                                            const int8_t *recurrent_to_cell_weight,
-                                            const int8_t *recurrent_to_output_weight,
-                                            const muriscv_nn_lstm_params *lstm,
-                                            const int n_batch,
-                                            const int n_cell,
-                                            const int n_input,
-                                            const int n_output,
-                                            int8_t *output_state,
-                                            int16_t *cell_state,
-                                            int8_t *output,
-                                            muriscv_nn_lstm_context *scratch_buffers);
+muriscv_nn_status muriscv_nn_lstm_step_s8(const int8_t *data_in,
+                                        const int8_t *hidden_in,
+                                        int8_t *hidden_out,
+                                        const muriscv_nn_lstm_params *params,
+                                        muriscv_nn_lstm_context *buffers,
+                                        const int32_t batch_offset);
 
 /**
- * @brief         Updates a LSTM gate for an iteration step of LSTM function, int8x8_16 version.
+ * @brief Updates a LSTM gate for an iteration step of LSTM function, int8x8_16 version.
  *
- * param[in]    input                           Input data
- * param[in]    input_to_gate_weights           Input to gate weights
- * param[in]    input_to_gate_bias              Input to gate weights
- * param[in]    input_to_gate_scaling           Input to gate scaling
- * param[in]    activation                      Actival min and max values
- * param[in]    output_state                    Output state
- * param[in]    recurrent_to_gate_weights       Recurrent to gate weights
- * param[in]    recurrent_to_gate_bias          Recurrent to gate bias
- * param[in]    recurrent_to_gate_scaling       Recurrent to gate scaling
- * param[in]    n_batch                         Batch size
- * param[in]    n_input                         Input size
- * param[out]   n_output                        Output size
- * param[in]    activation_type                 Activation type (sigmoid or tanh)
- * param[out]   n_cell                          Cell size
+ * @param[in]   data_in                         Data input pointer
+ * @param[in]   hidden_in                       Hidden state/ recurrent input pointer
+ * @param[in]   gate_data                       Struct containing all information about the gate caluclation, see
+ * muriscv_nn_types.
+ * @param[in]   params                          Struct containing all information about the lstm_operation, see
+ * muriscv_nn_types
+ * @param[out]  output                          Hidden state/ recurrent output pointer
+ * @param[in]   batch_offset                    Number of timesteps between consecutive batches, see
+ * muriscv_nn_lstm_step_s8.
+ * @return                                      The function returns MURISCV_NN_SUCCESS
  */
-void muriscv_nn_lstm_calculate_gate_s8_s16(const int8_t *input,
-                                       const int8_t *input_to_gate_weights,
-                                       const int32_t *input_to_gate_bias,
-                                       const muriscv_nn_scaling input_to_gate_scaling,
-                                       const int8_t *output_state,
-                                       const int8_t *recurrent_to_gate_weights,
-                                       const int32_t *recurrent_to_gate_bias,
-                                       const muriscv_nn_scaling recurrent_to_gate_scaling,
-                                       const int32_t n_batch,
-                                       const int32_t n_input,
-                                       const int32_t n_output,
-                                       const int32_t n_cell,
-                                       const muriscv_nn_activation_type activation_type,
-                                       int16_t *gate);
-
-/**
- * @brief       Update cell state for a single LSTM iteration step, int8x8_16 version.
- * @param[in]   n_block             total number of cells for all batches
- * @param[in]   cell_state_scale    Scaling factor of cell state
- * @param[in]   cell_state          Input/output vector, size n_batch*n_cell
- * @param[in]   input_gate          Input vector of size n_block
- * @param[in]   forget_gate         Input/scratch vector of size n_block, always modified
- * @param[in]   cell_gate           Input vector of size, n_block
- */
-void muriscv_nn_lstm_update_cell_state_s16(const int32_t n_block,
-                                       const int32_t cell_state_scale,
-                                       int16_t *cell_state,
-                                       const int16_t *input_gate,
-                                       const int16_t *forget_gate,
-                                       const int16_t *cell_gate);
-
-/**
- * @brief       Calculate the output state tensor of an LSTM step, s8 input/output and s16 weight version.
- *
- * @param[in]       n_batch                     The number of distinct vectors in each array
- * @param[in]       n_cell                      Number of cells
- * @param[in,out]   cell_state                  Cell state, size n_batch*n_cell
- * @param[in]       cell_state_scale            Scaling of cell_state
- * @param[in]       output_gate                 Output gate
- * @param[in]       hidden_scale                Effective scaling of cell_state .* output_gate
- * @param[in]       hidden_offset               Zero point for cell_state .* output_gate
- * @param[out]      output_state                Output state
- * @param[in]       cell_gate_scratch           Scratch buffer
- */
-void muriscv_nn_lstm_update_output_s8_s16(const int n_batch,
-                                      const int n_cell,
-                                      int16_t *cell_state,
-                                      const int32_t cell_state_scale,
-                                      const int16_t *output_gate,
-                                      const muriscv_nn_scaling hidden_scale,
-                                      const int32_t hidden_offset,
-                                      int8_t *output_state,
-                                      int16_t *cell_gate_scratch);
+muriscv_nn_status muriscv_nn_lstm_calculate_gate_s8_s16(const int8_t *data_in,
+                                                      const int8_t *hidden_in,
+                                                      const muriscv_nn_lstm_gate *gate_data,
+                                                      const muriscv_nn_lstm_params *params,
+                                                      int16_t *output,
+                                                      const int32_t batch_offset);
 
 /**
  * @brief The result of the multiplication is accumulated to the passed result buffer.
  * Multiplies a matrix by a "batched" vector (i.e. a matrix with a batch dimension composed by input vectors independent
  * from each other).
  *
- * @param[in]   lhs_in           Batched vector
- * @param[in]   rhs_in           Weights - input matrix (H(Rows)xW(Columns))
- * @param[in]   bias             Bias vector
+ * @param[in]   lhs              Batched vector
+ * @param[in]   rhs              Weights - input matrix (H(Rows)xW(Columns))
+ * @param[in]   effective_bias   Bias + lhs_offset * kernel_sum term precalculated into a constant vector.
  * @param[out]  dst              Output
- * @param[in]   dst_offset       Output offset
  * @param[in]   dst_multiplier   Multiplier for quantization
  * @param[in]   dst_shift        Shift for quantization
  * @param[in]   rhs_cols         Vector/matarix column length
  * @param[in]   rhs_rows         Row count of matrix
- * @param[in]   batch            Batch size
+ * @param[in]   batches          Batch size
+ * @param[in]   batch_offset     Number of timesteps between consecutive batches in input, see muriscv_nn_lstm_step_s8. Note
+ that the output is always stored with sequential batches.
+ * @return                       The function returns <code>MURISCV_NN_SUCCESS</code>
+
  */
-void muriscv_nn_vec_mat_mul_result_acc_s8(const int8_t *lhs_in,
-                                      const int8_t *rhs_in,
-                                      const int32_t *bias,
-                                      int16_t *dst,
-                                      const int32_t dst_offset,
-                                      const int32_t dst_multiplier,
-                                      const int32_t dst_shift,
-                                      const int32_t rhs_cols,
-                                      const int32_t rhs_rows,
-                                      const int32_t batch);
+muriscv_nn_status muriscv_nn_vec_mat_mul_result_acc_s8_s16(const int8_t *lhs,
+                                                         const int8_t *rhs,
+                                                         const int32_t *effective_bias,
+                                                         int16_t *dst,
+                                                         const int32_t dst_multiplier,
+                                                         const int32_t dst_shift,
+                                                         const int32_t rhs_cols,
+                                                         const int32_t rhs_rows,
+                                                         const int32_t batches,
+                                                         const int32_t batch_offset);
 
 /**
  * @brief s16 elementwise multiplication with s8 output
@@ -2042,7 +2015,10 @@ void muriscv_nn_vec_mat_mul_result_acc_s8(const int8_t *lhs_in,
  * @param[in]       out_offset          output offset
  * @param[in]       out_mult            output multiplier
  * @param[in]       out_shift           output shift
- * @param[in]       block_size          number of samples
+ * @param[in]       block_size          number of samples per batch
+ * @param[in]       batch_size          number of samples per batch
+ * @param[in]       batch_offset        Number of timesteps between consecutive batches in output, see
+ * muriscv_nn_lstm_step_s8. Note that it is assumed that the input is stored with sequential batches.
  * @return          The function returns MURISCV_NN_SUCCESS
  *
  * @details   Supported framework: TensorFlow Lite micro
@@ -2053,7 +2029,38 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_s8(const int16_t *input_1_vect,
                                                const int32_t out_offset,
                                                const int32_t out_mult,
                                                const int32_t out_shift,
-                                               const int32_t block_size);
+                                               const int32_t block_size,
+                                               const int32_t batch_size,
+                                               const int32_t batch_offset);
+
+/**
+ * @brief s16 elementwise multiplication. The result of the multiplication is accumulated to the passed result buffer.
+ * @param[in]       input_1_vect        pointer to input vector 1
+ * @param[in]       input_2_vect        pointer to input vector 2
+ * @param[in]       input_1_offset      offset for input 1. Not used.
+ * @param[in]       input_2_offset      offset for input 2. Not used.
+ * @param[in,out]   output              pointer to output vector
+ * @param[in]       out_offset          output offset. Not used.
+ * @param[in]       out_mult            output multiplier
+ * @param[in]       out_shift           output shift
+ * @param[in]       out_activation_min  minimum value to clamp output to. Min: -32768
+ * @param[in]       out_activation_max  maximum value to clamp output to. Max: 32767
+ * @param[in]       block_size          number of samples
+ * @return          The function returns MURISCV_NN_SUCCESS
+ *
+ * @details   Supported framework: TensorFlow Lite micro
+ */
+muriscv_nn_status muriscv_nn_elementwise_mul_acc_s16(const int16_t *input_1_vect,
+                                                const int16_t *input_2_vect,
+                                                const int32_t input_1_offset,
+                                                const int32_t input_2_offset,
+                                                int16_t *output,
+                                                const int32_t out_offset,
+                                                const int32_t out_mult,
+                                                const int32_t out_shift,
+                                                const int32_t out_activation_min,
+                                                const int32_t out_activation_max,
+                                                const int32_t block_size);
 
 #ifdef __cplusplus
 }

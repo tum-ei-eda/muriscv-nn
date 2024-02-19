@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2021-2024 Chair of Electronic Design Automation, TUM
  */
 
 #ifndef _MURISCV_NN_TYPES_H
@@ -57,6 +57,15 @@ typedef struct
     int32_t w; /**< Width */
     int32_t c; /**< Input channels */
 } muriscv_nn_dims;
+
+/** MURISCV-NN object to contain LSTM specific input parameters related to dimensions */
+typedef struct
+{
+    int32_t max_time;
+    int32_t num_inputs;
+    int32_t num_batches;
+    int32_t num_outputs;
+} muriscv_nn_lstm_dims;
 
 /** MURISCV-NN object for the per-channel quantization parameters */
 typedef struct
@@ -148,40 +157,6 @@ typedef struct
     const int16_t *one_by_one_lut;
 } muriscv_nn_softmax_lut_s16;
 
-/** LSTM scratch buffer container */
-typedef struct
-{
-    int16_t *input_gate;
-    int16_t *forget_gate;
-    int16_t *cell_gate;
-    int16_t *output_gate;
-} muriscv_nn_lstm_context;
-
-/** MURISCV-NN object to contain LSTM specific input parameters related to dimensions */
-typedef struct
-{
-    int32_t max_time;
-    int32_t num_inputs;
-    int32_t num_batches;
-    int32_t num_outputs;
-} muriscv_nn_lstm_dims;
-
-/** Quantized clip value for cell and projection of LSTM input. Zero value means no clipping. */
-typedef struct
-{
-    int16_t cell;
-    int8_t projection;
-} muriscv_nn_lstm_clip_params;
-
-/** LSTM guard parameters */
-typedef struct
-{
-    int32_t input_variance;
-    int32_t forget_variance;
-    int32_t cell_variance;
-    int32_t output_variance;
-} muriscv_nn_lstm_guard_params;
-
 /** MURISCV-NN object for quantization parameters */
 typedef struct
 {
@@ -189,69 +164,60 @@ typedef struct
     int32_t shift;      /**< Shift value */
 } muriscv_nn_scaling;
 
-/** MURISCV-NN norm layer coefficients */
+/** MURISCV-NN object for LSTM gate parameters*/
 typedef struct
 {
-    int16_t *input_weight;
-    int16_t *forget_weight;
-    int16_t *cell_weight;
-    int16_t *output_weight;
-} muriscv_nn_layer_norm;
+    int32_t input_multiplier;
+    int32_t input_shift;
+    const int8_t *input_weights;
+    const int32_t *input_effective_bias; /**< Bias added with precomputed kernel_sum * lhs_offset*/
+
+    int32_t hidden_multiplier;
+    int32_t hidden_shift;
+    const int8_t *hidden_weights;
+    const int32_t *hidden_effective_bias; /**< Precomputed kernel_sum * lhs_offset*/
+
+    const int32_t *bias;
+    muriscv_nn_activation_type activation_type;
+} muriscv_nn_lstm_gate;
 
 /** Parameters for integer LSTM, as defined in TFLM */
 typedef struct
 {
-    int32_t time_major; /**< Nonzero (true) if first row of data is timestamps for input */
-    muriscv_nn_scaling input_to_input_scaling;
-    muriscv_nn_scaling input_to_forget_scaling;
-    muriscv_nn_scaling input_to_cell_scaling;
-    muriscv_nn_scaling input_to_output_scaling;
-    muriscv_nn_scaling recurrent_to_input_scaling;
-    muriscv_nn_scaling recurrent_to_forget_scaling;
-    muriscv_nn_scaling recurrent_to_cell_scaling;
-    muriscv_nn_scaling recurrent_to_output_scaling;
-    muriscv_nn_scaling cell_to_input_scaling;
-    muriscv_nn_scaling cell_to_forget_scaling;
-    muriscv_nn_scaling cell_to_output_scaling;
-    muriscv_nn_scaling projection_scaling;
-    muriscv_nn_scaling hidden_scaling;
-    muriscv_nn_scaling layer_norm_input_scaling;  /**< layer normalization for input layer */
-    muriscv_nn_scaling layer_norm_forget_scaling; /**< layer normalization for forget gate */
-    muriscv_nn_scaling layer_norm_cell_scaling;   /**< layer normalization for cell */
-    muriscv_nn_scaling layer_norm_output_scaling; /**< layer normalization for outpus layer */
+    int32_t time_major; /**< 0 if first dimension is batch, else first dimension is time */
+    int32_t batch_size;
+    int32_t time_steps;
+    int32_t input_size; /**< Size of new data input into the LSTM cell*/
+    int32_t
+        hidden_size; /**< Size of output from the LSTM cell, used as output and recursively into the next time step*/
 
-    int32_t cell_state_shift;
-    int32_t hidden_offset;
-    int32_t output_state_offset;
+    int32_t input_offset;
 
-    muriscv_nn_lstm_clip_params clip;
-    muriscv_nn_lstm_guard_params guard;
-    muriscv_nn_layer_norm layer_norm;
+    int32_t forget_to_cell_multiplier;
+    int32_t forget_to_cell_shift;
+    int32_t input_to_cell_multiplier;
+    int32_t input_to_cell_shift;
+    int32_t cell_clip; /**< Min/max value of cell output*/
+    int32_t cell_scale_power;
 
-    /* Effective bias is precalculated as bias + zero_point * weight.
-    Only applicable to when input/output are s8 and weights are s16 */
-    const int32_t *i2i_effective_bias; /**< input to input effective bias */
-    const int32_t *i2f_effective_bias; /**< input to forget gate effective bias */
-    const int32_t *i2c_effective_bias; /**< input to cell effective bias */
-    const int32_t *i2o_effective_bias; /**< input to output effective bias */
+    int32_t output_multiplier;
+    int32_t output_shift;
+    int32_t output_offset;
 
-    const int32_t *r2i_effective_bias; /**< recurrent gate to input effective bias */
-    const int32_t *r2f_effective_bias; /**< recurrent gate to forget gate effective bias */
-    const int32_t *r2c_effective_bias; /**< recurrent gate to cell effective bias */
-    const int32_t *r2o_effective_bias; /**< recurrent gate to output effective bias */
-
-    const int32_t *projection_effective_bias;
-
-    /* Not precalculated bias */
-    const int32_t *input_gate_bias;
-    const int32_t *forget_gate_bias;
-    const int32_t *cell_gate_bias;
-    const int32_t *output_gate_bias;
-
-    /* Activation min and max */
-    muriscv_nn_activation activation;
+    muriscv_nn_lstm_gate forget_gate;
+    muriscv_nn_lstm_gate input_gate;
+    muriscv_nn_lstm_gate cell_gate;
+    muriscv_nn_lstm_gate output_gate;
 
 } muriscv_nn_lstm_params;
+
+/** MURISCV-NN object for LSTM scratch buffers*/
+typedef struct
+{
+    void *temp1;
+    void *temp2;
+    void *cell_state;
+} muriscv_nn_lstm_context;
 
 
 #ifdef __cplusplus

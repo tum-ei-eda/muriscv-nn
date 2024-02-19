@@ -23,7 +23,7 @@
  * Title:        muriscv_nn_activations_q15.c
  * Description:  Q15 neural network activation function using direct table look-up
  *
- * $Date:        20 March 2023
+ * $Date:        19 February 2024
  * $Revision:    V.1.0.0
  *
  * Target Processor:  RISCV cores
@@ -49,10 +49,10 @@
  *
  */
 
-void muriscv_nn_activation_s16(const int16_t *input,
+muriscv_nn_status muriscv_nn_activation_s16(const int16_t *input,
                            int16_t *output,
-                           const uint16_t size,
-                           const uint16_t left_shift,
+                           const int32_t size,
+                           const int32_t left_shift,
                            const muriscv_nn_activation_type type)
 {
     uint32_t abs_input_shift, max_saturation;
@@ -114,6 +114,8 @@ void muriscv_nn_activation_s16(const int16_t *input,
         }
         *output = (int16_t)result;
     }
+    
+    return MURISCV_NN_SUCCESS;
 }
 
 /**
