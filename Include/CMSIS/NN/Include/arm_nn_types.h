@@ -45,6 +45,11 @@ extern "C" {
 
 #define cmsis_nn_transpose_conv_params muriscv_nn_transpose_conv_params
 
+#define cmsis_nn_lstm_gate muriscv_nn_lstm_gate
+
+#define ARM_SIGMOID MURISCV_SIGMOID
+#define ARM_TANH MURISCV_TANH
+
 
 
 #ifdef __cplusplus
