@@ -27,7 +27,6 @@ echo "Download TFLM sources."
 if [ ! -d "tflite-micro" ]; then
   git clone https://github.com/tensorflow/tflite-micro.git
   cd tflite-micro
-  git checkout a549448bb234cf3fed15ad5dabf83d06f82326ce
 else
   cd tflite-micro
   git pull

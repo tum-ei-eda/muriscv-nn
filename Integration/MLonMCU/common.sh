@@ -25,7 +25,7 @@ export MLIF_REF=main
 
 # TFLM
 # export TFLM_REF=47f77ab6876f66a2d5e4b7f0266e374b4260181e
-export TFLM_REF=a549448bb234cf3fed15ad5dabf83d06f82326ce
+export TFLM_REF=main
 export ENABLE_TFLM=0
 
 # TVM
