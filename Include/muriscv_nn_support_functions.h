@@ -1283,18 +1283,23 @@ __STATIC_FORCEINLINE void muriscv_nn_memset_s8(int8_t *dst, const int8_t val, ui
 
 #if defined(USE_PEXT)
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s4 word into two s8 words.
  */
 __STATIC_FORCEINLINE void read_and_pad_s4(const int8_t *source, int32_t *out1, int32_t *out2)
 {
+    //UNIMP FOR RISCV
     int16_t in = muriscv_nn_read_s8x2(source);
     int32_t inA = (in & 0x00FF) | ((in & 0xFF00) << 8);
 
-    *out1 = SXTB16_RORn(__sxtb16(inA << 4), 4);
-    *out2 = SXTB16_RORn(__sxtb16(inA), 4);
+    //*out1 = SXTB16_RORn(__sxtb16(inA << 4), 4);
+    //*out2 = SXTB16_RORn(__sxtb16(inA), 4);
+    out1 = NULL;
+    out2 = NULL;
 }
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s4 word into two s8 words.
  * @details   The s4 elements are not evenly aligned on the byte boundary, so 3 bytes need to be read instead of 2.
@@ -1309,102 +1314,129 @@ __STATIC_FORCEINLINE void read_and_pad_s4(const int8_t *source, int32_t *out1, i
  */
 __STATIC_FORCEINLINE void read_and_pad_s4_uneven(const int8_t *source, int32_t *out1, int32_t *out2)
 {
+    //UNIMP FOR RISCV
     int32_t inA1 = (source[0] & 0xFF) | ((source[1] & 0xFF) << 16);
     int32_t inA2 = (source[1] & 0xFF) | ((source[2] & 0xFF) << 16);
 
-    *out1 = SXTB16_RORn(__sxtb16(inA2 << 4), 4);
-    *out2 = SXTB16_RORn(__sxtb16(inA1), 4);
+    //*out1 = SXTB16_RORn(__sxtb16(inA2 << 4), 4);
+    //*out2 = SXTB16_RORn(__sxtb16(inA1), 4);
+    out1 = NULL;
+    out2 = NULL;
+    
 }
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s4 word into two s16 words with ordering.
  */
 __STATIC_FORCEINLINE void read_and_pad_s4_ordered(const int8_t *source, int32_t *out1, int32_t *out2)
 {
+    //UNIMP FOR RISCV
     int16_t in = muriscv_nn_read_s8x2(source);
     int32_t inA = (in & 0x00FF) | ((in & 0xFF00) << 8);
-    int32_t inAbuf1 = SXTB16_RORn(__sxtb16(inA), 4);
-    int32_t inAbuf2 = SXTB16_RORn(__sxtb16(inA << 4), 4);
+    //int32_t inAbuf1 = SXTB16_RORn(__sxtb16(inA), 4);
+    //int32_t inAbuf2 = SXTB16_RORn(__sxtb16(inA << 4), 4);
     #ifndef ARM_MATH_BIG_ENDIAN
-    *out2 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
-    *out1 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
+    //*out2 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
+    //*out1 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
     #else
-    *out1 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
-    *out2 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
+    //*out1 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
+    //*out2 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
     #endif
+    out1 = NULL;
+    out2 = NULL;
+    
 }
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s8 word into two s16 words with ordering.
  */
 __STATIC_FORCEINLINE const int8_t *read_and_pad(const int8_t *source, int32_t *out1, int32_t *out2)
 {
+    //UNIMP FOR RISCV
     int32_t inA = muriscv_nn_read_s8x4_ia(&source);
-    int32_t inAbuf1 = SXTB16_RORn((uint32_t)inA, 8);
-    int32_t inAbuf2 = SXTB16(inA);
+    //int32_t inAbuf1 = SXTB16_RORn((uint32_t)inA, 8);
+    //int32_t inAbuf2 = SXTB16(inA);
 
     #ifndef ARM_MATH_BIG_ENDIAN
-    *out2 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
-    *out1 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
+    //*out2 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
+    //*out1 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
     #else
-    *out1 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
-    *out2 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
+    //*out1 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
+    //*out2 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
     #endif
+    out1 = NULL;
+    out2 = NULL;
 
     return source;
 }
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s8 word into two s16 words with ordering and addition.
  */
 __STATIC_FORCEINLINE void read_pad_and_add_s8(const int8_t *source, int32_t *out1, int32_t *out2, const uint32_t add)
 {
+    //UNIMP FOR RISCV
     int32_t inA = muriscv_nn_read_s8x4(source);
-    int32_t inAbuf1 = SXTAB16_RORn(add, (uint32_t)inA, 8);
-    int32_t inAbuf2 = SXTAB16(add, inA);
+    //int32_t inAbuf1 = SXTAB16_RORn(add, (uint32_t)inA, 8);
+    //int32_t inAbuf2 = SXTAB16(add, inA);
 
     #ifndef ARM_MATH_BIG_ENDIAN
-    *out2 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
-    *out1 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
+    //*out2 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
+    //*out1 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
     #else
-    *out1 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
-    *out2 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
+    //*out1 = (int32_t)(PKHTB(inAbuf1, inAbuf2, 16));
+    //*out2 = (int32_t)(PKHBT(inAbuf2, inAbuf1, 16));
     #endif
+    out1 = NULL;
+    out2 = NULL;
 }
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand two bytes into one word with ordering.
  */
 __STATIC_FORCEINLINE void read_and_pad_s8x2(const int8_t *source, int32_t *out)
 {
+    //UNIMP FOR RISCV
     int16_t in = muriscv_nn_read_s8x2(source);
     int32_t inA = (in & 0x00FF) | ((in & 0xFF00) << 8);
-    *out = SXTB16(inA);
+    //*out = SXTB16(inA);
+    out = NULL;
 }
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand two bytes into one word with ordering and addition.
  */
 __STATIC_FORCEINLINE void read_pad_and_add_s8x2(const int8_t *source, int32_t *out, const uint32_t add)
 {
+    //UNIMP FOR RISCV
     int16_t in = muriscv_nn_read_s8x2(source);
     int32_t inA = (in & 0x00FF) | ((in & 0xFF00) << 8);
-    *out = SXTAB16(add, inA);
+    //*out = SXTAB16(add, inA);
+    out = NULL;
 }
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s8 word into two s16 words with no additional ordering.
  */
 __STATIC_FORCEINLINE const int8_t *read_and_pad_reordered(const int8_t *source, int32_t *out1, int32_t *out2)
 {
+    //UNIMP FOR RISCV
     int32_t inA = muriscv_nn_read_s8x4_ia(&source);
     #ifndef ARM_MATH_BIG_ENDIAN
-    *out2 = SXTB16(ROR((uint32_t)inA, 8));
-    *out1 = SXTB16(inA);
+    //*out2 = SXTB16(ROR((uint32_t)inA, 8));
+    //*out1 = SXTB16(inA);
     #else
-    *out1 = SXTB16(ROR((uint32_t)inA, 8));
-    *out2 = SXTB16(inA);
+    //*out1 = SXTB16(ROR((uint32_t)inA, 8));
+    //*out2 = SXTB16(inA);
     #endif
+    out1 = NULL;
+    out2 = NULL;
 
     return source;
 }
