@@ -15,11 +15,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
+# Modifications copyright (C) 2024 Chair of Electronic Design Automation, TUM
 #
 
 target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_elementwise_add_s8.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_elementwise_add_s16.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_elementwise_mul_s8.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_elementwise_mul_s16.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_elementwise_mul_s16_s8.c)
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_elementwise_mul_s16_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_elementwise_mul_acc_s16.c)

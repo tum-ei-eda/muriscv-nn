@@ -24,7 +24,7 @@
  * Title:        muriscv_vector_sum_s8
  * Description:  Generic function for calculating vector sums
  *
- * $Date:        10 October 2023
+ * $Date:        19 February 2024
  * $Revision:    V.1.0.0
  *
  * Target :  RISCV V-EXT architectures
@@ -52,7 +52,9 @@
 muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
                                       const int32_t vector_cols,
                                       const int32_t vector_rows,
-                                      const int8_t *vector_data)
+                                      const int8_t *vector_data,
+                                      const int32_t lhs_offset,
+                                      const int32_t *bias_data)
 {
 #if defined(USE_VEXT)
     //ARM CODE.  NEEDS TO BE CONVERTED TO RISCV
