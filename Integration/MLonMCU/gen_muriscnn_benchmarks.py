@@ -251,7 +251,7 @@ BACKEND_DEFAULT_CONFIG = {
     "tvmaot": {"usmp.algorithm": "hill_climb"},
 }
 
-VLENS = [64, 128, 256, 512, 1024, 2048]
+VLENS = [64, 128, 256, 512, 1024, 2048, 4096, 8192]
 
 DEFAULT_VLENS = [64, 128, 256, 512, 1024, 2048]
 
