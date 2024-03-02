@@ -65,15 +65,27 @@ int8_t *muriscv_nn_mat_mul_core_4x_s8(const int32_t row_elements,
         const int8_t *ip_row_3 = row_base + (3 * offset);
 
         volatile size_t vl = vsetvl_e32m4(row_elements);
-        vint32m4_t sum_tmp_v = vmv_v_x_i32m4(0, vl);
-        vint32m4_t acc_n0_v = vmv_v_x_i32m4(0, vl);
-        vint32m4_t acc_n1_v = vmv_v_x_i32m4(0, vl);
-        vint32m4_t acc_n2_v = vmv_v_x_i32m4(0, vl);
-        vint32m4_t acc_n3_v = vmv_v_x_i32m4(0, vl);
+        
+        
+        //First loop iteration unrolled to initialize accumulators with vmul
+        vint32m4_t col_val_init = __riscv_vsext_vf4_i32m4(__riscv_vle8_v_i8m1(col_base, vl), vl);
+        vint32m4_t sum_tmp_v = __riscv_vmul_vv_i32m4(col_val_init, __riscv_vmv_v_x_i32m4(1, vl), vl); 
+
+        vint32m4_t row_val_init = __riscv_vsext_vf4_i32m4(__riscv_vle8_v_i8m1(ip_row_0, vl), vl);
+        vint32m4_t acc_n0_v = __riscv_vmul_vv_i32m4(col_val_init, row_val_init, vl);
+
+        row_val_init = __riscv_vsext_vf4_i32m4(__riscv_vle8_v_i8m1(ip_row_1, vl), vl);
+        vint32m4_t acc_n1_v = __riscv_vmul_vv_i32m4(col_val_init, row_val_init, vl);
+
+        row_val_init = __riscv_vsext_vf4_i32m4(__riscv_vle8_v_i8m1(ip_row_2, vl), vl);
+        vint32m4_t acc_n2_v = __riscv_vmul_vv_i32m4(col_val_init, row_val_init, vl);
+
+        row_val_init = __riscv_vsext_vf4_i32m4(__riscv_vle8_v_i8m1(ip_row_3, vl), vl);
+        vint32m4_t acc_n3_v = __riscv_vmul_vv_i32m4(col_val_init, row_val_init, vl);
 
 
-        size_t loop_cnt = row_elements;
-        size_t loop_ptr = 0;
+        size_t loop_cnt = row_elements - vl;
+        size_t loop_ptr = vl;
         while (loop_cnt > 0)
         {
             vl = vsetvl_e32m4(loop_cnt);
