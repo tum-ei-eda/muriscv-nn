@@ -36,7 +36,9 @@ Toolchain/*
 !Toolchain/download_rv32gc.sh
 !Toolchain/download_rv32gcv.sh
 !Toolchain/download_rv32gcp.sh
+!Toolchain/download_rv32im.sh
 !Toolchain/download_rv32imv.sh
+!Toolchain/download_rv32im_zicsr_zve32x.sh
 !Toolchain/download_lite.sh
 !Toolchain/README.md
 
