@@ -58,9 +58,9 @@
 {% for model_name, model_data in backend_data.items() %}
 ### {{model_descriptions[model_name]}} (`{{model_name}}`)
 
-|  Cycles (Speedup) | Total ROM (rel.) | Total RAM (rel.) | VLEN | {% if "tvm" in backend_name %} Layout | {% endif%} Kernels    | Mode | Arch | Auto-Vectorization |
-| -----------------:|-----------------:| ----------------:| ----:| {% if "tvm" in backend_name %} ------ | {% endif %} --------- | ---- | ---- | -------------------|
-{% for x in model_data %}| `{{x["Run Cycles"]}}` <br>({% if loop.index0 == x["Baseline"] %} **Base** {% else %} {{(1.0/x["Run Cycles (rel.)"]) | round(1) }}x {% endif %}) | `{{x["Total ROM"]}}` <br>({% if loop.index0 == x["Baseline"] %} **Base** {% else %} {{ x["Total ROM (rel.)"] | round3 }} {% endif %}) | `{{x["Total RAM"]}}` <br>({% if loop.index0 == x["Baseline"] %} **Base** {% else %} {{ x["Total RAM (rel.)"] | round3 }} {% endif %}) | {{x["VLEN"]}} | {% if "tvm" in backend_name %} {{x["Layout"]}} | {% endif %}{{x["Kernels"]}} | {{x["Mode"]}} | {{x["Arch"]}} | {{x["AutoVectorize"]}} |
+|  Cycles (Speedup) | Total ROM (rel.) | Total RAM (rel.) | VLEN | {% if "tvm" in backend_name %} Layout | {% endif%} Kernels    | Mode | Arch | Unroll | Auto-Vectorization |
+| -----------------:|-----------------:| ----------------:| ----:| {% if "tvm" in backend_name %} ------ | {% endif %} --------- | ---- | ---- | ---- | -------------------|
+{% for x in model_data %}| `{{x["Run Cycles"]}}` <br>({% if loop.index0 == x["Baseline"] %} **Base** {% else %} {{(1.0/x["Run Cycles (rel.)"]) | round(1) }}x {% endif %}) | `{{x["Total ROM"]}}` <br>({% if loop.index0 == x["Baseline"] %} **Base** {% else %} {{ x["Total ROM (rel.)"] | round3 }} {% endif %}) | `{{x["Total RAM"]}}` <br>({% if loop.index0 == x["Baseline"] %} **Base** {% else %} {{ x["Total RAM (rel.)"] | round3 }} {% endif %}) | {{x["VLEN"]}} | {% if "tvm" in backend_name %} {{x["Layout"]}} | {% endif %}{{x["Kernels"]}} | {{x["Mode"]}} | {{x["Arch"]}} | {{x["Unroll"]}} | {{x["AutoVectorize"]}} |
 {% endfor %}
 {% endfor %}
 {% endfor %}
