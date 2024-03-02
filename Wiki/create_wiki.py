@@ -104,10 +104,10 @@ if args.split:
     for framework_name, framework_data in data.items():
         for toolchain_name, toolchain_data in framework_data.items():
             for optimize_name, optimize_data in toolchain_data.items():
-                filename = f"Benchmarks-" + date + "-" + framework_name.upper() + "-" + toolchain_name.upper() + "-O" + optimize_name
+                filename = f"Benchmarks-" + date + "-" + framework_name.upper() + "-" + toolchain_name.upper() + "-O" + str(optimize_name)
                 # print("data", {framework_name: {toolchain_name: toolchain_data}})
                 data2 = {framework_name: {toolchain_name: {optimize_name: optimize_data}}}
-                df2 = df[(df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name) & (df["optimize"] == optimize_name)]
+                df2 = df[(df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name) & (df["Optimize"] == optimize_name)]
                 # print("fn", framework_name)
                 # print("tn", toolchain_name)
                 # print("flt", (df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name) & (df["Optimize"]))
