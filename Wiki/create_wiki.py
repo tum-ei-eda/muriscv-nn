@@ -70,7 +70,7 @@ for framework_name, framework_df in df.groupby("Framework"):
                 backend_names.append(backend_name)
                 data[framework_name][toolchain_name][optimize_name][backend_name] = {}
                 for model_name, model_df in backend_df.groupby("Model"):
-                    data[framework_name][toolchain_name][backend_name][model_name] = model_df.to_dict("records")
+                    data[framework_name][toolchain_name][optimize_name][backend_name][model_name] = model_df.to_dict("records")
                     model_names.append(model_name)
 
 # data = {
