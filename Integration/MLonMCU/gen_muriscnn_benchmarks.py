@@ -245,8 +245,8 @@ def get_backend_config(backend, features, enable_autotuned=False):
 
 
 DEFAULT_CONFIG = {
-    # "mlif.num_threads": 4,
-    "mlif.num_threads": 12,
+    "mlif.num_threads": 4,
+    # "mlif.num_threads": 12,
     # "mlif.optimize": "s",
     "mlif.fuse_ld": "none",
     "run.export_optional": True,
