@@ -13,7 +13,7 @@ jobs:
         backend: [tvmaot, tflmi]
         toolchain: [gcc, llvm]
         optimize: [3, s]
-        unroll: [0]
+        unroll: [1]
 
     steps:
 
@@ -117,7 +117,7 @@ jobs:
         working-directory: ./Wiki
         run: |
           source ../Integration/MLonMCU/common.sh
-          python3 create_wiki.py */*.csv --split
+          python3 create_wiki.py */*.csv --split --date CUSTOM
 
       - name: Clone Wiki Repo
         uses: actions/checkout@v4
