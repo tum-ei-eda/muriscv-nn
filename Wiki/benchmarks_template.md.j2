@@ -51,8 +51,9 @@
 
 {% for framework_name, framework_data in data.items() %}
 {% for toolchain_name, toolchain_data in framework_data.items() %}
-{% for backend_name, backend_data in toolchain_data.items() %}
-## Results (Framework: {{framework_name}}, Backend: {{backend_name}}, Toolchain: {{toolchain_name}})
+{% for optimize_name, optimize_data in toolchain_data.items() %}
+{% for backend_name, backend_data in optimize_data.items() %}
+## Results (Framework: {{framework_name}}, Backend: {{backend_name}}, Toolchain: {{toolchain_name}}, Flags: -O{{optimize_name}})
 
 {% for model_name, model_data in backend_data.items() %}
 ### {{model_descriptions[model_name]}} (`{{model_name}}`)

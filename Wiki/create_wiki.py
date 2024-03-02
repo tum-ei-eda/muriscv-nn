@@ -53,6 +53,7 @@ data = {}
 framework_names = []
 backend_names = []
 toolchain_names = []
+optimize_names = []
 model_names = []
 target_names = ["spike"]  # TODO: allow-multiple targets
 
@@ -62,12 +63,15 @@ for framework_name, framework_df in df.groupby("Framework"):
     for toolchain_name, toolchain_df in framework_df.groupby("Toolchain"):
         toolchain_names.append(toolchain_name)
         data[framework_name][toolchain_name] = {}
-        for backend_name, backend_df in toolchain_df.groupby("Backend"):
-            backend_names.append(backend_name)
-            data[framework_name][toolchain_name][backend_name] = {}
-            for model_name, model_df in backend_df.groupby("Model"):
-                data[framework_name][toolchain_name][backend_name][model_name] = model_df.to_dict("records")
-                model_names.append(model_name)
+        for optimize_name, optimize_df in toolchain_df.groupby("Optimize"):
+            optimize_names.append(optimize_name)
+            data[framework_name][toolchain_name][optimize_name] = {}
+            for backend_name, backend_df in optimize_df.groupby("Backend"):
+                backend_names.append(backend_name)
+                data[framework_name][toolchain_name][optimize_name][backend_name] = {}
+                for model_name, model_df in backend_df.groupby("Model"):
+                    data[framework_name][toolchain_name][backend_name][model_name] = model_df.to_dict("records")
+                    model_names.append(model_name)
 
 # data = {
 #     "tflmi": {
@@ -99,31 +103,33 @@ BACKEND_DESCS = {
 if args.split:
     for framework_name, framework_data in data.items():
         for toolchain_name, toolchain_data in framework_data.items():
-            filename = f"Benchmarks-" + date + "-" + framework_name.upper() + "-" + toolchain_name.upper()
-            # print("data", {framework_name: {toolchain_name: toolchain_data}})
-            data2 = {framework_name: {toolchain_name: toolchain_data}}
-            df2 = df[(df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name)]
-            print("fn", framework_name)
-            print("tn", toolchain_name)
-            print("flt", (df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name))
-            print("df2", df2)
-            # input("123")
-            content = template.render(
-                data=data2,
-                model_descriptions=MODEL_DESCS,
-                backend_descriptions=BACKEND_DESCS,
-                filename=filename,
-                framework_names=[framework_name],
-                backend_names=backend_names,
-                toolchain_names=[toolchain_name],
-                model_names=model_names,
-                target_names=target_names
-            )
-            with open(filename + ".md", mode="w", encoding="utf-8") as message:
-                message.write(content)
-                print(f"... wrote {filename}.md")
-            df2.to_csv(filename + ".csv")
-            print(f"... wrote {filename}.csv")
+            for optimize_name, optimize_data in toolchain_data.items():
+                filename = f"Benchmarks-" + date + "-" + framework_name.upper() + "-" + toolchain_name.upper() + "-O" + optimize_name
+                # print("data", {framework_name: {toolchain_name: toolchain_data}})
+                data2 = {framework_name: {toolchain_name: {optimize_name: optimize_data}}}
+                df2 = df[(df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name) & (df["optimize"] == optimize_name)]
+                # print("fn", framework_name)
+                # print("tn", toolchain_name)
+                # print("flt", (df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name) & (df["Optimize"]))
+                # print("df2", df2)
+                # input("123")
+                content = template.render(
+                    data=data2,
+                    model_descriptions=MODEL_DESCS,
+                    backend_descriptions=BACKEND_DESCS,
+                    filename=filename,
+                    framework_names=[framework_name],
+                    backend_names=backend_names,
+                    toolchain_names=[toolchain_name],
+                    optimize_names=[optimize_name],
+                    model_names=model_names,
+                    target_names=target_names
+                )
+                with open(filename + ".md", mode="w", encoding="utf-8") as message:
+                    message.write(content)
+                    print(f"... wrote {filename}.md")
+                df2.to_csv(filename + ".csv")
+                print(f"... wrote {filename}.csv")
 else:
     filename = f"Benchmarks-" + date
     # data2 = {}
@@ -139,6 +145,7 @@ else:
         framework_names=framework_names,
         backend_names=backend_names,
         toolchain_names=toolchain_names,
+        optimize_names=optimize_names,
         model_names=model_names,
         target_names=target_names
     )
