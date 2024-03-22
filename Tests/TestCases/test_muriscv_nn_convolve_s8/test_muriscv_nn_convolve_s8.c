@@ -510,7 +510,7 @@ void conv_1_x_n_1_muriscv_nn_convolve_s8(void)
     quant_params.multiplier = (int32_t *)conv_1_x_n_1_output_mult;
     quant_params.shift = (int32_t *)conv_1_x_n_1_output_shift;
 
-    int32_t buf_size = muriscv_nn_convolve_1_x_n_s8_get_buffer_size(&input_dims, &filter_dims);
+    int32_t buf_size = muriscv_nn_convolve_1_x_n_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
@@ -592,7 +592,7 @@ void conv_1_x_n_2_muriscv_nn_convolve_s8(void)
     quant_params.multiplier = (int32_t *)conv_1_x_n_2_output_mult;
     quant_params.shift = (int32_t *)conv_1_x_n_2_output_shift;
 
-    int32_t buf_size = muriscv_nn_convolve_1_x_n_s8_get_buffer_size(&input_dims, &filter_dims);
+    int32_t buf_size = muriscv_nn_convolve_1_x_n_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
@@ -673,7 +673,7 @@ void conv_1_x_n_3_muriscv_nn_convolve_s8(void)
     quant_params.multiplier = (int32_t *)conv_1_x_n_3_output_mult;
     quant_params.shift = (int32_t *)conv_1_x_n_3_output_shift;
 
-    int32_t buf_size = muriscv_nn_convolve_1_x_n_s8_get_buffer_size(&input_dims, &filter_dims);
+    int32_t buf_size = muriscv_nn_convolve_1_x_n_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 

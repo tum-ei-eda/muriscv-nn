@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2021-2024 Chair of Electronic Design Automation, TUM
  */
 
 #if defined(USE_VEXT)
