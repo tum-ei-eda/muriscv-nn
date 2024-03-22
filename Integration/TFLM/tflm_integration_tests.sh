@@ -97,7 +97,7 @@ for test in "${TESTS[@]}"; do
     ${test}
   echo ${test}
     ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
-        ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${test} \
+        ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}_cmsis_nn_${TOOLCHAIN}/bin/${test} \
         ${TARGET_ARCH} ${VLEN} ${ELEN} 1
 
 done
@@ -119,6 +119,6 @@ for bm in "${BENCHMARKS[@]}"; do
     ${bm}
 
     ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
-    ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}/bin/${bm} \
+    ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}_cmsis_nn_${TOOLCHAIN}/bin/${bm} \
     ${TARGET_ARCH} ${VLEN} ${ELEN} 1
 done
