@@ -9,7 +9,7 @@ on:
   push:
     branches:
       - 'master'
-      - 'sync'
+#      - 'sync'
   pull_request:
     branches: [ "master" ]
 
