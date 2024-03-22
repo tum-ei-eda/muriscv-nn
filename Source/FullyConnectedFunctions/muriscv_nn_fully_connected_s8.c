@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2021-2024 Chair of Electronic Design Automation, TUM
  */
 
 #if defined(USE_VEXT)
@@ -84,7 +84,8 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
                                      output_dims->c, /* row_dim or output_depth */
                                      fc_params->activation.min,
                                      fc_params->activation.max,
-                                     1L);
+                                     1L,
+                                     0); //RHS OFFSET CURRENTLY UNUSED
         input += filter_dims->n;
         output += output_dims->c;
         batch_cnt--;

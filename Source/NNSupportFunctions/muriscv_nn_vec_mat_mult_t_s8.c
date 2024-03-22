@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2021-2024 Chair of Electronic Design Automation, TUM
  */
 
 #if defined(USE_VEXT)
@@ -59,7 +59,8 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
                                                const int32_t rhs_rows,
                                                const int32_t activation_min,
                                                const int32_t activation_max,
-                                               const int32_t address_offset)
+                                               const int32_t address_offset,
+                                               const int32_t rhs_offset) // Currently Unused
 {
 #if defined(USE_VEXT)
 

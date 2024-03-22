@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2021-2023 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2021-2024 Chair of Electronic Design Automation, TUM
  */
 
 #if defined(USE_VEXT)
@@ -114,7 +114,7 @@ int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size(const muriscv_nn_conv_par
     }
     else if ((input_dims->h == 1) && (output_dims->w % 4 == 0) && (conv_params->dilation.w == 1))
     {
-        return muriscv_nn_convolve_1_x_n_s8_get_buffer_size(input_dims, filter_dims);
+        return muriscv_nn_convolve_1_x_n_s8_get_buffer_size(conv_params, input_dims, filter_dims, output_dims);
     }
     else
     {

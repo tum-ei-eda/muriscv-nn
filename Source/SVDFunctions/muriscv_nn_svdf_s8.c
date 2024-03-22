@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
+ * Modifications copyright (C) 2024 Chair of Electronic Design Automation, TUM
  */
 
 /* ----------------------------------------------------------------------
@@ -135,7 +135,8 @@ muriscv_nn_status muriscv_nn_svdf_s8(const muriscv_nn_context *ctx,
                                                            feature_batches,
                                                            in_activation_min,
                                                            in_activation_max,
-                                                           time_batches);
+                                                           time_batches,
+                                                           0); //RHS OFFSET UNUSED
 
         if (res != MURISCV_NN_SUCCESS)
         {
