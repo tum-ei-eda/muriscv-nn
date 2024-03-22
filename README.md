@@ -51,5 +51,10 @@ When running ResNet on [TensorFlow Lite for Microcontrollers](https://github.com
 
 Stay tuned for more performance numbers in the near future!
 
-## Disclaimer
-This is a work in progress, and we apologize if things are not (yet) working as they should. If you run into issues, please let us know! 
+## Acknowledgment
+
+<img src="./images/BMBF_gefoerdert_2017_en.jpg" alt="drawing" height="75" align="left" >
+
+This research is partially funded by the German Federal Ministry of Education and Research (BMBF) within
+the project [Scale4Edge](https://www.edacentrum.de/scale4edge/) (grant number 16ME0465).
+
