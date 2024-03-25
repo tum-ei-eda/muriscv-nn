@@ -17,14 +17,13 @@ jobs:
 
     - name: Check if Sync Branch already exists
       id: sync_mode
-      continue-on-error: true
       run: |
-        git ls-remote --exit-code --heads origin sync >/dev/null 2>&1
-        echo "SYNC_EXISTS=$?" >> $GITHUB_OUTPUT   #Exit code 0 if branch exists, 2 if not
+        CHECK_SYNC=$(git ls-remote --heads origin sync | wc -l 2>&1)
+        echo "SYNC_EXISTS=$CHECK_SYNC" >> $GITHUB_OUTPUT   #1 if branch exists, 0 if not
         
 
-    - name: Switch to Sync Branch if it exits
-      if: steps.sync_mode.outputs.SYNC_EXISTS == '0'
+    - name: Switch to Sync Branch
+      if: steps.sync_mode.outputs.SYNC_EXISTS == '1'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
@@ -43,7 +42,7 @@ jobs:
       run: python3 CMSIS_NN_sync.py
 
     - name: Create Pull Request
-      if: steps.sync_mode.outputs.SYNC_EXISTS == '2'
+      if: steps.sync_mode.outputs.SYNC_EXISTS == '0'
       uses: peter-evans/create-pull-request@v5
       with:
         commit-message: |
@@ -53,7 +52,7 @@ jobs:
         token: ${{ secrets.CMSIS_SYNC_KEY }}
 
     - name: Add and count changed files
-      if: steps.sync_mode.outputs.SYNC_EXISTS == '0'
+      if: steps.sync_mode.outputs.SYNC_EXISTS == '1'
       id: count_files
       working-directory: ./
       run: |
@@ -63,11 +62,11 @@ jobs:
         echo "NUM_CHANGED=$NUM_STAGED" >> $GITHUB_OUTPUT 
     - name: Create Commit
       working-directory: ./
-      if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
+      if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '1'
       run: |
         git commit -m "Automated Sync from CMSIS-NN"
     - name: Push changes
-      if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
+      if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '1'
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.CMSIS_SYNC_KEY }}
