@@ -11,10 +11,9 @@ jobs:
       matrix:
         benchmark: [aww, vww, resnet, toycar]
         backend: [tvmaot, tflmi]
-        # toolchain: [gcc, llvm]
-        toolchain: [llvm]
-        optimize: [3, s]
-        unroll: [1]
+        toolchain: [gcc, llvm]
+        optimize: [s]
+        unroll: [0]
 
     steps:
 
