@@ -53,20 +53,21 @@ jobs:
 
     - name: Add and count changed files
       if: steps.sync_mode.outputs.SYNC_EXISTS == '0'
+      id: count_files
       working-directory: ./
       run: |
         git add Source/*
         git add Include/*
         git diff --cached --numstat | wc -l >> NUM_STAGED
-        echo "NUM_CHANGED=$NUM_STAGED" >> $GITHUB_ENV
+        echo "NUM_CHANGED=$NUM_STAGED" >> $GITHUB_OUTPUT 
     - name: Create Commit
       working-directory: ./
-      if: ${{ env.NUM_CHANGED }} != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
+      if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
       run: |
-        echo ${{ env.NUM_CHANGED }}
+        echo steps.count_files.outputs.NUM_CHANGED
         git commit -m "Automated Sync from CMSIS-NN"
     - name: Push changes
-      if: ${{ env.NUM_CHANGED }} != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
+      if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.CMSIS_SYNC_KEY }}
