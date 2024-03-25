@@ -19,7 +19,8 @@ jobs:
       id: sync_mode
       run: |
         git ls-remote --exit-code --heads origin sync >/dev/null 2>&1
-        echo "SYNC_EXISTS=$?" >> "GITHUB_OUTPUT   #Exit code 0 if branch exists, 2 if not
+        EXIT_CODE=$?
+        echo "SYNC_EXISTS=$EXIT_CODE" >> "GITHUB_OUTPUT   #Exit code 0 if branch exists, 2 if not
         
 
     - name: Switch to Sync Branch if it exits
