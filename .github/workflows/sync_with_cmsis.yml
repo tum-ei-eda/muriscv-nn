@@ -59,6 +59,7 @@ jobs:
         git add Source/*
         git add Include/*
         git diff --cached --numstat | wc -l >> NUM_STAGED
+        echo "$NUM_STAGED"
         echo "NUM_CHANGED=$NUM_STAGED" >> $GITHUB_OUTPUT 
     - name: Create Commit
       working-directory: ./
