@@ -26,6 +26,9 @@ jobs:
     - name: Switch to Sync Branch if it exits
       if: steps.sync_mode.outputs.SYNC_EXISTS == '0'
       run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git remote set-url origin https://x-access-token:${{ secrets.github_key }}@github.com/$GITHUB_REPOSITORY
         git checkout sync
           
 
@@ -52,9 +55,6 @@ jobs:
       if: steps.sync_mode.outputs.SYNC_EXISTS == '0'
       working-directory: ./
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git remote set-url origin https://x-access-token:${{ secrets.github_key }}@github.com/$GITHUB_REPOSITORY
         git add --all
         echo "NUM_CHANGED=$(echo git diff --cached --numstat | wc -l)" >> $GITHUB_ENV
     - name: Create Commit
