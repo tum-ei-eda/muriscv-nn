@@ -59,6 +59,7 @@ jobs:
         git add Include/*
         git status
         echo "NUM_CHANGED=$(echo git diff --cached --numstat | wc -l)" >> $GITHUB_ENV
+        git status
     - name: Create Commit
       working-directory: ./
       if: ${{ env.NUM_CHANGED }} != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
