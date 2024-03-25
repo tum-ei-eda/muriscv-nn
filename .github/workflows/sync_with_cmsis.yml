@@ -15,6 +15,19 @@ jobs:
       with:
         persist-credentials: false
 
+    - name: Check if Sync Branch already exists
+    - id: sync_mode
+      run: |
+        git ls-remote --exit-code --heads origin sync >/dev/null 2>&1
+        echo "SYNC_EXISTS=$?" >> "GITHUB_OUTPUT   #Exit code 0 if branch exists, 2 if not
+        
+
+    - name: Switch to Sync Branch if it exits
+    - if: steps.sync_mode == '0'
+      run: |
+        git checkout sync
+          
+
     - name: Download dependencies
       run: |
         pip install GitPython
@@ -25,6 +38,7 @@ jobs:
       run: python3 CMSIS_NN_sync.py
 
     - name: Create Pull Request
+      if: steps.sync_mode == '2'
       uses: peter-evans/create-pull-request@v5
       with:
         commit-message: |
@@ -32,5 +46,28 @@ jobs:
         title: Automated Sync with CMSIS-NN
         branch: sync
         token: ${{ secrets.CMSIS_SYNC_KEY }}
+
+    - name: Add and count changed files
+      if: steps.sync_mode == '0'
+      working-directory: ./
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git remote set-url origin https://x-access-token:${{ secrets.github_key }}@github.com/$GITHUB_REPOSITORY
+        git add --all
+        echo "NUM_CHANGED=$(echo git diff --cached --numstat | wc -l)" >> $GITHUB_ENV
+    - name: Create Commit
+      working-directory: ./
+      if: ${{ env.NUM_CHANGED }} != '0' && steps.sync_mode == '0'
+      run: |
+        git commit -m "Automated Sync from CMSIS-NN"
+    - name: Push changes
+      if: ${{ env.NUM_CHANGED }} != '0' && steps.sync_mode == '0'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.CMSIS_SYNC_KEY }}
+        branch: sync
+
+    
 
 
