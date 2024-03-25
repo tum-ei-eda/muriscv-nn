@@ -64,7 +64,7 @@ jobs:
       working-directory: ./
       if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
       run: |
-        echo steps.count_files.outputs.NUM_CHANGED
+        echo ${{ steps.count_files.outputs.NUM_CHANGED }}
         git commit -m "Automated Sync from CMSIS-NN"
     - name: Push changes
       if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
