@@ -64,11 +64,11 @@ jobs:
         echo $NUM_CHANGED
     - name: Create Commit
       working-directory: ./
-      if: ${{ env.NUM_CHANGED }} != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
+      if: ${{ env.NUM_CHANGED }} != '' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
       run: |
         git commit -m "Automated Sync from CMSIS-NN"
     - name: Push changes
-      if: ${{ env.NUM_CHANGED }} != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
+      if: ${{ env.NUM_CHANGED }} != '' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.CMSIS_SYNC_KEY }}
