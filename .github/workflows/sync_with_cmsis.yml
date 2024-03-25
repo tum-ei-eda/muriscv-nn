@@ -55,21 +55,18 @@ jobs:
       if: steps.sync_mode.outputs.SYNC_EXISTS == '0'
       working-directory: ./
       run: |
-        git status
         git add Source/*
         git add Include/*
-        git status
-        echo "NUM_CHANGED=$(echo git diff --cached --numstat | wc -l)" >> $GITHUB_ENV
-        ls
-        echo $NUM_CHANGED
+        git diff --cached --numstat | wc -l >> NUM_STAGED
+        echo "NUM_CHANGED=$NUM_STAGED" >> $GITHUB_ENV
     - name: Create Commit
       working-directory: ./
-      if: ${{ env.NUM_CHANGED }} != '' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
+      if: ${{ env.NUM_CHANGED }} != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
       run: |
         echo ${{ env.NUM_CHANGED }}
         git commit -m "Automated Sync from CMSIS-NN"
     - name: Push changes
-      if: ${{ env.NUM_CHANGED }} != '' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
+      if: ${{ env.NUM_CHANGED }} != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '0'
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.CMSIS_SYNC_KEY }}
