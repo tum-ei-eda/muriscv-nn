@@ -610,7 +610,7 @@ def main():
         "--opt",
         type=str,
         action="append",
-        choices=["0", "1", "2", "3", "s"],
+        choices=["0", "1", "2", "3", "s", "fast"],
         # default=default_features,
         default=[],
         help=f"-O flags to use (default: {DEFAULT_OPTIMIZE})",
