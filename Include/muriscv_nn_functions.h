@@ -22,8 +22,8 @@
  * Title:        muriscv_nn_functions.h
  * Description:  Public header file for MURISCV NN Library
  *
- * $Date:        11 March 2024
- * $Revision:    V.15.0.0
+ * $Date:        20 February 2024
+ * $Revision:    V.15.1.0
 
  *
  * Target :  Arm(R) M-Profile Architecture
@@ -1482,7 +1482,7 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
                                            int8_t *output_data);
 
 /**
- * @brief Calculate the sum of each row in vector_data, multiply by lhs_offset and optionally add bias_data.
+ * @brief Calculate the sum of each row in vector_data, multiply by lhs_offset and optionally add s32 bias_data.
  * @param[in, out]      vector_sum_buf              Buffer for vector sums
  * @param[in]           vector_cols                 Number of vector columns
  * @param[in]           vector_rows                 Number of vector rows
@@ -1498,6 +1498,24 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
                                       const int8_t *vector_data,
                                       const int32_t lhs_offset,
                                       const int32_t *bias_data);
+
+/**
+ * @brief Calculate the sum of each row in vector_data, multiply by lhs_offset and optionally add s64 bias_data.
+ * @param[in, out]      vector_sum_buf              Buffer for vector sums
+ * @param[in]           vector_cols                 Number of vector columns
+ * @param[in]           vector_rows                 Number of vector rows
+ * @param[in]           vector_data                 Vector of weigths data
+ * @param[in]           lhs_offset                  Constant multiplied with each sum
+ * @param[in]           bias_data                   Vector of bias data, added to each sum.
+ * @return              The function returns
+ *                         <code>MURISCV_NN_SUCCESS</code> - Successful operation
+ */
+muriscv_nn_status muriscv_nn_vector_sum_s8_s64(int64_t *vector_sum_buf,
+                                          const int32_t vector_cols,
+                                          const int32_t vector_rows,
+                                          const int8_t *vector_data,
+                                          const int32_t lhs_offset,
+                                          const int64_t *bias_data);
 
 /**
  * @brief Get size of additional buffer required by muriscv_nn_fully_connected_s8().
@@ -2409,32 +2427,6 @@ muriscv_nn_status muriscv_nn_svdf_state_s16_s8(const muriscv_nn_context *input_c
                                           int8_t *output_data);
 
 /**
- * @defgroup LSTM LSTM Layer Functions
- *
- */
-
-/**
- * @brief LSTM unidirectional function with 8 bit input and output and 16 bit gate output.
- *
- * @param[in]   input                      Pointer to input data
- * @param[out]  output                     Pointer to output data
- * @param[in]   params                     Struct containing all information about the lstm operator, see muriscv_nn_types.
- * @param[in]   buffers                    Struct containing pointers to all temporary scratch buffers needed for the
- * lstm operator, see muriscv_nn_types.
- *
- *
- * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
- *
- * @details
- *    1. Supported framework: TensorFlow Lite Micro
- *
- */
-muriscv_nn_status muriscv_nn_lstm_unidirectional_s8(const int8_t *input,
-                                               int8_t *output,
-                                               const muriscv_nn_lstm_params *params,
-                                               muriscv_nn_lstm_context *buffers);
-
-/**
  * @brief Get size of additional buffer required by muriscv_nn_svdf_s8().
  * @param[in]      filter_dims             dimension of filter
  * @return         The function returns    required buffer size in bytes
@@ -2461,6 +2453,53 @@ int32_t muriscv_nn_svdf_s8_get_buffer_size_dsp(const muriscv_nn_dims *filter_dim
  *
  */
 int32_t muriscv_nn_svdf_s8_get_buffer_size_mve(const muriscv_nn_dims *filter_dims);
+
+/**
+ * @defgroup LSTM LSTM Layer Functions
+ *
+ */
+
+/**
+ * @brief LSTM unidirectional function with 8 bit input and output and 16 bit gate output, 32 bit bias.
+ *
+ * @param[in]   input                      Pointer to input data
+ * @param[out]  output                     Pointer to output data
+ * @param[in]   params                     Struct containing all information about the lstm operator, see muriscv_nn_types.
+ * @param[in]   buffers                    Struct containing pointers to all temporary scratch buffers needed for the
+ * lstm operator, see muriscv_nn_types.
+ *
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite Micro
+ *
+ */
+muriscv_nn_status muriscv_nn_lstm_unidirectional_s8(const int8_t *input,
+                                               int8_t *output,
+                                               const muriscv_nn_lstm_params *params,
+                                               muriscv_nn_lstm_context *buffers);
+
+/**
+ * @brief LSTM unidirectional function with 16 bit input and output and 16 bit gate output, 64 bit bias.
+ *
+ * @param[in]   input                      Pointer to input data
+ * @param[out]  output                     Pointer to output data
+ * @param[in]   params                     Struct containing all information about the lstm operator, see muriscv_nn_types.
+ * @param[in]   buffers                    Struct containing pointers to all temporary scratch buffers needed for the
+ * lstm operator, see muriscv_nn_types.
+ *
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite Micro
+ *
+ */
+muriscv_nn_status muriscv_nn_lstm_unidirectional_s16(const int16_t *input,
+                                                int16_t *output,
+                                                const muriscv_nn_lstm_params *params,
+                                                muriscv_nn_lstm_context *buffers);
 
 #ifdef __cplusplus
 }
