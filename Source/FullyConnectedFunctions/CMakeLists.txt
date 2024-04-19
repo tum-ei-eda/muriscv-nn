@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
+# Modifications copyright (C) 2024 Chair of Electronic Design Automation, TUM
 #
 
 target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_fully_connected_s8.c
@@ -23,4 +23,5 @@ target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_f
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vector_sum_s8.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_fully_connected_s4.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_fully_connected_get_buffer_sizes_s8.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_fully_connected_get_buffer_sizes_s16.c)
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_fully_connected_get_buffer_sizes_s16.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vector_sum_s8_s64.c)
