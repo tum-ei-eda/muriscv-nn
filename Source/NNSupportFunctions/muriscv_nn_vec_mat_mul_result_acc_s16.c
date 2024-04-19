@@ -214,142 +214,142 @@ muriscv_nn_status muriscv_nn_vec_mat_mul_result_acc_s16(const int16_t *lhs,
 //        }
 //
 //    #else // USE_VEXT
-
-        const int32_t row_loop_cnt = rhs_rows / 2;
-
-        for (int32_t i = 0; i < row_loop_cnt; i++)
-        {
-
-            int64_t acc_64_0 = 0;
-            int64_t acc_64_1 = 0;
-            int32_t acc_0 = 0;
-            int32_t acc_1 = 0;
-
-            const int32_t col_loop_cnt = rhs_cols_fast / 4;
-
-            const int16_t *lhs_vec = lhs;
-            const int8_t *rhs_0 = rhs_ptr;
-            rhs_ptr += rhs_cols;
-            const int8_t *rhs_1 = rhs_ptr;
-            rhs_ptr += rhs_cols;
-
-            for (int j = col_loop_cnt; j != 0; j--)
-            {
-                int32_t ker_0, ker_1, vec_part_0, vec_part_1;
-
-                vec_part_0 = muriscv_nn_read_q15x2_ia(&lhs_vec);
-                vec_part_1 = muriscv_nn_read_q15x2_ia(&lhs_vec);
-
-                rhs_0 = read_and_pad(rhs_0, &ker_0, &ker_1);
-
-                acc_0 = SMLAD(ker_0, vec_part_0, acc_0);
-                acc_0 = SMLAD(ker_1, vec_part_1, acc_0);
-
-                rhs_1 = read_and_pad(rhs_1, &ker_0, &ker_1);
-
-                acc_1 = SMLAD(ker_0, vec_part_0, acc_1);
-                acc_1 = SMLAD(ker_1, vec_part_1, acc_1);
-            }
-
-            acc_64_0 += acc_0;
-            acc_64_1 += acc_1;
-
-            for (int k = col_loop_cnt * 4; k < rhs_cols; k++)
-            {
-                const int32_t lhs_temp = (*lhs_vec);
-                lhs_vec++;
-                acc_64_0 += lhs_temp * (*rhs_0);
-                rhs_0++;
-                acc_64_1 += lhs_temp * (*rhs_1);
-                rhs_1++;
-            }
-
-            acc_64_0 += *effective_bias_ptr++;
-            acc_64_1 += *effective_bias_ptr++;
-            int32_t tmp;
-
-            tmp = muriscv_nn_requantize_s64(acc_64_0, reduced_multiplier, dst_shift);
-            tmp += (int64_t)*dst;
-            tmp = MAX(tmp, NN_Q15_MIN);
-            tmp = MIN(tmp, NN_Q15_MAX);
-            *dst++ = (int16_t)tmp;
-
-            tmp = muriscv_nn_requantize_s64(acc_64_1, reduced_multiplier, dst_shift);
-            tmp += (int64_t)*dst;
-            tmp = MAX(tmp, NN_Q15_MIN);
-            tmp = MIN(tmp, NN_Q15_MAX);
-            *dst++ = (int16_t)tmp;
-        }
-
-        if (rhs_rows & 0x1)
-        {
-            int64_t acc_64_0 = 0;
-            int32_t acc_0 = 0;
-            const int32_t col_loop_cnt = rhs_cols_fast / 4;
-
-            const int16_t *lhs_vec = lhs;
-            const int8_t *rhs_0 = rhs_ptr;
-
-            for (int i = col_loop_cnt; i != 0; i--)
-            {
-                int32_t ker_0, ker_1, vec;
-                rhs_0 = read_and_pad(rhs_0, &ker_0, &ker_1);
-
-                vec = muriscv_nn_read_q15x2_ia(&lhs_vec);
-                acc_0 = SMLAD(ker_0, vec, acc_0);
-
-                vec = muriscv_nn_read_q15x2_ia(&lhs_vec);
-                acc_0 = SMLAD(ker_1, vec, acc_0);
-            }
-
-            acc_64_0 += acc_0;
-
-            for (int j = col_loop_cnt * 4; j < rhs_cols; j++)
-            {
-                const int32_t lhs_temp = (*lhs_vec);
-                lhs_vec++;
-                acc_64_0 += lhs_temp * (*rhs_0);
-                rhs_0++;
-            }
-
-            acc_64_0 += *effective_bias_ptr++;
-
-            int32_t tmp;
-            tmp = muriscv_nn_requantize_s64(acc_64_0, reduced_multiplier, dst_shift);
-            tmp += (int64_t)*dst;
-            tmp = MAX(tmp, NN_Q15_MIN);
-            tmp = MIN(tmp, NN_Q15_MAX);
-            *dst++ = (int16_t)tmp;
-        }
-
-//    #endif // USE_VEXT
-//#else      // USE_PEXT
-//        for (int i_row_loop_cnt = 0; i_row_loop_cnt < rhs_rows; i_row_loop_cnt++)
+//
+//        const int32_t row_loop_cnt = rhs_rows / 2;
+//
+//        for (int32_t i = 0; i < row_loop_cnt; i++)
 //        {
-//            const int16_t *lhs_ptr = lhs;
 //
-//            int64_t result = *effective_bias_ptr++;
+//            int64_t acc_64_0 = 0;
+//            int64_t acc_64_1 = 0;
+//            int32_t acc_0 = 0;
+//            int32_t acc_1 = 0;
 //
-//            for (int32_t rhs_cols_idx = 0; rhs_cols_idx < rhs_cols; ++rhs_cols_idx)
+//            const int32_t col_loop_cnt = rhs_cols_fast / 4;
+//
+//            const int16_t *lhs_vec = lhs;
+//            const int8_t *rhs_0 = rhs_ptr;
+//            rhs_ptr += rhs_cols;
+//            const int8_t *rhs_1 = rhs_ptr;
+//            rhs_ptr += rhs_cols;
+//
+//            for (int j = col_loop_cnt; j != 0; j--)
 //            {
-//                const int64_t rhs_value0 = (int8_t)*rhs_ptr;
-//                const int64_t lhs_value = *lhs_ptr;
+//                int32_t ker_0, ker_1, vec_part_0, vec_part_1;
 //
-//                result += lhs_value * rhs_value0;
-//                ++rhs_ptr;
-//                ++lhs_ptr;
+//                vec_part_0 = muriscv_nn_read_q15x2_ia(&lhs_vec);
+//                vec_part_1 = muriscv_nn_read_q15x2_ia(&lhs_vec);
+//
+//                rhs_0 = read_and_pad(rhs_0, &ker_0, &ker_1);
+//
+//                acc_0 = SMLAD(ker_0, vec_part_0, acc_0);
+//                acc_0 = SMLAD(ker_1, vec_part_1, acc_0);
+//
+//                rhs_1 = read_and_pad(rhs_1, &ker_0, &ker_1);
+//
+//                acc_1 = SMLAD(ker_0, vec_part_0, acc_1);
+//                acc_1 = SMLAD(ker_1, vec_part_1, acc_1);
 //            }
 //
-//            // Quantize down
-//            result = muriscv_nn_requantize_s64(result, reduced_multiplier, dst_shift);
-//            result += (int64_t)*dst;
+//            acc_64_0 += acc_0;
+//            acc_64_1 += acc_1;
 //
-//            // Clamp the result
-//            result = ((result) > (NN_Q15_MIN) ? (result) : (NN_Q15_MIN));
-//            result = ((result) < (NN_Q15_MAX) ? (result) : (NN_Q15_MAX));
+//            for (int k = col_loop_cnt * 4; k < rhs_cols; k++)
+//            {
+//                const int32_t lhs_temp = (*lhs_vec);
+//                lhs_vec++;
+//                acc_64_0 += lhs_temp * (*rhs_0);
+//                rhs_0++;
+//                acc_64_1 += lhs_temp * (*rhs_1);
+//                rhs_1++;
+//            }
 //
-//            *dst++ = (int16_t)result;
+//            acc_64_0 += *effective_bias_ptr++;
+//            acc_64_1 += *effective_bias_ptr++;
+//            int32_t tmp;
+//
+//            tmp = muriscv_nn_requantize_s64(acc_64_0, reduced_multiplier, dst_shift);
+//            tmp += (int64_t)*dst;
+//            tmp = MAX(tmp, NN_Q15_MIN);
+//            tmp = MIN(tmp, NN_Q15_MAX);
+//            *dst++ = (int16_t)tmp;
+//
+//            tmp = muriscv_nn_requantize_s64(acc_64_1, reduced_multiplier, dst_shift);
+//            tmp += (int64_t)*dst;
+//            tmp = MAX(tmp, NN_Q15_MIN);
+//            tmp = MIN(tmp, NN_Q15_MAX);
+//            *dst++ = (int16_t)tmp;
 //        }
+//
+//        if (rhs_rows & 0x1)
+//        {
+//            int64_t acc_64_0 = 0;
+//            int32_t acc_0 = 0;
+//            const int32_t col_loop_cnt = rhs_cols_fast / 4;
+//
+//            const int16_t *lhs_vec = lhs;
+//            const int8_t *rhs_0 = rhs_ptr;
+//
+//            for (int i = col_loop_cnt; i != 0; i--)
+//            {
+//                int32_t ker_0, ker_1, vec;
+//                rhs_0 = read_and_pad(rhs_0, &ker_0, &ker_1);
+//
+//                vec = muriscv_nn_read_q15x2_ia(&lhs_vec);
+//                acc_0 = SMLAD(ker_0, vec, acc_0);
+//
+//                vec = muriscv_nn_read_q15x2_ia(&lhs_vec);
+//                acc_0 = SMLAD(ker_1, vec, acc_0);
+//            }
+//
+//            acc_64_0 += acc_0;
+//
+//            for (int j = col_loop_cnt * 4; j < rhs_cols; j++)
+//            {
+//                const int32_t lhs_temp = (*lhs_vec);
+//                lhs_vec++;
+//                acc_64_0 += lhs_temp * (*rhs_0);
+//                rhs_0++;
+//            }
+//
+//            acc_64_0 += *effective_bias_ptr++;
+//
+//            int32_t tmp;
+//            tmp = muriscv_nn_requantize_s64(acc_64_0, reduced_multiplier, dst_shift);
+//            tmp += (int64_t)*dst;
+//            tmp = MAX(tmp, NN_Q15_MIN);
+//            tmp = MIN(tmp, NN_Q15_MAX);
+//            *dst++ = (int16_t)tmp;
+//        }
+//
+//    #endif // USE_VEXT
+//#else      // USE_PEXT
+        for (int i_row_loop_cnt = 0; i_row_loop_cnt < rhs_rows; i_row_loop_cnt++)
+        {
+            const int16_t *lhs_ptr = lhs;
+
+            int64_t result = *effective_bias_ptr++;
+
+            for (int32_t rhs_cols_idx = 0; rhs_cols_idx < rhs_cols; ++rhs_cols_idx)
+            {
+                const int64_t rhs_value0 = (int8_t)*rhs_ptr;
+                const int64_t lhs_value = *lhs_ptr;
+
+                result += lhs_value * rhs_value0;
+                ++rhs_ptr;
+                ++lhs_ptr;
+            }
+
+            // Quantize down
+            result = muriscv_nn_requantize_s64(result, reduced_multiplier, dst_shift);
+            result += (int64_t)*dst;
+
+            // Clamp the result
+            result = ((result) > (NN_Q15_MIN) ? (result) : (NN_Q15_MIN));
+            result = ((result) < (NN_Q15_MAX) ? (result) : (NN_Q15_MAX));
+
+            *dst++ = (int16_t)result;
+        }
 //#endif     // USE_PEXT
 
         lhs += rhs_cols * batch_offset;

@@ -156,12 +156,12 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_batch_offset(const int16_t *inp
             *output++ = (int16_t)mul_res;
         }
 //#endif // #if defined(USE_VEXT)
-//
-//        output += (batch_offset - 1) * block_size;
-//    }
-//    return MURISCV_NN_SUCCESS;
-//}
-//
-///**
-// * @} end of Doxygen group
-// */
+
+        output += (batch_offset - 1) * block_size;
+    }
+    return MURISCV_NN_SUCCESS;
+}
+
+/**
+ * @} end of Doxygen group
+ */

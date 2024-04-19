@@ -95,7 +95,7 @@ muriscv_nn_status muriscv_nn_lstm_step_s16(const int16_t *data_in,
 
     // Calculate hidden state directly to output.
     muriscv_nn_activation_s16(
-        cell_state, hidden_temp, params->hidden_size * params->batch_size, params->cell_scale_power + 12, ARM_TANH);
+        cell_state, hidden_temp, params->hidden_size * params->batch_size, params->cell_scale_power + 12, MURISCV_TANH);
     muriscv_nn_elementwise_mul_s16_batch_offset(output_gate,
                                          hidden_temp,
                                          hidden_out,
