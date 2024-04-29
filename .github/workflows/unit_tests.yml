@@ -60,7 +60,7 @@ jobs:
         echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
         echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
-    - name: Download GCC Cache
+    - name: Download GCC + LLVM Cache
       id: cache-GCC
       uses: actions/cache@v4
       env:

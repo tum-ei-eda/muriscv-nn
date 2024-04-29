@@ -79,15 +79,13 @@ fi
 if [ "${TOOLCHAIN}" == "LLVM" ]; then
   echo "*** Checking for LLVM ***"
   cd ../../Toolchain
-  if clang-17 --version &>/dev/null; then
-      echo "LLVM 17 appears to be installed."
+    # Download LLVM 18 (which includes vector support)
+  if [ -d llvm ]; then
+    echo "Found LLVM compiler in the Toolchain directory."
   else
-    echo "No LLVM 17 installation found. Installing LLVM 17..."
-    wget https://apt.llvm.org/llvm.sh
-    chmod +x llvm.sh
-    sudo ./llvm.sh 17
-    rm llvm.sh
-  fi 
+    echo "No LLVM compiler in the Toolchain directory found. Downloading one..."
+      ./download_llvm.sh 18   
+  fi
 
 else
   echo "*** Checking for GCC Binaries ***"
@@ -121,7 +119,7 @@ if [ "${SKIP_BUILD}" == OFF ]; then
 
   mkdir build
   cd build
-  cmake -DRISCV_GCC_PREFIX=$(pwd)/../Toolchain/${RV_ARCH}/ -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DDISABLE_TFLM_INTG_TESTS=ON ..
+  cmake -DRISCV_GCC_PREFIX=$(pwd)/../Toolchain/${RV_ARCH}/ -DRISCV_LLVM_PREFIX=$(pwd)/../Toolchain/llvm/bin/ -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DDISABLE_TFLM_INTG_TESTS=ON ..
   make all
 
 else

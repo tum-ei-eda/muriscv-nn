@@ -38,7 +38,7 @@ jobs:
         echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
 
-    - name: Download Cached GCC Binaries
+    - name: Download Cached GCC + LLVM Binaries
       id: cache-gcc
       uses: actions/cache@v4
       env:
@@ -80,7 +80,7 @@ jobs:
         echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
         echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
-    - name: Download Cached GCC Binaries
+    - name: Download Cached GCC + LLVM Binaries
       id: cache-gcc
       uses: actions/cache@v4
       env:

@@ -210,10 +210,10 @@ index 00000000..3fc8d49c
 +
 +else ifeq ($(TOOLCHAIN), llvm)
 +
-+  CXX_TOOL := clang++-17
-+  CC_TOOL := clang-17
-+  AR_TOOL := llvm-ar-17
-+  CP_TOOL := llvm-objcopy-17
++  CXX_TOOL := $(LLVM_TOOLCHAIN_ROOT)/clang-18
++  CC_TOOL := $(LLVM_TOOLCHAIN_ROOT)/clang-18
++  AR_TOOL := $(LLVM_TOOLCHAIN_ROOT)/llvm-ar
++  CP_TOOL := $(LLVM_TOOLCHAIN_ROOT)/llvm-objcopy
 +
 +  PLATFORM_FLAGS += \
 +  -march=$(TARGET_ARCH) \
@@ -222,7 +222,7 @@ index 00000000..3fc8d49c
 +  --gcc-toolchain=$(GCC_TOOLCHAIN_ROOT) \
 +  --sysroot=$(GCC_TOOLCHAIN_ROOT)/$(GCC_TOOLCHAIN_PREFIX)
 +
-+  LDFLAGS += -fuse-ld=lld-17
++  LDFLAGS += -fuse-ld=lld
 +
 +else
 +  $(error "TOOLCHAIN=$(TOOLCHAIN) is not supported.")

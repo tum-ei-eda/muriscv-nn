@@ -42,3 +42,15 @@ wget --progress=dot:giga $URL
 mkdir -p $dest
 tar -xvf $archive -C $dest
 rm $archive
+#check if gnu subdirectory is present
+#if so, remove it
+if [  -d ./${dest}/gnu ]; then
+    cd ${dest}
+    mv gnu/bin bin
+    mv gnu/include include
+    mv gnu/lib lib
+    mv gnu/libexec libexec
+    mv gnu/riscv32-unknown-elf riscv32-unknown-elf
+    mv gnu/share share
+    rm -r gnu
+fi

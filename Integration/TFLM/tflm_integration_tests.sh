@@ -93,6 +93,7 @@ for test in "${TESTS[@]}"; do
     USE_PEXT=${USE_PEXT} \
     TOOLCHAIN=${TOOLCHAIN} \
     GCC_TOOLCHAIN_ROOT=${GCC_TOOLCHAIN_ROOT} \
+    LLVM_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/llvm/bin \
     BUILD_TYPE=${BUILD_TYPE} \
     ${test}
   echo ${test}
@@ -115,6 +116,7 @@ for bm in "${BENCHMARKS[@]}"; do
     USE_PEXT=${USE_PEXT} \
     TOOLCHAIN=${TOOLCHAIN} \
     GCC_TOOLCHAIN_ROOT=${GCC_TOOLCHAIN_ROOT} \
+    LLVM_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/llvm/bin \
     BUILD_TYPE=${BUILD_TYPE} \
     ${bm}
 
