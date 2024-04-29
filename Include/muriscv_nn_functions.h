@@ -23,7 +23,7 @@
  * Description:  Public header file for MURISCV NN Library
  *
  * $Date:        20 February 2024
- * $Revision:    V.14.0.0
+ * $Revision:    V.15.1.0
 
  *
  * Target :  Arm(R) M-Profile Architecture
@@ -382,8 +382,10 @@ muriscv_nn_status muriscv_nn_convolve_s4(const muriscv_nn_context *ctx,
  * @param[in]      bias_data      Optional bias data pointer. Data type: int32
  * @param[in]      output_dims    Output tensor dimensions. Format: [N, H, W, C_OUT]
  * @param[out]     output_data    Output data pointer. Data type: int8
-
- * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code> if successful or
+ *                                  <code>MURISCV_NN_ARG_ERROR</code> if incorrect arguments or
+ *                                  <code>MURISCV_NN_NO_IMPL_ERROR</code>
  *
  * @details
  *    1. Supported framework: TensorFlow Lite micro
@@ -529,8 +531,10 @@ int32_t muriscv_nn_transpose_conv_s8_get_buffer_size_mve(const muriscv_nn_dims *
  * @param[in]      bias_data      Optional bias data pointer. Data type: int64
  * @param[in]      output_dims    Output tensor dimensions. Format: [N, H, W, C_OUT]
  * @param[out]     output_data    Output data pointer. Data type: int16
-
- * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code> if successful or
+ *                                  <code>MURISCV_NN_ARG_ERROR</code> if incorrect arguments or
+ *                                  <code>MURISCV_NN_NO_IMPL_ERROR</code>
  *
  * @details
  *    1. Supported framework: TensorFlow Lite micro
@@ -548,47 +552,6 @@ muriscv_nn_status muriscv_nn_convolve_s16(const muriscv_nn_context *ctx,
                                      const int64_t *bias_data,
                                      const muriscv_nn_dims *output_dims,
                                      int16_t *output_data);
-/**
- * @brief Optimized s16 convolution function
- * @param[in, out] ctx            Function context that contains the additional buffer if required by the function.
- *                                muriscv_nn_convolve_fast_s16_get_buffer_size will return the buffer_size if required.
- *                                The caller is expected to clear the buffer, if applicable, for security reasons.
- * @param[in]      conv_params    Convolution parameters (e.g. strides, dilations, pads,...).
- *                                conv_params->input_offset  : Not used
- *                                conv_params->output_offset : Not used
- * @param[in]      quant_params   Per-channel quantization info.
- *                                It contains the multiplier and shift values to be applied to each output channel
- * @param[in]      input_dims     Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
- * @param[in]      input_data     Input (activation) data pointer. Data type: int16
- * @param[in]      filter_dims    Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK are the
- *                                spatial filter dimensions. (filter_dims->w * filter_dims->h * input_dims->c) must not
- exceed 512
- * @param[in]      filter_data    Filter data pointer. Data type: int8
- * @param[in]      bias_dims      Bias tensor dimensions. Format: [C_OUT]
- * @param[in]      bias_data      Optional bias data pointer. Data type: int64
- * @param[in]      output_dims    Output tensor dimensions. Format: [N, H, W, C_OUT]
- * @param[out]     output_data    Output data pointer. Data type: int16
-
- * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
- *
- * @details
- *    1. Supported framework: TensorFlow Lite micro
- *    2. Additional memory is required for optimization. Refer to argument 'ctx' for details.
- *    3. Implementation supports kernel volumes (filter width * filter height * input channels) < 512.
- *
- */
-
-muriscv_nn_status muriscv_nn_convolve_fast_s16(const muriscv_nn_context *ctx,
-                                          const muriscv_nn_conv_params *conv_params,
-                                          const muriscv_nn_per_channel_quant_params *quant_params,
-                                          const muriscv_nn_dims *input_dims,
-                                          const int16_t *input_data,
-                                          const muriscv_nn_dims *filter_dims,
-                                          const int8_t *filter_data,
-                                          const muriscv_nn_dims *bias_dims,
-                                          const int64_t *bias_data,
-                                          const muriscv_nn_dims *output_dims,
-                                          int16_t *output_data);
 
 /**
  * @brief Get the required buffer size for s16 convolution function
@@ -600,17 +563,6 @@ muriscv_nn_status muriscv_nn_convolve_fast_s16(const muriscv_nn_context *ctx,
  *
  */
 int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims);
-
-/**
- * @brief Get the required buffer size for fast s16 convolution function
- *
- * @param[in]       input_dims    Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
- * @param[in]       filter_dims   Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK
- *                                are the spatial filter dimensions
- * @return          The function returns required buffer size(bytes)
- *
- */
-int32_t muriscv_nn_convolve_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims);
 
 /**
  * @brief Fast s4 version for 1x1 convolution (non-square shape)
@@ -1530,7 +1482,7 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
                                            int8_t *output_data);
 
 /**
- * @brief Calculate the sum of each row in vector_data, multiply by lhs_offset and optionally add bias_data.
+ * @brief Calculate the sum of each row in vector_data, multiply by lhs_offset and optionally add s32 bias_data.
  * @param[in, out]      vector_sum_buf              Buffer for vector sums
  * @param[in]           vector_cols                 Number of vector columns
  * @param[in]           vector_rows                 Number of vector rows
@@ -1546,6 +1498,24 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
                                       const int8_t *vector_data,
                                       const int32_t lhs_offset,
                                       const int32_t *bias_data);
+
+/**
+ * @brief Calculate the sum of each row in vector_data, multiply by lhs_offset and optionally add s64 bias_data.
+ * @param[in, out]      vector_sum_buf              Buffer for vector sums
+ * @param[in]           vector_cols                 Number of vector columns
+ * @param[in]           vector_rows                 Number of vector rows
+ * @param[in]           vector_data                 Vector of weigths data
+ * @param[in]           lhs_offset                  Constant multiplied with each sum
+ * @param[in]           bias_data                   Vector of bias data, added to each sum.
+ * @return              The function returns
+ *                         <code>MURISCV_NN_SUCCESS</code> - Successful operation
+ */
+muriscv_nn_status muriscv_nn_vector_sum_s8_s64(int64_t *vector_sum_buf,
+                                          const int32_t vector_cols,
+                                          const int32_t vector_rows,
+                                          const int8_t *vector_data,
+                                          const int32_t lhs_offset,
+                                          const int64_t *bias_data);
 
 /**
  * @brief Get size of additional buffer required by muriscv_nn_fully_connected_s8().
@@ -2457,32 +2427,6 @@ muriscv_nn_status muriscv_nn_svdf_state_s16_s8(const muriscv_nn_context *input_c
                                           int8_t *output_data);
 
 /**
- * @defgroup LSTM LSTM Layer Functions
- *
- */
-
-/**
- * @brief LSTM unidirectional function with 8 bit input and output and 16 bit gate output.
- *
- * @param[in]   input                      Pointer to input data
- * @param[out]  output                     Pointer to output data
- * @param[in]   params                     Struct containing all information about the lstm operator, see muriscv_nn_types.
- * @param[in]   buffers                    Struct containing pointers to all temporary scratch buffers needed for the
- * lstm operator, see muriscv_nn_types.
- *
- *
- * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
- *
- * @details
- *    1. Supported framework: TensorFlow Lite Micro
- *
- */
-muriscv_nn_status muriscv_nn_lstm_unidirectional_s8(const int8_t *input,
-                                               int8_t *output,
-                                               const muriscv_nn_lstm_params *params,
-                                               muriscv_nn_lstm_context *buffers);
-
-/**
  * @brief Get size of additional buffer required by muriscv_nn_svdf_s8().
  * @param[in]      filter_dims             dimension of filter
  * @return         The function returns    required buffer size in bytes
@@ -2509,6 +2453,53 @@ int32_t muriscv_nn_svdf_s8_get_buffer_size_dsp(const muriscv_nn_dims *filter_dim
  *
  */
 int32_t muriscv_nn_svdf_s8_get_buffer_size_mve(const muriscv_nn_dims *filter_dims);
+
+/**
+ * @defgroup LSTM LSTM Layer Functions
+ *
+ */
+
+/**
+ * @brief LSTM unidirectional function with 8 bit input and output and 16 bit gate output, 32 bit bias.
+ *
+ * @param[in]   input                      Pointer to input data
+ * @param[out]  output                     Pointer to output data
+ * @param[in]   params                     Struct containing all information about the lstm operator, see muriscv_nn_types.
+ * @param[in]   buffers                    Struct containing pointers to all temporary scratch buffers needed for the
+ * lstm operator, see muriscv_nn_types.
+ *
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite Micro
+ *
+ */
+muriscv_nn_status muriscv_nn_lstm_unidirectional_s8(const int8_t *input,
+                                               int8_t *output,
+                                               const muriscv_nn_lstm_params *params,
+                                               muriscv_nn_lstm_context *buffers);
+
+/**
+ * @brief LSTM unidirectional function with 16 bit input and output and 16 bit gate output, 64 bit bias.
+ *
+ * @param[in]   input                      Pointer to input data
+ * @param[out]  output                     Pointer to output data
+ * @param[in]   params                     Struct containing all information about the lstm operator, see muriscv_nn_types.
+ * @param[in]   buffers                    Struct containing pointers to all temporary scratch buffers needed for the
+ * lstm operator, see muriscv_nn_types.
+ *
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite Micro
+ *
+ */
+muriscv_nn_status muriscv_nn_lstm_unidirectional_s16(const int16_t *input,
+                                                int16_t *output,
+                                                const muriscv_nn_lstm_params *params,
+                                                muriscv_nn_lstm_context *buffers);
 
 #ifdef __cplusplus
 }

@@ -1,6 +1,6 @@
-// Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
+// Modifications copyright (C) 2024 Chair of Electronic Design Automation, TUM
 /*
- * SPDX-FileCopyrightText: Copyright 2010-2023 Arm Limited and/or its affiliates
+ * SPDX-FileCopyrightText: Copyright 2010-2024 Arm Limited and/or its affiliates
  * <open-source-office@arm.com>
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -21,10 +21,10 @@
 /* ----------------------------------------------------------------------
  * Project:      CMSIS NN Library
  * Title:        muriscv_nn_mat_mult_kernel_s16.c
- * Description:  Matrix-multiplication function for convolution
+ * Description:  Matrix-multiplication function for 16 bits convolution
  *
- * $Date:        5 Janauray 2023
- * $Revision:    V.1.2.0
+ * $Date:        22 March 2024
+ * $Revision:    V.2.0.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
@@ -47,34 +47,35 @@
  * Refer header file for details.
  *
  */
-
 int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
                                     const int16_t *input_b,
                                     const int32_t output_ch,
                                     const int32_t *out_shift,
                                     const int32_t *out_mult,
-                                    const int16_t activation_min,
-                                    const int16_t activation_max,
+                                    const int32_t activation_min,
+                                    const int32_t activation_max,
                                     const int32_t num_col_a,
                                     const int64_t *const output_bias,
                                     int16_t *out_0)
 {
-
-//#if defined(USE_PEXT) && !defined(USE_VEXT)
-//    /* set up the second output pointers */
+//#if !defined(USE_VEXT)
+//    const int32_t num_col_a_fast = num_col_a > MAX_COL_COUNT ? MAX_COL_COUNT : num_col_a;
+//    const int32_t num_col_a_slow = num_col_a - MAX_COL_COUNT;
+//
 //    int16_t *out_1 = out_0 + output_ch;
 //    const int64_t *bias = output_bias;
-//    uint16_t row_count = output_ch / 2;
+//    int32_t row_count = output_ch / 2;
 //    const int8_t *ip_a0 = input_a;
+//    int32_t reduced_multiplier;
 //
-//    /* this loop over rows in A */
+//    /* This loop over rows in A */
 //    while (row_count)
 //    {
-//        /* setup pointers for B */
+//        /* Setup pointers for B */
 //        const int16_t *ip_b0 = input_b;
 //        const int16_t *ip_b1 = ip_b0 + num_col_a;
 //
-//        /* align the second pointer for A */
+//        /* Align the second pointer for A */
 //        const int8_t *ip_a1 = ip_a0 + num_col_a;
 //
 //        /* Init accumulator for channel N and N + 1 */
@@ -83,8 +84,15 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
 //        int32_t ch_1_out_0 = 0;
 //        int32_t ch_1_out_1 = 0;
 //
-//        uint16_t col_count = num_col_a / 4;
-//        /* accumulate over the vector */
+//        int64_t ch_0_out_0_s64 = 0;
+//        int64_t ch_0_out_1_s64 = 0;
+//        int64_t ch_1_out_0_s64 = 0;
+//        int64_t ch_1_out_1_s64 = 0;
+//
+//    #if defined(USE_PEXT)
+//        uint16_t col_count = num_col_a_fast / 4;
+//
+//        /* Accumulate over the vector */
 //        while (col_count)
 //        {
 //            int32_t a01, a02, a11, a12;
@@ -108,8 +116,12 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
 //            ch_1_out_1 = SMLAD(a12, b1, ch_1_out_1);
 //
 //            col_count--;
-//        } /* while over col_count */
-//        col_count = num_col_a & 0x3;
+//        }
+//        col_count = num_col_a_fast & 0x3;
+//    #else
+//        int32_t col_count = num_col_a_fast;
+//    #endif
+//
 //        while (col_count)
 //        {
 //            int8_t a0 = *ip_a0++;
@@ -122,22 +134,49 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
 //            ch_1_out_0 += a1 * b0;
 //            ch_1_out_1 += a1 * b1;
 //            col_count--;
-//        } /* while over col_count */
+//        }
+//
+//        ch_0_out_0_s64 = ch_0_out_0;
+//        ch_0_out_1_s64 = ch_0_out_1;
+//        ch_1_out_0_s64 = ch_1_out_0;
+//        ch_1_out_1_s64 = ch_1_out_1;
+//
+//        if (num_col_a > MAX_COL_COUNT)
+//        {
+//            col_count = num_col_a_slow;
+//            while (col_count)
+//            {
+//                int8_t a0 = *ip_a0++;
+//                int16_t b0 = *ip_b0++;
+//                int8_t a1 = *ip_a1++;
+//                int16_t b1 = *ip_b1++;
+//
+//                ch_0_out_0_s64 += a0 * b0;
+//                ch_0_out_1_s64 += a0 * b1;
+//                ch_1_out_0_s64 += a1 * b0;
+//                ch_1_out_1_s64 += a1 * b1;
+//                col_count--;
+//            }
+//        }
+//
 //        if (bias)
 //        {
-//            int32_t reduced_multiplier = REDUCE_MULTIPLIER(*out_mult);
-//            int64_t acc_64 = ch_0_out_0 + *bias;
-//            ch_0_out_0 = muriscv_nn_requantize_s64(acc_64, reduced_multiplier, *out_shift);
-//            acc_64 = ch_0_out_1 + *bias++;
-//            ch_0_out_1 = muriscv_nn_requantize_s64(acc_64, reduced_multiplier, *out_shift);
-//            out_mult++;
+//            ch_0_out_0_s64 += *bias;
+//            ch_0_out_1_s64 += *bias++;
+//            ch_1_out_0_s64 += *bias;
+//            ch_1_out_1_s64 += *bias++;
 //        }
-//        else
-//        {
-//            ch_0_out_0 = muriscv_nn_requantize(ch_0_out_0, *out_mult, *out_shift);
-//            ch_0_out_1 = muriscv_nn_requantize(ch_0_out_1, *out_mult, *out_shift);
-//            out_mult++;
-//        }
+//
+//        reduced_multiplier = REDUCE_MULTIPLIER(*out_mult);
+//        ch_0_out_0 = muriscv_nn_requantize_s64(ch_0_out_0_s64, reduced_multiplier, *out_shift);
+//        ch_0_out_1 = muriscv_nn_requantize_s64(ch_0_out_1_s64, reduced_multiplier, *out_shift);
+//        out_mult++;
+//        out_shift++;
+//
+//        reduced_multiplier = REDUCE_MULTIPLIER(*out_mult);
+//        ch_1_out_0 = muriscv_nn_requantize_s64(ch_1_out_0_s64, reduced_multiplier, *out_shift);
+//        ch_1_out_1 = muriscv_nn_requantize_s64(ch_1_out_1_s64, reduced_multiplier, *out_shift);
+//
 //        ch_0_out_0 = MAX(ch_0_out_0, activation_min);
 //        ch_0_out_0 = MIN(ch_0_out_0, activation_max);
 //        *out_0++ = (int16_t)ch_0_out_0;
@@ -145,23 +184,7 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
 //        ch_0_out_1 = MAX(ch_0_out_1, activation_min);
 //        ch_0_out_1 = MIN(ch_0_out_1, activation_max);
 //        *out_1++ = (int16_t)ch_0_out_1;
-//        out_shift++;
 //
-//        if (bias)
-//        {
-//            int32_t reduced_multiplier = REDUCE_MULTIPLIER(*out_mult);
-//            int64_t acc_64 = ch_1_out_0 + *bias;
-//            ch_1_out_0 = muriscv_nn_requantize_s64(acc_64, reduced_multiplier, *out_shift);
-//            acc_64 = ch_1_out_1 + *bias++;
-//            ch_1_out_1 = muriscv_nn_requantize_s64(acc_64, reduced_multiplier, *out_shift);
-//            out_mult++;
-//        }
-//        else
-//        {
-//            ch_1_out_0 = muriscv_nn_requantize(ch_1_out_0, *out_mult, *out_shift);
-//            ch_1_out_1 = muriscv_nn_requantize(ch_1_out_1, *out_mult, *out_shift);
-//            out_mult++;
-//        }
 //        ch_1_out_0 = MAX(ch_1_out_0, activation_min);
 //        ch_1_out_0 = MIN(ch_1_out_0, activation_max);
 //        *out_0++ = (int16_t)ch_1_out_0;
@@ -169,24 +192,29 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
 //        ch_1_out_1 = MAX(ch_1_out_1, activation_min);
 //        ch_1_out_1 = MIN(ch_1_out_1, activation_max);
 //        *out_1++ = (int16_t)ch_1_out_1;
+//
+//        out_mult++;
 //        out_shift++;
 //
-//        /* skip row */
+//        /* Skip row */
 //        ip_a0 += num_col_a;
 //        row_count--;
 //    }
 //
-//    /* compute the last odd numbered row if any */
+//    /* Compute the last odd numbered row if any */
 //    if (output_ch & 0x1)
 //    {
-//        /* setup pointers for B */
+//        /* Setup pointers for B */
 //        const int16_t *ip_b0 = input_b;
 //        const int16_t *ip_b1 = ip_b0 + num_col_a;
 //
 //        int32_t ch_0_out_0 = 0;
 //        int32_t ch_0_out_1 = 0;
+//        int64_t ch_0_out_0_s64 = 0;
+//        int64_t ch_0_out_1_s64 = 0;
 //
-//        uint16_t col_count = num_col_a >> 2;
+//    #if defined(USE_PEXT)
+//        uint16_t col_count = num_col_a_fast >> 2;
 //        while (col_count)
 //        {
 //            int32_t a01, a02;
@@ -206,6 +234,9 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
 //            col_count--;
 //        }
 //        col_count = num_col_a & 0x3;
+//    #else
+//        int32_t col_count = num_col_a_fast;
+//    #endif
 //        while (col_count)
 //        {
 //            int8_t a0 = *ip_a0++;
@@ -216,19 +247,35 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
 //            ch_0_out_1 += a0 * b1;
 //            col_count--;
 //        }
+//
+//        ch_0_out_0_s64 = ch_0_out_0;
+//        ch_0_out_1_s64 = ch_0_out_1;
+//
+//        if (num_col_a > MAX_COL_COUNT)
+//        {
+//            col_count = num_col_a_slow;
+//            while (col_count)
+//            {
+//                int8_t a0 = *ip_a0++;
+//                int16_t b0 = *ip_b0++;
+//                int16_t b1 = *ip_b1++;
+//
+//                ch_0_out_0_s64 += a0 * b0;
+//                ch_0_out_1_s64 += a0 * b1;
+//                col_count--;
+//            }
+//        }
+//
 //        if (bias)
 //        {
-//            int32_t reduced_multiplier = REDUCE_MULTIPLIER(*out_mult);
-//            int64_t acc_64 = ch_0_out_0 + *bias;
-//            ch_0_out_0 = muriscv_nn_requantize_s64(acc_64, reduced_multiplier, *out_shift);
-//            acc_64 = ch_0_out_1 + *bias++;
-//            ch_0_out_1 = muriscv_nn_requantize_s64(acc_64, reduced_multiplier, *out_shift);
+//            ch_0_out_0_s64 += *bias;
+//            ch_0_out_1_s64 += *bias++;
 //        }
-//        else
-//        {
-//            ch_0_out_0 = muriscv_nn_requantize(ch_0_out_0, *out_mult, *out_shift);
-//            ch_0_out_1 = muriscv_nn_requantize(ch_0_out_1, *out_mult, *out_shift);
-//        }
+//
+//        reduced_multiplier = REDUCE_MULTIPLIER(*out_mult);
+//        ch_0_out_0 = muriscv_nn_requantize_s64(ch_0_out_0_s64, reduced_multiplier, *out_shift);
+//        ch_0_out_1 = muriscv_nn_requantize_s64(ch_0_out_1_s64, reduced_multiplier, *out_shift);
+//
 //        ch_0_out_0 = MAX(ch_0_out_0, activation_min);
 //        ch_0_out_0 = MIN(ch_0_out_0, activation_max);
 //        *out_0++ = (int16_t)ch_0_out_0;
@@ -242,7 +289,7 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
 //
 //    out_0 += output_ch;
 //
-//    /* return the new output pointer with offset */
+//    /* Return the new output pointer with offset */
 //    return out_0;
 //#else
     (void)input_a;
@@ -255,7 +302,7 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
     (void)num_col_a;
     (void)output_bias;
     (void)out_0;
-    /* To be completed */
+
     return NULL;
 //#endif
 }

@@ -1,4 +1,4 @@
-// Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
+// Modifications copyright (C) 2024 Chair of Electronic Design Automation, TUM
 /*
  * SPDX-FileCopyrightText: Copyright 2023 Arm Limited and/or its affiliates <open-source-office@arm.com>
  *
@@ -47,16 +47,16 @@ __STATIC_INLINE int32_t muriscv_nn_convolve_fast_s16_get_buffer_size_dsp(const m
     return (2 * input_dims->c * filter_dims->w * filter_dims->h) * (int32_t)sizeof(int16_t);
 }
 
-int32_t muriscv_nn_convolve_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
-{
-#if defined(USE_PEXT) && !defined(USE_VEXT)
-    return muriscv_nn_convolve_fast_s16_get_buffer_size_dsp(input_dims, filter_dims);
-#else
-    (void)input_dims;
-    (void)filter_dims;
-    return 0;
-#endif
-}
+//int32_t muriscv_nn_convolve_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
+//{
+//#if defined(USE_PEXT) && !defined(USE_VEXT)
+//    return muriscv_nn_convolve_fast_s16_get_buffer_size_dsp(input_dims, filter_dims);
+//#else
+//    (void)input_dims;
+//    (void)filter_dims;
+//    return 0;
+//#endif
+//}
 
 int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
 {

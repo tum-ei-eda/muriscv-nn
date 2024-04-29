@@ -169,15 +169,15 @@ typedef struct
 {
     int32_t input_multiplier;
     int32_t input_shift;
-    const int8_t *input_weights;
-    const int32_t *input_effective_bias; /**< Bias added with precomputed kernel_sum * lhs_offset*/
+    const void *input_weights;
+    const void *input_effective_bias; /**< Bias added with precomputed kernel_sum * lhs_offset*/
 
     int32_t hidden_multiplier;
     int32_t hidden_shift;
-    const int8_t *hidden_weights;
-    const int32_t *hidden_effective_bias; /**< Precomputed kernel_sum * lhs_offset*/
+    const void *hidden_weights;
+    const void *hidden_effective_bias; /**< Precomputed kernel_sum * lhs_offset*/
 
-    const int32_t *bias;
+    const void *bias;
     muriscv_nn_activation_type activation_type;
 } muriscv_nn_lstm_gate;
 
