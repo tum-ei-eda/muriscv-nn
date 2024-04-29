@@ -53,4 +53,5 @@ target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_get_buffer_sizes_s8.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_wrapper_s4.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_kernel_row_offset_s8_s16.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_kernel_s16.c)
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_kernel_s16.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_convolve_1_x_n_s4.c)
