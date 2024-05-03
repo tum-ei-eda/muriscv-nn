@@ -55,7 +55,7 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
                                     const int32_t activation_min,
                                     const int32_t activation_max,
                                     const int32_t num_col_a,
-                                    const int64_t *const output_bias,
+                                    const muriscv_nn_bias_data *const bias_data,
                                     int16_t *out_0)
 {
 //#if !defined(USE_VEXT)
@@ -300,7 +300,7 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
     (void)activation_min;
     (void)activation_max;
     (void)num_col_a;
-    (void)output_bias;
+    (void)bias_data;
     (void)out_0;
 
     return NULL;

@@ -48,7 +48,7 @@
  */
 muriscv_nn_status muriscv_nn_mat_mult_nt_t_s16(const int16_t *lhs,
                                              const int8_t *rhs,
-                                             const int64_t *bias,
+                                             const muriscv_nn_bias_data *bias_data,
                                              int16_t *dst,
                                              const int32_t *dst_multipliers,
                                              const int32_t *dst_shifts,
@@ -250,7 +250,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s16(const int16_t *lhs,
     (void)dst;
     (void)activation_min;
     (void)activation_max;
-    (void)bias;
+    (void)bias_data;
     (void)lhs_rows;
     (void)lhs_rows;
     (void)rhs_rows;
