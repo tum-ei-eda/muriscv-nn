@@ -96,11 +96,6 @@ if [ "${TOOLCHAIN}" == "LLVM" ];then
         cd ${TC_DIR}
         ./download_llvm.sh 18
     fi
-
-    #If using llvm, set vars correctly
-    if [ "${USE_IMV}" == "ON" ];then
-        IMV_FLAGS="-DRISCV_ARCH=rv32im -DRISCV_ABI=ilp32"
-    fi
 fi
 
 #Need to check for GCC for either compiler or newlib headers for LLVM
@@ -137,7 +132,7 @@ elif [ "${USE_IMV}" == "ON" ];then
         ./download_rv32imv.sh
       )
     fi
-    IMV_FLAGS="-DRISCV_ARCH=rv32im -DRISCV_ABI=ilp32"
+    IMV_FLAGS="-DRISCV_ARCH=rv32imv -DRISCV_ABI=ilp32"
 
   else
     if [ -d ${TC_DIR_RV32GC} ]; then
