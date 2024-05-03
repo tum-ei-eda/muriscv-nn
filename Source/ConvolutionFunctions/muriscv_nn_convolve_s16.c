@@ -54,7 +54,7 @@ muriscv_nn_status muriscv_nn_convolve_s16(const muriscv_nn_context *ctx,
                                           const muriscv_nn_dims *filter_dims,
                                           const q7_t *filter_data,
                                           const muriscv_nn_dims *bias_dims,
-                                          const int64_t *bias_data,
+                                          const muriscv_nn_bias_data *bias_data,
                                           const muriscv_nn_dims *output_dims,
                                           q15_t *output_data)
 {
@@ -123,7 +123,24 @@ muriscv_nn_status muriscv_nn_convolve_s16(const muriscv_nn_context *ctx,
 
                     if (bias_data)
                     {
-                        conv_out_acc += bias_data[i_out_ch];
+                        const int64_t *bias_s64 = (const int64_t *)bias_data->data;
+                        const int32_t *bias_s32 = (const int32_t *)bias_data->data;
+                        const bool is_int32_bias = bias_data->is_int32_bias;
+                        
+                        int64_t bias;
+                        if (is_int32_bias)
+                        {
+                            bias = (int64_t)bias_s32[i_out_ch];
+
+                        }
+                        else
+                        {
+                        
+                           bias = (int64_t)bias_s64[i_out_ch];
+                        }
+
+                        
+                        conv_out_acc += bias;
                     }
 
                     int32_t conv_out =

@@ -49,7 +49,7 @@ muriscv_nn_status muriscv_nn_convolve_wrapper_s16(const muriscv_nn_context *ctx,
                                                   const muriscv_nn_dims *filter_dims,
                                                   const q7_t *filter_data,
                                                   const muriscv_nn_dims *bias_dims,
-                                                  const int64_t *bias_data,
+                                                  const muriscv_nn_bias_data *bias_data,
                                                   const muriscv_nn_dims *output_dims,
                                                   q15_t *output_data)
 {

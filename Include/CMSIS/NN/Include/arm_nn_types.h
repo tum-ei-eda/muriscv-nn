@@ -29,6 +29,7 @@ extern "C" {
 #define cmsis_nn_tile muriscv_nn_tile
 #define cmsis_nn_context muriscv_nn_context
 #define cmsis_nn_dims muriscv_nn_dims
+#define cmsis_nn_bias_data muriscv_nn_bias_data
 #define cmsis_nn_per_channel_quant_params muriscv_nn_per_channel_quant_params
 #define cmsis_nn_per_tensor_quant_params muriscv_nn_per_tensor_quant_params
 #define cmsis_nn_activation muriscv_nn_activation
