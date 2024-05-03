@@ -49,7 +49,7 @@ void int16xint8_muriscv_nn_convolve_s16(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = int16xint8_biases;
+    const q63_t *bias_pointer = int16xint8_biases;
     const q7_t *kernel_data = int16xint8_weights;
     const q15_t *input_data = int16xint8_input;
     const q15_t *output_ref = int16xint8_output_ref;
@@ -78,6 +78,8 @@ void int16xint8_muriscv_nn_convolve_s16(void)
     conv_params.activation.max = INT16XINT8_OUT_ACTIVATION_MAX;
     quant_params.multiplier = (int32_t *)int16xint8_output_mult;
     quant_params.shift = (int32_t *)int16xint8_output_shift;
+    
+    muriscv_nn_bias_data bias_data = { .data = (void*)bias_pointer, .is_int32_bias = false };
 
     int buf_size = muriscv_nn_convolve_s16_get_buffer_size(&input_dims, &filter_dims);
     ctx.buf = malloc(buf_size);
@@ -90,7 +92,7 @@ void int16xint8_muriscv_nn_convolve_s16(void)
                                                        &filter_dims,
                                                        kernel_data,
                                                        &bias_dims,
-                                                       bias_data,
+                                                       &bias_data,
                                                        &output_dims,
                                                        output);
     free(ctx.buf);
@@ -108,7 +110,7 @@ void int16xint8_muriscv_nn_convolve_s16(void)
                                              &filter_dims,
                                              kernel_data,
                                              &bias_dims,
-                                             bias_data,
+                                             &bias_data,
                                              &output_dims,
                                              output);
 
@@ -129,7 +131,7 @@ void requantize_s64_muriscv_nn_convolve_s16(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = requantize_s64_biases;
+    const q63_t *bias_pointer = requantize_s64_biases;
     const q7_t *kernel_data = requantize_s64_weights;
     const q15_t *input_data = requantize_s64_input;
     const q15_t *output_ref = requantize_s64_output_ref;
@@ -158,6 +160,8 @@ void requantize_s64_muriscv_nn_convolve_s16(void)
     conv_params.activation.max = REQUANTIZE_S64_OUT_ACTIVATION_MAX;
     quant_params.multiplier = (int32_t *)requantize_s64_output_mult;
     quant_params.shift = (int32_t *)requantize_s64_output_shift;
+    
+    muriscv_nn_bias_data bias_data = { .data = (void*)bias_pointer, .is_int32_bias = false };
 
     int buf_size = muriscv_nn_convolve_s16_get_buffer_size(&input_dims, &filter_dims);
     ctx.buf = malloc(buf_size);
@@ -170,7 +174,7 @@ void requantize_s64_muriscv_nn_convolve_s16(void)
                                                        &filter_dims,
                                                        kernel_data,
                                                        &bias_dims,
-                                                       bias_data,
+                                                       &bias_data,
                                                        &output_dims,
                                                        output);
     free(ctx.buf);
@@ -188,7 +192,7 @@ void requantize_s64_muriscv_nn_convolve_s16(void)
                                              &filter_dims,
                                              kernel_data,
                                              &bias_dims,
-                                             bias_data,
+                                             &bias_data,
                                              &output_dims,
                                              output);
 
@@ -209,7 +213,7 @@ void int16xint8_dilation_1_muriscv_nn_convolve_s16(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = int16xint8_dilation_1_biases;
+    const q63_t *bias_pointer = int16xint8_dilation_1_biases;
     const q7_t *kernel_data = int16xint8_dilation_1_weights;
     const q15_t *input_data = int16xint8_dilation_1_input;
     const q15_t *output_ref = int16xint8_dilation_1_output_ref;
@@ -238,6 +242,8 @@ void int16xint8_dilation_1_muriscv_nn_convolve_s16(void)
     conv_params.activation.max = INT16XINT8_DILATION_1_OUT_ACTIVATION_MAX;
     quant_params.multiplier = (int32_t *)int16xint8_dilation_1_output_mult;
     quant_params.shift = (int32_t *)int16xint8_dilation_1_output_shift;
+    
+    muriscv_nn_bias_data bias_data = { .data = (void*)bias_pointer, .is_int32_bias = false };
 
     int buf_size = muriscv_nn_convolve_s16_get_buffer_size(&input_dims, &filter_dims);
     ctx.buf = malloc(buf_size);
@@ -250,7 +256,7 @@ void int16xint8_dilation_1_muriscv_nn_convolve_s16(void)
                                                        &filter_dims,
                                                        kernel_data,
                                                        &bias_dims,
-                                                       bias_data,
+                                                       &bias_data,
                                                        &output_dims,
                                                        output);
     free(ctx.buf);
@@ -268,7 +274,7 @@ void int16xint8_dilation_1_muriscv_nn_convolve_s16(void)
                                              &filter_dims,
                                              kernel_data,
                                              &bias_dims,
-                                             bias_data,
+                                             &bias_data,
                                              &output_dims,
                                              output);
 
@@ -289,7 +295,7 @@ void int16xint8_dilation_2_muriscv_nn_convolve_s16(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = int16xint8_dilation_2_biases;
+    const q63_t *bias_pointer = int16xint8_dilation_2_biases;
     const q7_t *kernel_data = int16xint8_dilation_2_weights;
     const q15_t *input_data = int16xint8_dilation_2_input;
     const q15_t *output_ref = int16xint8_dilation_2_output_ref;
@@ -318,6 +324,8 @@ void int16xint8_dilation_2_muriscv_nn_convolve_s16(void)
     conv_params.activation.max = INT16XINT8_DILATION_2_OUT_ACTIVATION_MAX;
     quant_params.multiplier = (int32_t *)int16xint8_dilation_2_output_mult;
     quant_params.shift = (int32_t *)int16xint8_dilation_2_output_shift;
+    
+    muriscv_nn_bias_data bias_data = { .data = (void*)bias_pointer, .is_int32_bias = false };
 
     int buf_size = muriscv_nn_convolve_s16_get_buffer_size(&input_dims, &filter_dims);
     ctx.buf = malloc(buf_size);
@@ -330,7 +338,7 @@ void int16xint8_dilation_2_muriscv_nn_convolve_s16(void)
                                                        &filter_dims,
                                                        kernel_data,
                                                        &bias_dims,
-                                                       bias_data,
+                                                       &bias_data,
                                                        &output_dims,
                                                        output);
     free(ctx.buf);
@@ -348,7 +356,7 @@ void int16xint8_dilation_2_muriscv_nn_convolve_s16(void)
                                              &filter_dims,
                                              kernel_data,
                                              &bias_dims,
-                                             bias_data,
+                                             &bias_data,
                                              &output_dims,
                                              output);
 
@@ -368,8 +376,9 @@ void int16xint8_dilation_3_muriscv_nn_convolve_s16(void)
     muriscv_nn_dims filter_dims;
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
+    
 
-    const q63_t *bias_data = int16xint8_dilation_3_biases;
+    const q63_t *bias_pointer = int16xint8_dilation_3_biases;
     const q7_t *kernel_data = int16xint8_dilation_3_weights;
     const q15_t *input_data = int16xint8_dilation_3_input;
     const q15_t *output_ref = int16xint8_dilation_3_output_ref;
@@ -398,6 +407,8 @@ void int16xint8_dilation_3_muriscv_nn_convolve_s16(void)
     conv_params.activation.max = INT16XINT8_DILATION_3_OUT_ACTIVATION_MAX;
     quant_params.multiplier = (int32_t *)int16xint8_dilation_3_output_mult;
     quant_params.shift = (int32_t *)int16xint8_dilation_3_output_shift;
+    
+    muriscv_nn_bias_data bias_data = { .data = (void*)bias_pointer, .is_int32_bias = false };
 
     int buf_size = muriscv_nn_convolve_s16_get_buffer_size(&input_dims, &filter_dims);
     ctx.buf = malloc(buf_size);
@@ -410,7 +421,7 @@ void int16xint8_dilation_3_muriscv_nn_convolve_s16(void)
                                                        &filter_dims,
                                                        kernel_data,
                                                        &bias_dims,
-                                                       bias_data,
+                                                       &bias_data,
                                                        &output_dims,
                                                        output);
     free(ctx.buf);
@@ -428,7 +439,7 @@ void int16xint8_dilation_3_muriscv_nn_convolve_s16(void)
                                              &filter_dims,
                                              kernel_data,
                                              &bias_dims,
-                                             bias_data,
+                                             &bias_data,
                                              &output_dims,
                                              output);
 

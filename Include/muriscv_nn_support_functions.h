@@ -1937,6 +1937,7 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve(const int32x4_t val, co
      return 0;
 }
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Vector saturating doubling high multiply with predication returning high half.
  * @param[in]       m1        Multiplicand
@@ -1951,9 +1952,11 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_pred(const int3
                                                                const mve_pred16_t p,
                                                                const int32x4_t v_zero)
 {
-    return vqrdmulhq_m_n_s32(v_zero, m1, m2, p);
+    //return vqrdmulhq_m_n_s32(v_zero, m1, m2, p);
+    return 0;
 }
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Vector rounding divide by power of two with predication.
  * @param[in]       dividend - Dividend vector
@@ -1969,12 +1972,14 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_pred(const 
                                                                    const mve_pred16_t p,
                                                                    const int32x4_t v_zero)
 {
-    const int32x4_t shift = vdupq_x_n_s32(-exponent, p);
-    const int32x4_t fixup = vshrq_x_n_s32(vandq_x_s32(dividend, shift, p), 31, p);
-    const int32x4_t fixed_up_dividend = vqaddq_m_s32(v_zero, dividend, fixup, p);
-    return vrshlq_m_s32(v_zero, fixed_up_dividend, shift, p);
+    //const int32x4_t shift = vdupq_x_n_s32(-exponent, p);
+    //const int32x4_t fixup = vshrq_x_n_s32(vandq_x_s32(dividend, shift, p), 31, p);
+    //const int32x4_t fixed_up_dividend = vqaddq_m_s32(v_zero, dividend, fixup, p);
+    //return vrshlq_m_s32(v_zero, fixed_up_dividend, shift, p);
+    return 0;
 }
 
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Requantize a given vector with predication.
  * @param[in]       val         Vector to be requantized
@@ -1990,27 +1995,28 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_pred(const int32x4_t va
                                                        const int32_t shift,
                                                        const mve_pred16_t p)
 {
-    #ifdef MURISCV_NN_USE_SINGLE_ROUNDING
-    const int right_shift = MIN(-1, shift);
-    const int left_shift = shift - right_shift;
-    const int32x4_t v_zero = vcreateq_s32(0, 0);
+    //#ifdef MURISCV_NN_USE_SINGLE_ROUNDING
+    //const int right_shift = MIN(-1, shift);
+    //const int left_shift = shift - right_shift;
+    //const int32x4_t v_zero = vcreateq_s32(0, 0);
 
-    const int32x4_t left_shift_dup = vdupq_x_n_s32(left_shift, p);
-    const int32x4_t right_shift_dup = vdupq_x_n_s32(right_shift, p);
+    //const int32x4_t left_shift_dup = vdupq_x_n_s32(left_shift, p);
+    //const int32x4_t right_shift_dup = vdupq_x_n_s32(right_shift, p);
 
-    int32x4_t result = vqrdmulhq_m_n_s32(v_zero, vshlq_m_s32(v_zero, val, left_shift_dup, p), multiplier, p);
-    result = vrshlq_m_s32(v_zero, result, right_shift_dup, p);
+    //int32x4_t result = vqrdmulhq_m_n_s32(v_zero, vshlq_m_s32(v_zero, val, left_shift_dup, p), multiplier, p);
+    //result = vrshlq_m_s32(v_zero, result, right_shift_dup, p);
 
-    return result;
-    #else
-    const int32x4_t v_zero = vcreateq_s32(0, 0);
-    return muriscv_nn_divide_by_power_of_two_mve_pred(
-        muriscv_nn_doubling_high_mult_mve_pred(
-            vshlq_m_s32(v_zero, val, vdupq_x_n_s32(LEFT_SHIFT(shift), p), p), multiplier, p, v_zero),
-        RIGHT_SHIFT(shift),
-        p,
-        v_zero);
-    #endif
+    //return result;
+    //#else
+    //const int32x4_t v_zero = vcreateq_s32(0, 0);
+    //return muriscv_nn_divide_by_power_of_two_mve_pred(
+    //    muriscv_nn_doubling_high_mult_mve_pred(
+    //        vshlq_m_s32(v_zero, val, vdupq_x_n_s32(LEFT_SHIFT(shift), p), p), multiplier, p, v_zero),
+    //    RIGHT_SHIFT(shift),
+    //    p,
+    //    v_zero);
+    //#endif
+    return 0;
 }
 
 //MURISCV_NN CUSTOM CODE
