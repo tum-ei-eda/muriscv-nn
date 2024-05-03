@@ -21,6 +21,7 @@
 #ifndef _MURISCV_NN_TYPES_H
 #define _MURISCV_NN_TYPES_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -47,6 +48,13 @@ typedef struct
     void *buf;    /**< Pointer to a buffer needed for the optimization */
     int32_t size; /**< Buffer size */
 } muriscv_nn_context;
+
+/** MURISCV-NN object used to hold bias data for int16 variants. */
+typedef struct
+{
+    const void *data;         /**< Pointer to bias data */
+    const bool is_int32_bias; /**< Indicate type of bias data. True means int32 else int64 */
+} muriscv_nn_bias_data;
 
 /** MURISCV-NN object to contain the dimensions of the tensors */
 typedef struct

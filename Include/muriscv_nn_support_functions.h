@@ -22,8 +22,8 @@
  * Title:        muriscv_nn_support_functions.h
  * Description:  Public header file of support functions for MURISCV NN Library
  *
- * $Date:        10 April 2024
- * $Revision:    V.20.2.0
+ * $Date:        23 April 2024
+ * $Revision:    V.21.0.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
@@ -420,12 +420,14 @@ int8_t *muriscv_nn_mat_mult_s8(const int8_t *input_row,
  * @param[in]       input_a     pointer to operand A
  * @param[in]       input_b     pointer to operand B, always consists of 2 vectors.
  * @param[in]       output_ch   number of rows of A
- * @param[in]       out_shift  pointer to per output channel requantization shift parameter.
- * @param[in]       out_mult   pointer to per output channel requantization multiplier parameter.
+ * @param[in]       out_shift   pointer to per output channel requantization shift parameter.
+ * @param[in]       out_mult    pointer to per output channel requantization multiplier parameter.
  * @param[in]       activation_min   minimum value to clamp the output to. Range : int16
  * @param[in]       activation_max   maximum value to clamp the output to. Range : int16
  * @param[in]       num_col_a   number of columns of A
- * @param[in]       output_bias per output channel bias. Range : int64
+ * @param[in]       bias_data   pointer to struct with bias vector. The length of this vector is equal to the number
+ *                              of output columns (or RHS input rows). The vector can be int32 or int64 indicated by a
+ *                              flag in the struct.
  * @param[in,out]   out_0       pointer to output
  * @return     The function returns one of the two
  *              1. The incremented output pointer for a successful operation or
@@ -444,7 +446,7 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
                                     const int32_t activation_min,
                                     const int32_t activation_max,
                                     const int32_t num_col_a,
-                                    const int64_t *const output_bias,
+                                    const muriscv_nn_bias_data *const bias_data,
                                     int16_t *out_0);
 
 //MURISCV_NN CUSTOM CODE
@@ -470,6 +472,44 @@ muriscv_nn_status muriscv_nn_mat_mul_core_1x_s8(int32_t row_elements,
                                                 const int8_t *col_base,
                                                 int32_t *const sum_col,
                                                 int32_t *const output);
+
+/**
+ * @brief General Vector by Matrix multiplication with requantization, storage of result and int4 weights packed into an
+ * int8 buffer.
+ * @param[in]       row_elements          number of row elements
+ * @param[in]       skipped_row_elements  number of row elements skipped due to padding.
+ *                                        row_elements + skipped_row_elements = (kernel_x * kernel_y) * input_ch
+ * @param[in]       row_base_ref          pointer to row operand
+ * @param[in]       col_base_ref          pointer to col operand as packed int4
+ * @param[out]      out_ch                Number of output channels
+ * @param[in]       conv_params           Pointer to convolution parameters like offsets and activation values
+ * @param[in]       quant_params          Pointer to per-channel quantization parameters
+ * @param[in]       bias                  Pointer to optional per-channel bias
+ * @param[out]      output                Pointer to output where int8 results are stored.
+ * @return     The function performs matrix(row_base_ref) multiplication with vector(col_base_ref) and
+ *             scaled result is stored in memory.
+ *
+ * @details Pseudo-code as int8 example. Int4 filter data will be unpacked.
+ *      *output = 0
+ *      sum_col = 0
+ *      for (j = 0; j < out_ch; j++)
+ *      for (i = 0; i < row_elements; i++)
+ *          *output += row_base_ref[i] * col_base_ref[i]
+ *          sum_col += col_base_ref[i]
+ *      scale sum_col using quant_params and bias
+ *      store result in 'output'
+ *
+ *
+ */
+muriscv_nn_status muriscv_nn_mat_mul_core_1x_s4(int32_t row_elements,
+                                              const int32_t skipped_row_elements,
+                                              const int8_t *row_base_ref,
+                                              const int8_t *col_base_ref,
+                                              const int32_t out_ch,
+                                              const muriscv_nn_conv_params *conv_params,
+                                              const muriscv_nn_per_channel_quant_params *quant_params,
+                                              const int32_t *bias,
+                                              int8_t *output);
 
 /**
  * @brief Matrix-multiplication with requantization & activation function for four rows and one column
@@ -602,8 +642,9 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const int8_t *lhs,
  *
  * @param[in]  lhs                Pointer to the LHS input matrix
  * @param[in]  rhs                Pointer to the RHS input matrix
- * @param[in]  bias               Pointer to the bias vector. The length of this vector is equal to the number of
- *                                output columns (or RHS input rows)
+ * @param[in]  bias_data          Pointer to struct with bias vector. The length of this vector is equal to the number
+ *                                of output columns (or RHS input rows). The vector can be int32 or int64 indicated by a
+ *                                flag in the struct.
  * @param[out] dst                Pointer to the output matrix with "m" rows and "n" columns
  * @param[in]  dst_multipliers    Pointer to the multipliers vector needed for the per-channel requantization.
  *                                The length of this vector is equal to the number of output columns (or RHS input
@@ -624,7 +665,7 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8(const int8_t *lhs,
  */
 muriscv_nn_status muriscv_nn_mat_mult_nt_t_s16(const int16_t *lhs,
                                              const int8_t *rhs,
-                                             const int64_t *bias,
+                                             const muriscv_nn_bias_data *bias_data,
                                              int16_t *dst,
                                              const int32_t *dst_multipliers,
                                              const int32_t *dst_shifts,
@@ -1894,6 +1935,88 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve(const int32x4_t val, co
      //    muriscv_nn_doubling_high_mult_mve(vshlq_s32(val, vdupq_n_s32(LEFT_SHIFT(shift))), multiplier), RIGHT_SHIFT(shift));
      //#endif
      return 0;
+}
+
+//MURISCV_NN CUSTOM CODE
+/**
+ * @brief           Vector saturating doubling high multiply with predication returning high half.
+ * @param[in]       m1        Multiplicand
+ * @param[in]       m2        Multiplier
+ * @param[in]       p         Vector predication mask
+ * @param[in]       v_zero    Vector of zeroes for merging predication intrinsic
+ * @return          Result of multiplication.
+ *
+ */
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_pred(const int32x4_t m1,
+                                                               const int32_t m2,
+                                                               const mve_pred16_t p,
+                                                               const int32x4_t v_zero)
+{
+    //return vqrdmulhq_m_n_s32(v_zero, m1, m2, p);
+    return 0;
+}
+
+//MURISCV_NN CUSTOM CODE
+/**
+ * @brief           Vector rounding divide by power of two with predication.
+ * @param[in]       dividend - Dividend vector
+ * @param[in]       exponent - Divisor = power(2, exponent)
+ *                             Range: [0, 31]
+ * @param[in]       p        - Vector predication mask
+ * @param[in]       v_zero   - Vector of zeroes for merging predication intrinsic
+ * @return          Rounded result of division. Midpoint is rounded away from zero.
+ *
+ */
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_pred(const int32x4_t dividend,
+                                                                   const int32_t exponent,
+                                                                   const mve_pred16_t p,
+                                                                   const int32x4_t v_zero)
+{
+    //const int32x4_t shift = vdupq_x_n_s32(-exponent, p);
+    //const int32x4_t fixup = vshrq_x_n_s32(vandq_x_s32(dividend, shift, p), 31, p);
+    //const int32x4_t fixed_up_dividend = vqaddq_m_s32(v_zero, dividend, fixup, p);
+    //return vrshlq_m_s32(v_zero, fixed_up_dividend, shift, p);
+    return 0;
+}
+
+//MURISCV_NN CUSTOM CODE
+/**
+ * @brief           Requantize a given vector with predication.
+ * @param[in]       val         Vector to be requantized
+ * @param[in]       multiplier  multiplier
+ * @param[in]       shift       shift
+ * @param[in]       p           Vector predication mask
+ *
+ * @return          Returns (val * multiplier)/(2 ^ shift)
+ *
+ */
+__STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_pred(const int32x4_t val,
+                                                       const int32_t multiplier,
+                                                       const int32_t shift,
+                                                       const mve_pred16_t p)
+{
+    //#ifdef MURISCV_NN_USE_SINGLE_ROUNDING
+    //const int right_shift = MIN(-1, shift);
+    //const int left_shift = shift - right_shift;
+    //const int32x4_t v_zero = vcreateq_s32(0, 0);
+
+    //const int32x4_t left_shift_dup = vdupq_x_n_s32(left_shift, p);
+    //const int32x4_t right_shift_dup = vdupq_x_n_s32(right_shift, p);
+
+    //int32x4_t result = vqrdmulhq_m_n_s32(v_zero, vshlq_m_s32(v_zero, val, left_shift_dup, p), multiplier, p);
+    //result = vrshlq_m_s32(v_zero, result, right_shift_dup, p);
+
+    //return result;
+    //#else
+    //const int32x4_t v_zero = vcreateq_s32(0, 0);
+    //return muriscv_nn_divide_by_power_of_two_mve_pred(
+    //    muriscv_nn_doubling_high_mult_mve_pred(
+    //        vshlq_m_s32(v_zero, val, vdupq_x_n_s32(LEFT_SHIFT(shift), p), p), multiplier, p, v_zero),
+    //    RIGHT_SHIFT(shift),
+    //    p,
+    //    v_zero);
+    //#endif
+    return 0;
 }
 
 //MURISCV_NN CUSTOM CODE
