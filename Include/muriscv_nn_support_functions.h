@@ -22,8 +22,8 @@
  * Title:        muriscv_nn_support_functions.h
  * Description:  Public header file of support functions for MURISCV NN Library
  *
- * $Date:        23 April 2024
- * $Revision:    V.21.0.0
+ * $Date:        30 April 2024
+ * $Revision:    V.21.1.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
@@ -183,13 +183,18 @@ extern "C" {
 #define CLAMP(x, h, l) MAX(MIN((x), (h)), (l))
 #define REDUCE_MULTIPLIER(_mult) ((_mult < 0x7FFF0000) ? ((_mult + (1 << 15)) >> 16) : 0x7FFF)
 
-// Number of channels processed in a block for DW Conv(MVE)
+// Number of channels processed in a block for DW Conv with Int8 weights(MVE)
 // Requirement: Greater than 0 & less than 128
 // This can be fine tuned to match number of input channels for best performance.
 // A layer with lower number of channels than CH_IN_BLOCK_MVE will result in higher
 // scratch buffer usage and a layer with higher number of channels than CH_IN_BLOCK_MVE
 // will result in lower scratch buffer usage.
 #define CH_IN_BLOCK_MVE (124)
+
+// Number of channels processed in a block for DW Conv with Int4 weights(MVE)
+// Requirement: See CH_IN_BLOCK_MVE.
+// An additional requirement for this signed 4 variant is that it must be an even number.
+#define S4_CH_IN_BLOCK_MVE (124)
 
 // For input of int16 when number of columns are above this limit int64 accumulation is needed
 // to not loose precision.
@@ -333,6 +338,20 @@ void muriscv_nn_q7_to_q15_with_offset(const int8_t *src, int16_t *dst, int32_t b
 void muriscv_nn_s8_to_s16_unordered_with_offset(const int8_t *src, int16_t *dst, int32_t block_size, int16_t offset);
 
 #endif
+
+/**
+ * @brief Get the required buffer size for optimized s8 depthwise convolution
+ *        function with constraint that in_channel equals out_channel.
+ *        This is for processors with MVE extension.
+ *        Refer to muriscv_nn_depthwise_conv_s8_opt_get_buffer_size() for function argument details.
+ *
+ * @note  Intended for compilation on Host. If compiling for an Arm target, use
+ *        muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(). Note also this is a support function,
+ *        so not recommended to call directly even on Host.
+ *
+ */
+int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_mve(const muriscv_nn_dims *input_dims,
+                                                      const muriscv_nn_dims *filter_dims);
 
 /**
  * @brief Get the required buffer size for optimized s8 depthwise convolution
@@ -914,6 +933,50 @@ muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_padded_s8(const int8_t *lhs,
  *                  - rhs
  */
 muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_s8(const int8_t *lhs,
+                                                  const int8_t *rhs,
+                                                  const int32_t lhs_offset,
+                                                  const int32_t active_ch,
+                                                  const int32_t total_ch,
+                                                  const int32_t *out_shift,
+                                                  const int32_t *out_mult,
+                                                  const int32_t out_offset,
+                                                  const int32_t activation_min,
+                                                  const int32_t activation_max,
+                                                  const uint16_t row_x_col,
+                                                  const int32_t *const output_bias,
+                                                  int8_t *out);
+
+/**
+ * @brief Depthwise convolution of transposed rhs matrix with 4 lhs matrices. To be used in non-padded cases. rhs
+ * consists of packed int4 data. Dimensions are the same for lhs and rhs.
+ *
+ * @param[in]      lhs             Input left-hand side matrix
+ * @param[in]      rhs             Input right-hand side matrix (transposed). Consists of int4 data packed in an int8
+ * buffer.
+ * @param[in]      lhs_offset      LHS matrix offset(input offset). Range: -127 to 128
+ * @param[in]      active_ch       Subset of total_ch processed
+ * @param[in]      total_ch        Number of channels in LHS/RHS
+ * @param[in]      out_shift       Per channel output shift. Length of vector is equal to number of channels.
+ * @param[in]      out_mult        Per channel output multiplier. Length of vector is equal to number of channels.
+ * @param[in]      out_offset      Offset to be added to the output values. Range: -127 to 128
+ * @param[in]      activation_min  Minimum value to clamp the output to. Range: int8
+ * @param[in]      activation_max  Maximum value to clamp the output to. Range: int8
+ * @param[in]       row_x_col       (row_dimension * col_dimension) of LHS/RHS matrix
+ * @param[in]      output_bias     Per channel output bias. Length of vector is equal to number of channels.
+ * @param[in]      out             Output pointer
+ *
+ * @return         The function returns one of the two
+ *                  - Updated output pointer if an implementation is available
+ *                  - NULL if no implementation is available.
+ *
+ * @note           If number of channels is not a multiple of 4, upto 3 elements outside the boundary will be read
+ * out for the following.
+ *                  - Output shift
+ *                  - Output multiplier
+ *                  - Output bias
+ *                  - rhs
+ */
+muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_s4(const int8_t *lhs,
                                                   const int8_t *rhs,
                                                   const int32_t lhs_offset,
                                                   const int32_t active_ch,
@@ -1953,7 +2016,6 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_pred(const int3
                                                                const int32x4_t v_zero)
 {
     //return vqrdmulhq_m_n_s32(v_zero, m1, m2, p);
-    return 0;
 }
 
 //MURISCV_NN CUSTOM CODE
@@ -1973,10 +2035,9 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_pred(const 
                                                                    const int32x4_t v_zero)
 {
     //const int32x4_t shift = vdupq_x_n_s32(-exponent, p);
-    //const int32x4_t fixup = vshrq_x_n_s32(vandq_x_s32(dividend, shift, p), 31, p);
-    //const int32x4_t fixed_up_dividend = vqaddq_m_s32(v_zero, dividend, fixup, p);
-    //return vrshlq_m_s32(v_zero, fixed_up_dividend, shift, p);
-    return 0;
+    const int32x4_t fixup = vshrq_x_n_s32(vandq_x_s32(dividend, shift, p), 31, p);
+    const int32x4_t fixed_up_dividend = vqaddq_m_s32(v_zero, dividend, fixup, p);
+    return vrshlq_m_s32(v_zero, fixed_up_dividend, shift, p);
 }
 
 //MURISCV_NN CUSTOM CODE
@@ -1997,26 +2058,25 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_pred(const int32x4_t va
 {
     //#ifdef MURISCV_NN_USE_SINGLE_ROUNDING
     //const int right_shift = MIN(-1, shift);
-    //const int left_shift = shift - right_shift;
-    //const int32x4_t v_zero = vcreateq_s32(0, 0);
+    const int left_shift = shift - right_shift;
+    const int32x4_t v_zero = vcreateq_s32(0, 0);
 
-    //const int32x4_t left_shift_dup = vdupq_x_n_s32(left_shift, p);
-    //const int32x4_t right_shift_dup = vdupq_x_n_s32(right_shift, p);
+    const int32x4_t left_shift_dup = vdupq_x_n_s32(left_shift, p);
+    const int32x4_t right_shift_dup = vdupq_x_n_s32(right_shift, p);
 
-    //int32x4_t result = vqrdmulhq_m_n_s32(v_zero, vshlq_m_s32(v_zero, val, left_shift_dup, p), multiplier, p);
-    //result = vrshlq_m_s32(v_zero, result, right_shift_dup, p);
+    int32x4_t result = vqrdmulhq_m_n_s32(v_zero, vshlq_m_s32(v_zero, val, left_shift_dup, p), multiplier, p);
+    result = vrshlq_m_s32(v_zero, result, right_shift_dup, p);
 
-    //return result;
-    //#else
-    //const int32x4_t v_zero = vcreateq_s32(0, 0);
-    //return muriscv_nn_divide_by_power_of_two_mve_pred(
-    //    muriscv_nn_doubling_high_mult_mve_pred(
-    //        vshlq_m_s32(v_zero, val, vdupq_x_n_s32(LEFT_SHIFT(shift), p), p), multiplier, p, v_zero),
-    //    RIGHT_SHIFT(shift),
-    //    p,
-    //    v_zero);
-    //#endif
-    return 0;
+    return result;
+    #else
+    const int32x4_t v_zero = vcreateq_s32(0, 0);
+    return muriscv_nn_divide_by_power_of_two_mve_pred(
+        muriscv_nn_doubling_high_mult_mve_pred(
+            vshlq_m_s32(v_zero, val, vdupq_x_n_s32(LEFT_SHIFT(shift), p), p), multiplier, p, v_zero),
+        RIGHT_SHIFT(shift),
+        p,
+        v_zero);
+    #endif
 }
 
 //MURISCV_NN CUSTOM CODE
