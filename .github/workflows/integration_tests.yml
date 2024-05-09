@@ -122,7 +122,7 @@ jobs:
         echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
         echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
-    - name: Download Cached GCC Binaries
+    - name: Download Cached GCC + LLVM Binaries
       id: cache-gcc
       uses: actions/cache@v4
       env:
@@ -161,14 +161,6 @@ jobs:
       working-directory: ./Integration/TFLM/tflite-micro
       run: git apply ../muriscv_nn.patch
 
-    - name: Download LLVM
-      working-directory: ./Integration/TFLM/tflite-micro
-      run: |
-        wget https://apt.llvm.org/llvm.sh
-        chmod +x llvm.sh
-        sudo ./llvm.sh 17
-        rm llvm.sh
-
     - name: TFLM Integration Test for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}
       working-directory: ./Integration/TFLM/tflite-micro
       run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.elen }} ${{ matrix.config.sim }}
@@ -200,7 +192,7 @@ jobs:
         echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
         echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
-    - name: Download Cached GCC Binaries
+    - name: Download Cached GCC + LLVM Binaries
       id: cache-gcc
       uses: actions/cache@v4
       env:
@@ -280,7 +272,7 @@ jobs:
         echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
         echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
 
-    - name: Download Cached GCC Binaries
+    - name: Download Cached GCC + LLVM Binaries
       id: cache-gcc
       uses: actions/cache@v4
       env:

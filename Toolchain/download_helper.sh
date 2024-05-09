@@ -42,3 +42,10 @@ wget --progress=dot:giga $URL
 mkdir -p $dest
 tar -xvf $archive -C $dest
 rm $archive
+#check if gnu subdirectory is present
+#if so, remove it
+if [  -d ./${dest}/gnu ]; then
+    cd ${dest}
+    mv gnu/* .
+    rm -r gnu
+fi

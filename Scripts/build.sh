@@ -32,6 +32,7 @@ USE_VEXT=OFF
 USE_PEXT=OFF
 USE_IMV=OFF
 GCC_PREFIX=${TC_DIR}/rv32gc
+LLVM_PREFIX=${TC_DIR}/llvm/bin/
 IMV_FLAGS=""
 SIM_FLAGS=""
 VLEN=""
@@ -87,69 +88,64 @@ fi
 #################### Check for Dependencies for Build ##########################
 ################################################################################
 if [ "${TOOLCHAIN}" == "LLVM" ];then
-     # Install LLVM 17 (which includes vector support)
-    if clang-17 --version &>/dev/null; then
-      echo "LLVM 17 appears to be installed."
+     # Download LLVM 18 (which includes vector support)
+    if [ -d ${TC_DIR}/llvm ]; then
+      echo "Found LLVM compiler in the Toolchain directory."
     else
-      echo "No LLVM 17 installation found. Installing LLVM 17..."
-      wget https://apt.llvm.org/llvm.sh
-      chmod +x llvm.sh
-      sudo ./llvm.sh 17
-      rm llvm.sh
+      echo "No LLVM compiler in the Toolchain directory found. Downloading one..."
+        cd ${TC_DIR}
+        ./download_llvm.sh 18
     fi
-
-    if [ "${USE_IMV}" == "ON" ];then
-        IMV_FLAGS="-DRISCV_ARCH=rv32imzve32x -DRISCV_ABI=ilp32"
-    fi
-
-elif [ "${TOOLCHAIN}" == "GCC" ];then
-    if [ "${USE_VEXT}" == "ON" ] && [ "${USE_IMV}" == "OFF" ] ;then
-
-       if [ -d ${TC_DIR_RV32GCV} ]; then
-          echo "Found rv32gcv GCC compiler in the Toolchain directory."
-        else
-          echo "No rv32gcv GCC compiler in the Toolchain directory found. Downloading one..."
-          (
-            cd ${TC_DIR}
-            ./download_rv32gcv.sh
-          )
-        fi
-
-     elif [ "${USE_PEXT}" == "ON" ];then
-       if [ -d ${TC_DIR_RV32GCP} ]; then
-          echo "Found rv32gcp GCC compiler in the Toolchain directory."
-        else
-          echo "No rv32gcp GCC compiler in the Toolchain directory found. Downloading one..."
-          (
-            cd ${TC_DIR}
-            ./download_rv32gcp.sh
-          )
-        fi
-    elif [ "${USE_IMV}" == "ON" ];then
-    # Download rv32imv GCC
-        if [ -d ${TC_DIR_RV32IMV} ]; then
-          echo "Found rv32imv GCC compiler in the Toolchain directory."
-        else
-          echo "No rv32imv GCC compiler in the Toolchain directory found. Downloading one..."
-          (
-            cd ${TC_DIR}
-            ./download_rv32imv.sh
-          )
-        fi
-        IMV_FLAGS="-DRISCV_ARCH=rv32imv -DRISCV_ABI=ilp32"
-
-     else
-        if [ -d ${TC_DIR_RV32GC} ]; then
-          echo "Found rv32gc GCC compiler in the Toolchain directory."
-        else
-          echo "No rv32gc GCC compiler in the Toolchain directory found. Downloading one..."
-          (
-            cd ${TC_DIR}
-            ./download_rv32gc.sh
-          )
-        fi
-     fi
 fi
+
+#Need to check for GCC for either compiler or newlib headers for LLVM
+if [ "${USE_VEXT}" == "ON" ] && [ "${USE_IMV}" == "OFF" ] ;then
+
+    if [ -d ${TC_DIR_RV32GCV} ]; then
+      echo "Found rv32gcv GCC compiler in the Toolchain directory."
+    else
+      echo "No rv32gcv GCC compiler in the Toolchain directory found. Downloading one..."
+      (
+        cd ${TC_DIR}
+        ./download_rv32gcv.sh
+      )
+    fi
+
+  elif [ "${USE_PEXT}" == "ON" ];then
+    if [ -d ${TC_DIR_RV32GCP} ]; then
+      echo "Found rv32gcp GCC compiler in the Toolchain directory."
+    else
+      echo "No rv32gcp GCC compiler in the Toolchain directory found. Downloading one..."
+      (
+        cd ${TC_DIR}
+        ./download_rv32gcp.sh
+      )
+    fi
+elif [ "${USE_IMV}" == "ON" ];then
+# Download rv32imv GCC
+    if [ -d ${TC_DIR_RV32IMV} ]; then
+      echo "Found rv32imv GCC compiler in the Toolchain directory."
+    else
+      echo "No rv32imv GCC compiler in the Toolchain directory found. Downloading one..."
+      (
+        cd ${TC_DIR}
+        ./download_rv32imv.sh
+      )
+    fi
+    IMV_FLAGS="-DRISCV_ARCH=rv32imv -DRISCV_ABI=ilp32"
+
+  else
+    if [ -d ${TC_DIR_RV32GC} ]; then
+      echo "Found rv32gc GCC compiler in the Toolchain directory."
+    else
+      echo "No rv32gc GCC compiler in the Toolchain directory found. Downloading one..."
+      (
+        cd ${TC_DIR}
+        ./download_rv32gc.sh
+      )
+    fi
+  fi
+
 
 
 ################################################################################
@@ -160,7 +156,7 @@ rm -rf ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}
 echo $1
 echo ${TC_DIR}/$2
-cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN}
+cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX}/ -DRISCV_LLVM_PREFIX=${LLVM_PREFIX}  -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN}
 make -j $(nproc) -C ${BUILD_DIR}
 
 exit 0
