@@ -46,11 +46,6 @@ rm $archive
 #if so, remove it
 if [  -d ./${dest}/gnu ]; then
     cd ${dest}
-    mv gnu/bin bin
-    mv gnu/include include
-    mv gnu/lib lib
-    mv gnu/libexec libexec
-    mv gnu/riscv32-unknown-elf riscv32-unknown-elf
-    mv gnu/share share
+    mv gnu/* .
     rm -r gnu
 fi
