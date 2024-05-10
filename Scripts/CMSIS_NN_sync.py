@@ -183,17 +183,24 @@ def get_function_blocks(file):
                     func_name = name[2]
             else:
                 func_name = name[1]
-
-            if (file[(ptr_file+1)%len(file)] == "{\n"):
+                
+                
+            #Find the end of the function declaration ( a ')' in the line).  This handles functions with arguments across multiple lines
+            while not(')' in file[ptr_file]):
+               func_block.append(file[ptr_file])
+               ptr_file+=1    
+                
+            #Find end of this function block    
+            if (file[(ptr_file+1)%len(file)] == "{\n"):  #This handles functions with contents in {}
                 while not("}\n" == file[ptr_file] or "};\n" == file[ptr_file]):
                     func_block.append(file[ptr_file])
                     ptr_file+=1
-            else:
+            else: #This handles functions defined in a single line
                 while not(");" in file[ptr_file] or file[ptr_file] == '\n'):
                     func_block.append(file[ptr_file])
                     ptr_file+=1
 
-            func_block.append(file[ptr_file])
+            func_block.append(file[ptr_file]) #Add termination line
             functions.append([func_name, func_block_ptr, func_block, custom])
             custom = False
 
@@ -205,10 +212,12 @@ def get_function_blocks(file):
             while not(("#define" in file[ptr_file] and ptr_file != func_block_ptr) or file[ptr_file] == "\n" or "MURISCV_NN CUSTOM CODE" in file[ptr_file]):
                 func_block.append(file[ptr_file])
                 ptr_file+=1
-            #Find name of block
+            
+            #Add the custom code comment line if needed
             if(custom):
                 func_block.insert(0,custom_code_line)
                 func_block_ptr-=1
+            #Find name of block
             name = []
             for line in func_block:
                 if "#define" in line:
@@ -227,6 +236,7 @@ def get_function_blocks(file):
 
             name = func_block[0].replace('(', ' ')
             name = name.split(' ')[2]
+            #Add the custom code comment line if needed
             if(custom):
                 func_block.insert(0,custom_code_line)
                 func_block_ptr-=1
@@ -492,6 +502,7 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
                 #Custom implementation.  Write muriscv version and advance pointers
                 for line in next_ops[0][3][2]:
                     muriscv_file_new.append(line)
+                    print(line)
                 ptr_muriscv+=len(next_ops[0][3][2])
                 ptr_cmsis+=len(next_ops[0][2][2])
             else:
@@ -666,8 +677,11 @@ for subdir_cmsis in subdir_cmsis_gen:
 #        new_test_files = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/TestData/' + data_dir))
 #        for file in new_test_files[2]:
 #            create_muriscv_nn_file(file, muriscv_dir + '/Tests/TestData/' + data_dir +"/" , file, cmsis_dir + '/Tests/UnitTest/TestCases/TestData/' + data_dir)
-        
+
+#update the functions file        
 update_include_file("muriscv_nn_functions.h", muriscv_include_dir, "arm_nnfunctions.h", cmsis_include_dir)
+
+#update the support functions file
 update_include_file("muriscv_nn_support_functions.h", muriscv_include_dir, "arm_nnsupportfunctions.h", cmsis_include_dir)
 
 
