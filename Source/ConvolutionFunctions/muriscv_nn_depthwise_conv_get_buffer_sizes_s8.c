@@ -1,4 +1,4 @@
-// Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
+	// Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
 /*
  * SPDX-FileCopyrightText: Copyright 2023 Arm Limited and/or its affiliates <open-source-office@arm.com>
  *
@@ -41,7 +41,7 @@
  * @{
  */
 
-__STATIC_INLINE int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_mve(const muriscv_nn_dims *input_dims,
+int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_mve(const muriscv_nn_dims *input_dims,
                                                                       const muriscv_nn_dims *filter_dims)
 {
     (void)input_dims;
