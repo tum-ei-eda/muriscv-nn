@@ -80,8 +80,7 @@ muriscv_nn_status muriscv_nn_fully_connected_s4(const muriscv_nn_context *ctx,
                                  filter_dims->n, /* col_dim or accum_depth */
                                  output_dims->c, /* row_dim or output_depth */
                                  fc_params->activation.min,
-                                 fc_params->activation.max,
-                                 1L);
+                                 fc_params->activation.max);
         input += filter_dims->n;
         output += output_dims->c;
         batch_cnt--;
