@@ -18,9 +18,7 @@
  * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
  */
 
-#if defined(USE_VEXT)
-#include <riscv_vector.h>
-#elif defined(USE_PEXT)
+#if defined(USE_PEXT)
 #include <rvp_intrinsic.h>
 #endif
 

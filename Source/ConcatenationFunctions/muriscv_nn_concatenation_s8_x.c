@@ -18,10 +18,6 @@
  * Modifications copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM
  */
 
-#if defined(USE_VEXT)
-#include <riscv_vector.h>
-#endif
-
 #include "muriscv_nn_functions.h"
 #include "muriscv_nn_support_functions.h"
 
