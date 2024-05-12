@@ -59,8 +59,7 @@ jobs:
         ./Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version
         ./Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version
         ./Toolchain/rv32imv/bin/riscv32-unknown-elf-gcc --version
-        # ./Toolchain/llvm/bin/clang --version
-        ./Toolchain/llvm/llvm/bin/clang --version
+        ./Toolchain/llvm/bin/clang --version
 
     - name: Install Spike Dependencies
       run: |
