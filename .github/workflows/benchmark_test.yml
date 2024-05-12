@@ -116,7 +116,7 @@ jobs:
         working-directory: ./Wiki
         run: |
           source ../Integration/MLonMCU/common.sh
-          python3 create_wiki.py */*.csv --split --date CUSTOM
+          python3 create_wiki.py */*.csv --split
 
       - name: Clone Wiki Repo
         uses: actions/checkout@v4
