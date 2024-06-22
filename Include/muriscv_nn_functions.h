@@ -22,8 +22,8 @@
  * Title:        muriscv_nn_functions.h
  * Description:  Public header file for MURISCV NN Library
  *
- * $Date:        23 April 2024
- * $Revision:    V.16.0.0
+ * $Date:        04 Jun 2024
+ * $Revision:    V.16.1.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
@@ -361,6 +361,48 @@ muriscv_nn_status muriscv_nn_convolve_s4(const muriscv_nn_context *ctx,
                                     const int32_t *bias_data,
                                     const muriscv_nn_dims *output_dims,
                                     int8_t *output_data);
+
+/**
+ * @brief Basic s4 convolution function with a requirement of even number of kernels.
+ * @param[in, out] ctx            Function context that contains the additional buffer if required by the function.
+ *                                muriscv_nn_convolve_s4_get_buffer_size will return the buffer_size if required.
+ *                                The caller is expected to clear the buffer ,if applicable, for security reasons.
+ * @param[in]      conv_params    Convolution parameters (e.g. strides, dilations, pads,...).
+ *                                Range of conv_params->input_offset  : [-127, 128]
+ *                                Range of conv_params->output_offset : [-128, 127]
+ * @param[in]      quant_params   Per-channel quantization info.
+ *                                It contains the multiplier and shift values to be applied to each output channel
+ * @param[in]      input_dims     Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
+ * @param[in]      input_data     Input (activation) data pointer. Data type: int8
+ * @param[in]      filter_dims    Filter tensor dimensions. Format: [C_OUT, HK, WK, C_IN] where HK and WK are the
+ *                                spatial filter dimensions. Note the product must be even.
+ * @param[in]      filter_data    Packed Filter data pointer. Data type: int8 packed with 2x int4
+ * @param[in]      bias_dims      Bias tensor dimensions. Format: [C_OUT]
+ * @param[in]      bias_data      Optional bias data pointer. Data type: int32
+ * @param[in]      output_dims    Output tensor dimensions. Format: [N, H, W, C_OUT]
+ * @param[out]     output_data    Output data pointer. Data type: int8
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code> if successful or
+ *                                  <code>MURISCV_NN_ARG_ERROR</code> if incorrect arguments or
+ *                                  <code>MURISCV_NN_NO_IMPL_ERROR</code> if not for MVE
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite micro
+ *    2. Additional memory is required for optimization. Refer to argument 'ctx' for details.
+ *
+ */
+muriscv_nn_status muriscv_nn_convolve_even_s4(const muriscv_nn_context *ctx,
+                                         const muriscv_nn_conv_params *conv_params,
+                                         const muriscv_nn_per_channel_quant_params *quant_params,
+                                         const muriscv_nn_dims *input_dims,
+                                         const int8_t *input_data,
+                                         const muriscv_nn_dims *filter_dims,
+                                         const int8_t *filter_data,
+                                         const muriscv_nn_dims *bias_dims,
+                                         const int32_t *bias_data,
+                                         const muriscv_nn_dims *output_dims,
+                                         int8_t *output_data);
+
 /**
  * @brief Basic s8 convolution function
  * @param[in, out] ctx            Function context that contains the additional buffer if required by the function.
