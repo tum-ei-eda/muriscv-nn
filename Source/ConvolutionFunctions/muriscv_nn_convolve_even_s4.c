@@ -224,7 +224,7 @@ muriscv_nn_status muriscv_nn_convolve_even_s4(const muriscv_nn_context *ctx,
 //
 //    /* Return to application */
 //    return MURISCV_NN_SUCCESS;
-//}
+}
 //
 ///**
 // * @} end of NNConv group
