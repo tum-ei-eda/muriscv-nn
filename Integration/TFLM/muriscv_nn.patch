@@ -74,11 +74,11 @@ index 00000000..6e2cbe32
 +
 +}  // namespace tflite
 diff --git a/tensorflow/lite/micro/tools/make/Makefile b/tensorflow/lite/micro/tools/make/Makefile
-index 08eb057e..64f34769 100644
+index 90b0c294..d66becd1 100644
 --- a/tensorflow/lite/micro/tools/make/Makefile
 +++ b/tensorflow/lite/micro/tools/make/Makefile
-@@ -134,8 +134,6 @@ endif
- 
+@@ -145,8 +145,6 @@ endif
+
  CC_WARNINGS := \
    -Wsign-compare \
 -  -Wdouble-promotion \
@@ -86,10 +86,10 @@ index 08eb057e..64f34769 100644
    -Wunused-function \
    -Wswitch \
    -Wvla \
-@@ -145,6 +143,16 @@ CC_WARNINGS := \
+@@ -156,6 +154,16 @@ CC_WARNINGS := \
    -Wstrict-aliasing \
    -Wno-unused-parameter
- 
+
 +ifeq ($(TOOLCHAIN), llvm)
 +  CC_WARNINGS += \
 +    -Wno-unused-but-set-variable
@@ -103,7 +103,7 @@ index 08eb057e..64f34769 100644
  ifneq ($(TOOLCHAIN), gcc)
    # GCC can be overly aggressive with shadow warnings, such as warning when a
    # lambda has variable with the same name as a non-captured variable from the
-@@ -190,7 +198,6 @@ ifeq ($(TOOLCHAIN), gcc)
+@@ -201,7 +209,6 @@ ifeq ($(TOOLCHAIN), gcc)
      # GCC on MacOS uses an LLVM backend so we avoid the additional linker flags
      # that are unsupported with LLVM.
      LDFLAGS += \
@@ -111,17 +111,17 @@ index 08eb057e..64f34769 100644
        -Wl,--gc-sections
    endif
  endif
-@@ -639,7 +646,8 @@ ifneq ($(OPTIMIZED_KERNEL_DIR),)
+@@ -653,7 +660,8 @@ ifneq ($(OPTIMIZED_KERNEL_DIR),)
      $(error Incorrect OPTIMIZED_KERNEL_DIR: $(RESULT))
    endif
- 
+
 -  include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
 +  # No need for the cmsis_nn external libs makefile when using muRISCV-NN.
 +  #include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
    # Specialize for the optimized kernels
    MICROLITE_CC_KERNEL_SRCS := $(shell python3 $(MAKEFILE_DIR)/specialize_files.py \
  		--base_files "$(MICROLITE_CC_KERNEL_SRCS)" \
-@@ -856,6 +864,12 @@ ifeq ($(TOOLCHAIN), armclang)
+@@ -865,6 +873,12 @@ ifeq ($(TOOLCHAIN), armclang)
    $(BINDIR)%.bin: $(BINDIR)%
  		@mkdir -p $(dir $@)
  		$(FROMELF) --bin --output=$@ $<
@@ -136,10 +136,10 @@ index 08eb057e..64f34769 100644
    $(BINDIR)%.bin: $(BINDIR)%
 diff --git a/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
 new file mode 100644
-index 00000000..3fc8d49c
+index 00000000..c045b344
 --- /dev/null
 +++ b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
-@@ -0,0 +1,91 @@
+@@ -0,0 +1,92 @@
 +# Copyright (C) 2023 Chair of Electronic Design Automation, TUM
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
@@ -199,7 +199,8 @@ index 00000000..3fc8d49c
 +    -DUSE_PEXT
 +endif
 +
-+ifeq ($(TOOLCHAIN), gcc)
++ifeq ($(TOOLCHAIN), x86)
++else ifeq ($(TOOLCHAIN), gcc)
 +
 +  TARGET_TOOLCHAIN_ROOT := $(GCC_TOOLCHAIN_ROOT)/bin/
 +  TARGET_TOOLCHAIN_PREFIX := $(GCC_TOOLCHAIN_PREFIX)-
