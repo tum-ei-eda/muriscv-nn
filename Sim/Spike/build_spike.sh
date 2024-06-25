@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+set -e
+
 SKIP_INSTALL=OFF;
 
 while getopts 's' flag; do
