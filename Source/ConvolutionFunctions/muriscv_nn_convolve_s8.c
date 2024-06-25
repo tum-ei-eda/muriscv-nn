@@ -91,7 +91,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
     for (int i_batch = 0; i_batch < input_batches; i_batch++)
     {
 
-#if defined(USE_VEXT)
+#if defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
 
         /* Generate upto four columns from the input tensor a GEMM computation */
         q7_t *im2col_buf = (q7_t *)buffer_a;
