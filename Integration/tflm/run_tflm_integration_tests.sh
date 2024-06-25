@@ -30,17 +30,18 @@ RV_ARCH=rv32gc
 BENCHMARK=NONE
 TOOLCHAIN=GCC
 SKIP_BUILD=OFF
+SIMULATOR=Spike
 
 
 
 #Parse Input Args
-while getopts 'pvl:b:t:se:h' flag; do
+while getopts 'pvl:b:t:Se:s:h' flag; do
   case "${flag}" in
     p) USE_PEXT=ON
        RV_ARCH=rv32gcp ;;
   ``v) USE_VEXT=ON
        RV_ARCH=rv32gcv ;;
-    s) SKIP_BUILD=ON ;;
+    S) SKIP_BUILD=ON ;;
     l) VLEN="${OPTARG}"
         if [ "${VLEN}" == 0 ]; then
           echo "Set VLEN to 1024 to make Spike not error when VEXT is not used"
@@ -49,12 +50,15 @@ while getopts 'pvl:b:t:se:h' flag; do
     e) ELEN="${OPTARG}" ;;
     b) BENCHMARK="${OPTARG}" ;;
     t) TOOLCHAIN="${OPTARG}" ;;
+    s) SIMULATOR="${OPTARG}" ;;
     * | h) echo "Add -p to compile with rv32gcp"
            echo "Add -v to compile with rv32gcv"
            echo "Specify VLEN with -l {VLEN}"
            echo "Specify ELEN with -l {ELEN}"
            echo "Use -b {aww/vww/toy/ic} to select tvm benchmark to run"
            echo "Use -t {GCC/LLVM} to select toolchain.  PEXT is only supported with GCC"
+           echo "Add -S to skip build step"
+           echo "Add -s {Spike,ETISS,Native} to pick simulator"
            exit 1 ;;
   esac
 done
@@ -77,57 +81,66 @@ if [ ! -d ./tflite-micro ]; then
     ./download_tflm.sh
 fi
 
-if [ "${TOOLCHAIN}" == "LLVM" ]; then
-  echo "*** Checking for LLVM ***"
-  cd ../../Toolchain
-    # Download LLVM 17 (which includes vector support)
-  if [ -d llvm ]; then
-    echo "Found LLVM compiler in the Toolchain directory."
+if [[ $SIMULATOR != "Native" ]]
+then
+  if [ "${TOOLCHAIN}" == "LLVM" ]; then
+    echo "*** Checking for LLVM ***"
+    cd $SCRIPT_DIR/../../Toolchain
+      # Download LLVM 17 (which includes vector support)
+    if [ -d llvm ]; then
+      echo "Found LLVM compiler in the Toolchain directory."
+    else
+      echo "No LLVM compiler in the Toolchain directory found. Downloading one..."
+        ./download_llvm.sh 18
+    fi
+
   else
-    echo "No LLVM compiler in the Toolchain directory found. Downloading one..."
-      ./download_llvm.sh 18   
-  fi
+    echo "*** Checking for GCC Binaries ***"
+    cd $SCRIPT_DIR/../../Toolchain
 
-else
-  echo "*** Checking for GCC Binaries ***"
-  cd ../../Toolchain
+    if [ ! -d ./${RV_ARCH} ]; then
 
-  if [ ! -d ./${RV_ARCH} ]; then
-
-      echo "MISSING ${RV_ARCH} in Toolchains folder.  Downloading prebuilt GCC with script now."
-      ./download_${RV_ARCH}.sh
+        echo "MISSING ${RV_ARCH} in Toolchains folder.  Downloading prebuilt GCC with script now."
+        ./download_${RV_ARCH}.sh
+    fi
   fi
 fi
 
-echo "*** Checking for Spike and PK binaries ***"
-cd ../Sim/Spike/bin
+if [[ $SIMULATOR == "Spike" ]]  # TODO: move to sim dir
+then
+  echo "*** Checking for Spike and PK binaries ***"
+  cd $SCRIPT_DIR/../../Sim/Spike/bin
 
-if [ ! -f spike ]; then
-    echo "MISSING Spike in Sim/Spike/bin folder.  Downloading prebuilt Spike and PK with script now."
-    #./download.sh
+  if [ ! -f spike ]; then
+      echo "MISSING Spike in Sim/Spike/bin folder.  Downloading prebuilt Spike and PK with script now."
+      #./download.sh
+  fi
 fi
 
 
 if [ "${SKIP_BUILD}" == OFF ]; then
 
   echo "*** Deleting Current Build Directory ***"
-  cd ../../..
-  if [  -d ./build ]; then
-    sudo rm -r build
+  if [  -d $SCRIPT_DIR/../../build ]; then
+    rm -rf $SCRIPT_DIR/../../build
   fi
 
   echo "*** Building ${BENCHMARK} ***"
 
-  mkdir build
-  cd build
-  cmake -DRISCV_GCC_PREFIX=$(pwd)/../Toolchain/${RV_ARCH}/ -DRISCV_LLVM_PREFIX=$(pwd)/../Toolchain/llvm/bin/ -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DDISABLE_TVM_INTG_TESTS=ON ..
-  make all
+  mkdir $SCRIPT_DIR/../../build
+  cd $SCRIPT_DIR/../../build
+  if [[ $SIMULATOR == "Native" ]]
+  then
+    cmake -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DDISABLE_TVM_INTG_TESTS=ON -DENABLE_UNIT_TESTS=OFF ..
+  else
+    cmake -DRISCV_GCC_PREFIX=$(pwd)/../Toolchain/${RV_ARCH}/ -DRISCV_LLVM_PREFIX=$(pwd)/../Toolchain/llvm/bin/ -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DDISABLE_TVM_INTG_TESTS=ON -DENABLE_UNIT_TESTS=OFF ..
+  fi
+  make all -j`nproc`
 
 else
   echo "*** Skipping Build ***"
-  cd ../../../build
 fi
 
-echo "*** Running with Spike ***"
-cd ../Sim/Spike
-./run.sh $(pwd)/../../build/Integration/tflm/${BENCHMARK}/${BENCHMARK}_tflm.elf ${RV_ARCH} ${VLEN} ${ELEN}
+echo "*** Running with $SIMULATOR ***"
+cd $SCRIPT_DIR/../../build
+ctest --verbose -R ${BENCHMARK}_tflm
