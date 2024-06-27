@@ -29,7 +29,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # List of tests to run
-TESTS=(hello_world micro_speech_test network_tester_test person_detection_test)
+TESTS=(hello_world hello_world_test micro_speech micro_speech_test network_tester_test person_detection_test kernel_conv_test kernel_transpose_conv_test unidirectional_sequence_lstm_test kernel_add_test kernel_depthwise_conv_test kernel_fully_connected_test kernel_mul_test kernel_pooling_test kernel_softmax_test kernel_svdf_test)
+# TODO: kernel_lstm_eval_test?
 
 # List of benchmarks to run
 BENCHMARKS=(keyword_benchmark keyword_benchmark_8bit person_detection_benchmark)
