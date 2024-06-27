@@ -29,8 +29,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # List of tests to run
-#TESTS=(hello_world magic_wand_test micro_speech_test network_tester_test person_detection_test)
-TESTS=(hello_world)
+TESTS=(hello_world micro_speech_test network_tester_test person_detection_test)
 
 # List of benchmarks to run
 BENCHMARKS=(keyword_benchmark keyword_benchmark_8bit person_detection_benchmark)
