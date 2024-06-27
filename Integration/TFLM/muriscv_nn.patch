@@ -136,10 +136,10 @@ index 90b0c294..d66becd1 100644
    $(BINDIR)%.bin: $(BINDIR)%
 diff --git a/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
 new file mode 100644
-index 00000000..c045b344
+index 00000000..677e4c6a
 --- /dev/null
 +++ b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
-@@ -0,0 +1,92 @@
+@@ -0,0 +1,93 @@
 +# Copyright (C) 2023 Chair of Electronic Design Automation, TUM
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
@@ -199,15 +199,16 @@ index 00000000..c045b344
 +    -DUSE_PEXT
 +endif
 +
-+ifeq ($(TOOLCHAIN), x86)
-+else ifeq ($(TOOLCHAIN), gcc)
++ifeq ($(TOOLCHAIN), gcc)
++  ifneq ($(TARGET_ARCH), native)
++    TARGET_TOOLCHAIN_ROOT := $(GCC_TOOLCHAIN_ROOT)/bin/
++    TARGET_TOOLCHAIN_PREFIX := $(GCC_TOOLCHAIN_PREFIX)-
 +
-+  TARGET_TOOLCHAIN_ROOT := $(GCC_TOOLCHAIN_ROOT)/bin/
-+  TARGET_TOOLCHAIN_PREFIX := $(GCC_TOOLCHAIN_PREFIX)-
++    PLATFORM_FLAGS += \
++      -march=$(TARGET_ARCH) \
++      -mabi=ilp32d
++  endif
 +
-+  PLATFORM_FLAGS += \
-+    -march=$(TARGET_ARCH) \
-+    -mabi=ilp32d
 +
 +else ifeq ($(TOOLCHAIN), llvm)
 +

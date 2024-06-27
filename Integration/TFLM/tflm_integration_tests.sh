@@ -56,7 +56,7 @@ if [ $# -eq 0 ]
     GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/rv32gcv
     VLEN=512               # Vector length parameter passed to simulator
     ELEN=64
-    SIMULATOR=OVPsim            # Spike/OVPsim
+    SIMULATOR=Spike            # Spike/OVPsim
     else
     USE_VEXT=$1                  # ON/OFF
     USE_PEXT=$2                # ON/OFF
@@ -82,7 +82,7 @@ cd ${TFLM_PATH}
 make -f tensorflow/lite/micro/tools/make/Makefile clean
 
 for test in "${TESTS[@]}"; do
-  echo ${test}
+  echo test=${test}
   make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \
     TARGET_ARCH=${TARGET_ARCH} \
@@ -95,17 +95,31 @@ for test in "${TESTS[@]}"; do
     LLVM_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/llvm/bin \
     BUILD_TYPE=${BUILD_TYPE} \
     ${test}
-  echo ${test}
-    ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
-        ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}_cmsis_nn_${TOOLCHAIN}/bin/${test} \
-        ${TARGET_ARCH} ${VLEN} ${ELEN} 1
 
+  ELF=${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}_cmsis_nn_${TOOLCHAIN}/bin/${test}
+  echo "*** Running with $SIMULATOR ***"
+  if [[ $SIMULATOR == "Native" ]]
+  then
+    $ELF
+  elif [[ $SIMULATOR == "Spike" ]]
+  then
+    $MURISCV_NN_PATH/Sim/Spike/run.sh $ELF ${TARGET_ARCH} ${VLEN} ${ELEN}
+  elif [[ $SIMULATOR == "OVPsim" ]]
+  then
+    $MURISCV_NN_PATH/Sim/OVPsim/run.sh $ELF ${TARGET_ARCH} ${VLEN} ${ELEN} 1
+  elif [[ $SIMULATOR == "ETISS" ]]
+  then
+    $MURISCV_NN_PATH/Sim/ETISS/run.sh $ELF
+  else
+    echo "Unsupported Simulator: $SIMULATOR"
+  fi
 done
 
-make -f tensorflow/lite/micro/tools/make/Makefile clean
+# make -f tensorflow/lite/micro/tools/make/Makefile clean
 
 
 for bm in "${BENCHMARKS[@]}"; do
+  echo bm=${bm}
   make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \
     TARGET_ARCH=${TARGET_ARCH} \
@@ -119,7 +133,21 @@ for bm in "${BENCHMARKS[@]}"; do
     BUILD_TYPE=${BUILD_TYPE} \
     ${bm}
 
-    ${MURISCV_NN_PATH}/Sim/${SIMULATOR}/run.sh \
-    ${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}_cmsis_nn_${TOOLCHAIN}/bin/${bm} \
-    ${TARGET_ARCH} ${VLEN} ${ELEN} 1
+  ELF=${TFLM_PATH}/gen/${TARGET}_${TARGET_ARCH}_${BUILD_TYPE}_cmsis_nn_${TOOLCHAIN}/bin/${bm} \
+  echo "*** Running with $SIMULATOR ***"
+  if [[ $SIMULATOR == "Native" ]]
+  then
+    $ELF
+  elif [[ $SIMULATOR == "Spike" ]]
+  then
+    $MURISCV_NN_PATH/Sim/Spike/run.sh $ELF ${TARGET_ARCH} ${VLEN} ${ELEN}
+  elif [[ $SIMULATOR == "OVPsim" ]]
+  then
+    $MURISCV_NN_PATH/Sim/OVPsim/run.sh $ELF ${TARGET_ARCH} ${VLEN} ${ELEN} 1
+  elif [[ $SIMULATOR == "ETISS" ]]
+  then
+    $MURISCV_NN_PATH/Sim/ETISS/run.sh $ELF
+  else
+    echo "Unsupported Simulator: $SIMULATOR"
+  fi
 done
