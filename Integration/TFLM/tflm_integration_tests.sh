@@ -51,7 +51,7 @@ if [ $# -eq 0 ]
     echo "No arguments supplied, using default configuration"
     USE_VEXT=ON                  # ON/OFF
     USE_PEXT=OFF                # ON/OFF
-    BUILD_TYPE=Release            # Debug/Release
+    BUILD_TYPE=release            # debug/release
     TOOLCHAIN=llvm            # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
     TARGET_ARCH=rv32gcv           # rv32gcv for vector support
     GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/rv32gcv

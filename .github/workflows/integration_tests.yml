@@ -22,16 +22,16 @@ jobs:
         fail-fast: false
         matrix:
           config:
-            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "native", vlen: 0, elen: 64, sim: "Native"}
-            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
-            - {vext: "OFF", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
-            - {vext: "OFF", pext: "ON", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcp", vlen: 0, elen: 64, sim: "Spike"}
-            # - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 64, elen: 64, sim: "Spike"}
-            # - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 64, elen: 64, sim: "Spike"}
-            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "gcc", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext: "ON", pext: "OFF", mode: "RELEASE", toolchain: "llvm", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
+            - {vext: "OFF", pext: "OFF", mode: "release", toolchain: "gcc", arch: "native", vlen: 0, elen: 64, sim: "Native"}
+            - {vext: "OFF", pext: "OFF", mode: "release", toolchain: "gcc", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
+            - {vext: "OFF", pext: "OFF", mode: "release", toolchain: "llvm", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
+            - {vext: "OFF", pext: "ON", mode: "release", toolchain: "gcc", arch: "rv32gcp", vlen: 0, elen: 64, sim: "Spike"}
+            # - {vext: "ON", pext: "OFF", mode: "release", toolchain: "gcc", arch: "rv32gcv", vlen: 64, elen: 64, sim: "Spike"}
+            # - {vext: "ON", pext: "OFF", mode: "release", toolchain: "llvm", arch: "rv32gcv", vlen: 64, elen: 64, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "release", toolchain: "gcc", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "release", toolchain: "llvm", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "release", toolchain: "gcc", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
+            - {vext: "ON", pext: "OFF", mode: "release", toolchain: "llvm", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
 
     name: TFLM Built-In Tests
     runs-on: ubuntu-22.04
