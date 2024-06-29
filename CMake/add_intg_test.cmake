@@ -20,7 +20,7 @@
 macro(add_muriscv_nn_intg_test TEST_NAME)
 
   # Register test with CTest and provide command to execute
-  if(DEFINED RISCV_ARCH)
+  if(NOT ${TOOLCHAIN} STREQUAL "x86")
     if(${SIMULATOR} STREQUAL "OVPsim")
       add_test(NAME ${TEST_NAME}
         COMMAND ${CMAKE_SOURCE_DIR}/Sim/OVPsim/run.sh ./${TEST_NAME}.elf ${RISCV_ARCH} ${VLEN} ${ELEN} 1
