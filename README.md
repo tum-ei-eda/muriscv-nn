@@ -51,6 +51,36 @@ When running ResNet on [TensorFlow Lite for Microcontrollers](https://github.com
 
 Stay tuned for more performance numbers in the near future!
 
+## Publications
+
+- **muRISCV-NN: Challenging Zve32x Autovectorization with TinyML Inference Library for RISC-V Vector Extension** (https://dl.acm.org/doi/10.1145/3637543.3652878)
+
+  *CF '24 Companion: Proceedings of the 21st ACM International Conference on Computing Frontiers Workshops and Special Sessions*
+
+  BibTeX
+
+  ```bibtex
+  @inproceedings{10.1145/3637543.3652878,
+    author = {van Kempen, Philipp and Jones, Jefferson Parker and Mueller-Gritschneder, Daniel and Schlichtmann, Ulf},
+    title = {muRISCV-NN: Challenging Zve32x Autovectorization with TinyML Inference Library for RISC-V Vector Extension},
+    year = {2024},
+    isbn = {9798400704925},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3637543.3652878},
+    doi = {10.1145/3637543.3652878},
+    abstract = {With the rapid adoption of deep learning workloads to resource-constrained edge devices, efficient and data-parallel computing paradigms are becoming increasingly important. The RISC-V ISA provides a set of vector extensions featuring powerful data computation capabilities to accelerate deep learning workloads at the edge. However, the RISC-V ecosystem lacks a lightweight, open-source, and vendor-agnostic compute library to support these extensions on embedded platforms. After porting the existing ARM Cortex-M specific kernel implementation to the RISC-V vector ISA, we optimized the operator implementations to make the most out of the data-level parallelism provided by supported targets. In comparison to programs vectorized by LLVM's built-in auto-vectorizer, we see an up to 60\% advantage in runtime for convolutional models and large vectors while introducing less ROM overheads. Furthermore, muRISCV-NN integrates well with existing ML deployment frameworks, is bit-accurate to CMSIS-NN, and can, thus, be used as a drop-in replacement with minimal changes to the compilation flow.},
+    booktitle = {Proceedings of the 21st ACM International Conference on Computing Frontiers Workshops and Special Sessions},
+    pages = {75–78},
+    numpages = {4},
+    keywords = {Compilers, Neural Network Inference, RISC-V, Vectorization},
+    location = {Ischia, Italy},
+    series = {CF '24 Companion}
+  }
+  ```
+
+  
+
 ## Acknowledgment
 
 <img src="./BMBF_gefoerdert_2017_en.jpg" alt="drawing" height="75" align="left" >
