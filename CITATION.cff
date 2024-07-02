@@ -1,10 +1,12 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-- family-names: "Peddinghaus"
-  given-names: "Fabian"
 - family-names: "van Kempen"
   given-names: "Philipp"
+- family-names: "Jones"
+  given-names: "Jefferson Parker Jones"
+- family-names: "Peddinghaus"
+  given-names: "Fabian"
 - family-names: "Stahl"
   given-names: "Rafael"
 - family-names: "Mueller-Gritschneder"
@@ -13,3 +15,26 @@ title: "muRISCV-NN: Efficient Deep-Learning Kernels for RISC-V"
 version: 0.1.0
 date-released: 2022-06-20
 url: "https://github.com/tum-ei-eda/muriscv-nn"
+preferred-citation:
+  authors:
+    - family-names: van Kempen
+      given-names: Philipp
+    - family-names: Jones
+      given-names: Jefferson Parker
+    - family-names: Mueller-Gritschneder
+      given-names: Daniel
+    - family-names: Schlichtmann
+      given-names: Ulf
+  title: 'muRISCV-NN: Challenging Zve32x Autovectorization with TinyML Inference Library for RISC-V Vector Extension'
+  doi: 10.1145/3637543.3652878
+  url: https://doi.org/10.1145/3637543.3652878
+  type: article-journal
+  pages: 75–78
+  year: '2024'
+  isbn: '9798400704925'
+  collection-title: Proceedings of the 21st ACM International Conference on Computing Frontiers Workshops and Special Sessions
+  conference:
+    name: CF '24 Companion
+  publisher:
+    name: Association for Computing Machinery
+    address: New York, NY, USA
