@@ -32,10 +32,19 @@ jobs:
         git checkout sync
           
 
-    - name: Download dependencies
+    - name: Download dependencies + clone CMSIS-NN
+      working-directory: ./Scripts
       run: |
         pip install GitPython
         pip install numpy
+        pip install ruby
+        git clone https://github.com/ARM-software/CMSIS-NN.git
+        cd CMSIS_NN/Tests/UnitTest
+        pip install -r requirements.txt
+        
+    - name: Generate remaining test files
+      working-directory: ./Scripts/CMSIS_NN/Tests/UnitTest
+      run: python3 unittest_targets.py --download-and-generate-test-runners
 
     - name: Run Sync Script
       working-directory: ./Scripts
