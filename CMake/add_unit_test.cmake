@@ -27,8 +27,7 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
         ADD_EXECUTABLE_PULPINO(${TEST_NAME}
             ${CMAKE_SOURCE_DIR}/Tests/TestCases/${TEST_FILE_NAME}/${TEST_FILE_NAME}.c)
     else()
-        add_executable(${TEST_NAME}
-            ${CMAKE_SOURCE_DIR}/Tests/TestCases/${TEST_FILE_NAME}/${TEST_FILE_NAME}.c)
+        add_executable(${TEST_NAME})
     endif()
 
     target_link_libraries(${TEST_NAME} PUBLIC ${MURISCVNN_LIB}

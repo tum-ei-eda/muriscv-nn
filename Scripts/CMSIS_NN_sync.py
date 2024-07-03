@@ -15,8 +15,8 @@ cmsis_varnames = ["arm_cmsis_nn_", "arm_nn_", "arm_nn" ,"arm_", "cmsis_nn_"]
 cmsis_errornames = ["ARM_CMSIS_NN_"]
 
 #Translations between cmsis comments/headers to muriscv
-cmsis_commentnames = ["cmsis-nn", "CMSIS NN", "_ARM_NN", "ARM_NN_", "ARM_NN"]
-muriscv_commentnames = ["muriscv-nn", "MURISCV NN", "_MURISCV_NN_", "MURISCV_NN_", "MURISCV_NN"]
+cmsis_commentnames = ["cmsis-nn", "CMSIS NN", "_ARM_NN", "ARM_NN_", "ARM_NN", "ARM_"]
+muriscv_commentnames = ["muriscv-nn", "MURISCV NN", "_MURISCV_NN_", "MURISCV_NN_", "MURISCV_NN", "MURISCV_"]
 
 cmsis_include_files = ["arm_nnfunctions.h", "arm_nntypes.h", "arm_nnsupportfunctions.h", "arm_nn_math_types.h"]
 muriscv_include_files = ["muriscv_nn_functions.h", "muriscv_nn_types.h", "muriscv_nn_support_functions.h", "muriscv_nn_math_types.h"]
@@ -70,6 +70,18 @@ def create_muriscv_nn_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis
         newline = newline.replace("arm_nnsupportfunctions.h", "muriscv_nn_support_functions.h")
         newline = newline.replace("../TestData", "../../TestData")
         newline = newline.replace("../Utils", "../../Utils")
+        
+        newline = newline.replace("SUPPORTFUNCTIONS", "SUPPORT_FUNCTIONS")
+        newline = newline.replace("ARM_MATH_MVEI", "USE_VEXT")
+        newline = newline.replace("ARM_MATH_DSP", "USE_PEXT")
+        newline = newline.replace("ARM_MATH_DSP", "USE_PEXT")
+        newline = newline.replace("CMSIS_NN_USE_SINGLE_ROUNDING", "MURISCV_NN_USE_SINGLE_ROUNDING")
+        for var_name in cmsis_varnames:
+            newline = newline.replace(var_name, "muriscv_nn_")
+        for error_name in cmsis_errornames:
+            newline = newline.replace(error_name, "MURISCV_NN_")
+        for i in range(len(cmsis_commentnames)):
+            newline = newline.replace(cmsis_commentnames[i], muriscv_commentnames[i])
 
         #check if line is beginning or end of optimized arm code block
         if "#if defined" in line or "#ifdef" in line or ("#else" in line and not arm_code_block):
@@ -284,6 +296,7 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
         for i in range(len(cmsis_commentnames)):
             newline = newline.replace(cmsis_commentnames[i], muriscv_commentnames[i])
         cmsis_file_updated.append(newline)
+        
     for line in muriscv_file:
             muriscv_file_old.append(line)
 
@@ -618,65 +631,80 @@ for subdir_cmsis in subdir_cmsis_gen:
 
 #This block copies over any new Test folders and corresponding data
 #Code works, for copying over tests and adding them correctly, but arm has updated its test framework.  TODO: UPDATE ALL TESTS TO THIS NEW FRAMEWORK
-#new_tests = []
-#subdir_cmsis = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/'))
-#subdir_muriscv = next(os.walk(muriscv_dir + '/Tests/TestCases'))
-#for test_dir in subdir_cmsis[1]:
-#    #skip the CMSIS specific folders in this directory
-#    if not("Utils" in test_dir or "TestData" in test_dir):
-#        #check for matching subdirectory in muriscv
-#        present = False
-#        new_name = test_dir
-#        for prefix in cmsis_filename_prefixes: 
-#            new_name = new_name.replace(prefix, "muriscv_nn_")
-#        for muriscv_test in subdir_muriscv[1]:
-#            if muriscv_test == new_name:
-#                present = True
-#        if present == False:  
-#            #Test is missing from muriscv_nn.  Need to add it      
-#            os.mkdir(muriscv_dir + '/Tests/TestCases/' + new_name)
-#            new_tests.append(new_name)
-#            #create new cmakelist file
-#            cmakelist = open(muriscv_dir + '/Tests/TestCases/' + new_name + '/CMakeLists.txt', "w")
-#            for line in new_test_CMakeList:
-#                cmakelist.writelines(line)
-#            cmakelist.writelines("add_muriscv_nn_unit_test(" + new_name + ")\n")
-#            cmakelist.close()
-#            #need to copy over new test source and update names
-#            create_muriscv_nn_file(new_name+".c", muriscv_dir + '/Tests/TestCases/' + new_name, test_dir + ".c", cmsis_dir + '/Tests/UnitTest/TestCases/' + test_dir)
-#
+new_tests = []
+subdir_cmsis = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/'))
+subdir_muriscv = next(os.walk(muriscv_dir + '/Tests/TestCases'))
+for test_dir in subdir_cmsis[1]:
+    #skip the CMSIS specific folders in this directory
+    if not("Utils" in test_dir or "TestData" in test_dir):
+        #check for matching subdirectory in muriscv
+        present = False
+        new_name = test_dir
+        for prefix in cmsis_filename_prefixes: 
+            new_name = new_name.replace(prefix, "muriscv_nn_")
+        for muriscv_test in subdir_muriscv[1]:
+            if muriscv_test == new_name:
+                present = True
+        if present == False:  
+            #Test is missing from muriscv_nn.  Need to add it      
+            os.mkdir(muriscv_dir + '/Tests/TestCases/' + new_name)
+            new_tests.append(new_name)
+            #create new cmakelist file
+            cmakelist = open(muriscv_dir + '/Tests/TestCases/' + new_name + '/CMakeLists.txt', "w")
+            for line in new_test_CMakeList:
+                cmakelist.writelines(line)
+            cmakelist.writelines("add_muriscv_nn_unit_test(" + new_name + ")\n")
+            cmakelist.writelines("target_sources("+new_name+" PRIVATE\n"+
+                                 "                Unity/unity_"+new_name+".c\n"+
+                                 "                Unity/TestRunner/unity_"+new_name+"_runner.c)")
+            cmakelist.close()
+            #need to copy over new test source and update names
+            create_muriscv_nn_file(new_name+".c", muriscv_dir + '/Tests/TestCases/' + new_name, test_dir + ".c", cmsis_dir + '/Tests/UnitTest/TestCases/' + test_dir)
+            
+            #need to copy over the unity test file with helper functions for each test
+            os.mkdir(muriscv_dir + '/Tests/TestCases/' + new_name + '/Unity')
+            create_muriscv_nn_file("unity_"+new_name+".c", muriscv_dir + '/Tests/TestCases/' + new_name + '/Unity', "unity_"+test_dir + ".c", cmsis_dir + '/Tests/UnitTest/TestCases/' + test_dir + '/Unity')
+            
+            #Need to copy over the autogenerated runner file.  Must be generated using this command "python3 unittest_targets.py --download-and-generate-test-runners"
+            os.mkdir(muriscv_dir + '/Tests/TestCases/' + new_name + '/Unity/TestRunner')
+            create_muriscv_nn_file("unity_"+new_name+"_runner.c", muriscv_dir + '/Tests/TestCases/' + new_name + '/Unity/TestRunner', "unity_"+test_dir + "_runner.c", cmsis_dir + '/Tests/UnitTest/TestCases/' + test_dir + '/Unity/TestRunner')
+            
+
 ##add new tests to cmakelists directory
-#if len(new_tests) > 0:
-#    cmakelist = open(muriscv_dir + '/Tests/TestCases/CMakeLists.txt', "r+")
-#    file = []
-#    for line in cmakelist:
-#        file.append(line)
-#    cmakelist.seek(0)
-#    cmakelist.truncate()
-#    for line in file:
-#        cmakelist.writelines(line)
-#    for test_name in new_tests:
-#        cmakelist.writelines("add_subdirectory("+test_name + ")\n")
-#    cmakelist.close()
-#
-##copy new test data 
-#subdir_cmsis = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/TestData'))
-#subdir_muriscv = next(os.walk(muriscv_dir + '/Tests/TestData'))
-#for data_dir in subdir_cmsis[1]:
-#    #check for matching subdirectory in muriscv
-#    present = False
-#    for muriscv_data in subdir_muriscv[1]:
-#        if muriscv_data == data_dir:
-#            present = True
-#    if present == False: 
-#        print("NEW TEST DATA FOLDER " + data_dir) 
-#        #Test data is missing from muriscv_nn.  Need to add all files in the directory    
-#        os.mkdir(muriscv_dir + '/Tests/TestData/' + data_dir)
-#        print("new test directory: " + cmsis_dir + '/Tests/UnitTest/TestCases/TestData/' + data_dir)
-#        #need to copy over new test sources and update names
-#        new_test_files = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/TestData/' + data_dir))
-#        for file in new_test_files[2]:
-#            create_muriscv_nn_file(file, muriscv_dir + '/Tests/TestData/' + data_dir +"/" , file, cmsis_dir + '/Tests/UnitTest/TestCases/TestData/' + data_dir)
+if len(new_tests) > 0:
+    cmakelist = open(muriscv_dir + '/Tests/TestCases/CMakeLists.txt', "r+")
+    file = []
+    for line in cmakelist:
+        file.append(line)
+    cmakelist.seek(0)
+    cmakelist.truncate()
+    for line in file:
+        cmakelist.writelines(line)
+    for test_name in new_tests:
+        cmakelist.writelines("add_subdirectory("+test_name + ")\n")
+    cmakelist.close()
+
+#copy new test data 
+subdir_cmsis = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/TestData'))
+subdir_muriscv = next(os.walk(muriscv_dir + '/Tests/TestData'))
+for data_dir in subdir_cmsis[1]:
+    #check for matching subdirectory in muriscv
+    present = False
+    for muriscv_data in subdir_muriscv[1]:
+        if muriscv_data == data_dir:
+            present = True
+    if present == False: 
+        print("NEW TEST DATA FOLDER " + data_dir) 
+        #Test data is missing from muriscv_nn.  Need to add all files in the directory    
+        os.mkdir(muriscv_dir + '/Tests/TestData/' + data_dir)
+        print("new test directory: " + cmsis_dir + '/Tests/UnitTest/TestCases/TestData/' + data_dir)
+        #need to copy over new test sources and update names
+        new_test_files = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/TestData/' + data_dir))
+        for file in new_test_files[2]:
+            create_muriscv_nn_file(file, muriscv_dir + '/Tests/TestData/' + data_dir +"/" , file, cmsis_dir + '/Tests/UnitTest/TestCases/TestData/' + data_dir)
+
+
+
 
 #update the functions file        
 update_include_file("muriscv_nn_functions.h", muriscv_include_dir, "arm_nnfunctions.h", cmsis_include_dir)
