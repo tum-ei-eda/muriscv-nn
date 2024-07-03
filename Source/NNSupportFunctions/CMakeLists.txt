@@ -42,4 +42,5 @@ target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_d
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_lstm_step_s16.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mul_core_1x_s4.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_depthwise_conv_nt_t_s4.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_nt_interleaved_t_even_s4.c)
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_nt_interleaved_t_even_s4.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_mat_mult_nt_t_s8_s32.c)
