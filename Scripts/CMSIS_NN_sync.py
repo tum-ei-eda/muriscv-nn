@@ -686,6 +686,10 @@ if len(new_tests) > 0:
 
 #copy new test data 
 subdir_cmsis = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/TestData'))
+
+if not os.path.isdir(muriscv_dir + '/Tests/TestData'):
+    os.mkdir(muriscv_dir + '/Tests/TestData')
+  
 subdir_muriscv = next(os.walk(muriscv_dir + '/Tests/TestData'))
 for data_dir in subdir_cmsis[1]:
     #check for matching subdirectory in muriscv
