@@ -38,7 +38,7 @@ jobs:
         pip install GitPython
         pip install numpy
         pip install ruby
-        git clone https://github.com/ARM-software/CMSIS-NN.git
+        git clone https://github.com/ARM-software/CMSIS-NN.git CMSIS_NN
         ls
         cd ./Scripts/CMSIS_NN/Tests/UnitTest
         pip install -r requirements.txt
