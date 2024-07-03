@@ -40,7 +40,12 @@ jobs:
         pip install ruby
         git clone https://github.com/ARM-software/CMSIS-NN.git CMSIS_NN
         ls
-        cd /CMSIS_NN/Tests/UnitTest
+        cd CMSIS_NN
+        ls
+        cd Tests
+        ls
+        cd UnitTest
+        ls
         pip install -r requirements.txt
         
     - name: Generate remaining test files
