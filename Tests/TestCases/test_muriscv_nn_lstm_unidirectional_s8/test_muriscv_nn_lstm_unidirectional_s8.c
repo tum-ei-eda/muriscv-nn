@@ -30,7 +30,7 @@
 
 #if (LSTM_2_BUFFER_SIZE > LSTM_1_BUFFER_SIZE) || (LSTM_1_BUFFER_SIZE < LSTM_ONE_TIME_STEP_BUFFER_SIZE)
     #error "Test buffers too small."
-//#endif
+#endif
 
 // Update the buffer size if adding a unit test with larger buffer.
 #define LARGEST_BUFFER_SIZE LSTM_1_BUFFER_SIZE
