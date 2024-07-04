@@ -3,11 +3,12 @@
 </p>
 
 [![GitHub license](https://img.shields.io/github/license/tum-ei-eda/mlonmcu.svg)](https://github.com/tum-ei-eda/mlonmcu/blob/main/LICENSE)
-![Build](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/build.yml/badge.svg)
-![Scalar Unit Tests](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/test_scalar.yml/badge.svg)
-![Vector V Unit Tests](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/test_vector.yml/badge.svg)
-![Packed P Unit Tests](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/test_packed.yml/badge.svg)
-<!-- ![TFLM Integration Tests]https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/tflm_integration_ovpsim.yml/badge.svg)-->
+![CI Build](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/build.yml/badge.svg)
+![CI Unit Tests](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/unit_tests.yml/badge.svg)
+![CI Integration Tests](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/integration_tests.yml/badge.svg)
+![CI Benchmarks](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/benchmark_test.yml/badge.svg)
+![CI CMSIS-NN AutoSync](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/sync_with_cmsis.yml/badge.svg)
+
 
 # muRISCV-NN
 muRISCV-NN is a collection of efficient deep learning kernels for embedded platforms and microcontrollers. It is based on ARM's [CMSIS-NN](https://github.com/ARM-software/CMSIS_5/tree/develop/CMSIS/NN) library but targets the [RISC-V ISA](https://en.wikipedia.org/wiki/RISC-V) instead.
