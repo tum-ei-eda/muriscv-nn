@@ -3,11 +3,11 @@
 </p>
 
 [![GitHub license](https://img.shields.io/github/license/tum-ei-eda/mlonmcu.svg)](https://github.com/tum-ei-eda/mlonmcu/blob/main/LICENSE)
-![CI Build](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/build.yml/badge.svg)
-![CI Unit Tests](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/unit_tests.yml/badge.svg)
-![CI Integration Tests](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/integration_tests.yml/badge.svg)
-![CI Benchmarks](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/benchmark_test.yml/badge.svg)
-![CI CMSIS-NN AutoSync](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/sync_with_cmsis.yml/badge.svg)
+[![CI Build](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/build.yml/badge.svg)](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/build.yml)
+[![CI Unit Tests](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/unit_tests.yml)
+[![CI Integration Tests](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/integration_tests.yml/badge.svg)](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/integration_tests.yml)
+[![CI Benchmarks](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/benchmark_test.yml/badge.svg)](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/benchmark_test.yml)
+[![CI CMSIS-NN AutoSync](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/sync_with_cmsis.yml/badge.svg)](https://github.com/tum-ei-eda/muriscv-nn/actions/workflows/sync_with_cmsis.yml)
 
 
 # muRISCV-NN
