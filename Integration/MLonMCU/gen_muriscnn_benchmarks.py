@@ -260,8 +260,10 @@ BACKEND_DEFAULT_CONFIG = {
 }
 
 VLENS = [64, 128, 256, 512, 1024, 2048, 4096, 8192]
-
 DEFAULT_VLENS = [64, 128, 256, 512, 1024, 2048]
+
+XLENS = [32, 64]
+DEFAULT_XLENS = [32]
 
 DEFAULT_OPTIMIZE = ["s"]
 DEFAULT_UNROLL = [0]
@@ -320,6 +322,7 @@ POSTPROCESS_CONFIG = {
         # "Extensions",
         "Arch",
         "VLEN",
+        "XLEN",
         "Layout",
         "Toolchain",
         "AutoVectorize",
@@ -338,6 +341,8 @@ POSTPROCESS_CONFIG = {
         "Abi2",
     ],
     "rename_cols.mapping": {
+        # TODO: consider adding xlen here?
+        # TODO: make target-name independent
         "config_spike.vlen": "VLEN",
         "config_ovpsim.vlen": "VLEN",
         "config_tvmaot.desired_layout": "Layout",
@@ -387,7 +392,7 @@ def gen_features(backend, features, validate=False, auto_vectorize=False):
     return ret
 
 
-def gen_config(backend, backend_config, target, features, vlen, toolchain, enable_postprocesses=False, baseline=None, scalar_default_only=False, loop=True, slp=True, use_vext="AUTO", use_pext="AUTO", unroll=False, optimize="s", embedded=False):
+def gen_config(backend, backend_config, target, features, vlen, toolchain, enable_postprocesses=False, baseline=None, scalar_default_only=False, loop=True, slp=True, use_vext="AUTO", use_pext="AUTO", unroll=False, optimize="s", embedded=False, xlen=None):
     ret = {}
     ret["mlif.toolchain"] = toolchain
     ret["mlif.optimize"] = optimize
@@ -411,10 +416,13 @@ def gen_config(backend, backend_config, target, features, vlen, toolchain, enabl
         # if not scalar_default_only or "muriscvnn" in features or "muriscvnnbyoc" in features:
         ret["vext.vlen"] = vlen
         ret["vext.embedded"] = embedded
-    if embedded and target in RISCV_TARGETS:
-        ret[f"{target}.fpu"] = "none"
-        ret[f"{target}.compressed"] = False
-        ret[f"{target}.atomic"] = False
+    if target in RISCV_TARGETS:
+        if xlen:
+            ret[f"{target}.xlen"] = xlen
+        if embedded:
+            ret[f"{target}.fpu"] = "none"
+            ret[f"{target}.compressed"] = False
+            ret[f"{target}.atomic"] = False
     # else:
     # assert vlen == 0
     if "cmsisnnbyoc" in features:
@@ -527,29 +535,31 @@ def benchmark(args):
                                                                 avs = [(1, 1)]
 
                                                     # print("fff", features)
-                                                    for vlen in vlens:
-                                                        for av in avs:
-                                                            loop, slp = av
-                                                            # print("vl", vlen)
-                                                            # input("9")
-                                                            config = gen_config(
-                                                                backend, backend_config, target, features, vlen, toolchain=toolchain, enable_postprocesses=args.post, baseline=args.baseline, scalar_default_only=scalar_default_only, loop=loop, slp=slp, use_vext=use_vext, use_pext=use_pext, unroll=unroll, optimize=opt, embedded=args.embedded,
-                                                            )
-                                                            config.update(user_config)  # TODO
-                                                            # resolve_missing_configs(config, features, target, context)
-                                                            run = session.create_run(config=config)
-                                                            run.add_features_by_name(features, context=context)
-                                                            run.add_platform_by_name(PLATFORM, context=context)
-                                                            run.add_frontend_by_name(FRONTEND, context=context)
-                                                            run.add_model_by_name(model, context=context)
-                                                            run.add_backend_by_name(backend, context=context)
-                                                            run.add_target_by_name(target, context=context)
-                                                            if args.post:
-                                                                run.add_postprocesses_by_name(POSTPROCESSES_0)
-                                                                run.add_postprocess(CustomPostprocess(), append=True)
-                                                                run.add_postprocesses_by_name(POSTPROCESSES_1, append=True)
-                                                                if args.baseline is not None:
-                                                                    run.add_postprocess_by_name("compare_rows", append=True)
+                                                    xlens = args.xlen
+                                                    for xlen in xlens:
+                                                        for vlen in vlens:
+                                                            for av in avs:
+                                                                loop, slp = av
+                                                                # print("vl", vlen)
+                                                                # input("9")
+                                                                config = gen_config(
+                                                                    backend, backend_config, target, features, vlen, toolchain=toolchain, enable_postprocesses=args.post, baseline=args.baseline, scalar_default_only=scalar_default_only, loop=loop, slp=slp, use_vext=use_vext, use_pext=use_pext, unroll=unroll, optimize=opt, embedded=args.embedded, xlen=xlen
+                                                                )
+                                                                config.update(user_config)  # TODO
+                                                                # resolve_missing_configs(config, features, target, context)
+                                                                run = session.create_run(config=config)
+                                                                run.add_features_by_name(features, context=context)
+                                                                run.add_platform_by_name(PLATFORM, context=context)
+                                                                run.add_frontend_by_name(FRONTEND, context=context)
+                                                                run.add_model_by_name(model, context=context)
+                                                                run.add_backend_by_name(backend, context=context)
+                                                                run.add_target_by_name(target, context=context)
+                                                                if args.post:
+                                                                    run.add_postprocesses_by_name(POSTPROCESSES_0)
+                                                                    run.add_postprocess(CustomPostprocess(), append=True)
+                                                                    run.add_postprocesses_by_name(POSTPROCESSES_1, append=True)
+                                                                    if args.baseline is not None:
+                                                                        run.add_postprocess_by_name("compare_rows", append=True)
             if args.noop:
                 stage = RunStage.LOAD
             else:
@@ -623,6 +633,15 @@ def main():
         # default=DEFAULT_VLENS,
         default=[],
         help=f"VLENS to use (RISC-V only) (default: {DEFAULT_VLENS})",
+    )
+    parser.add_argument(
+        "--xlen",
+        type=int,
+        action="append",
+        choices=XLENS,
+        # default=DEFAULT_XLENS,
+        default=[],
+        help=f"XLENS to use (RISC-V only) (default: {DEFAULT_XLENS})",
     )
     parser.add_argument(
         "--toolchain",
@@ -734,6 +753,8 @@ def main():
         args.feature = DEFAULT_FEATURES
     if not args.vlen:
         args.vlen = DEFAULT_VLENS
+    if not args.xlen:
+        args.xlen = DEFAULT_XLENS
     if not args.optimize:
         args.optimize = DEFAULT_OPTIMIZE
     if not args.unroll:
