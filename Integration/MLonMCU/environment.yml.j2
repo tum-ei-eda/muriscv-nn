@@ -138,12 +138,16 @@ vars:
   # toolchain
 {% if enable_gcc | int %}
 {% if local_gcc | int %}
-  # riscv_gcc.name: "riscv64-unknown-elf"
+  riscv_gcc.name: "riscv64-unknown-elf"
   riscv_gcc.install_dir_default: "{{ home_dir }}/../../../Toolchain/rv64gc"
 {% if enable_vext | int %}
+  riscv_gcc.name: "riscv64-unknown-elf"
+  riscv_gcc.install_dir_default: "{{ home_dir }}/../../../Toolchain/rv64gc"
   riscv_gcc.install_dir_vext: "{{ home_dir }}/../../../Toolchain/rv64gcv"
 {% endif %}
 {% if enable_pext | int %}
+  riscv_gcc.name: "riscv64-unknown-elf"
+  riscv_gcc.install_dir_default: "{{ home_dir }}/../../../Toolchain/rv64gc"
   riscv_gcc.install_dir_pext: "{{ home_dir }}/../../../Toolchain/rv64gcp"
 {% endif %}
 {% endif %}
