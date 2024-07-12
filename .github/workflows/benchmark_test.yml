@@ -58,10 +58,10 @@ jobs:
         ls Toolchain/rv32imv
         ls Toolchain/llvm
         ./Toolchain/rv32gc/bin/riscv32-unknown-elf-gcc --version
-        ./Toolchain/rv64gc/bin/riscv32-unknown-elf-gcc --version
+        ./Toolchain/rv64gc/bin/riscv64-unknown-elf-gcc --version
         ./Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version
         ./Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version
-        ./Toolchain/rv64gcv/bin/riscv32-unknown-elf-gcc --version
+        ./Toolchain/rv64gcv/bin/riscv64-unknown-elf-gcc --version
         ./Toolchain/rv32imv/bin/riscv32-unknown-elf-gcc --version
         ./Toolchain/llvm/bin/clang --version
 
