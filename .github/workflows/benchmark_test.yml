@@ -19,6 +19,16 @@ jobs:
 
     - uses: actions/checkout@v4
 
+    - name: Maximize build space
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 32768
+        temp-reserve-mb: 4096
+        remove-dotnet: 'true'
+        remove-android: 'true'
+        remove-haskell: 'true'
+        remove-codeql: 'true'
+
     - name: Install TFLM dependencies
       run: |
         sudo apt-get install python3-setuptools
