@@ -96,7 +96,7 @@ endif()
 project(muriscvnn LANGUAGES C CXX ASM DESCRIPTION "muRISCV-NN, a CMSIS-NN port for RISC-V.")
 
 # This is the main library we are building, resolves to project name
-set(MURISCVNN_LIB ${CMAKE_PROJECT_NAME})
+set(MURISCVNN_LIB ${PROJECT_NAME})
 
 # See whats going in CMake while getting the build process up and running
 set(CMAKE_VERBOSE_MAKEFILE ON)
