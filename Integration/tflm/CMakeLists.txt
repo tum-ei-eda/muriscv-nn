@@ -415,8 +415,8 @@ target_include_directories(tflm PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/kissfft
   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/flatbuffers
   ${CMAKE_CURRENT_SOURCE_DIR}/third_party/flatbuffers/include
-  ${CMAKE_SOURCE_DIR}/Include
-  ${CMAKE_SOURCE_DIR}/Include/CMSIS/NN
+  ${PROJECT_SOURCE_DIR}/Include
+  ${PROJECT_SOURCE_DIR}/Include/CMSIS/NN
 )
 
 if(${TOOLCHAIN} STREQUAL "LLVM")

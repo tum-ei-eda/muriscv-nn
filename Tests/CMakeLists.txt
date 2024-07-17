@@ -29,12 +29,12 @@ FetchContent_Declare(
 )
 add_definitions(-DUNITY_INCLUDE_CONFIG_H)
 FetchContent_MakeAvailable(unity)
-target_include_directories(unity PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Tests/TestData>
-                                        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Tests/Utils>
+target_include_directories(unity PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Tests/TestData>
+                                        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Tests/Utils>
                                         $<BUILD_INTERFACE:${unity_SOURCE_DIR}/src>)
 
 if(${SIMULATOR} STREQUAL "Vicuna")
-  target_include_directories(unity PRIVATE $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Sim/Vicuna>)
+  target_include_directories(unity PRIVATE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/Sim/Vicuna>)
 endif()
 
 add_subdirectory(TestCases)

@@ -23,18 +23,18 @@ macro(add_muriscv_nn_intg_test TEST_NAME)
   if(NOT ${TOOLCHAIN} STREQUAL "x86")
     if(${SIMULATOR} STREQUAL "OVPsim")
       add_test(NAME ${TEST_NAME}
-        COMMAND ${CMAKE_SOURCE_DIR}/Sim/OVPsim/run.sh ./${TEST_NAME}.elf ${RISCV_ARCH} ${VLEN} ${ELEN} 1
+        COMMAND ${PROJECT_SOURCE_DIR}/Sim/OVPsim/run.sh ./${TEST_NAME}.elf ${RISCV_ARCH} ${VLEN} ${ELEN} 1
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     elseif(${SIMULATOR} STREQUAL "Spike")
       add_test(NAME ${TEST_NAME}
-        COMMAND ${CMAKE_SOURCE_DIR}/Sim/Spike/run.sh ./${TEST_NAME}.elf ${RISCV_ARCH} ${VLEN} ${ELEN}
+        COMMAND ${PROJECT_SOURCE_DIR}/Sim/Spike/run.sh ./${TEST_NAME}.elf ${RISCV_ARCH} ${VLEN} ${ELEN}
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     elseif(${SIMULATOR} STREQUAL "ETISS")
       add_test(NAME ${TEST_NAME}
-        COMMAND ${CMAKE_SOURCE_DIR}/Sim/ETISS/run.sh ./${TEST_NAME}
+        COMMAND ${PROJECT_SOURCE_DIR}/Sim/ETISS/run.sh ./${TEST_NAME}
         WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     elseif(${SIMULATOR} STREQUAL "Vicuna")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T ${CMAKE_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lld_link.ld")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T ${PROJECT_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lld_link.ld")
         target_link_options(${TEST_NAME} PRIVATE "-nostartfiles")
         target_link_libraries(${TEST_NAME} PRIVATE vicuna_crt)
 
@@ -51,7 +51,7 @@ macro(add_muriscv_nn_intg_test TEST_NAME)
                            "$<TARGET_FILE:${TEST_NAME}>.path" VERBATIM)
 
         add_test(NAME ${TEST_NAME}
-                 COMMAND ${CMAKE_SOURCE_DIR}/Sim/Vicuna/run.sh "$<TARGET_FILE:${TEST_NAME}>.path"
+                 COMMAND ${PROJECT_SOURCE_DIR}/Sim/Vicuna/run.sh "$<TARGET_FILE:${TEST_NAME}>.path"
                  WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     else()
       message(FATAL_ERROR "Could not add test for specified simulator ${SIMULATOR}!")

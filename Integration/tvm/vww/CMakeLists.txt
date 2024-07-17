@@ -32,8 +32,8 @@ target_include_directories(${TEST_NAME}_tvm PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/runtime/include
   ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/include
-  ${CMAKE_SOURCE_DIR}/Include
-  ${CMAKE_SOURCE_DIR}/Include/CMSIS/NN/Include
+  ${PROJECT_SOURCE_DIR}/Include
+  ${PROJECT_SOURCE_DIR}/Include/CMSIS/NN/Include
 )
 
 target_sources(${TEST_NAME}_tvm PRIVATE
