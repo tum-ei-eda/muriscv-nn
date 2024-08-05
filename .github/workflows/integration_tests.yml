@@ -61,6 +61,7 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
+          fail-on-cache-miss: true
           key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
@@ -81,6 +82,7 @@ jobs:
           cache-name: cache-spike-binaries
       with:
           path: ./Sim/Spike/bin
+          fail-on-cache-miss: true
           key: spike-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
             spike-binaries-${{ steps.dates.outputs.yesterday }}
@@ -133,6 +135,7 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
+          fail-on-cache-miss: true
           key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
@@ -153,6 +156,7 @@ jobs:
           cache-name: cache-spike-binaries
       with:
           path: ./Sim/Spike/bin
+          fail-on-cache-miss: true
           key: spike-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
             spike-binaries-${{ steps.dates.outputs.yesterday }}
@@ -215,6 +219,7 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
+          fail-on-cache-miss: true
           key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
@@ -235,6 +240,7 @@ jobs:
           cache-name: cache-spike-binaries
       with:
           path: ./Sim/Spike/bin
+          fail-on-cache-miss: true
           key: spike-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
             spike-binaries-${{ steps.dates.outputs.yesterday }}
