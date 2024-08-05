@@ -42,9 +42,11 @@ target_include_directories(${MURISCVNN_LIB} PUBLIC
   ${CMAKE_SOURCE_DIR}/Include
   ${CMAKE_SOURCE_DIR}/Include/CMSIS/NN/Include)
 
-# TODO(fabianpedd): We currently need to include the Vicuna headers in order to redirect printf
-if(${SIMULATOR} STREQUAL "Vicuna")
-  target_include_directories(${MURISCVNN_LIB} PUBLIC ${CMAKE_SOURCE_DIR}/Sim/Vicuna)
+if(SIMULATOR)
+  # TODO(fabianpedd): We currently need to include the Vicuna headers in order to redirect printf
+  if(${SIMULATOR} STREQUAL "Vicuna")
+    target_include_directories(${MURISCVNN_LIB} PUBLIC ${CMAKE_SOURCE_DIR}/Sim/Vicuna)
+  endif()
 endif()
 
 if(BASICMATHSNN)
