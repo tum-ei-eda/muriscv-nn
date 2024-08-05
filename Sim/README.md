@@ -34,7 +34,7 @@ Similar to OVPsim Spike is also an ISS and running at 100 MIPS and 1 CPI.
 
 An important difference between Spike and OVPsim is, that Spike sets the `vill` bit in `vtype` on reset, OVPsim does not. This means that on Spike you can't execute vector instructions without executing a `vsetvl` instruction first. The vector specification actually states (section 3.11): "It is recommended that at reset, vtype.vill is set, the remaining bits in vtype are zero, and vl is set to zero." So OVPsim is the "bad boy" here. However, both are conformant to the spec.
 
-~~Either download a copy of the binaries using our internal mirrors (see `Spike/bin/download.sh`) or~~ compile your own copy using (`build_spike.sh`).
+~~Either download a copy of the binaries using our internal mirrors (see `Spike/bin/download.sh`) or~~ compile your own copy using `build_spike.sh`.
 
 ### Compile your own Spike binaries
 In order to compile your own [Spike](https://github.com/riscv-software-src/riscv-isa-sim) and [pk](https://github.com/riscv-software-src/riscv-pk) binaries, you will need to follow the build steps from their respective GitHub repositories with some slight modifications in order to be able to build an `rv32gcv` compatible version:
