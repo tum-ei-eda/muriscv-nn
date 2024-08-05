@@ -34,6 +34,8 @@ option(SVDF                 "SVDF"                  ON)
 option(NNSUPPORT            "NN Support"            ON)
 option(LSTM                 "LSTM Support"          ON)
 
+set(MURISCVNN_LIB "muriscvnn")
+
 add_library(${MURISCVNN_LIB} STATIC)
 
 target_include_directories(${MURISCVNN_LIB} PUBLIC
