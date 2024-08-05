@@ -92,6 +92,8 @@ jobs:
       run: |
         ls ./Sim/Spike/
         ls ./Sim/Spike/bin
+        ls ./Sim/Spike/spike
+        ls ./Sim/Spike/pk
 
     - name: Install Spike Dependencies
       run: |
