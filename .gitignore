@@ -34,7 +34,9 @@ Sim/ETISS/etiss-*
 # Toolchain
 Toolchain/*
 !Toolchain/download_rv32gc.sh
+!Toolchain/download_rv64gc.sh
 !Toolchain/download_rv32gcv.sh
+!Toolchain/download_rv64gcv.sh
 !Toolchain/download_rv32gcp.sh
 !Toolchain/download_rv32im.sh
 !Toolchain/download_rv32imv.sh
