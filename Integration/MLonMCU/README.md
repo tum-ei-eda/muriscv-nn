@@ -16,9 +16,8 @@ cd $DIR/Toolchain && ./download_rv32gcp.sh && cd -
 cd $DIR/Toolchain && ./download_rv32gcv.sh && cd -
 
 # Sim (comment in/out others if (not) required)
-# cd $DIR/Sim/Spike/bin && ./download.sh && cd -
+# cd $DIR/Sim/Spike/ && ./build_spike.sh && cd -
 # cd $DIR/Sim/ETISS/ && virtualenv -p python3.8 .venv && source .venv/bin/activate && pip install -r requirements.txt && python setup_etiss.py && deactivate && cd -
-# cd $DIR/Sim/OVPsim/bin && ./download.sh && cd -
 ```
 
 Simulators can also be automatically installed with MLonMCU (recommended).

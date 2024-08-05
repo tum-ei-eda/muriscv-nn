@@ -92,23 +92,26 @@ if [ "${SIM}" == "OVPsim" ];then
     if [ -f ${SIM_BIN_PATH_OVP} ]; then
       echo "Found an OVPsim instance in the Sim directory."
     else
-      echo "No OVPsim in the Sim directory found. Downloading one..."
-      (
-        cd ${SIM_BIN_DIR_OVP}
-        ./download.sh
-      )
+      echo "No OVPsim in the Sim directory found."
+      exit 1
+      # (
+      #   cd ${SIM_BIN_DIR_OVP}
+      #   ./download.sh
+      # )
     fi
 
 elif [ "${SIM}" == "Spike" ];then
     # Download Spike
+    echo "SIM_BIN_PATH_SPIKE=${SIM_BIN_PATH_SPIKE}"
     if [ -f ${SIM_BIN_PATH_SPIKE} ]; then
       echo "Found an Spike instance in the Sim directory."
     else
-      echo "No Spike in the Sim directory found. Downloading one..."
-      (
-        cd ${SIM_BIN_DIR_SPIKE}
-        ./download.sh
-      )
+      echo "No Spike in the Sim directory found."
+      exit 1
+      # (
+      #   cd ${SIM_BIN_DIR_SPIKE}
+      #   ./download.sh
+      # )
       # Install Spike dependencies
       sudo apt-get install libboost-all-dev
       sudo apt-get install device-tree-compiler
