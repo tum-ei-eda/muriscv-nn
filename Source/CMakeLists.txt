@@ -39,8 +39,8 @@ set(MURISCVNN_LIB "muriscvnn")
 add_library(${MURISCVNN_LIB} STATIC)
 
 target_include_directories(${MURISCVNN_LIB} PUBLIC
-  ${CMAKE_SOURCE_DIR}/Include
-  ${CMAKE_SOURCE_DIR}/Include/CMSIS/NN/Include)
+  ${PROJECT_SOURCE_DIR}/Include
+  ${PROJECT_SOURCE_DIR}/Include/CMSIS/NN/Include)
 
 if(SIMULATOR)
   # TODO(fabianpedd): We currently need to include the Vicuna headers in order to redirect printf
