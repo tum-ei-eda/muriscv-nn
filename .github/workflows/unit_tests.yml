@@ -86,6 +86,11 @@ jobs:
             spike-binaries-${{ steps.dates.outputs.date }}
             spike-binaries-
 
+    - name: Check Spike
+      run: |
+        ls ./Sim/Spike/
+        ls ./Sim/Spike/bin
+
     - name: Install Spike Dependencies
       run: |
         sudo apt-get install libboost-all-dev
