@@ -43,7 +43,7 @@ jobs:
 
     - name: Create Pull Request
       if: steps.sync_mode.outputs.SYNC_EXISTS == '0'
-      uses: peter-evans/create-pull-request@v5
+      uses: peter-evans/create-pull-request@v6
       with:
         commit-message: |
               Automated Sync with CMSIS-NN
