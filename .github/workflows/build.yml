@@ -33,9 +33,9 @@ jobs:
     - name: Get dates
       id: dates
       run: |
-        echo "::set-output name=today::$(date +'%Y-%m-%d')"
-        echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
-        echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
+        echo "today=$(date +'%Y-%m-%d')" > $GITHUB_OUTPUT
+        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" > $GITHUB_OUTPUT
+        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" > $GITHUB_OUTPUT
 
 
     - name: Download Cached GCC + LLVM Binaries
@@ -77,9 +77,9 @@ jobs:
     - name: Get dates
       id: dates
       run: |
-        echo "::set-output name=today::$(date +'%Y-%m-%d')"
-        echo "::set-output name=yesterday::$(date +'%Y-%m-%d' -d yesterday)"
-        echo "::set-output name=date::$(date +'%Y-%m-%d' -d 'last saturday')"
+        echo "today=$(date +'%Y-%m-%d')" > $GITHUB_OUTPUT
+        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" > $GITHUB_OUTPUT
+        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" > $GITHUB_OUTPUT
 
     - name: Download Cached GCC + LLVM Binaries
       id: cache-gcc

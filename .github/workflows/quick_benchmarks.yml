@@ -23,7 +23,7 @@ jobs:
 
     - name: Get date of last cache build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d' -d "last saturday")"
+      run: echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" > $GITHUB_OUTPUT
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -59,7 +59,7 @@ jobs:
 
     - name: Get current date
       id: date-today
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+      run: echo "today=$(date +'%Y-%m-%d')" > $GITHUB_OUTPUT
 
 
     - name: Archive Benchmark Results
