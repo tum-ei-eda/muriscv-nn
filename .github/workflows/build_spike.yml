@@ -40,7 +40,9 @@ jobs:
           key: spike-binaries-${{ steps.date.outputs.date }}
 
     - name: Install BOOST
-      run: sudo apt-get install libboost-all-dev
+      run: |
+        sudo apt-get install libboost-all-dev
+        ls /usr/lib/x86_64-linux-gnu | grep regex
 
     - name: Clone Spike Repo
       working-directory: ./Sim/Spike

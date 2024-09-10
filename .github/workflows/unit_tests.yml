@@ -92,13 +92,14 @@ jobs:
       run: |
         ls ./Sim/Spike/
         ls ./Sim/Spike/bin
-        ls ./Sim/Spike/spike
-        ls ./Sim/Spike/pk
+        ls ./Sim/Spike/bin/spike
+        ls ./Sim/Spike/bin/pk
 
     - name: Install Spike Dependencies
       run: |
         sudo apt-get install libboost-all-dev
         sudo apt-get install device-tree-compiler
+        ls /usr/lib/x86_64-linux-gnu | grep regex
 
     - name: Run Unit Tests on Spike
       if: success() || failure()
