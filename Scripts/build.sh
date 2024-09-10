@@ -100,51 +100,53 @@ fi
 
 #Need to check for GCC for either compiler or newlib headers for LLVM
 if [ "${USE_VEXT}" == "ON" ] && [ "${USE_IMV}" == "OFF" ] ;then
+  if [ -d ${TC_DIR_RV32GCV} ]; then
+    echo "Found rv32gcv GCC compiler in the Toolchain directory."
+  else
+    echo "No rv32gcv GCC compiler in the Toolchain directory found. Downloading one..."
+    (
+      cd ${TC_DIR}
+      ./download_rv32gcv.sh
+    )
+  fi
 
-    if [ -d ${TC_DIR_RV32GCV} ]; then
-      echo "Found rv32gcv GCC compiler in the Toolchain directory."
-    else
-      echo "No rv32gcv GCC compiler in the Toolchain directory found. Downloading one..."
-      (
-        cd ${TC_DIR}
-        ./download_rv32gcv.sh
-      )
-    fi
-
-  elif [ "${USE_PEXT}" == "ON" ];then
-    if [ -d ${TC_DIR_RV32GCP} ]; then
-      echo "Found rv32gcp GCC compiler in the Toolchain directory."
-    else
-      echo "No rv32gcp GCC compiler in the Toolchain directory found. Downloading one..."
-      (
-        cd ${TC_DIR}
-        ./download_rv32gcp.sh
-      )
-    fi
+elif [ "${USE_PEXT}" == "ON" ];then
+  if [ -d ${TC_DIR_RV32GCP} ]; then
+    echo "Found rv32gcp GCC compiler in the Toolchain directory."
+  else
+    echo "No rv32gcp GCC compiler in the Toolchain directory found. Downloading one..."
+    (
+      cd ${TC_DIR}
+      ./download_rv32gcp.sh
+    )
+  fi
 elif [ "${USE_IMV}" == "ON" ];then
 # Download rv32imv GCC
-    if [ -d ${TC_DIR_RV32IMV} ]; then
-      echo "Found rv32imv GCC compiler in the Toolchain directory."
-    else
-      echo "No rv32imv GCC compiler in the Toolchain directory found. Downloading one..."
-      (
-        cd ${TC_DIR}
-        ./download_rv32imv.sh
-      )
-    fi
-    IMV_FLAGS="-DRISCV_ARCH=rv32imv -DRISCV_ABI=ilp32"
-
+  if [ -d ${TC_DIR_RV32IMV} ]; then
+    echo "Found rv32imv GCC compiler in the Toolchain directory."
   else
-    if [ -d ${TC_DIR_RV32GC} ]; then
-      echo "Found rv32gc GCC compiler in the Toolchain directory."
-    else
-      echo "No rv32gc GCC compiler in the Toolchain directory found. Downloading one..."
-      (
-        cd ${TC_DIR}
-        ./download_rv32gc.sh
-      )
-    fi
+    echo "No rv32imv GCC compiler in the Toolchain directory found. Downloading one..."
+    (
+      cd ${TC_DIR}
+      ./download_rv32imv.sh
+    )
   fi
+  IMV_FLAGS="-DRISCV_ARCH=rv32imv -DRISCV_ABI=ilp32"
+
+elif [ "${TOOLCHAIN}" == "x86" ];then
+  echo "Skipping download of RISC-V toolchain for x86 mode."
+
+else
+  if [ -d ${TC_DIR_RV32GC} ]; then
+    echo "Found rv32gc GCC compiler in the Toolchain directory."
+  else
+    echo "No rv32gc GCC compiler in the Toolchain directory found. Downloading one..."
+    (
+      cd ${TC_DIR}
+      ./download_rv32gc.sh
+    )
+  fi
+fi
 
 
 
