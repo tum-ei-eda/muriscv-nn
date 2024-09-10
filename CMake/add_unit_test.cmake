@@ -31,8 +31,7 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
             ${PROJECT_SOURCE_DIR}/Tests/TestCases/${TEST_FILE_NAME}/${TEST_FILE_NAME}.c)
     endif()
 
-    target_link_libraries(${TEST_NAME} PUBLIC ${MURISCVNN_LIB}
-                                              unity)
+    target_link_libraries(${TEST_NAME} PUBLIC muriscvnn unity)
 
     # Register test with CTest and provide command to execute
 
