@@ -102,7 +102,7 @@ jobs:
         ls /usr/lib/x86_64-linux-gnu | grep regex
 
     - name: Run Unit Tests on Spike
-      if: success() || failure()
+      # if: success() || failure()
       working-directory: ./Scripts
       run: |
         ./unit_tests.sh ${{ matrix.config.args }}
