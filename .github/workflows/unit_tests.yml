@@ -93,7 +93,7 @@ jobs:
         ls ./Sim/Spike/
         ls ./Sim/Spike/bin
         ls ./Sim/Spike/bin/spike
-        ls ./Sim/Spike/bin/pk
+        ls ./Sim/Spike/bin/pk_ilp32d
 
     - name: Install Spike Dependencies
       run: |
