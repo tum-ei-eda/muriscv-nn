@@ -73,7 +73,7 @@ set(TFLM_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/c/builtin_op_data.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/builtin_ops.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/schema/schema_generated.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/schema/schema_utils.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/compiler/mlir/lite/schema/schema_utils.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/schema/schema_utils.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/context_util.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_resource_variable.h
