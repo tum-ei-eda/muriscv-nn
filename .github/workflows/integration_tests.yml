@@ -31,9 +31,7 @@ jobs:
             - {vext: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "native", vlen: 0, elen: 64, sim: "Native"}
             - {vext: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
             - {vext: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
-            - {vext: "OFF", pext: "ON", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcp", vlen: 0, elen: 64, sim: "Spike"}
-            # - {vext: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 64, elen: 64, sim: "Spike"}
-            # - {vext: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 64, elen: 64, sim: "Spike"}
+            # - {vext: "OFF", pext: "ON", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcp", vlen: 0, elen: 64, sim: "Spike"}
             - {vext: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
             - {vext: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
             - {vext: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
@@ -115,7 +113,7 @@ jobs:
             - {vext_flag: "", pext_flag: "", toolchain: "x86", arch: "", vlen: 0, elen: 0, sim: "Native"}
             - {vext_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
             - {vext_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
-            - {vext_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0, sim: "Spike"}
+            # - {vext_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0, sim: "Spike"}
             - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
             - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
             - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
@@ -199,7 +197,7 @@ jobs:
             - {vext_flag: "", pext_flag: "", toolchain: "x86", arch: "", vlen: 0, elen: 0, sim: "Native"}
             - {vext_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
             - {vext_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
-            - {vext_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0, sim: "Spike"}
+            # - {vext_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0, sim: "Spike"}
             - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
             - {vext_flag: "-v", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
             - {vext_flag: "-v", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}

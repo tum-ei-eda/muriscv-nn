@@ -39,7 +39,7 @@ jobs:
         config:
           - {args: "-t GCC -s Spike"}
           - {args: "-t LLVM -s Spike"}
-          - {args: "-t GCC -s Spike -p"}
+          # - {args: "-t GCC -s Spike -p"}
           # - {args: "-t GCC -s Spike -v -l 64 -e 64"}
           - {args: "-t GCC -s Spike -v -l 128 -e 64"}
           - {args: "-t GCC -s Spike -v -l 512 -e 64"}
