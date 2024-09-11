@@ -49,6 +49,6 @@ target_sources(${TEST_NAME}_tvm PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}_data/${TEST_NAME}_output_data_ref.h
 )
 
-target_link_libraries(${TEST_NAME}_tvm PRIVATE ${MURISCVNN_LIB})
+target_link_libraries(${TEST_NAME}_tvm PRIVATE muriscvnn)
 
 add_muriscv_nn_intg_test(${TEST_NAME}_tvm)

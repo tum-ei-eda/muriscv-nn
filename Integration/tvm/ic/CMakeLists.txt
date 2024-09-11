@@ -36,10 +36,10 @@ if(${SIMULATOR} STREQUAL "Vicuna")
     ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/include
     ${PROJECT_SOURCE_DIR}/Include
     ${PROJECT_SOURCE_DIR}/Include/CMSIS/NN/Include
-    
+
     ${PROJECT_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lib
     ${PROJECT_SOURCE_DIR}/Sim/Vicuna/crt
-    
+
   )
 
   target_sources(${TEST_NAME}_tvm PRIVATE
@@ -53,10 +53,10 @@ if(${SIMULATOR} STREQUAL "Vicuna")
     ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}_data/${TEST_NAME}_model_settings.h
     ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}_data/${TEST_NAME}_output_data_ref.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}_data/${TEST_NAME}_output_data_ref.h
-    
+
     ${PROJECT_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lib/uart.c
     ${PROJECT_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lib/uart.h
-    
+
     ${PROJECT_SOURCE_DIR}/Sim/Vicuna/crt/vicuna_crt.c
     ${PROJECT_SOURCE_DIR}/Sim/Vicuna/crt/vicuna_crt.h
   )
@@ -66,7 +66,7 @@ else()
     ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/runtime/include
     ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/include
     ${PROJECT_SOURCE_DIR}/Include
-    ${PROJECT_SOURCE_DIR}/Include/CMSIS/NN/Include  
+    ${PROJECT_SOURCE_DIR}/Include/CMSIS/NN/Include
   )
 
   target_sources(${TEST_NAME}_tvm PRIVATE
@@ -83,6 +83,6 @@ else()
   )
 endif()
 
-target_link_libraries(${TEST_NAME}_tvm PRIVATE ${MURISCVNN_LIB})
+target_link_libraries(${TEST_NAME}_tvm PRIVATE muriscvnn)
 
 add_muriscv_nn_intg_test(${TEST_NAME}_tvm)

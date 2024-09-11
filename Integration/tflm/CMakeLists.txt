@@ -369,7 +369,7 @@ set(TFLM_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/kernels/padding.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/portable_type_to_tflitetype.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/builtin_op_data.h
-  
+
 )
 
 set(TFLM_THIRD_PARTY_SRCS
@@ -421,13 +421,13 @@ target_include_directories(tflm PUBLIC
 
 if(${TOOLCHAIN} STREQUAL "LLVM")
   target_link_libraries(tflm PRIVATE
-    ${MURISCVNN_LIB}
+    muriscvnn
     m
     stdc++
   )
 else()
     target_link_libraries(tflm PRIVATE
-    ${MURISCVNN_LIB}
+    muriscvnn
   )
 endif()
 

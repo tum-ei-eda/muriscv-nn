@@ -55,7 +55,7 @@ if(${SIMULATOR} STREQUAL "Vicuna")
 
     ${PROJECT_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lib/uart.c
     ${PROJECT_SOURCE_DIR}/Sim/Vicuna/vicuna/sw/lib/uart.h
-    
+
     ${PROJECT_SOURCE_DIR}/Sim/Vicuna/crt/vicuna_crt.c
     ${PROJECT_SOURCE_DIR}/Sim/Vicuna/crt/vicuna_crt.h
   )
@@ -83,6 +83,6 @@ else()
 
 endif()
 
-target_link_libraries(${TEST_NAME}_tvm PRIVATE ${MURISCVNN_LIB})
+target_link_libraries(${TEST_NAME}_tvm PRIVATE muriscvnn)
 
 add_muriscv_nn_intg_test(${TEST_NAME}_tvm)
