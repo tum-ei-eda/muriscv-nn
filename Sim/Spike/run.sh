@@ -30,11 +30,11 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [[ $2 == "rv32gcv" || $2 == "rv32gcp" || $2 == "rv32gc" ]]; then
-  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm --varch=vlen:$3,elen:$4 $SCRIPT_DIR/bin/pk_ilp32d $1
+  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm_zve${4}d_zvl${3}b $SCRIPT_DIR/bin/pk_ilp32d $1
 elif [[ $2 == "rv32imv" || $2 == "rv32im" ]]; then
-  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm --varch=vlen:$3,elen:$4 $SCRIPT_DIR/bin/pk_ilp32 $1
+  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm_zve${4}d_zvl${3}b $SCRIPT_DIR/bin/pk_ilp32 $1
 elif [[ "rv32imzve32x" ]]; then
-  $SCRIPT_DIR/bin/spike --isa="rv32imv_zicntr_zihpm" --varch=vlen:$3,elen:$4 $SCRIPT_DIR/bin/pk_ilp32 $1
+  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm_zvl${3}b $SCRIPT_DIR/bin/pk_ilp32 $1
 else
   echo "Unsupported arch string $2"
 fi
