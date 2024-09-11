@@ -16,6 +16,10 @@ on:
   workflow_call:
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   Test_x86:
     runs-on: ubuntu-22.04
@@ -99,7 +103,6 @@ jobs:
       run: |
         sudo apt-get install libboost-all-dev
         sudo apt-get install device-tree-compiler
-        ls /usr/lib/x86_64-linux-gnu | grep regex
 
     - name: Run Unit Tests on Spike
       # if: success() || failure()
