@@ -191,16 +191,22 @@ jobs:
       working-directory: ./Integration/tvm
       if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b vww -S
+      env:
+        TVM_VERSION: ${{ matrix.tvm_version }}
 
     - name: TVM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tvm
       if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b ic -S
+      env:
+        TVM_VERSION: ${{ matrix.tvm_version }}
 
     - name: TVM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tvm
       if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b toy -S
+      env:
+        TVM_VERSION: ${{ matrix.tvm_version }}
 
 
   TFLM_Integration_Tests_Spike:
@@ -286,25 +292,25 @@ jobs:
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b aww
       env:
-        TFLM_REF=${{ matrix.tflm_ref }}
+        TFLM_REF: ${{ matrix.tflm_ref }}
 
     - name: TFLM Integration Test VWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tflm
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b vww -S
       env:
-        TFLM_REF=${{ matrix.tflm_ref }}
+        TFLM_REF: ${{ matrix.tflm_ref }}
 
     - name: TFLM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tflm
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b ic -S
       env:
-        TFLM_REF=${{ matrix.tflm_ref }}
+        TFLM_REF: ${{ matrix.tflm_ref }}
 
     - name: TFLM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tflm
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b toy -S
       env:
-        TFLM_REF=${{ matrix.tflm_ref }}
+        TFLM_REF: ${{ matrix.tflm_ref }}
