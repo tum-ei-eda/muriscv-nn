@@ -58,7 +58,7 @@ jobs:
     - uses: psf/black@stable
       with:
         options: "--check --verbose --preview -l 120"
-        version: "~= 22.0"
+        version: "~= 24.8"
     - name: Check for changes
       run: |
         git status
