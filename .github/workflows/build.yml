@@ -73,6 +73,18 @@ jobs:
       run: |
         ./build.sh -t LLVM -v -i -b Release
 
+    - name: Build Portable Vector LLVM
+      if: success() || failure()
+      working-directory: ./Scripts
+      run: |
+        ./build.sh -t LLVM -v -b Release -x
+
+    - name: Build Portable Vector LLVM with IMV
+      if: success() || failure()
+      working-directory: ./Scripts
+      run: |
+        ./build.sh -t LLVM -v -i -b Release -x
+
   build_gcc:
     runs-on: ubuntu-22.04
     steps:
@@ -115,6 +127,18 @@ jobs:
       working-directory: ./Scripts
       run: |
         ./build.sh -t GCC -v -i -b Release
+
+    - name: Build Portable Vector GCC
+      if: success() || failure()
+      working-directory: ./Scripts
+      run: |
+        ./build.sh -t GCC -v -b Release -x
+
+    - name: Build Portable Vector GCC with IMV
+      if: success() || failure()
+      working-directory: ./Scripts
+      run: |
+        ./build.sh -t GCC -v -i -b Release -x
 
     - name: Build Packed GCC
       if: success() || failure()
