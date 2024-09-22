@@ -102,7 +102,7 @@ jobs:
         git clone https://github.com/tensorflow/tflite-micro.git
         if [[ "${{ matrix.tflm_ref }}" != "" ]]
         then
-          git checkout ${{ matrix.tflm_ref }}
+          git -C tflite-micro checkout ${{ matrix.tflm_ref }}
         fi
 
     - name: Patch TFLM
