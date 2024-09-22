@@ -49,7 +49,8 @@ OPTIMIZED_KERNEL_DIR=cmsis_nn # don't change
 if [ $# -eq 0 ]
   then
     echo "No arguments supplied, using default configuration"
-    USE_VEXT=ON                  # ON/OFF
+    USE_PORTABLE=OFF                  # ON/OFF
+    USE_VEXT=OFF                  # ON/OFF
     USE_PEXT=OFF                # ON/OFF
     BUILD_TYPE=release            # debug/release
     TOOLCHAIN=llvm            # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
@@ -61,13 +62,14 @@ if [ $# -eq 0 ]
     else
     USE_VEXT=$1                  # ON/OFF
     USE_PEXT=$2                # ON/OFF
-    BUILD_TYPE=$3            # Debug/Release
-    TOOLCHAIN=$4            # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
-    TARGET_ARCH=$5           # rv32gcv for vector support
+    USE_PORTABLE=$3                  # ON/OFF
+    BUILD_TYPE=$4            # Debug/Release
+    TOOLCHAIN=$5            # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
+    TARGET_ARCH=$6           # rv32gcv for vector support
     GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/$5
-    VLEN=$6               # Vector length parameter passed to simulator
-    ELEN=$7
-    SIMULATOR=$8            # Spike/OVPsim
+    VLEN=$7               # Vector length parameter passed to simulator
+    ELEN=$8
+    SIMULATOR=$9            # Spike/OVPsim
 
 fi
 
@@ -89,6 +91,7 @@ for test in "${TESTS[@]}"; do
     TARGET_ARCH=${TARGET_ARCH} \
     OPTIMIZED_KERNEL_DIR=${OPTIMIZED_KERNEL_DIR} \
     MURISCV_NN_PATH=${MURISCV_NN_PATH} \
+    USE_PORTABLE=${USE_PORTABLE} \
     USE_VEXT=${USE_VEXT} \
     USE_PEXT=${USE_PEXT} \
     TOOLCHAIN=${TOOLCHAIN} \
@@ -126,6 +129,7 @@ for bm in "${BENCHMARKS[@]}"; do
     TARGET_ARCH=${TARGET_ARCH} \
     OPTIMIZED_KERNEL_DIR=${OPTIMIZED_KERNEL_DIR} \
     MURISCV_NN_PATH=${MURISCV_NN_PATH} \
+    USE_PORTABLE=${USE_PORTABLE} \
     USE_VEXT=${USE_VEXT} \
     USE_PEXT=${USE_PEXT} \
     TOOLCHAIN=${TOOLCHAIN} \
