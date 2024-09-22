@@ -26,13 +26,19 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
         df = report.post_df.copy()
         df["Backend"] = report.pre_df["Backend"]
         df["Kernels"] = df.apply(
-            lambda row: "muRISCV-NN"
-            if row.get("feature_muriscvnn") or row.get("feature_muriscvnnbyoc")
-            else (
-                "CMSIS-NN"
-                if row.get("feature_cmsisnn") or row.get("feature_cmsisnnbyoc")
-                # else ("Autotuned" if row.get("feature_autotuned") else "Default")
-                else ("TVM" if "tvm" in row.get("Backend") else ("TFLM" if "tflm" in row.get("Backend") else "Unknown"))
+            lambda row: (
+                "muRISCV-NN"
+                if row.get("feature_muriscvnn") or row.get("feature_muriscvnnbyoc")
+                else (
+                    "CMSIS-NN"
+                    if row.get("feature_cmsisnn") or row.get("feature_cmsisnnbyoc")
+                    # else ("Autotuned" if row.get("feature_autotuned") else "Default")
+                    else (
+                        "TVM"
+                        if "tvm" in row.get("Backend")
+                        else ("TFLM" if "tflm" in row.get("Backend") else "Unknown")
+                    )
+                )
             ),
             axis=1,
         )
@@ -41,22 +47,43 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
         # print("dfB", df["config_muriscvnn.use_pext"])
         # input("A")
         df["Mode"] = df.apply(
-            lambda row: ("Autotuned" if row.get("feature_autotuned") else ("Fallback" if "tvm" in row.get("Backend") else ("Reference" if "tflm" in row.get("Backend") else "-")))
-            if not (row.get("feature_muriscvnn") or row.get("feature_muriscvnnbyoc"))
-            else (
-                "Vector"
-                if row.get("config_muriscvnn.use_vext") == 1 or row.get("config_muriscvnnbyoc.use_vext") == 1
+            lambda row: (
+                (
+                    "Autotuned"
+                    if row.get("feature_autotuned")
+                    else (
+                        "Fallback"
+                        if "tvm" in row.get("Backend")
+                        else ("Reference" if "tflm" in row.get("Backend") else "-")
+                    )
+                )
+                if not (row.get("feature_muriscvnn") or row.get("feature_muriscvnnbyoc"))
                 else (
-                    "Packed"
-                    if row.get("config_muriscvnn.use_pext") == 1 or row.get("config_muriscvnnbyoc.use_pext") == 1
-                    else "Scalar"
+                    "Vector"
+                    if row.get("config_muriscvnn.use_vext") == 1 or row.get("config_muriscvnnbyoc.use_vext") == 1
+                    else (
+                        "Packed"
+                        if row.get("config_muriscvnn.use_pext") == 1 or row.get("config_muriscvnnbyoc.use_pext") == 1
+                        else "Scalar"
+                    )
                 )
             ),
             axis=1,
         )
         if "config_tvmaot.desired_layout" in df.columns:
             df["Layout"] = df["config_tvmaot.desired_layout"].fillna("NHWC")
-        df["AutoVectorize"] = df.apply(lambda row: "Loop+SLP" if row.get("config_auto_vectorize.loop") and row.get("config_auto_vectorize.slp") else ("Loop" if row.get("config_auto_vectorize.loop") else ("SLP" if row.get("config_auto_vectorize.slp") else "-")), axis=1)
+        df["AutoVectorize"] = df.apply(
+            lambda row: (
+                "Loop+SLP"
+                if row.get("config_auto_vectorize.loop") and row.get("config_auto_vectorize.slp")
+                else (
+                    "Loop"
+                    if row.get("config_auto_vectorize.loop")
+                    else ("SLP" if row.get("config_auto_vectorize.slp") else "-")
+                )
+            ),
+            axis=1,
+        )
         # print("df[AV]", df["AutoVectorize"])
         # input("123")
         # df["Arch"] = df.apply(
@@ -145,7 +172,18 @@ TUNING_RECORDS = os.path.join(
 )
 
 
-def get_target_features(target, enable_default=True, enable_scalar=True, enable_vext=True, enable_pext=True, enable_dsp=False, enable_mvei=False, enable_muriscvnn=False, enable_cmsisnn=False, scalar_default_only=False):
+def get_target_features(
+    target,
+    enable_default=True,
+    enable_scalar=True,
+    enable_vext=True,
+    enable_pext=True,
+    enable_dsp=False,
+    enable_mvei=False,
+    enable_muriscvnn=False,
+    enable_cmsisnn=False,
+    scalar_default_only=False,
+):
     # print("get_target_features", target, enable_default, enable_vext, enable_pext, enable_muriscvnn, enable_cmsisnn)
     DEFAULT_SCALAR = [[] if enable_scalar else []]
     DEFAULT_VEXT = [["vext"] if not scalar_default_only and enable_vext else []]
@@ -364,6 +402,7 @@ POSTPROCESS_CONFIG = {
     "compare_rows.substract": False,  # Set to True to make the baseline 0.0 instead of 1.0
 }
 
+
 def gen_features(backend, features, validate=False, auto_vectorize=False):
     ret = []
     ret.extend(BACKEND_DEFAULT_FEATURES[backend])
@@ -387,7 +426,24 @@ def gen_features(backend, features, validate=False, auto_vectorize=False):
     return ret
 
 
-def gen_config(backend, backend_config, target, features, vlen, toolchain, enable_postprocesses=False, baseline=None, scalar_default_only=False, loop=True, slp=True, use_vext="AUTO", use_pext="AUTO", unroll=False, optimize="s", embedded=False):
+def gen_config(
+    backend,
+    backend_config,
+    target,
+    features,
+    vlen,
+    toolchain,
+    enable_postprocesses=False,
+    baseline=None,
+    scalar_default_only=False,
+    loop=True,
+    slp=True,
+    use_vext="AUTO",
+    use_pext="AUTO",
+    unroll=False,
+    optimize="s",
+    embedded=False,
+):
     ret = {}
     ret["mlif.toolchain"] = toolchain
     ret["mlif.optimize"] = optimize
@@ -395,7 +451,7 @@ def gen_config(backend, backend_config, target, features, vlen, toolchain, enabl
     ret.update(BACKEND_DEFAULT_CONFIG[backend])
     ret.update(backend_config)
     if enable_postprocesses:
-            ret.update(POSTPROCESS_CONFIG)
+        ret.update(POSTPROCESS_CONFIG)
     if "pext" in features and use_pext != 0:
         assert "vext" not in features
         assert vlen == 0
@@ -505,7 +561,9 @@ def benchmark(args):
                                                 vlens = [0]
                                                 if "vext" in features:
                                                     vlens = args.vlen
-                                                features = gen_features(backend, features, validate=args.validate, auto_vectorize=True)
+                                                features = gen_features(
+                                                    backend, features, validate=args.validate, auto_vectorize=True
+                                                )
                                                 # print("features", features)
                                                 # input("AAA")
                                                 cfg = [(None, None)]
@@ -517,7 +575,7 @@ def benchmark(args):
                                                     else:
                                                         cfg = [(0, 0)]
                                                 for use_vext, use_pext in cfg:
-                                                    avs = [(0,0)]
+                                                    avs = [(0, 0)]
                                                     if enable_auto_vectorize:
                                                         if "vext" in features:
                                                             # avs.append((1, 1))
@@ -533,7 +591,22 @@ def benchmark(args):
                                                             # print("vl", vlen)
                                                             # input("9")
                                                             config = gen_config(
-                                                                backend, backend_config, target, features, vlen, toolchain=toolchain, enable_postprocesses=args.post, baseline=args.baseline, scalar_default_only=scalar_default_only, loop=loop, slp=slp, use_vext=use_vext, use_pext=use_pext, unroll=unroll, optimize=opt, embedded=args.embedded,
+                                                                backend,
+                                                                backend_config,
+                                                                target,
+                                                                features,
+                                                                vlen,
+                                                                toolchain=toolchain,
+                                                                enable_postprocesses=args.post,
+                                                                baseline=args.baseline,
+                                                                scalar_default_only=scalar_default_only,
+                                                                loop=loop,
+                                                                slp=slp,
+                                                                use_vext=use_vext,
+                                                                use_pext=use_pext,
+                                                                unroll=unroll,
+                                                                optimize=opt,
+                                                                embedded=args.embedded,
                                                             )
                                                             config.update(user_config)  # TODO
                                                             # resolve_missing_configs(config, features, target, context)
@@ -547,14 +620,20 @@ def benchmark(args):
                                                             if args.post:
                                                                 run.add_postprocesses_by_name(POSTPROCESSES_0)
                                                                 run.add_postprocess(CustomPostprocess(), append=True)
-                                                                run.add_postprocesses_by_name(POSTPROCESSES_1, append=True)
+                                                                run.add_postprocesses_by_name(
+                                                                    POSTPROCESSES_1, append=True
+                                                                )
                                                                 if args.baseline is not None:
-                                                                    run.add_postprocess_by_name("compare_rows", append=True)
+                                                                    run.add_postprocess_by_name(
+                                                                        "compare_rows", append=True
+                                                                    )
             if args.noop:
                 stage = RunStage.LOAD
             else:
                 stage = RunStage.RUN
-            success = session.process_runs(until=stage, num_workers=args.parallel, progress=args.progress, context=context)
+            success = session.process_runs(
+                until=stage, num_workers=args.parallel, progress=args.progress, context=context
+            )
             report = session.get_reports()
         report_file = args.output
         report.export(report_file)

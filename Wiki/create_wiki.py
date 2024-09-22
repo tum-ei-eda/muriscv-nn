@@ -5,6 +5,7 @@ from datetime import date
 import pandas as pd
 import jinja2
 from jinja2 import FileSystemLoader
+
 # pass_eval_context
 
 today = date.today()
@@ -31,6 +32,7 @@ for fname in args.files:
 
 df.fillna("-", inplace=True)
 df["Framework"] = df["Backend"].apply(lambda x: "tvm" if "tvm" in x else "tflm")
+
 
 # print("df", df)
 def env_var(value, key):
@@ -70,7 +72,9 @@ for framework_name, framework_df in df.groupby("Framework"):
                 backend_names.append(backend_name)
                 data[framework_name][toolchain_name][optimize_name][backend_name] = {}
                 for model_name, model_df in backend_df.groupby("Model"):
-                    data[framework_name][toolchain_name][optimize_name][backend_name][model_name] = model_df.to_dict("records")
+                    data[framework_name][toolchain_name][optimize_name][backend_name][model_name] = model_df.to_dict(
+                        "records"
+                    )
                     model_names.append(model_name)
 
 # data = {
@@ -104,10 +108,23 @@ if args.split:
     for framework_name, framework_data in data.items():
         for toolchain_name, toolchain_data in framework_data.items():
             for optimize_name, optimize_data in toolchain_data.items():
-                filename = f"Benchmarks-" + date + "-" + framework_name.upper() + "-" + toolchain_name.upper() + "-O" + str(optimize_name)
+                filename = (
+                    f"Benchmarks-"
+                    + date
+                    + "-"
+                    + framework_name.upper()
+                    + "-"
+                    + toolchain_name.upper()
+                    + "-O"
+                    + str(optimize_name)
+                )
                 # print("data", {framework_name: {toolchain_name: toolchain_data}})
                 data2 = {framework_name: {toolchain_name: {optimize_name: optimize_data}}}
-                df2 = df[(df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name) & (df["Optimize"] == optimize_name)]
+                df2 = df[
+                    (df["Framework"] == framework_name)
+                    & (df["Toolchain"] == toolchain_name)
+                    & (df["Optimize"] == optimize_name)
+                ]
                 # print("fn", framework_name)
                 # print("tn", toolchain_name)
                 # print("flt", (df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name) & (df["Optimize"]))
@@ -123,7 +140,7 @@ if args.split:
                     toolchain_names=[toolchain_name],
                     optimize_names=[optimize_name],
                     model_names=model_names,
-                    target_names=target_names
+                    target_names=target_names,
                 )
                 with open(filename + ".md", mode="w", encoding="utf-8") as message:
                     message.write(content)
@@ -147,7 +164,7 @@ else:
         toolchain_names=toolchain_names,
         optimize_names=optimize_names,
         model_names=model_names,
-        target_names=target_names
+        target_names=target_names,
     )
     with open(filename + ".md", mode="w", encoding="utf-8") as message:
         message.write(content)
