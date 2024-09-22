@@ -120,7 +120,7 @@ jobs:
           tvm_version:
           - stable  # latest stable release (on PyPI)
           - nightly  # latest nightly release (on PyPI)
-          - 0.12.0 # Last working release (on PyPI, needs to be updated manually)
+          - 0.11.1 # Last working release (on PyPI, needs to be updated manually)
           config:
             - {vext_flag: "", pext_flag: "", toolchain: "x86", arch: "", vlen: 0, elen: 0, sim: "Native"}
             - {vext_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
@@ -286,31 +286,25 @@ jobs:
     - name: Download TFLM and build Source Tree
       working-directory: ./Integration/tflm
       run: ./download_tflm.sh
+      env:
+        TFLM_REF: ${{ matrix.tflm_ref }}
 
     - name: TFLM Integration Test AWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tflm
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b aww
-      env:
-        TFLM_REF: ${{ matrix.tflm_ref }}
 
     - name: TFLM Integration Test VWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tflm
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b vww -S
-      env:
-        TFLM_REF: ${{ matrix.tflm_ref }}
 
     - name: TFLM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tflm
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b ic -S
-      env:
-        TFLM_REF: ${{ matrix.tflm_ref }}
 
     - name: TFLM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tflm
       if: '!cancelled()'
       run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b toy -S
-      env:
-        TFLM_REF: ${{ matrix.tflm_ref }}
