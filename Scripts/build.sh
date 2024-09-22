@@ -28,6 +28,7 @@ source config.sh
 ################################################################################
 #################### Interpret Command Line Arguments ##########################
 ################################################################################
+USE_PORTABLE=OFF
 USE_VEXT=OFF
 USE_PEXT=OFF
 USE_IMV=OFF
@@ -38,9 +39,10 @@ SIM_FLAGS=""
 VLEN=""
 ELEN=""
 
-while getopts 't:vpib:s:l:e:h' flag; do
+while getopts 't:vxpib:s:l:e:h' flag; do
   case "${flag}" in
     t) TOOLCHAIN="${OPTARG}" ;;
+    x) USE_PORTABLE=ON ;;
     v) USE_VEXT=ON
        GCC_PREFIX=${TC_DIR}/rv32gcv ;;
     p) USE_PEXT=ON
@@ -53,6 +55,7 @@ while getopts 't:vpib:s:l:e:h' flag; do
     e) ELEN="-DELEN=${OPTARG}";;
     * | h) echo "Provide correct arguments.  Ex:  ./build.sh -t (GCC/LLVM/x86) -v -i -b (Release/Debug)"
        echo "-t : toolchain to use"
+       echo "-x : enable portable mode"
        echo "-v : enable/disable VEXT"
        echo "-p : enable/disable PEXT"
        echo "-i : enable/disable IMV"
@@ -158,7 +161,7 @@ rm -rf ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}
 echo $1
 echo ${TC_DIR}/$2
-cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX}/ -DRISCV_LLVM_PREFIX=${LLVM_PREFIX}  -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN}
+cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX}/ -DRISCV_LLVM_PREFIX=${LLVM_PREFIX}  -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DUSE_PORTABLE=${USE_PORTABLE} ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN}
 make -j $(nproc) -C ${BUILD_DIR}
 
 exit 0

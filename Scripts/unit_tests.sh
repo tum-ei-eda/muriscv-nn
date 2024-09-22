@@ -29,6 +29,7 @@ source config.sh
 ################################################################################
 #################### Interpret Command Line Arguments ##########################
 ################################################################################
+USE_PORTABLE=OFF
 USE_VEXT=OFF
 USE_PEXT=OFF
 USE_IMV=OFF
@@ -38,9 +39,11 @@ SIM=""
 VLEN=""
 ELEN=""
 
-while getopts 't:vpis:l:e:h' flag; do
+while getopts 't:xvpis:l:e:h' flag; do
   case "${flag}" in
     t) TOOLCHAIN="${OPTARG}" ;;
+    x) USE_PORTABLE=ON
+       BUILD_FLAGS="${BUILD_FLAGS} -x" ;;
     v) USE_VEXT=ON
        BUILD_FLAGS="${BUILD_FLAGS} -v" ;;
     p) USE_PEXT=ON
@@ -53,6 +56,7 @@ while getopts 't:vpis:l:e:h' flag; do
     e) ELEN="-e ${OPTARG}";;
     * | h) echo "Provide correct arguments.  Ex:  ./unit_tests.sh -t (GCC/LLVM/x86) -v -s (Spike/OVPsim) -l 1024"
        echo "-t : toolchain to use"
+       echo "-x : enable portable mode"
        echo "-v : enable/disable VEXT"
        echo "-p : enable/disable PEXT"
        echo "-i : enable/disable IMV"
