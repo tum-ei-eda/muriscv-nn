@@ -61,7 +61,7 @@ echo $PATH
 mkdir build
 cd build
 ../configure --prefix=$RISCV
-make
+make -j$(nproc)
 sudo make install
 
 #build PK for ilp32d
@@ -75,7 +75,7 @@ echo $PATH
 mkdir build
 cd build
 ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv_zicsr_zifencei --with-abi=ilp32d
-make
+make -j$(nproc)
 sudo make install
 
 #Copy spike and pk_ilp32d to bin folder
@@ -95,7 +95,7 @@ echo $PATH
 mkdir build
 cd build
 ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32imv --with-abi=ilp32
-make
+make -j $(nproc)
 sudo make install
 
 #copy ilp32 to bin folder
