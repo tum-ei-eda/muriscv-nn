@@ -76,8 +76,11 @@ if [ $# -eq 0 ];then
     echo "No input arguments supplied.  Run ./unit_tests.sh -h to see required input"
     exit 1
 elif [ "${SIM}" == "" ] && ([ "${USE_VEXT}" == "ON" ] || [ "${USE_PEXT}" == "ON" ]);then
-    echo "Native execution does not support VEXT or PEXT.  Please select a simulator with the -s flag"
-    exit 1
+    if [ "${USE_PORTABLE}" != "ON" ];
+    then
+        echo "Native execution does not support VEXT or PEXT.  Please select a simulator with the -s flag"
+        exit 1
+    fi
 elif [ "${VLEN}" == "" ] && ([ "${USE_VEXT}" == "ON" ] || [ "${USE_IMV}" == "ON" ]); then
     echo "Please specify a vector length"
     exit 1

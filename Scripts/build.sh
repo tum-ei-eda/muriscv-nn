@@ -80,8 +80,11 @@ elif [ "${USE_IMV}" == "ON" ] && [ "${USE_PEXT}" == "ON" ];then
     echo "Using rv32imv only supports VEXT.  Please disable PEXT"
     exit 1
 elif [ "${TOOLCHAIN}" == "x86" ] && ([ "${USE_PEXT}" == "ON" ] || [ "${USE_VEXT}" == "ON" ] || [ "${USE_IMV}" == "ON" ]);then
-    echo "Using x86 does not support VEXT or PEXT.  Please disable these."
-    exit 1
+    if [ "${USE_PORTABLE}" != "ON" ];
+    then
+        echo "Using x86 does not support VEXT or PEXT.  Please disable these."
+        exit 1
+    fi
 elif [ "${TOOLCHAIN}" == "LLVM" ] && [ "${USE_PEXT}" == "ON" ];then
     echo "Using LLVM does not support PEXT.  Please disable it."
     exit 1
