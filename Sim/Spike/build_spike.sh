@@ -53,12 +53,12 @@ cd ../Sim/Spike
 
 #Build Spike
 echo "Building spike"
-git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+test -d riscv-isa-sim || git clone https://github.com/riscv-software-src/riscv-isa-sim.git
 cd riscv-isa-sim
 export RISCV=$PWD/../../../Toolchain/rv32gcv
 export PATH=$PATH:$RISCV/bin
 echo $PATH
-mkdir build
+mkdir -p build
 cd build
 ../configure --prefix=$RISCV
 make -j$(nproc)
@@ -67,12 +67,12 @@ sudo make install
 #build PK for ilp32d
 cd ../..
 echo "Building pk_ilp32d"
-git clone https://github.com/riscv-software-src/riscv-pk.git
+test -d riscv-pk || git clone https://github.com/riscv-software-src/riscv-pk.git
 cd riscv-pk
 export RISCV=$PWD/../../../Toolchain/rv32gcv
 export PATH=$PATH:$RISCV/bin
 echo $PATH
-mkdir build
+mkdir -p build
 cd build
 ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv_zicsr_zifencei --with-abi=ilp32d
 make -j$(nproc)
@@ -92,7 +92,7 @@ rm -r build
 export RISCV=$PWD/../../../Toolchain/rv32imv
 export PATH=$PATH_ORIG:$RISCV/bin
 echo $PATH
-mkdir build
+mkdir -p build
 cd build
 ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32imv --with-abi=ilp32
 make -j $(nproc)
