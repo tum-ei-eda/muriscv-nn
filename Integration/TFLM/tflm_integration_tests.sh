@@ -66,7 +66,7 @@ if [ $# -eq 0 ]
     BUILD_TYPE=$4            # Debug/Release
     TOOLCHAIN=$5            # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
     TARGET_ARCH=$6           # rv32gcv for vector support
-    GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/$5
+    GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/$6
     VLEN=$7               # Vector length parameter passed to simulator
     ELEN=$8
     SIMULATOR=$9            # Spike/OVPsim
