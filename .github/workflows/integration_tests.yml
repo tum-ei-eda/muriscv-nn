@@ -115,7 +115,7 @@ jobs:
 
     - name: TFLM Integration Test for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/TFLM/tflite-micro
-      run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config,pext }} ${{ matrix.config.portable_vext }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.elen }} ${{ matrix.config.sim }}
+      run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }} ${{ matrix.config.portable_vext }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.elen }} ${{ matrix.config.sim }}
 
   TVM_Integration_Tests:
     strategy:
