@@ -38,8 +38,9 @@ SIM_FLAGS=""
 SIM=""
 VLEN=""
 ELEN=""
+BUILD_TYPE="Release"
 
-while getopts 't:xvpis:l:e:h' flag; do
+while getopts 't:xvpis:b:l:e:h' flag; do
   case "${flag}" in
     t) TOOLCHAIN="${OPTARG}" ;;
     x) USE_PORTABLE=ON
@@ -52,6 +53,7 @@ while getopts 't:xvpis:l:e:h' flag; do
        BUILD_FLAGS="${BUILD_FLAGS} -i" ;;
     s) SIM="${OPTARG}"
        SIM_FLAGS="-s ${SIM}" ;;
+    b) BUILD_TYPE="${OPTARG}" ;;
     l) VLEN="-l ${OPTARG}";;
     e) ELEN="-e ${OPTARG}";;
     * | h) echo "Provide correct arguments.  Ex:  ./unit_tests.sh -t (GCC/LLVM/x86) -v -s (Spike/OVPsim) -l 1024"
@@ -60,6 +62,7 @@ while getopts 't:xvpis:l:e:h' flag; do
        echo "-v : enable/disable VEXT"
        echo "-p : enable/disable PEXT"
        echo "-i : enable/disable IMV"
+       echo "-b : build type"
        echo "-s : Select simulator.  If unused, executes natively"
        echo "-l : Vector Length"
        echo "-e : Element width"
@@ -131,7 +134,7 @@ fi
 echo -t ${TOOLCHAIN} ${BUILD_FLAGS} ${BUILD_TYPE} ${SIM_FLAGS}
 
 
-if ./build.sh -t ${TOOLCHAIN} ${BUILD_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN} -b Release;then
+if ./build.sh -t ${TOOLCHAIN} ${BUILD_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN} -b ${BUILD_TYPE};then
     make -j $(nproc) -C ${BUILD_DIR}
     (
       cd ${BUILD_DIR}
