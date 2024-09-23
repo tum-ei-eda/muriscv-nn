@@ -43,7 +43,7 @@ if [ ! -d ./rv32gcv ]; then
     ./download_rv32gcv.sh
 fi
 if [ ! -d ./rv32imv ]; then
-    
+
     echo "MISSING rv32imv in Toolchains folder.  Downloading prebuilt GCC with script now."
     ./download_rv32imv.sh
 fi
@@ -72,7 +72,7 @@ export PATH=$PATH:$RISCV/bin
 echo $PATH
 mkdir build
 cd build
-../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv --with-abi=ilp32d
+../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv_zicsr_zifencei --with-abi=ilp32d
 make
 sudo make install
 
