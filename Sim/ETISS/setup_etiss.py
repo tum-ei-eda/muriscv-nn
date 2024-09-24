@@ -20,7 +20,6 @@ class Progress(git.remote.RemoteProgress):
 
 # TODO(fabianpedd): make these configurable from the terminal
 class Config(object):
-
     # Path to RISC-V compiler (relative to muriscv_nn root directory)
     REL_TOOLCHAIN_DIR = "Toolchain/rv32gcv"
     TOOLCHAIN_BASENAME = "riscv32-unknown-elf"
@@ -63,7 +62,6 @@ def create_ini_file(path: str, config: Config):
 #                  - https://docs.python.org/3/library/subprocess.html
 #                  - https://docs.python.org/3/library/subprocess.html#subprocess.CalledProcessError
 def setup_etiss(config: Config):
-
     # Clone ETISS
     config.etiss_dir = os.path.join(config.muriscv_nn_dir, "Sim/ETISS/", config.ETISS_GIT_DIR_NAME)
     logging.info("Cloning ETISS from %s into %s", config.ETISS_GIT_URL, config.etiss_dir)
