@@ -27,6 +27,9 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
+          tflm_ref:
+          - main  # latest upstream
+          - 19aaea85e4679a9a2f265e07ba190ac5ea4d3766 # Last working commit (needs to be updated manually)
           config:
             - {vext: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "native", vlen: 0, elen: 64, sim: "Native"}
             - {vext: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
@@ -95,7 +98,12 @@ jobs:
 
     - name: Download TFLM
       working-directory: ./Integration/TFLM
-      run: git clone https://github.com/tensorflow/tflite-micro.git
+      run: |
+        git clone https://github.com/tensorflow/tflite-micro.git
+        if [[ "${{ matrix.tflm_ref }}" != "" ]]
+        then
+          git -C tflite-micro checkout ${{ matrix.tflm_ref }}
+        fi
 
     - name: Patch TFLM
       working-directory: ./Integration/TFLM/tflite-micro
@@ -109,6 +117,10 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
+          tvm_version:
+          - stable  # latest stable release (on PyPI)
+          - nightly  # latest nightly release (on PyPI)
+          - 0.11.1 # Last working release (on PyPI, needs to be updated manually)
           config:
             - {vext_flag: "", pext_flag: "", toolchain: "x86", arch: "", vlen: 0, elen: 0, sim: "Native"}
             - {vext_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
@@ -172,27 +184,38 @@ jobs:
       working-directory: ./Integration/tvm
       if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b aww
+      env:
+        TVM_VERSION: ${{ matrix.tvm_version }}
 
     - name: TVM Integration Test VWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tvm
       if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b vww -S
+      env:
+        TVM_VERSION: ${{ matrix.tvm_version }}
 
     - name: TVM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tvm
       if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b ic -S
+      env:
+        TVM_VERSION: ${{ matrix.tvm_version }}
 
     - name: TVM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tvm
       if: '!cancelled()'
       run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b toy -S
+      env:
+        TVM_VERSION: ${{ matrix.tvm_version }}
 
 
   TFLM_Integration_Tests_Spike:
     strategy:
         fail-fast: false
         matrix:
+          tflm_ref:
+          - main  # latest upstream
+          - 19aaea85e4679a9a2f265e07ba190ac5ea4d3766 # Last working commit (needs to be updated manually)
           config:
             - {vext_flag: "", pext_flag: "", toolchain: "x86", arch: "", vlen: 0, elen: 0, sim: "Native"}
             - {vext_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
@@ -263,6 +286,8 @@ jobs:
     - name: Download TFLM and build Source Tree
       working-directory: ./Integration/tflm
       run: ./download_tflm.sh
+      env:
+        TFLM_REF: ${{ matrix.tflm_ref }}
 
     - name: TFLM Integration Test AWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
       working-directory: ./Integration/tflm

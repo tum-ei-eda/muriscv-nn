@@ -7,9 +7,13 @@ on:
     - cron: '0 4 * * *'
 
   push:
-    branches: [ master ]
+    branches:
+    - master
+    - develop
   pull_request:
-    branches: [ master ]
+    branches:
+    - master
+    - develop
 
   workflow_call:
   workflow_dispatch:

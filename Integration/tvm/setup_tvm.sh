@@ -34,9 +34,22 @@ python3 -m venv .venv
 source .venv/bin/activate
 # pip install numpy==1.26.4
 pip install numpy==1.24.4
-pip install apache-tvm
+TVM_VERSION=${TVM_VERSION:-stable}
+if [[ "$TVM_VERSION" == "stable" ]]
+then
+  pip install apache-tvm
+elif [[ "$TVM_VERSION" == "nightly" ]]
+then
+  pip install apache-tvm --pre
+elif [[ "$TVM_VERSION" != "" ]]
+then
+  pip install apache-tvm==$TVM_VERSION --pre
+else  # same as stable
+  pip install apache-tvm
+fi
 pip install -r requirements.txt
 pip install typing-extensions
+pip list | grep "apache-tvm"
 
 echo "Generate TVM kernel from models."
 for test in "${TESTS[@]}"; do
