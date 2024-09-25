@@ -101,7 +101,7 @@ jobs:
             spike-binaries-
 
     - name: Download TFLM
-      working-directory: ./Integration/TFLM
+      working-directory: ./Integration/tflm_builtin
       run: |
         git clone https://github.com/tensorflow/tflite-micro.git
         if [[ "${{ matrix.tflm_ref }}" != "" ]]
@@ -110,11 +110,11 @@ jobs:
         fi
 
     - name: Patch TFLM
-      working-directory: ./Integration/TFLM/tflite-micro
+      working-directory: ./Integration/tflm_builtin/tflite-micro
       run: git apply ../muriscv_nn.patch
 
     - name: TFLM Integration Test for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, SIM = ${{ matrix.config.sim }}
-      working-directory: ./Integration/TFLM/tflite-micro
+      working-directory: ./Integration/tflm_builtin/tflite-micro
       run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }} ${{ matrix.config.portable }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.elen }} ${{ matrix.config.sim }}
 
   TVM_Integration_Tests:
