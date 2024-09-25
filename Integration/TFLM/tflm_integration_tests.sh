@@ -46,33 +46,16 @@ TFLM_PATH=${SCRIPT_DIR}/tflite-micro
 # Compiliation parameters
 TARGET=muriscv_nn             # don't change
 OPTIMIZED_KERNEL_DIR=cmsis_nn # don't change
-if [ $# -eq 0 ]
-  then
-    echo "No arguments supplied, using default configuration"
-    USE_PORTABLE=OFF                  # ON/OFF
-    USE_VEXT=OFF                  # ON/OFF
-    USE_PEXT=OFF                # ON/OFF
-    BUILD_TYPE=release            # debug/release
-    TOOLCHAIN=llvm            # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
-    TARGET_ARCH=rv32gcv           # rv32gcv for vector support
-    GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/rv32gcv
-    VLEN=512               # Vector length parameter passed to simulator
-    ELEN=64
-    SIMULATOR=Spike            # Spike/OVPsim
-    else
-    USE_VEXT=$1                  # ON/OFF
-    USE_PEXT=$2                # ON/OFF
-    USE_PORTABLE=$3                  # ON/OFF
-    BUILD_TYPE=$4            # Debug/Release
-    TOOLCHAIN=$5            # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
-    TARGET_ARCH=$6           # rv32gcv for vector support
-    GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/$6
-    VLEN=$7               # Vector length parameter passed to simulator
-    ELEN=$8
-    SIMULATOR=$9            # Spike/OVPsim
-
-fi
-
+USE_VEXT=${1:-"OFF"}                # ON/OFF
+USE_PEXT=${2:-"OFF"}                # ON/OFF
+USE_PORTABLE=${3:-"OFF"}            # ON/OFF
+BUILD_TYPE=${4:-"release"}          # debug/release
+TOOLCHAIN=${5:-"llvm"}              # gcc/llvm (gcc requires normal/full version of the rv32gcv toolchain, not the lite version)
+TARGET_ARCH=${6:-"rv32gc"}          # rv32gc/rv32gcv/...
+GCC_TOOLCHAIN_ROOT=${MURISCV_NN_PATH}/Toolchain/$TARGET_ARCH
+VLEN=${7:-512}                      # Vector length parameter passed to simulator
+ELEN=${8:-64}                       # Maximum vector element width
+SIMULATOR=${9:-"Spike"}             # Spike/OVPsim
 
 #If VEXT is disabled, set VLEN to 1024 to prevent simulator complaints
 if [ ${USE_VEXT} == OFF ]; then
