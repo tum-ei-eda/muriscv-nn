@@ -29,6 +29,7 @@ source config.sh
 ################################################################################
 #################### Interpret Command Line Arguments ##########################
 ################################################################################
+USE_PORTABLE=OFF
 USE_VEXT=OFF
 USE_PEXT=OFF
 USE_IMV=OFF
@@ -37,10 +38,13 @@ SIM_FLAGS=""
 SIM=""
 VLEN=""
 ELEN=""
+BUILD_TYPE="Release"
 
-while getopts 't:vpis:l:e:h' flag; do
+while getopts 't:xvpis:b:l:e:h' flag; do
   case "${flag}" in
     t) TOOLCHAIN="${OPTARG}" ;;
+    x) USE_PORTABLE=ON
+       BUILD_FLAGS="${BUILD_FLAGS} -x" ;;
     v) USE_VEXT=ON
        BUILD_FLAGS="${BUILD_FLAGS} -v" ;;
     p) USE_PEXT=ON
@@ -49,13 +53,16 @@ while getopts 't:vpis:l:e:h' flag; do
        BUILD_FLAGS="${BUILD_FLAGS} -i" ;;
     s) SIM="${OPTARG}"
        SIM_FLAGS="-s ${SIM}" ;;
+    b) BUILD_TYPE="${OPTARG}" ;;
     l) VLEN="-l ${OPTARG}";;
     e) ELEN="-e ${OPTARG}";;
     * | h) echo "Provide correct arguments.  Ex:  ./unit_tests.sh -t (GCC/LLVM/x86) -v -s (Spike/OVPsim) -l 1024"
        echo "-t : toolchain to use"
+       echo "-x : enable portable mode"
        echo "-v : enable/disable VEXT"
        echo "-p : enable/disable PEXT"
        echo "-i : enable/disable IMV"
+       echo "-b : build type"
        echo "-s : Select simulator.  If unused, executes natively"
        echo "-l : Vector Length"
        echo "-e : Element width"
@@ -72,8 +79,11 @@ if [ $# -eq 0 ];then
     echo "No input arguments supplied.  Run ./unit_tests.sh -h to see required input"
     exit 1
 elif [ "${SIM}" == "" ] && ([ "${USE_VEXT}" == "ON" ] || [ "${USE_PEXT}" == "ON" ]);then
-    echo "Native execution does not support VEXT or PEXT.  Please select a simulator with the -s flag"
-    exit 1
+    if [ "${USE_PORTABLE}" != "ON" ];
+    then
+        echo "Native execution does not support VEXT or PEXT.  Please select a simulator with the -s flag"
+        exit 1
+    fi
 elif [ "${VLEN}" == "" ] && ([ "${USE_VEXT}" == "ON" ] || [ "${USE_IMV}" == "ON" ]); then
     echo "Please specify a vector length"
     exit 1
@@ -124,7 +134,7 @@ fi
 echo -t ${TOOLCHAIN} ${BUILD_FLAGS} ${BUILD_TYPE} ${SIM_FLAGS}
 
 
-if ./build.sh -t ${TOOLCHAIN} ${BUILD_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN} -b Release;then
+if ./build.sh -t ${TOOLCHAIN} ${BUILD_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN} -b ${BUILD_TYPE};then
     make -j $(nproc) -C ${BUILD_DIR}
     (
       cd ${BUILD_DIR}

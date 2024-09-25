@@ -58,7 +58,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_wrapper_s8(const muriscv_nn_context 
     if (1 == dw_conv_params->ch_mult && input_dims->n == 1 && dw_conv_params->dilation.w == 1 &&
         dw_conv_params->dilation.h == 1)
     {
-#if !defined(USE_VEXT)
+#if !defined(USE_VEXT) && !defined(USE_PORTABLE_VEXT)
         if ((filter_dims->w == 3) && (filter_dims->h == 3) && (dw_conv_params->padding.h <= 1) &&
             (dw_conv_params->padding.w <= 1))
         {

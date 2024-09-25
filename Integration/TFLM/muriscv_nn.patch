@@ -190,8 +190,13 @@ index 00000000..677e4c6a
 +
 +# Enable vector extension if requested
 +ifeq ($(USE_VEXT), ON)
-+  PLATFORM_FLAGS += \
-+    -DUSE_VEXT
++  ifeq ($(USE_PORTABLE), ON)
++    PLATFORM_FLAGS += \
++      -DUSE_PORTABLE_VEXT
++  else
++    PLATFORM_FLAGS += \
++      -DUSE_VEXT
++  endif
 +endif
 +# Enable packed extension if requested
 +ifeq ($(USE_PEXT), ON)

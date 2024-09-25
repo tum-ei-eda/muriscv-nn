@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+set -e
+
 SKIP_INSTALL=OFF;
 
 while getopts 's' flag; do
@@ -43,7 +45,7 @@ if [ ! -d ./rv32gcv ]; then
     ./download_rv32gcv.sh
 fi
 if [ ! -d ./rv32imv ]; then
-    
+
     echo "MISSING rv32imv in Toolchains folder.  Downloading prebuilt GCC with script now."
     ./download_rv32imv.sh
 fi
@@ -51,29 +53,29 @@ cd ../Sim/Spike
 
 #Build Spike
 echo "Building spike"
-git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+test -d riscv-isa-sim || git clone https://github.com/riscv-software-src/riscv-isa-sim.git
 cd riscv-isa-sim
 export RISCV=$PWD/../../../Toolchain/rv32gcv
 export PATH=$PATH:$RISCV/bin
 echo $PATH
-mkdir build
+mkdir -p build
 cd build
 ../configure --prefix=$RISCV
-make
+make -j$(nproc)
 sudo make install
 
 #build PK for ilp32d
 cd ../..
 echo "Building pk_ilp32d"
-git clone https://github.com/riscv-software-src/riscv-pk.git
+test -d riscv-pk || git clone https://github.com/riscv-software-src/riscv-pk.git
 cd riscv-pk
 export RISCV=$PWD/../../../Toolchain/rv32gcv
 export PATH=$PATH:$RISCV/bin
 echo $PATH
-mkdir build
+mkdir -p build
 cd build
-../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv --with-abi=ilp32d
-make
+../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv_zicsr_zifencei --with-abi=ilp32d
+make -j$(nproc)
 sudo make install
 
 #Copy spike and pk_ilp32d to bin folder
@@ -90,10 +92,10 @@ rm -r build
 export RISCV=$PWD/../../../Toolchain/rv32imv
 export PATH=$PATH_ORIG:$RISCV/bin
 echo $PATH
-mkdir build
+mkdir -p build
 cd build
 ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32imv --with-abi=ilp32
-make
+make -j $(nproc)
 sudo make install
 
 #copy ilp32 to bin folder

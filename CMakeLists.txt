@@ -22,7 +22,7 @@ message(STATUS "CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CM
 # Choose a simulator to run on.
 set(SIMULATOR "Spike" CACHE STRING "Specify the simulator.")
 set_property(CACHE SIMULATOR PROPERTY STRINGS OVPsim Spike ETISS Vicuna)
-if(${SIMULATOR} STREQUAL "Vicuna")
+if("${SIMULATOR}" STREQUAL "Vicuna")
   set(SIM_VICUNA "ON")
 endif()
 
@@ -30,6 +30,7 @@ endif()
 set(TOOLCHAIN "GCC" CACHE STRING "Specify which toolchain to use.")
 set_property(CACHE TOOLCHAIN PROPERTY STRINGS LLVM GCC x86 NONE)
 
+option(USE_PORTABLE "Use the Portable Kernels" OFF)
 # RISC-V extensions for HW acceleration
 option(USE_VEXT "Use the RISC-V V Vector Extension" OFF)
 option(USE_PEXT "Use the RISC-V P Packed Extension" OFF)
@@ -41,7 +42,7 @@ option(USE_PEXT "Use the RISC-V P Packed Extension" OFF)
 # - rv32gcv / ilp32d -> vector support
 # - rv32gcp / ilp32d -> packed support
 # - rv32imzve32x / ilp32 -> integer only and embedded vector support (GCC only supports rv32imv!)
-if(${SIMULATOR} STREQUAL "Vicuna") # Vicuna only supports a reduced set of extensions
+if("${SIMULATOR}" STREQUAL "Vicuna") # Vicuna only supports a reduced set of extensions
   if(USE_VEXT)
     set(RISCV_ARCH "rv32imzve32x" CACHE STRING "march argument to the compiler, using the vector extension")
   elseif(USE_PEXT)
@@ -88,7 +89,7 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 
 # ETISS is a special snowflake
-if(${SIMULATOR} STREQUAL "ETISS")
+if("${SIMULATOR}" STREQUAL "ETISS")
   file(GLOB_RECURSE PUPLINO_TARGET_CMAKE "${CMAKE_CURRENT_SOURCE_DIR}/Sim/ETISS/PulpinoTarget.cmake")
   include(${PUPLINO_TARGET_CMAKE})
 endif()
@@ -105,13 +106,21 @@ set(CMAKE_CXX_STANDARD 11)
 if(USE_VEXT AND USE_PEXT)
   message(FATAL_ERROR "V/P-Extension can not be enabled simultaneously.")
 elseif(USE_VEXT)
-  add_definitions(-DUSE_VEXT)
+  if(USE_PORTABLE)
+    add_definitions(-DUSE_PORTABLE_VEXT)
+  else()
+    add_definitions(-DUSE_VEXT)
+  endif()
 elseif(USE_PEXT)
-  add_definitions(-DUSE_PEXT)
+  if(USE_PORTABLE)
+    add_definitions(-DUSE_PORTABLE_PEXT)
+  else()
+    add_definitions(-DUSE_PEXT)
+  endif()
 endif()
 
 # Let preprocessor know which simulator we will be running on
-string(TOUPPER ${SIMULATOR} SIMULATOR_UP)
+string(TOUPPER "${SIMULATOR}" SIMULATOR_UP)
 add_definitions(-DSIM_${SIMULATOR_UP})
 
 # Set build mode, Debug by default

@@ -58,7 +58,7 @@ jobs:
         mkdir build
         cd build
         ../configure --prefix=$RISCV
-        make
+        make -j$(nproc)
         sudo make install
 
     - name: Clone PK Repo
@@ -74,7 +74,7 @@ jobs:
         mkdir build
         cd build
         ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv_zicsr_zifencei --with-abi=ilp32d
-        make
+        make -j$(nproc)
         sudo make install
 
     - name: Copy Spike and PK binaries to correct location
@@ -94,7 +94,7 @@ jobs:
         mkdir build
         cd build
         ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32imv_zicsr_zifencei --with-abi=ilp32
-        make
+        make -j$(nproc)
         sudo make install
 
     - name: PK Binary to correct location
