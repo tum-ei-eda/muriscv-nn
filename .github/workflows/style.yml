@@ -12,20 +12,31 @@ jobs:
           - 'Source'
           - 'Include'
     steps:
-    - uses: actions/checkout@v3
-    - name: Run clang-format style check for C/C++ programs.
-      uses: jidicula/clang-format-action@v4.10.2
+    - name: Check out Git repository
+      uses: actions/checkout@v3
+    - uses: cpp-linter/cpp-linter-action@v2
+      id: linter
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        clang-format-version: '13'
-        check-path: ${{ matrix.path }}
-    - name: Check for changes
-      run: |
-        git status
+        style: 'file'  # Use .clang-format config file
+        tidy-checks: '' # Use .clang-tidy config file
+        # only 'update' a single comment in a pull request's thread.
+        thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+    # - name: Run clang-format style check for C/C++ programs.
+    #   uses: jidicula/clang-format-action@v4.10.2
+    #   with:
+    #     clang-format-version: '13'
+    #     check-path: ${{ matrix.path }}
+    # - name: Check for changes
+    #   run: |
+    #    git status
   cmake-format:
     name: Formatting Check (CMake)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Check out Git repository
+      uses: actions/checkout@v3
     - name: Format CMake files
       id: cmake-format
       uses: PuneetMatharu/cmake-format-lint-action@v1.0.1
@@ -54,19 +65,34 @@ jobs:
   python-format:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: psf/black@stable
+    - name: Check out Git repository
+      uses: actions/checkout@v3
+    # - uses: psf/black@stable
+    #   with:
+    #     options: "--check --verbose --preview -l 120"
+    #     version: "~= 24.8"
+    # - name: Check for changes
+    #   run: |
+    #     git status
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
-        options: "--check --verbose --preview -l 120"
-        version: "~= 24.8"
-    - name: Check for changes
-      run: |
-        git status
+        python-version: 3.10
+
+    - name: Install Python dependencies
+      run: pip install black flake8
+
+    - name: Run linters
+      uses: wearerequired/lint-action@v1
+      with:
+        black: true
+        flake8: true
   shell-format:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v1
+    - name: Check out Git repository
+      uses: actions/checkout@v3
     - name: Run ShellCheck
       uses: azohra/shell-linter@latest
     - name: Check for changes
