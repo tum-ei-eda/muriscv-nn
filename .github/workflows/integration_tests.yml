@@ -217,7 +217,7 @@ jobs:
         TVM_VERSION: ${{ matrix.tvm_version }}
 
 
-  TFLM_Integration_Tests_Spike:
+  TFLM_Integration_Tests:
     strategy:
         fail-fast: false
         matrix:

@@ -31,7 +31,7 @@ jobs:
       run: |
         ./unit_tests.sh -t x86
 
-  Test_Spike:
+  Test_RISCV:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
