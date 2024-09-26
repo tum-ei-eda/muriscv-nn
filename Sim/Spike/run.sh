@@ -29,9 +29,13 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [[ $2 == "rv32gcv" || $2 == "rv32gcp" || $2 == "rv32gc" ]]; then
+if [[ $2 == "rv32gc" || $2 == "rv32gcp" ]]; then
+  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm $SCRIPT_DIR/bin/pk_ilp32d $1
+elif [[ $2 == "rv32gcv" ]]; then
   $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm_zve${4}d_zvl${3}b $SCRIPT_DIR/bin/pk_ilp32d $1
-elif [[ $2 == "rv32imv" || $2 == "rv32im" ]]; then
+elif [[ $2 == "rv32im" ]]; then
+  $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm $SCRIPT_DIR/bin/pk_ilp32 $1
+elif [[ $2 == "rv32imv" ]]; then
   $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm_zve${4}d_zvl${3}b $SCRIPT_DIR/bin/pk_ilp32 $1
 elif [[ "rv32imzve32x" ]]; then
   $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm_zvl${3}b $SCRIPT_DIR/bin/pk_ilp32 $1
