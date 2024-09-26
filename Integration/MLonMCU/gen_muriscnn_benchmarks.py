@@ -716,7 +716,7 @@ def main():
         "--baseline",
         type=int,
         default=None,
-        help=f"Compare results with this row (default: skip comparison)",
+        help="Compare results with this row (default: skip comparison)",
     )
     parser.add_argument(
         "--validate",

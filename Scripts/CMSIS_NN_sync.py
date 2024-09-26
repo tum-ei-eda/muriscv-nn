@@ -1,9 +1,6 @@
 #! /usr/bin/env python3
 
-from cgi import test
 import os
-from time import pthread_getcpuclockid
-from xml.etree.ElementTree import tostring
 from git import Repo
 import datetime
 
@@ -189,7 +186,8 @@ def get_function_blocks(file):
             else:
                 func_name = name[1]
 
-            # Find the end of the function declaration ( a ')' in the line).  This handles functions with arguments across multiple lines
+            # Find the end of the function declaration ( a ')' in the line).
+            # This handles functions with arguments across multiple lines
             while not (")" in file[ptr_file]):
                 func_block.append(file[ptr_file])
                 ptr_file += 1
@@ -353,7 +351,8 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
     for block in muriscv_functions:
         if block in old_func_remove:
             i = 0
-            # search for block where line number is greater than the block to be removed.  Identify where to place new block in order
+            # search for block where line number is greater than the block to be removed.
+            # Identify where to place new block in order
             while i < len(new_file_ops):
                 if new_file_ops[i][0] != "ADD":
                     if block[1] < new_file_ops[i][3][1]:
@@ -363,7 +362,8 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
 
         elif block[0] == "MURISCV_NN NEW CODE":
             i = 0
-            # search for block where line number is greater than the block to be removed.  Identify where to place new block in order
+            # search for block where line number is greater than the block to be removed.
+            # Identify where to place new block in order
             while i < len(new_file_ops):
                 if new_file_ops[i][0] != "ADD":
                     if block[1] < new_file_ops[i][3][1]:
@@ -371,10 +371,10 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
                 i += 1
             new_file_ops.insert(i, ["NEW CODE", block[0], [], block])
 
-        # Calculate length to the next sync point.  This determines if new lines have been added.  If they get added mention it.  Dont do line by line comparison in this case, not useful
-        # If length to next sync point is the same, operate line by line and check for changes.  Do operations when you reach the proper pointers
-        # at sync point, compare functions
-        # repeat
+        # Calculate length to the next sync point.  This determines if new lines have been added.
+        # If they get added mention it.  Dont do line by line comparison in this case, not useful.
+        # If length to next sync point is the same, operate line by line and check for changes.
+        # Do operations when you reach the proper pointers at sync point, compare functions repeat.
 
     muriscv_file_new.append(muriscv_file_old[0])
 
@@ -382,7 +382,8 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
     ptr_cmsis = 0
     file_changed = False
     while ptr_muriscv < len(muriscv_file_old) or ptr_cmsis < len(cmsis_file_updated):
-        # Find the next "Sync Point".  This is where both files should match.  This is either the beginning of a function declaration present in both files or the end of the file
+        # Find the next "Sync Point".  This is where both files should match.
+        # This is either the beginning of a function declaration present in both files or the end of the file.
         # All operations up to/including the sync point will be performed in this iteration of the loop
         next_ops = new_file_ops
         sync_ptr_muriscv = len(muriscv_file_old)
@@ -402,7 +403,8 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
         len_muriscv = sync_ptr_muriscv - ptr_muriscv
         len_cmsis = sync_ptr_cmsis - ptr_cmsis
 
-        # Remove operations we are about to perform from the remaining list and calculate length of code outside of blocks
+        # Remove operations we are about to perform from the remaining list and calculate length
+        # of code outside of blocks
         for op in next_ops:
             new_file_ops.remove(op)
             if op[0] == "ADD":
@@ -490,7 +492,8 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
                             + " ######"
                         )
                         file_changed = True
-                # Write the most updated line from cmsis to the new file and advance both pointers.  Unless final sync point has been reached, which is the end of the file
+                # Write the most updated line from cmsis to the new file and advance both pointers.
+                # Unless final sync point has been reached, which is the end of the file
 
                 # If sync pointer was reached by adding a block, dont append
                 if ptr_cmsis != sync_ptr_cmsis:
@@ -642,7 +645,8 @@ for subdir_cmsis in subdir_cmsis_gen:
 
 
 # This block copies over any new Test folders and corresponding data
-# Code works, for copying over tests and adding them correctly, but arm has updated its test framework.  TODO: UPDATE ALL TESTS TO THIS NEW FRAMEWORK
+# Code works, for copying over tests and adding them correctly, but arm has updated its test framework.
+# TODO: UPDATE ALL TESTS TO THIS NEW FRAMEWORK
 # new_tests = []
 # subdir_cmsis = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/'))
 # subdir_muriscv = next(os.walk(muriscv_dir + '/Tests/TestCases'))
@@ -670,7 +674,7 @@ for subdir_cmsis in subdir_cmsis_gen:
 #            #need to copy over new test source and update names
 #            create_muriscv_nn_file(new_name+".c", muriscv_dir + '/Tests/TestCases/' + new_name, test_dir + ".c", cmsis_dir + '/Tests/UnitTest/TestCases/' + test_dir)
 #
-##add new tests to cmakelists directory
+# #add new tests to cmakelists directory
 # if len(new_tests) > 0:
 #    cmakelist = open(muriscv_dir + '/Tests/TestCases/CMakeLists.txt', "r+")
 #    file = []
@@ -684,7 +688,7 @@ for subdir_cmsis in subdir_cmsis_gen:
 #        cmakelist.writelines("add_subdirectory("+test_name + ")\n")
 #    cmakelist.close()
 #
-##copy new test data
+# #copy new test data
 # subdir_cmsis = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/TestData'))
 # subdir_muriscv = next(os.walk(muriscv_dir + '/Tests/TestData'))
 # for data_dir in subdir_cmsis[1]:

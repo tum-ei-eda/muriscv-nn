@@ -109,7 +109,7 @@ if args.split:
         for toolchain_name, toolchain_data in framework_data.items():
             for optimize_name, optimize_data in toolchain_data.items():
                 filename = (
-                    f"Benchmarks-"
+                    "Benchmarks-"
                     + date
                     + "-"
                     + framework_name.upper()
@@ -125,11 +125,6 @@ if args.split:
                     & (df["Toolchain"] == toolchain_name)
                     & (df["Optimize"] == optimize_name)
                 ]
-                # print("fn", framework_name)
-                # print("tn", toolchain_name)
-                # print("flt", (df["Framework"] == framework_name) & (df["Toolchain"] == toolchain_name) & (df["Optimize"]))
-                # print("df2", df2)
-                # input("123")
                 content = template.render(
                     data=data2,
                     model_descriptions=MODEL_DESCS,
@@ -148,7 +143,7 @@ if args.split:
                 df2.to_csv(filename + ".csv")
                 print(f"... wrote {filename}.csv")
 else:
-    filename = f"Benchmarks-" + date
+    filename = "Benchmarks-" + date
     # data2 = {}
     # for framework_name, framework_data in data.items():
     #     for toolchain_name, toolchain_data in framework_data.items():

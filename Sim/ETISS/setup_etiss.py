@@ -5,7 +5,6 @@ import os
 import git
 import subprocess
 import multiprocessing
-import argparse
 
 
 logging.basicConfig(
@@ -50,15 +49,14 @@ class Config(object):
 def create_ini_file(path: str, config: Config):
     with open(path, "w") as f:
         f.write("[IntConfigurations]\n")
-        # TODO(fabianpedd): Why is it necessary to make this larger than the rest? 0x10 times larger is just a random choice
-        f.write(f"simple_mem_system.memseg_length_00=" + hex(config.PULPINO_ROM_START * 0x10) + "\n")
-        f.write(f"simple_mem_system.memseg_length_00=" + hex(config.PULPINO_ROM_SIZE * 0x10) + "\n")
-        f.write(f"simple_mem_system.memseg_origin_01=" + hex(config.PULPINO_RAM_START * 0x10) + "\n")
-        f.write(f"simple_mem_system.memseg_length_01=" + hex(config.PULPINO_RAM_SIZE * 0x10) + "\n")
+        f.write("simple_mem_system.memseg_length_00=" + hex(config.PULPINO_ROM_START * 0x10) + "\n")
+        f.write("simple_mem_system.memseg_length_00=" + hex(config.PULPINO_ROM_SIZE * 0x10) + "\n")
+        f.write("simple_mem_system.memseg_origin_01=" + hex(config.PULPINO_RAM_START * 0x10) + "\n")
+        f.write("simple_mem_system.memseg_length_01=" + hex(config.PULPINO_RAM_SIZE * 0x10) + "\n")
 
 
-# TODO(fabianpedd): add stdout=subprocess.PIPE and only print with logging level debug
-# TODO(fabianpedd): catch and handle expections from subprocess and (only then) print stderr / stdout using logging level error
+# TODO: add stdout=subprocess.PIPE and only print with logging level debug
+# TODO: catch and handle expections from subprocess and (only then) print stderr / stdout using logging level error
 #                  - https://docs.python.org/3/library/subprocess.html
 #                  - https://docs.python.org/3/library/subprocess.html#subprocess.CalledProcessError
 def setup_etiss(config: Config):
@@ -67,7 +65,7 @@ def setup_etiss(config: Config):
     logging.info("Cloning ETISS from %s into %s", config.ETISS_GIT_URL, config.etiss_dir)
     try:
         git.Repo.clone_from(config.ETISS_GIT_URL, config.etiss_dir, branch=config.ETISS_GIT_BRANCH, progress=Progress())
-    except:
+    except Exception:
         logging.warning("ETISS directory %s already exists", config.etiss_dir)
 
     # Build ETISS

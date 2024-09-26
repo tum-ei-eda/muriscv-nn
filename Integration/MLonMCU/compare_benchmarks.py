@@ -11,14 +11,14 @@ def main():
         "--reference",
         type=str,
         action="store",
-        help=f"Path to reference benchmark .csv",
+        help="Path to reference benchmark .csv",
     )
     parser.add_argument(
         "-b",
         "--benchmark",
         type=str,
         action="store",
-        help=f"Path to newly generated benchmark .csv",
+        help="Path to newly generated benchmark .csv",
     )
 
     args = parser.parse_args()
