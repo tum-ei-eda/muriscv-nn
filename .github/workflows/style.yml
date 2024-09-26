@@ -9,6 +9,9 @@ jobs:
     steps:
     - name: Check out Git repository
       uses: actions/checkout@v3
+    - name: Run CMake to generate compilation database
+      run: |
+        cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DTOOLCHAIN=x86
     - uses: cpp-linter/cpp-linter-action@v2
       id: linter
       env:
@@ -18,6 +21,7 @@ jobs:
         tidy-checks: '' # Use .clang-tidy config file
         # only 'update' a single comment in a pull request's thread.
         thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+        database: 'build'
     # - name: Run clang-format style check for C/C++ programs.
     #   uses: jidicula/clang-format-action@v4.10.2
     #   with:
