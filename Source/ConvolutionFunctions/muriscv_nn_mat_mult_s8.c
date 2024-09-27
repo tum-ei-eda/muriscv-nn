@@ -38,22 +38,22 @@
  */
 
 int8_t *muriscv_nn_mat_mult_s8(const int8_t *input_row,
-                           const int8_t *input_col,
-                           const uint16_t output_ch,
-                           const uint16_t col_batches,
-                           const int32_t *output_shift,
-                           const int32_t *output_mult,
-                           const int32_t out_offset,
-                           const int32_t col_offset,
-                           const int32_t row_offset,
-                           const int16_t activation_min,
-                           const int16_t activation_max,
-                           const uint16_t row_len,
-                           const int32_t *const bias,
-                           int8_t *out)
+                               const int8_t *input_col,
+                               const uint16_t output_ch,
+                               const uint16_t col_batches,
+                               const int32_t *output_shift,
+                               const int32_t *output_mult,
+                               const int32_t out_offset,
+                               const int32_t col_offset,
+                               const int32_t row_offset,
+                               const int16_t activation_min,
+                               const int16_t activation_max,
+                               const uint16_t row_len,
+                               const int32_t *const bias,
+                               int8_t *out)
 {
 #if defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
-    //Our old implementation
+    // Our old implementation
     (void)row_offset;
 
     // TODO(fabianpedd): unroll the batch loop 4x similiar to how its done in

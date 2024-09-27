@@ -1,4 +1,4 @@
-	// Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
+// Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
 /*
  * SPDX-FileCopyrightText: Copyright 2023 Arm Limited and/or its affiliates <open-source-office@arm.com>
  *
@@ -42,18 +42,20 @@
  */
 
 int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_mve(const muriscv_nn_dims *input_dims,
-                                                                      const muriscv_nn_dims *filter_dims)
+                                                             const muriscv_nn_dims *filter_dims)
 {
     (void)input_dims;
     return (4 * CH_IN_BLOCK_MVE * filter_dims->w * filter_dims->h) * (int32_t)sizeof(int8_t);
 }
 
-int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_dsp(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
+int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_dsp(const muriscv_nn_dims *input_dims,
+                                                             const muriscv_nn_dims *filter_dims)
 {
     return (input_dims->c * filter_dims->w * filter_dims->h) * sizeof(int16_t);
 }
 
-int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
+int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(const muriscv_nn_dims *input_dims,
+                                                         const muriscv_nn_dims *filter_dims)
 {
 #if defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     return muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_mve(input_dims, filter_dims);
@@ -67,9 +69,9 @@ int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(const muriscv_nn_dims *
 }
 
 int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size(const muriscv_nn_dw_conv_params *dw_conv_params,
-                                                      const muriscv_nn_dims *input_dims,
-                                                      const muriscv_nn_dims *filter_dims,
-                                                      const muriscv_nn_dims *output_dims)
+                                                             const muriscv_nn_dims *input_dims,
+                                                             const muriscv_nn_dims *filter_dims,
+                                                             const muriscv_nn_dims *output_dims)
 {
     int32_t size = 0;
 
@@ -90,9 +92,9 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size(const muriscv_nn_dw
 }
 
 int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size_dsp(const muriscv_nn_dw_conv_params *dw_conv_params,
-                                                          const muriscv_nn_dims *input_dims,
-                                                          const muriscv_nn_dims *filter_dims,
-                                                          const muriscv_nn_dims *output_dims)
+                                                                 const muriscv_nn_dims *input_dims,
+                                                                 const muriscv_nn_dims *filter_dims,
+                                                                 const muriscv_nn_dims *output_dims)
 {
     int32_t size = 0;
 
@@ -111,9 +113,9 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size_dsp(const muriscv_n
 }
 
 int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size_mve(const muriscv_nn_dw_conv_params *dw_conv_params,
-                                                          const muriscv_nn_dims *input_dims,
-                                                          const muriscv_nn_dims *filter_dims,
-                                                          const muriscv_nn_dims *output_dims)
+                                                                 const muriscv_nn_dims *input_dims,
+                                                                 const muriscv_nn_dims *filter_dims,
+                                                                 const muriscv_nn_dims *output_dims)
 {
     int32_t size = 0;
 

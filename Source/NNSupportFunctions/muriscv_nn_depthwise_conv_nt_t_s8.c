@@ -44,18 +44,18 @@
  */
 
 muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
-                                                  const q7_t *rhs,
-                                                  const int32_t input_offset,
-                                                  const int32_t active_ch,
-                                                  const int32_t total_ch,
-                                                  const int32_t *out_shift,
-                                                  const int32_t *out_mult,
-                                                  const int32_t out_offset,
-                                                  const int32_t activation_min,
-                                                  const int32_t activation_max,
-                                                  const uint16_t row_x_col,
-                                                  const int32_t *const output_bias,
-                                                  q7_t *out)
+                                                    const q7_t *rhs,
+                                                    const int32_t input_offset,
+                                                    const int32_t active_ch,
+                                                    const int32_t total_ch,
+                                                    const int32_t *out_shift,
+                                                    const int32_t *out_mult,
+                                                    const int32_t out_offset,
+                                                    const int32_t activation_min,
+                                                    const int32_t activation_max,
+                                                    const uint16_t row_x_col,
+                                                    const int32_t *const output_bias,
+                                                    q7_t *out)
 {
 #if defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     const int32_t *bias = output_bias;
@@ -106,7 +106,8 @@ muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_s8(const q7_t *lhs,
         {
 #if defined(USE_VEXT)
             vint32m2_t ker = vsext_vf4_i32m2(vle8_v_i8mf2(rhs_0, vl), vl);
-            ker_sum = vmacc_vv_i32m2(ker_sum, ker, vmv_v_x_i32m2(1, vl), vl);  // TODO(fabianpedd): Should be a tail undisturbed add
+            ker_sum = vmacc_vv_i32m2(
+                ker_sum, ker, vmv_v_x_i32m2(1, vl), vl); // TODO(fabianpedd): Should be a tail undisturbed add
 
             vint32m2_t ip = vsext_vf4_i32m2(vle8_v_i8mf2(lhs_0, vl), vl);
             out_0 = vmacc_vv_i32m2(out_0, ip, ker, vl);

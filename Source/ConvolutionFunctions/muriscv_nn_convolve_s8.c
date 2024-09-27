@@ -273,7 +273,6 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
 
                 uint16_t col_count = (input_ch * kernel_y * kernel_x) >> 2;
 
-
                 while (col_count)
                 {
                     q31_t inA = muriscv_nn_read_q7x4_ia_fast(&ker_a);
@@ -288,7 +287,6 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
                     sum = __rv_kmada(sum, ker_a2, ip_b2);
 
                     col_count--;
-
                 }
                 /* Handle left over mac */
                 col_count = input_ch * kernel_y * kernel_x & 0x3;
@@ -317,26 +315,24 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
         output_data += (output_x * output_y * output_ch);
     }
 
-
-
     /* Return to application */
     return MURISCV_NN_SUCCESS;
 }
 
-//int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
+// int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
 //{
-//    // TODO(fabianpedd): Check if this special buffer case makes sense in the vector case (im2col)?
-//#if defined(USE_VEXT)
-//    int32_t col_length = input_dims->c * filter_dims->w * filter_dims->h;
-//    // Get number of complete int16 lanes(multiple of 8) for given col_length. This is dependent on
-//    // implementation of  muriscv_nn_mat_mult_s8
-//    col_length = (col_length + 7) / 8;
-//    // 4 -> number of im2col buffers, 8 -> 8 elements per Q register
-//    return 4 * col_length * 8 * (int32_t)sizeof(int8_t);
-//#else
-//    return (2 * input_dims->c * filter_dims->w * filter_dims->h) * (int32_t)sizeof(int16_t);
-//#endif
-//}
+//     // TODO(fabianpedd): Check if this special buffer case makes sense in the vector case (im2col)?
+// #if defined(USE_VEXT)
+//     int32_t col_length = input_dims->c * filter_dims->w * filter_dims->h;
+//     // Get number of complete int16 lanes(multiple of 8) for given col_length. This is dependent on
+//     // implementation of  muriscv_nn_mat_mult_s8
+//     col_length = (col_length + 7) / 8;
+//     // 4 -> number of im2col buffers, 8 -> 8 elements per Q register
+//     return 4 * col_length * 8 * (int32_t)sizeof(int8_t);
+// #else
+//     return (2 * input_dims->c * filter_dims->w * filter_dims->h) * (int32_t)sizeof(int16_t);
+// #endif
+// }
 
 /**
  * @} end of NNConv group

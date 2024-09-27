@@ -118,17 +118,18 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                     {
                         if (i_ker_y < 0 || i_ker_y >= input_y || i_ker_x < 0 || i_ker_x >= input_x)
                         {
-                            // TODO(fabianpedd): Here they are loading -input_offset into the zero-padding. This allows for
-                            // easier handling of padding edge case when accumulating, as one can simply add input_offset to
-                            // all accumulating values (the zero-padded) border then turns zero. However, this requires the
-                            // if (padded == 0) case distinction. Maybe there is a cleaner way to do this?!
+                            // TODO(fabianpedd): Here they are loading -input_offset into the zero-padding. This allows
+                            // for easier handling of padding edge case when accumulating, as one can simply add
+                            // input_offset to all accumulating values (the zero-padded) border then turns zero.
+                            // However, this requires the if (padded == 0) case distinction. Maybe there is a cleaner
+                            // way to do this?!
                             muriscv_nn_memset_s8(lhs_buffer, (int8_t)-input_offset, (uint32_t)active_ch);
                         }
                         else
                         {
                             muriscv_nn_memcpy_s8(lhs_buffer,
-                                          input_slice + (i_ker_y * input_x + i_ker_x) * input_ch,
-                                          (uint32_t)active_ch);
+                                                 input_slice + (i_ker_y * input_x + i_ker_x) * input_ch,
+                                                 (uint32_t)active_ch);
                         }
                         lhs_buffer += CH_IN_BLOCK_MVE;
                     }
@@ -141,18 +142,18 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                     lhs_buffer = (int8_t *)buffer_a;
 
                     muriscv_nn_depthwise_conv_nt_t_s8(lhs_buffer,
-                                                  kernel + block_offset,
-                                                  input_offset,
-                                                  active_ch,
-                                                  input_ch,
-                                                  output_shift + block_offset,
-                                                  output_mult + block_offset,
-                                                  output_offset,
-                                                  output_activation_min,
-                                                  output_activation_max,
-                                                  kernel_size,
-                                                  bias + block_offset,
-                                                  out);
+                                                      kernel + block_offset,
+                                                      input_offset,
+                                                      active_ch,
+                                                      input_ch,
+                                                      output_shift + block_offset,
+                                                      output_mult + block_offset,
+                                                      output_offset,
+                                                      output_activation_min,
+                                                      output_activation_max,
+                                                      kernel_size,
+                                                      bias + block_offset,
+                                                      out);
 
                     out += (4 * input_ch);
                     buffer_count = 0;
@@ -240,7 +241,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
 
         active_ch = MIN(CH_IN_BLOCK_MVE, remaining_ch);
         remaining_ch -= CH_IN_BLOCK_MVE;
-        }
+    }
 
 #else // defined(USE_PEXT)
 
