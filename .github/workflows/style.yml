@@ -22,6 +22,7 @@ jobs:
         # only 'update' a single comment in a pull request's thread.
         thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
         database: 'build'
+        step-summary: true
     # - name: Run clang-format style check for C/C++ programs.
     #   uses: jidicula/clang-format-action@v4.10.2
     #   with:
