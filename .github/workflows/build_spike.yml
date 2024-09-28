@@ -10,6 +10,12 @@ on:
 jobs:
   Build_Spike:
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        spike_ref:
+        - master
+        pk_ref:
+        - 1a52fa44aba49307137ea2ad5263613da33a877b
 
     steps:
     - uses: actions/checkout@v4
@@ -46,7 +52,9 @@ jobs:
 
     - name: Clone Spike Repo
       working-directory: ./Sim/Spike
-      run: git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+      run: |
+        git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+        git -C riscv-isa-sim checkout ${{ matrix.spike_ref }}
 
     - name: Build Spike
       working-directory: ./Sim/Spike/riscv-isa-sim
@@ -63,7 +71,9 @@ jobs:
 
     - name: Clone PK Repo
       working-directory: ./Sim/Spike
-      run: git clone https://github.com/riscv-software-src/riscv-pk.git
+      run: |
+        git clone https://github.com/riscv-software-src/riscv-pk.git
+        git -C riscv-pk checkout ${{ matrix.pk_ref }}
 
     - name: Build PK for ilp32d
       working-directory: ./Sim/Spike/riscv-pk
