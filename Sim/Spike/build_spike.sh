@@ -20,10 +20,44 @@
 set -e
 
 SKIP_INSTALL=OFF;
+SPIKE_REF=master
+PK_REF=master  # Working commit: 1a52fa44aba49307137ea2ad5263613da33a877b
 
-while getopts 's' flag; do
+while getopts 'sh-:' flag; do
   case "${flag}" in
     s) SKIP_INSTALL=ON ;;
+    -)
+        case "${OPTARG}" in
+            spike_ref)
+                val="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+                SPIKE_REF=${val}
+                ;;
+            spike_ref=*)
+                val=${OPTARG#*=}
+                SPIKE_REF=${val}
+                ;;
+            pk_ref)
+                val="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+                PK_REF=${val}
+                ;;
+            pk_ref=*)
+                val=${OPTARG#*=}
+                PK_REF=${val}
+                ;;
+            *)
+                if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
+                    echo "Unknown option --${OPTARG}. Use -h to see valid options." >&2
+                    exit 1
+                fi
+                ;;
+        esac;;
+    h | *)
+        echo "usage: $0 [-s] [--spike-ref[=]<value>] [--pk-ref[=]<value>]"
+       echo "-s : Skip apt install step (non-sudo mode)"
+       echo "--spike-ref : Branch/commit/tag of riscv-isa-sim repo"
+       echo "--pk-ref : Branch/commit/tag of riscv-pk repo"
+       exit 1
+       ;;
  esac
 done
 
@@ -55,6 +89,7 @@ cd ../Sim/Spike
 echo "Building spike"
 test -d riscv-isa-sim || git clone https://github.com/riscv-software-src/riscv-isa-sim.git
 cd riscv-isa-sim
+git checkout $SPIKE_REF
 export RISCV=$PWD/../../../Toolchain/rv32gcv
 export PATH=$PATH:$RISCV/bin
 echo $PATH
@@ -69,6 +104,7 @@ cd ../..
 echo "Building pk_ilp32d"
 test -d riscv-pk || git clone https://github.com/riscv-software-src/riscv-pk.git
 cd riscv-pk
+git checkout $PK_REF
 export RISCV=$PWD/../../../Toolchain/rv32gcv
 export PATH=$PATH:$RISCV/bin
 echo $PATH
