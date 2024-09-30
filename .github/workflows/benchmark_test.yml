@@ -5,7 +5,7 @@ on:
 
 jobs:
   Run_Benchmark:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -93,7 +93,7 @@ jobs:
 
 
   Update_Wiki:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs: Run_Benchmark
 
     steps:

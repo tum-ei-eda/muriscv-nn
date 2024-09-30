@@ -21,7 +21,7 @@
 set -euo pipefail
 
 # Path to this script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # List of integration tests to run
 TESTS=(aww ic toy vww)
@@ -43,7 +43,7 @@ then
   pip install apache-tvm --pre
 elif [[ "$TVM_VERSION" != "" ]]
 then
-  pip install apache-tvm==$TVM_VERSION --pre
+  pip install "apache-tvm==$TVM_VERSION" --pre
 else  # same as stable
   pip install apache-tvm
 fi
@@ -63,7 +63,7 @@ for test in "${TESTS[@]}"; do
       TVMC_TARGET_ARGS="${TVMC_TARGET_ARGS} --target-cmsis-nn-mcpu cortex-m33"
     fi
 
-    python -m tvm.driver.tvmc compile ${test}/${test}.tflite \
+    python -m tvm.driver.tvmc compile "${test}/${test}.tflite" \
       --verbose \
       --runtime crt \
       --executor aot \
@@ -79,10 +79,10 @@ for test in "${TESTS[@]}"; do
       --executor-aot-unpacked-api 1 \
       --executor-aot-interface-api c \
       ${TVMC_TARGET_ARGS} \
-      --output ${test}/${test}.tar
+      --output "${test}/${test}.tar"
 
-    mkdir -p ${test}/${build}
-    tar xf ${test}/${test}.tar -C ${test}/${build}
-    rm ${test}/${test}.tar
+    mkdir -p "${test}/${build}"
+    tar xf "${test}/${test}.tar" -C "${test}/${build}"
+    rm "${test}/${test}.tar"
   done
 done

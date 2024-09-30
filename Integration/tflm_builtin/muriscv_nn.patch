@@ -78,7 +78,7 @@ index 90b0c294..d66becd1 100644
 --- a/tensorflow/lite/micro/tools/make/Makefile
 +++ b/tensorflow/lite/micro/tools/make/Makefile
 @@ -145,8 +145,6 @@ endif
-
+ 
  CC_WARNINGS := \
    -Wsign-compare \
 -  -Wdouble-promotion \
@@ -89,7 +89,7 @@ index 90b0c294..d66becd1 100644
 @@ -156,6 +154,16 @@ CC_WARNINGS := \
    -Wstrict-aliasing \
    -Wno-unused-parameter
-
+ 
 +ifeq ($(TOOLCHAIN), llvm)
 +  CC_WARNINGS += \
 +    -Wno-unused-but-set-variable
@@ -114,7 +114,7 @@ index 90b0c294..d66becd1 100644
 @@ -653,7 +660,8 @@ ifneq ($(OPTIMIZED_KERNEL_DIR),)
      $(error Incorrect OPTIMIZED_KERNEL_DIR: $(RESULT))
    endif
-
+ 
 -  include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
 +  # No need for the cmsis_nn external libs makefile when using muRISCV-NN.
 +  #include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
@@ -136,10 +136,10 @@ index 90b0c294..d66becd1 100644
    $(BINDIR)%.bin: $(BINDIR)%
 diff --git a/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
 new file mode 100644
-index 00000000..677e4c6a
+index 00000000..28546951
 --- /dev/null
 +++ b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
-@@ -0,0 +1,93 @@
+@@ -0,0 +1,98 @@
 +# Copyright (C) 2023 Chair of Electronic Design Automation, TUM
 +#
 +# Licensed under the Apache License, Version 2.0 (the "License");
@@ -190,8 +190,13 @@ index 00000000..677e4c6a
 +
 +# Enable vector extension if requested
 +ifeq ($(USE_VEXT), ON)
-+  PLATFORM_FLAGS += \
-+    -DUSE_VEXT
++  ifeq ($(USE_PORTABLE), ON)
++    PLATFORM_FLAGS += \
++      -DUSE_PORTABLE_VEXT
++  else
++    PLATFORM_FLAGS += \
++      -DUSE_VEXT
++  endif
 +endif
 +# Enable packed extension if requested
 +ifeq ($(USE_PEXT), ON)

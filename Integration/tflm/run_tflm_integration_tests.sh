@@ -22,6 +22,7 @@ set -euo pipefail
 # Path to this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+USE_PORTABLE=OFF
 USE_PEXT=OFF
 USE_VEXT=OFF
 VLEN=1024
@@ -35,8 +36,9 @@ SIMULATOR=Spike
 
 
 #Parse Input Args
-while getopts 'pvl:b:t:Se:s:h' flag; do
+while getopts 'xpvl:b:t:Se:s:h' flag; do
   case "${flag}" in
+    x) USE_PORTABLE=ON ;;
     p) USE_PEXT=ON
        RV_ARCH=rv32gcp ;;
   ``v) USE_VEXT=ON
@@ -51,7 +53,8 @@ while getopts 'pvl:b:t:Se:s:h' flag; do
     b) BENCHMARK="${OPTARG}" ;;
     t) TOOLCHAIN="${OPTARG}" ;;
     s) SIMULATOR="${OPTARG}" ;;
-    * | h) echo "Add -p to compile with rv32gcp"
+    * | h) echo "Add -x to enable portable mode"
+           echo "Add -p to compile with rv32gcp"
            echo "Add -v to compile with rv32gcv"
            echo "Specify VLEN with -l {VLEN}"
            echo "Specify ELEN with -l {ELEN}"
@@ -133,7 +136,7 @@ if [ "${SKIP_BUILD}" == OFF ]; then
   then
     cmake -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DDISABLE_TVM_INTG_TESTS=ON -DENABLE_UNIT_TESTS=OFF ..
   else
-    cmake -DRISCV_GCC_PREFIX=$(pwd)/../Toolchain/${RV_ARCH}/ -DRISCV_LLVM_PREFIX=$(pwd)/../Toolchain/llvm/bin/ -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DDISABLE_TVM_INTG_TESTS=ON -DENABLE_UNIT_TESTS=OFF ..
+    cmake -DRISCV_GCC_PREFIX=$(pwd)/../Toolchain/${RV_ARCH}/ -DRISCV_LLVM_PREFIX=$(pwd)/../Toolchain/llvm/bin/ -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DUSE_PORTABLE=${USE_PORTABLE} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DDISABLE_TVM_INTG_TESTS=ON -DENABLE_UNIT_TESTS=OFF -DVLEN=${VLEN} -DELEN=${ELEN} ..
   fi
   make all -j`nproc`
 

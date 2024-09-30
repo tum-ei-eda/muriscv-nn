@@ -70,7 +70,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
         return MURISCV_NN_ARG_ERROR;
     }
 
-#if defined(USE_VEXT) /* || defined(USE_PEXT) */
+#if defined(USE_VEXT) || defined(USE_PORTABLE_VEXT) /* || defined(USE_PEXT) */
 
     const int32_t input_x = input_dims->w;
     const int32_t input_y = input_dims->h;
@@ -90,7 +90,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
     const int32_t output_activation_max = dw_conv_params->activation.max;
     q15_t *buffer_a = (q15_t *)ctx->buf;
 
-#if defined(USE_VEXT)
+#if defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     (void)bias_dims;
     /* Generate two columns from the input tensor */
     int8_t *lhs_buffer = (int8_t *)buffer_a;
@@ -118,17 +118,18 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                     {
                         if (i_ker_y < 0 || i_ker_y >= input_y || i_ker_x < 0 || i_ker_x >= input_x)
                         {
-                            // TODO(fabianpedd): Here they are loading -input_offset into the zero-padding. This allows for
-                            // easier handling of padding edge case when accumulating, as one can simply add input_offset to
-                            // all accumulating values (the zero-padded) border then turns zero. However, this requires the
-                            // if (padded == 0) case distinction. Maybe there is a cleaner way to do this?!
+                            // TODO(fabianpedd): Here they are loading -input_offset into the zero-padding. This allows
+                            // for easier handling of padding edge case when accumulating, as one can simply add
+                            // input_offset to all accumulating values (the zero-padded) border then turns zero.
+                            // However, this requires the if (padded == 0) case distinction. Maybe there is a cleaner
+                            // way to do this?!
                             muriscv_nn_memset_s8(lhs_buffer, (int8_t)-input_offset, (uint32_t)active_ch);
                         }
                         else
                         {
                             muriscv_nn_memcpy_s8(lhs_buffer,
-                                          input_slice + (i_ker_y * input_x + i_ker_x) * input_ch,
-                                          (uint32_t)active_ch);
+                                                 input_slice + (i_ker_y * input_x + i_ker_x) * input_ch,
+                                                 (uint32_t)active_ch);
                         }
                         lhs_buffer += CH_IN_BLOCK_MVE;
                     }
@@ -141,18 +142,18 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                     lhs_buffer = (int8_t *)buffer_a;
 
                     muriscv_nn_depthwise_conv_nt_t_s8(lhs_buffer,
-                                                  kernel + block_offset,
-                                                  input_offset,
-                                                  active_ch,
-                                                  input_ch,
-                                                  output_shift + block_offset,
-                                                  output_mult + block_offset,
-                                                  output_offset,
-                                                  output_activation_min,
-                                                  output_activation_max,
-                                                  kernel_size,
-                                                  bias + block_offset,
-                                                  out);
+                                                      kernel + block_offset,
+                                                      input_offset,
+                                                      active_ch,
+                                                      input_ch,
+                                                      output_shift + block_offset,
+                                                      output_mult + block_offset,
+                                                      output_offset,
+                                                      output_activation_min,
+                                                      output_activation_max,
+                                                      kernel_size,
+                                                      bias + block_offset,
+                                                      out);
 
                     out += (4 * input_ch);
                     buffer_count = 0;
@@ -170,6 +171,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                 const int8_t *col_0 = lhs_buffer + (kernel_size * CH_IN_BLOCK_MVE * i_buf) + offset;
                 const int8_t *row_0 = kernel + offset;
 
+#if defined(USE_VEXT)
                 size_t vl = vsetvl_e32m2(num_ch_to_process);
                 vint32m2_t out_0 = vmv_v_x_i32m2(0, vl);
                 if (bias)
@@ -200,6 +202,38 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                 out += vl;
                 offset += vl;
                 num_ch_to_process -= vl;
+#else
+                // TODO: portable impl
+                int32_t out_0 = 0;
+                if (bias)
+                {
+                    out_0 += bias[offset];
+                }
+
+                for (int i_ker = 0; i_ker < kernel_size; i_ker++)
+                {
+                    int32_t ker_0 = (int32_t)(*row_0);
+                    int32_t ip_0 = (int32_t)(*col_0);
+                    ip_0 += input_offset;
+                    out_0 += ip_0 * ker_0;
+
+                    col_0 += CH_IN_BLOCK_MVE;
+                    row_0 += input_ch;
+                }
+
+                const int32_t mult = *(output_mult + offset);
+                const int32_t shift = *(output_shift + offset);
+
+                out_0 = muriscv_nn_requantize(out_0, mult, shift);
+                out_0 += output_offset;
+                out_0 = MAX(out_0, output_activation_min);
+                out_0 = MIN(out_0, output_activation_max);
+                *out = (int8_t)out_0;
+
+                out++;
+                offset++;
+                num_ch_to_process--;
+#endif
             }
         }
 
@@ -207,7 +241,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
 
         active_ch = MIN(CH_IN_BLOCK_MVE, remaining_ch);
         remaining_ch -= CH_IN_BLOCK_MVE;
-        }
+    }
 
 #else // defined(USE_PEXT)
 

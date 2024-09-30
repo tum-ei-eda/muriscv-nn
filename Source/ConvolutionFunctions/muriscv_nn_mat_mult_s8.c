@@ -38,22 +38,22 @@
  */
 
 int8_t *muriscv_nn_mat_mult_s8(const int8_t *input_row,
-                           const int8_t *input_col,
-                           const uint16_t output_ch,
-                           const uint16_t col_batches,
-                           const int32_t *output_shift,
-                           const int32_t *output_mult,
-                           const int32_t out_offset,
-                           const int32_t col_offset,
-                           const int32_t row_offset,
-                           const int16_t activation_min,
-                           const int16_t activation_max,
-                           const uint16_t row_len,
-                           const int32_t *const bias,
-                           int8_t *out)
+                               const int8_t *input_col,
+                               const uint16_t output_ch,
+                               const uint16_t col_batches,
+                               const int32_t *output_shift,
+                               const int32_t *output_mult,
+                               const int32_t out_offset,
+                               const int32_t col_offset,
+                               const int32_t row_offset,
+                               const int16_t activation_min,
+                               const int16_t activation_max,
+                               const uint16_t row_len,
+                               const int32_t *const bias,
+                               int8_t *out)
 {
-#if defined(USE_VEXT)
-    //Our old implementation
+#if defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
+    // Our old implementation
     (void)row_offset;
 
     // TODO(fabianpedd): unroll the batch loop 4x similiar to how its done in
@@ -67,6 +67,7 @@ int8_t *muriscv_nn_mat_mult_s8(const int8_t *input_row,
             const int8_t *ip_r0 = input_row + (i_out_ch * row_len);
             const int8_t *ip_c0 = input_col + (i_col_batch * row_len);
 
+#if defined(USE_VEXT)
             volatile size_t vl = vsetvl_e32m8(row_len);
             vint32m8_t res_0 = vmv_v_x_i32m8(0, vl);
 
@@ -100,6 +101,28 @@ int8_t *muriscv_nn_mat_mult_s8(const int8_t *input_row,
             vl = vsetvl_e32m8(row_len);
             red_0 = vredsum_vs_i32m8_i32m1(red_0, res_0, red_0, vl);
             q31_t acc_0 = vmv_x_s_i32m1_i32(red_0);
+#else
+
+            int32_t res_0 = 0;
+
+            uint16_t row_len_cnt = row_len;
+            while (row_len_cnt > 0)
+            {
+                int32_t r0 = (int32_t)(*ip_r0);
+                int32_t c0 = (int32_t)(*ip_c0);
+                c0 += col_offset;
+                res_0 += r0 * c0;
+                ip_r0++;
+                ip_c0++;
+                row_len_cnt--;
+            }
+
+            q31_t acc_0 = res_0;
+            if (bias)
+            {
+                acc_0 += bias[i_out_ch];
+            }
+#endif
 
             acc_0 = muriscv_nn_requantize(acc_0, output_mult[i_out_ch], output_shift[i_out_ch]);
             acc_0 += out_offset;

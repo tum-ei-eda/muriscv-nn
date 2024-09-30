@@ -1,0 +1,120 @@
+name: Style Checks
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  clang-format:
+    name: Formatting Check (C/C++)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out Git repository
+      uses: actions/checkout@v3
+    - name: Run CMake to generate compilation database
+      run: |
+        cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DTOOLCHAIN=x86 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+    - uses: cpp-linter/cpp-linter-action@v2
+      id: linter
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        style: 'file'  # Use .clang-format config file
+        tidy-checks: '' # Use .clang-tidy config file
+        # only 'update' a single comment in a pull request's thread.
+        thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+        database: 'build'
+        step-summary: true
+    # - name: Run clang-format style check for C/C++ programs.
+    #   uses: jidicula/clang-format-action@v4.10.2
+    #   with:
+    #     clang-format-version: '13'
+    #     check-path: ${{ matrix.path }}
+    # - name: Check for changes
+    #   run: |
+    #    git status
+  cmake-format:
+    name: Formatting Check (CMake)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out Git repository
+      uses: actions/checkout@v3
+    - name: Format CMake files
+      id: cmake-format
+      uses: PuneetMatharu/cmake-format-lint-action@v1.0.1
+      with:
+        # Arguments to be passed to cmake-format.
+        #
+        # Options:
+        #   -h, --help            show this help message and exit
+        #   -v, --version         show program's version number and exit
+        #   -l {error,warning,info,debug}, --log-level {error,warning,info,debug}
+        #   --dump-config [{yaml,json,python}]
+        #                         If specified, print the default configuration to stdout and exit
+        #   --dump {lex,parse,parsedb,layout,markup}
+        #   --no-help             When used with --dump-config, will omit helptext comments in the output
+        #   --no-default          When used with --dump-config, will omit any unmodified configuration value.
+        #   -i, --in-place
+        #   --check               Exit with status code 0 if formatting would not change file contents, or status code 1 if it would
+        #   -o OUTFILE_PATH, --outfile-path OUTFILE_PATH
+        #                         Where to write the formatted file. Default is stdout.
+        #   -c CONFIG_FILES [CONFIG_FILES ...], --config-files CONFIG_FILES [CONFIG_FILES ...]
+        #                         path to configuration file(s)
+        args: --config-files .cmake-format.yaml --check
+    - name: Check for changes
+      run: |
+        git status
+  python-format:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out Git repository
+      uses: actions/checkout@v3
+    # - uses: psf/black@stable
+    #   with:
+    #     options: "--check --verbose --preview -l 120"
+    #     version: "~= 24.8"
+    # - name: Check for changes
+    #   run: |
+    #     git status
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install Python dependencies
+      run: pip install black flake8
+
+    - name: Run linters
+      uses: wearerequired/lint-action@v1
+      with:
+        black: true
+        flake8: true
+  shell-format:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out Git repository
+      uses: actions/checkout@v3
+    - name: Run ShellCheck
+      uses: azohra/shell-linter@latest
+    - name: Check for changes
+      run: |
+        git status
+  license-check:
+    name: Check for License headers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+      - name: Install Python dependencies
+        run: pip install licenseheaders
+      - name: Download template file
+        run: wget https://raw.githubusercontent.com/johann-petrak/licenseheaders/master/templates/apache-2.tmpl
+      - name: Run check
+        run: |
+          licenseheaders -t apache-2.tmpl -y "${YEARS}" -o "${OWNER}" -n "${PROJECT}" -u "${URL}" -d . -E "${EXTENSIONS}"
+          test -z "$(git status --untracked-files=no --porcelain)" || (echo "Please check your license headers!" ; git status --untracked-files=no --porcelain ; false) && echo "License check was successful."
+        env:
+          OWNER: "TUM Department of Electrical and Computer Engineering"
+          PROJECT: "muRISCV-NN"
+          YEARS: "2023"
+          URL: "https://github.com/tum-ei-eda/muriscv-nn.git"
+          EXTENSIONS: "py cmake yml sh md"

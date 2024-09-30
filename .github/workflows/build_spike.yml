@@ -10,6 +10,12 @@ on:
 jobs:
   Build_Spike:
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        spike_ref:
+        - master
+        pk_ref:
+        - 1a52fa44aba49307137ea2ad5263613da33a877b
 
     steps:
     - uses: actions/checkout@v4
@@ -46,7 +52,9 @@ jobs:
 
     - name: Clone Spike Repo
       working-directory: ./Sim/Spike
-      run: git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+      run: |
+        git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+        git -C riscv-isa-sim checkout ${{ matrix.spike_ref }}
 
     - name: Build Spike
       working-directory: ./Sim/Spike/riscv-isa-sim
@@ -58,12 +66,14 @@ jobs:
         mkdir build
         cd build
         ../configure --prefix=$RISCV
-        make
+        make -j$(nproc)
         sudo make install
 
     - name: Clone PK Repo
       working-directory: ./Sim/Spike
-      run: git clone https://github.com/riscv-software-src/riscv-pk.git
+      run: |
+        git clone https://github.com/riscv-software-src/riscv-pk.git
+        git -C riscv-pk checkout ${{ matrix.pk_ref }}
 
     - name: Build PK for ilp32d
       working-directory: ./Sim/Spike/riscv-pk
@@ -74,7 +84,7 @@ jobs:
         mkdir build
         cd build
         ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv_zicsr_zifencei --with-abi=ilp32d
-        make
+        make -j$(nproc)
         sudo make install
 
     - name: Copy Spike and PK binaries to correct location
@@ -94,7 +104,7 @@ jobs:
         mkdir build
         cd build
         ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32imv_zicsr_zifencei --with-abi=ilp32
-        make
+        make -j$(nproc)
         sudo make install
 
     - name: PK Binary to correct location
