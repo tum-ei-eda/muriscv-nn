@@ -24,8 +24,17 @@ jobs:
       env:
           cache-name: cache-gcc-binaries
       with:
-          path: ./Toolchain
+          path: |
+            ./Toolchain
+            !./Toolchain/*.sh
           key: gcc-binaries-${{ steps.date.outputs.date }}
+
+    - name: Restore Scripts
+      working-directory: ./Toolchain
+      run: |
+           git status
+           git diff
+           git restore *.sh
 
     - name: Cleanup old files
       working-directory: ./Toolchain
