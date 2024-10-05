@@ -27,6 +27,14 @@ jobs:
           path: ./Toolchain
           key: gcc-binaries-${{ steps.date.outputs.date }}
 
+    - name: Cleanup old files
+      working-directory: ./Toolchain
+      run: |
+           test ! -d rv32gc || rm -rf rv32gc
+           test ! -d rv32gcp || rm -rf rv32gcp
+           test ! -d rv32gcv || rm -rf rv32gcv
+           test ! -d rv32imv || rm -rf rv32imv
+           test ! -d llvm || rm -rf llvm
 
 
     - name: Download GCC Binaries
