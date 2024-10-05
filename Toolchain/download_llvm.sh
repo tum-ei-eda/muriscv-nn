@@ -19,7 +19,7 @@
 
 set -e
 
-VERSION=${1:-"17"}
+VERSION=${1:-"18"}
 
 if [[ "$VERSION" == "15" ]]
 then
@@ -33,7 +33,12 @@ then
 elif [[ "$VERSION" == "18" ]]
 then
     ./download_helper.sh llvm/ LLVM default 18.1.4 llvm
+elif [[ "$VERSION" == "19" ]]
+then
+    ./download_helper.sh llvm/ LLVM default 19.1.1 llvm
 elif [[ "$VERSION" == "dev" ]]
 then
     ./download_helper.sh llvm/ LLVM default 2024.01.15 llvm
+else
+    ./download_helper.sh llvm/ LLVM default $VERSION llvm
 fi
