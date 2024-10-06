@@ -19,10 +19,4 @@
 
 set -e
 
-# Downloads the "full" version of the rv32gc GCC toolchain
-# to be used as a standalone compiler!
-# wget https://syncandshare.lrz.de/dl/fiN6bFDEbHgzj2TDCuowwFWS/rv32gc.tar.xz
-# mkdir -p rv32gc
-# tar -xvf rv32gc.tar.xz -C rv32gc
-# rm rv32gc.tar.xz
 ./download_helper.sh rv32gc/ GCC default 2024.09.03 rv32gc_ilp32d
