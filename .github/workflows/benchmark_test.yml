@@ -52,14 +52,20 @@ jobs:
       run: |
         ls Toolchain/
         ls Toolchain/rv32gc
+        ls Toolchain/rv64gc
         ls Toolchain/rv32gcp
         ls Toolchain/rv32gcv
-        ls Toolchain/rv32imv
+        ls Toolchain/rv64gcv
+        ls Toolchain/rv32im
+        ls Toolchain/rv32im_zve32x
         ls Toolchain/llvm
         ./Toolchain/rv32gc/bin/riscv32-unknown-elf-gcc --version
+        ./Toolchain/rv64gc/bin/riscv32-unknown-elf-gcc --version
         ./Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version
         ./Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version
-        ./Toolchain/rv32imv/bin/riscv32-unknown-elf-gcc --version
+        ./Toolchain/rv64gcv/bin/riscv32-unknown-elf-gcc --version
+        ./Toolchain/rv32im/bin/riscv32-unknown-elf-gcc --version
+        ./Toolchain/rv32im_zve32x/bin/riscv32-unknown-elf-gcc --version
         ./Toolchain/llvm/bin/clang --version
 
     - name: Install Spike Dependencies

@@ -48,7 +48,7 @@ while getopts 't:vxpib:s:l:e:h' flag; do
     p) USE_PEXT=ON
        GCC_PREFIX=${TC_DIR}/rv32gcp ;;
     i) USE_IMV=ON
-       GCC_PREFIX=${TC_DIR}/rv32imv ;;
+       GCC_PREFIX=${TC_DIR}/rv32im_zve32x ;;
     b) BUILD_TYPE="${OPTARG}" ;;
     s) SIM_FLAGS="-DSIMULATOR=${OPTARG}";;
     l) VLEN="-DVLEN=${OPTARG}";;
@@ -77,7 +77,7 @@ elif [ "${USE_VEXT}" == "ON" ] && [ "${USE_PEXT}" == "ON" ];then
     echo "MURISCV-NN currently does not support both VEXT and PEXT at the same time.  Please disable one of these"
     exit 1
 elif [ "${USE_IMV}" == "ON" ] && [ "${USE_PEXT}" == "ON" ];then
-    echo "Using rv32imv only supports VEXT.  Please disable PEXT"
+    echo "Using rv32im_zve32x only supports VEXT.  Please disable PEXT"
     exit 1
 elif [ "${TOOLCHAIN}" == "x86" ] && ([ "${USE_PEXT}" == "ON" ] || [ "${USE_VEXT}" == "ON" ] || [ "${USE_IMV}" == "ON" ]);then
     if [ "${USE_PORTABLE}" != "ON" ];
@@ -129,15 +129,15 @@ elif [ "${USE_PEXT}" == "ON" ];then
 elif [ "${USE_IMV}" == "ON" ];then
 # Download rv32imv GCC
   if [ -d ${TC_DIR_RV32IMV} ]; then
-    echo "Found rv32imv GCC compiler in the Toolchain directory."
+    echo "Found rv32im_zve32x GCC compiler in the Toolchain directory."
   else
-    echo "No rv32imv GCC compiler in the Toolchain directory found. Downloading one..."
+    echo "No rv32im_zve32x GCC compiler in the Toolchain directory found. Downloading one..."
     (
       cd ${TC_DIR}
-      ./download_rv32imv.sh
+      ./download_rv32im_zve32x.sh
     )
   fi
-  IMV_FLAGS="-DRISCV_ARCH=rv32imv -DRISCV_ABI=ilp32"
+  IMV_FLAGS="-DRISCV_ARCH=rv32im_zve32x -DRISCV_ABI=ilp32"
 
 elif [ "${TOOLCHAIN}" == "x86" ];then
   echo "Skipping download of RISC-V toolchain for x86 mode."

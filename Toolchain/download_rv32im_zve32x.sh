@@ -26,4 +26,4 @@ set -e
 # tar -xvf rv32imv.tar.xz -C rv32imv
 # rm rv32imv.tar.xz
 # ./download_helper.sh rv32imv/ GCC vext 2022.11.12 rv32imv_ilp32
-./download_helper.sh rv32im_zicsr_zve32x/ GCC default 2024.09.03 rv32im_zicsr_zve32x_ilp32
+./download_helper.sh rv32im_zve32x/ GCC default 2024.09.03 rv32im_zicsr_zifencei_zve32x_ilp32
