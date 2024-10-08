@@ -32,7 +32,8 @@ then
     ./download_helper.sh llvm/ LLVM default 17.0.6 llvm
 elif [[ "$VERSION" == "18" ]]
 then
-    ./download_helper.sh llvm/ LLVM default 18.1.4 llvm
+    # ./download_helper.sh llvm/ LLVM default 18.1.4 llvm
+    ./download_helper.sh llvm/ LLVM default 18.1.8 llvm
 elif [[ "$VERSION" == "19" ]]
 then
     ./download_helper.sh llvm/ LLVM default 19.1.1 llvm
