@@ -27,8 +27,7 @@ jobs:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
-          key: gcc-binaries-2024-10-05
-          # key: gcc-binaries-${{ steps.date.outputs.date }}
+          key: gcc-binaries-${{ steps.date.outputs.date }}
 
     - name: Restore Scripts
       working-directory: ./Toolchain
