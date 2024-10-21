@@ -58,7 +58,7 @@ Stay tuned for more performance numbers in the near future!
 
   *CF '24 Companion: Proceedings of the 21st ACM International Conference on Computing Frontiers Workshops and Special Sessions*
 
-  BibTeX
+  BibTeX:
 
   ```bibtex
   @inproceedings{10.1145/3637543.3652878,
@@ -80,6 +80,24 @@ Stay tuned for more performance numbers in the near future!
   }
   ```
 
+  
+- **From Simulation to RVV Hardware: Evaluating the muRISCV-NN TinyML Inference Library on the CanMV K230 Platform** (https://mediatum.ub.tum.de/1747602?show_id=1759366&style=full_text)
+
+  *Student research internship*
+
+  Disclaimer: HW got provided by RISC-V International® (See https://riscv.org/risc-v-developer-boards/details/ for details)
+
+  BibTeX:
+
+  ```bibtex
+  @mastersthesis{,
+	  author = {Witteler, Benedikt},
+	  title = {From Simulation to RVV Hardware: Evaluating the muRISCV-NN TinyML Inference Library on the CanMV K230 Platform},
+	  year = {2024},
+	  school = {Technische Universität München},
+	  month = {Oct}
+  }
+  ```
   
 
 ## Acknowledgment
