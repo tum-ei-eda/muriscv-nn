@@ -20,7 +20,7 @@ jobs:
 
     - name: Cache GCC Binaries
       id: cache-gcc
-      uses: actions/cache@v4
+      uses: actions/cache/save@v4
       env:
           cache-name: cache-gcc-binaries
       with:

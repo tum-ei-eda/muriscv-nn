@@ -67,7 +67,7 @@ jobs:
     - name: Download Cached GCC + LLVM Binaries
       if: ${{ matrix.config.sim }} != "Native"
       id: cache-gcc
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -88,7 +88,7 @@ jobs:
     - name: Download Spike Cache
       if: ${{ matrix.config.sim }} == "Spike"
       id: cache-Spike
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       env:
           cache-name: cache-spike-binaries
       with:
@@ -154,7 +154,7 @@ jobs:
     - name: Download Cached GCC + LLVM Binaries
       if: ${{ matrix.config.sim }} != "Native"
       id: cache-gcc
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -175,7 +175,7 @@ jobs:
     - name: Download Spike Cache
       if: ${{ matrix.config.sim }} == "Spike"
       id: cache-Spike
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       env:
           cache-name: cache-spike-binaries
       with:
@@ -253,7 +253,7 @@ jobs:
     - name: Download Cached GCC + LLVM Binaries
       if: ${{ matrix.config.sim }} != "Native"
       id: cache-gcc
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -274,7 +274,7 @@ jobs:
     - name: Download Spike Cache
       if: ${{ matrix.config.sim }} == "Spike"
       id: cache-Spike
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       env:
           cache-name: cache-spike-binaries
       with:

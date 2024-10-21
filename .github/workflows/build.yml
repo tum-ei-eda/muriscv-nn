@@ -44,7 +44,7 @@ jobs:
 
     - name: Download Cached GCC + LLVM Binaries
       id: cache-gcc
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -99,7 +99,7 @@ jobs:
 
     - name: Download Cached GCC + LLVM Binaries
       id: cache-gcc
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       env:
           cache-name: cache-gcc-binaries
       with:

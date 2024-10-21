@@ -29,7 +29,7 @@ jobs:
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
-      uses: actions/cache@v4
+      uses: actions/cache/restore@v4
       env:
           cache-name: cache-gcc-binaries
       with:
@@ -43,7 +43,7 @@ jobs:
 
     - name: Setup Spike Cache
       id: cache-Spike
-      uses: actions/cache@v4
+      uses: actions/cache/save@v4
       env:
           cache-name: cache-spike-binaries
       with:
