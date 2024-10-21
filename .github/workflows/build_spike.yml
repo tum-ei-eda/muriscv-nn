@@ -34,7 +34,7 @@ jobs:
           cache-name: cache-gcc-binaries
       with:
           path: ./Toolchain
-          fail-on-cache-miss: true
+          # fail-on-cache-miss: true
           key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
