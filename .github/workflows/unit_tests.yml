@@ -68,9 +68,9 @@ jobs:
     - name: Get dates
       id: dates
       run: |
-        echo "today=$(date +'%Y-%m-%d')" > $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" > $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" > $GITHUB_OUTPUT
+        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
 
     - name: Download GCC + LLVM Cache
       id: cache-GCC

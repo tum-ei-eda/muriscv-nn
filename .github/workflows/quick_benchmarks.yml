@@ -21,9 +21,12 @@ jobs:
         pip3 install Pillow
         pip3 install Wave
 
-    - name: Get date of last cache build
-      id: date
-      run: echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" > $GITHUB_OUTPUT
+    - name: Get dates
+      id: dates
+      run: |
+        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -33,8 +36,10 @@ jobs:
       with:
           path: ./Toolchain
           fail-on-cache-miss: true
-          key: gcc-binaries-${{ steps.date.outputs.date }}
+          key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
+            gcc-binaries-${{ steps.dates.outputs.yesterday }}
+            gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
 
     - name: Install Spike Dependencies
@@ -57,13 +62,9 @@ jobs:
         export MLONMCU_HOME=$WORKSPACE_DIR
         python gen_muriscnn_benchmarks.py -b tflmi -t spike --vlen 128 --post -p --parallel -f muriscvnn aww
 
-    - name: Get current date
-      id: date-today
-      run: echo "today=$(date +'%Y-%m-%d')" > $GITHUB_OUTPUT
-
 
     - name: Archive Benchmark Results
       uses: actions/upload-artifact@v4
       with:
-          name: quick-benchmarks-${{ steps.date-today.outputs.date }}
+          name: quick-benchmarks-${{ steps.dates.outputs.today }}
           path: ./Integration/MLonMCU/out.csv

@@ -20,9 +20,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Get current date
-      id: date
-      run: echo "today=$(date +'%Y-%m-%d')" > $GITHUB_OUTPUT
+    - name: Get dates
+      id: dates
+      run: |
+        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -32,8 +35,10 @@ jobs:
       with:
           path: ./Toolchain
           fail-on-cache-miss: true
-          key: gcc-binaries-${{ steps.date.outputs.date }}
+          key: gcc-binaries-${{ steps.dates.outputs.today }}
           restore-keys: |
+            gcc-binaries-${{ steps.dates.outputs.yesterday }}
+            gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
 
     - name: Setup Spike Cache

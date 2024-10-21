@@ -26,13 +26,12 @@ jobs:
         pip3 install Pillow
         pip3 install Wave
 
-
     - name: Get dates
       id: dates
       run: |
-        echo "today=$(date +'%Y-%m-%d')" > $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" > $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" > $GITHUB_OUTPUT
+        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
 
     - name: Download Cached GCC Binaries
       id: cache-gcc
@@ -117,7 +116,7 @@ jobs:
 
       - name: Get current date
         id: date-today
-        run: echo "today=$(date +'%Y-%m-%d')" > $GITHUB_OUTPUT
+        run: echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - name: Create New Wiki Page
         working-directory: ./Wiki
