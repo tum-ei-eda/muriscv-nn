@@ -65,7 +65,7 @@ jobs:
         echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
 
     - name: Download Cached GCC + LLVM Binaries
-      if: ${{ matrix.config.toolchain }} != "x86"
+      if: ${{ matrix.config.sim }} != "Native"
       id: cache-gcc
       uses: actions/cache@v4
       env:
@@ -152,7 +152,7 @@ jobs:
         echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
 
     - name: Download Cached GCC + LLVM Binaries
-      if: ${{ matrix.config.toolchain }} != "x86"
+      if: ${{ matrix.config.sim }} != "Native"
       id: cache-gcc
       uses: actions/cache@v4
       env:
@@ -251,7 +251,7 @@ jobs:
         echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
 
     - name: Download Cached GCC + LLVM Binaries
-      if: ${{ matrix.config.toolchain }} != "x86"
+      if: ${{ matrix.config.sim }} != "Native"
       id: cache-gcc
       uses: actions/cache@v4
       env:
