@@ -50,7 +50,7 @@ jobs:
           cache-name: cache-spike-binaries
       with:
           path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.date.outputs.date }}
+          key: spike-binaries-${{ steps.dates.outputs.today }}
 
     - name: Install BOOST
       run: |
