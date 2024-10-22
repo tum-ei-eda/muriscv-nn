@@ -18,17 +18,6 @@ jobs:
       id: date
       run: echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-    - name: Cache GCC Binaries
-      id: cache-gcc
-      uses: actions/cache/save@v4
-      env:
-          cache-name: cache-gcc-binaries
-      with:
-          path: |
-            ./Toolchain
-            !./Toolchain/*.sh
-          key: gcc-binaries-${{ steps.date.outputs.today }}
-
     - name: Restore Scripts
       working-directory: ./Toolchain
       run: |
@@ -61,3 +50,14 @@ jobs:
            ./download_rv32im.sh
            ./download_rv32im_zve32x.sh
            ./download_llvm.sh 18
+
+    - name: Cache GCC Binaries
+      id: cache-gcc
+      uses: actions/cache/save@v4
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: |
+            ./Toolchain
+            !./Toolchain/*.sh
+          key: gcc-binaries-${{ steps.date.outputs.today }}

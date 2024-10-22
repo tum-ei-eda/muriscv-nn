@@ -43,15 +43,6 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
 
-    - name: Setup Spike Cache
-      id: cache-Spike
-      uses: actions/cache/save@v4
-      env:
-          cache-name: cache-spike-binaries
-      with:
-          path: ./Sim/Spike/bin
-          key: spike-binaries-${{ steps.dates.outputs.today }}
-
     - name: Install BOOST
       run: |
         sudo apt-get install libboost-all-dev
@@ -138,3 +129,12 @@ jobs:
       run: |
         cp ../riscv-pk/build/pk pk_ilp32
         ls
+
+    - name: Setup Spike Cache
+      id: cache-Spike
+      uses: actions/cache/save@v4
+      env:
+          cache-name: cache-spike-binaries
+      with:
+          path: ./Sim/Spike/bin
+          key: spike-binaries-${{ steps.dates.outputs.today }}
