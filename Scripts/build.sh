@@ -137,7 +137,7 @@ elif [ "${USE_IMV}" == "ON" ];then
       ./download_rv32im_zve32x.sh
     )
   fi
-  IMV_FLAGS="-DRISCV_ARCH=rv32im_zve32x -DRISCV_ABI=ilp32"
+  IMV_FLAGS="-DRISCV_ARCH=rv32im_zicsr_zifencei_zve32x -DRISCV_ABI=ilp32"
 
 elif [ "${TOOLCHAIN}" == "x86" ];then
   echo "Skipping download of RISC-V toolchain for x86 mode."
