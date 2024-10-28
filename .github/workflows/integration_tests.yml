@@ -36,13 +36,13 @@ jobs:
             - {vext: "OFF", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
             # - {vext: "OFF", portable: "OFF", pext: "ON", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcp", vlen: 0, elen: 64, sim: "Spike"}
             - {vext: "ON", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable": "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
+            - {vext: "ON", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
             - {vext: "ON", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable": "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
+            - {vext: "ON", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
             - {vext: "ON", portable: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable": "ON", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
+            - {vext: "ON", portable: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
             - {vext: "ON", portable: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable": "ON", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
+            - {vext: "ON", portable: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
 
     name: TFLM Built-In Tests
     runs-on: ubuntu-22.04
