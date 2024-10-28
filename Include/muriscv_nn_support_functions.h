@@ -109,7 +109,9 @@
 #define vmul_vv_i32m8 __riscv_vmul_vv_i32m8
 #define vmv_v_x_i32m1 __riscv_vmv_v_x_i32m1
 #define vmv_v_x_i8m8 __riscv_vmv_v_x_i8m8
-#define vredsum_vs_i32m8_i32m1(a, b, c, d) __riscv_vredsum_vs_i32m8_i32m1(b, c, d)
+// #define vredsum_vs_i32m8_i32m1(a, b, c, d) __riscv_vredsum_vs_i32m8_i32m1(b, c, d)
+// #define vredsum_vs_i32m8_i32m1 __riscv_vredsum_vs_i32m8_i32m1
+// #define vredsum_vs_i32m8_i32m1(a, b, c) __riscv_vredsum_vs_i32m8_i32m1(b, a, b, c)
 #define vse16_v_i16m8 __riscv_vse16_v_i16m8
 #define vsetvl_e16m4 __riscv_vsetvl_e16m4
 #define vsetvl_e16m8 __riscv_vsetvl_e16m8
@@ -132,7 +134,7 @@
 #define vmin_vx_i32m8 __riscv_vmin_vx_i32m8
 #define vmul_vx_i32m2 __riscv_vmul_vx_i32m2
 #define vmv_x_s_i32m1_i32 __riscv_vmv_x_s_i32m1_i32
-#define vredsum_vs_i32m2_i32m1(a, b, c, d) __riscv_vredsum_vs_i32m2_i32m1(b, c, d)
+// #define vredsum_vs_i32m2_i32m1(a, b, c, d) __riscv_vredsum_vs_i32m2_i32m1(b, c, d)
 #define vse8_v_i8mf2 __riscv_vse8_v_i8mf2
 #define vsub_vx_i32m8_m __riscv_vsub_vx_i32m8_tum
 #define vse16_v_i16m4 __riscv_vse16_v_i16m4

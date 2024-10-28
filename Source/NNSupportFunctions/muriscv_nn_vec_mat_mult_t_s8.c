@@ -238,7 +238,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         }
 
         vl = vsetvl_e32m8(rhs_cols);
-        reduct = vredsum_vs_i32m8_i32m1(reduct, result, reduct, vl);
+        reduct = __riscv_vredsum_vs_i32m8_i32m1(result, reduct, vl);
         q31_t res_scalar = vmv_x_s_i32m1_i32(reduct);
 
         res_scalar = muriscv_nn_requantize(res_scalar, dst_multiplier, dst_shift);

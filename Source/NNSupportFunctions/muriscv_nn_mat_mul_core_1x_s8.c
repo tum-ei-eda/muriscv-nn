@@ -77,11 +77,11 @@ muriscv_nn_status muriscv_nn_mat_mul_core_1x_s8(int32_t row_elements,
     vl = vsetvl_e32m8(row_elements);
 
     vint32m1_t reduct = vmv_v_x_i32m1(0, vl);
-    reduct = vredsum_vs_i32m8_i32m1(reduct, acc, reduct, vl);
+    reduct = __riscv_vredsum_vs_i32m8_i32m1(acc, reduct, vl);
     acc_n0 = vmv_x_s_i32m1_i32(reduct);
 
     reduct = vmv_v_x_i32m1(0, vl);
-    reduct = vredsum_vs_i32m8_i32m1(reduct, sum, reduct, vl);
+    reduct = __riscv_vredsum_vs_i32m8_i32m1(sum, reduct, vl);
     sum_tmp = vmv_x_s_i32m1_i32(reduct);
 #else
     for (int i = 0; i < row_elements; i++)

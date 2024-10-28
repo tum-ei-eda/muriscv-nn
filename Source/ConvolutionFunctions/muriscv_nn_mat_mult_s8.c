@@ -99,7 +99,7 @@ int8_t *muriscv_nn_mat_mult_s8(const int8_t *input_row,
             }
 
             vl = vsetvl_e32m8(row_len);
-            red_0 = vredsum_vs_i32m8_i32m1(red_0, res_0, red_0, vl);
+            red_0 = __riscv_vredsum_vs_i32m8_i32m1(res_0, red_0, vl);
             q31_t acc_0 = vmv_x_s_i32m1_i32(red_0);
 #else
 

@@ -261,7 +261,7 @@ static void depthwise_conv_s8_generic(const q7_t *input,
                         //                             vl = vsetvl_e32m1(1);
                         //                             vint32m1_t red_0 = vmv_v_x_i32m1(0, vl);
                         //                             vl = vsetvl_e32m8(ker_x_end - ker_x_start);
-                        //                             red_0 = vredsum_vs_i32m8_i32m1(red_0, res_0, red_0, vl);
+                        //                             red_0 = __riscv_vredsum_vs_i32m8_i32m1(res_0, red_0, vl);
                         //                             acc_0 += vmv_x_s_i32m1_i32(red_0);
                         //                         }
                         // #else /* defined(USE_VEXT) */
