@@ -56,7 +56,18 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
                                       const int32_t lhs_offset,
                                       const int32_t *bias_data)
 {
-#if defined(USE_VEXT)
+    if (bias_data)
+    {
+        memcpy(vector_sum_buf, bias_data, vector_rows * sizeof(int32_t));
+    }
+    else
+    {
+        memset(vector_sum_buf, 0, vector_rows * sizeof(int32_t));
+    }
+
+    if (lhs_offset)
+    {
+// #if defined(USE_VEXT)
     //ARM CODE.  NEEDS TO BE CONVERTED TO RISCV
     /*
     const int32_t row_loop_cnt = vector_rows / 4;
@@ -135,18 +146,23 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
         vector_sum_buf[i_row_loop_cnt] = vector_sum_0;
     }
     */
-    return (MURISCV_NN_SUCCESS);
-    
-    //return (MURISCV_NN_NO_IMPL_ERROR);
-    
-#else
-    (void)vector_sum_buf;
-    (void)vector_rows;
-    (void)vector_cols;
-    (void)vector_data;
 
-    return (MURISCV_NN_NO_IMPL_ERROR);
-#endif
+    //return (MURISCV_NN_NO_IMPL_ERROR);
+
+// #else
+        for (int i = 0; i < vector_rows; i++)
+        {
+            int32_t sum = 0;
+            for (int j = 0; j < vector_cols; j++)
+            {
+                sum += *vector_data++;
+            }
+            *vector_sum_buf++ += sum * lhs_offset;
+        }
+
+// #endif
+    }
+    return (MURISCV_NN_SUCCESS);
 }
 
 /**
