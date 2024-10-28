@@ -56,7 +56,9 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_s8(const int16_t *input_1_vect,
                                                const int32_t batch_offset)
 
 {
-    int32_t loop_count = block_size;
+    for (int i = 0; i < batch_size; i++)
+    {
+        int32_t loop_count = block_size;
 
 /*#if defined(ARM_MATH_MVEI)
 
@@ -105,19 +107,20 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_s8(const int16_t *input_1_vect,
         loop_count -= 2;
     }
     #endif*/
-    for (int i = 0; i < loop_count; i++)
+    for (int j = 0; j < loop_count; j++, input_1_vect++, input_2_vect++, output++)
     {
         /* C = A * B */
-        int32_t mul_res = input_1_vect[i] * input_2_vect[i];
+        int32_t mul_res = (*input_1_vect) * (*input_2_vect);
         mul_res = muriscv_nn_requantize(mul_res, out_mult, out_shift) + out_offset;
 
         mul_res = CLAMP(mul_res, Q7_MAX, Q7_MIN);
 
-        output[i] = (int8_t)mul_res;
+        *output = (int8_t)mul_res;
     }
 
 //#endif
-
+        output += (batch_offset - 1) * block_size;
+    }
     return MURISCV_NN_SUCCESS;
 }
 /**
