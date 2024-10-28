@@ -69,13 +69,16 @@ muriscv_nn_status muriscv_nn_activation_s16(const int16_t *input,
         break;
     }
 
+    // int32_t input_multiplier = ((int32_t)3) << left_shift;
+    const int32_t input_multiplier = (left_shift < 0) ? 3 : 3 << left_shift;
+    const int32_t abs_left_shift = (left_shift < 0) ? -left_shift : 0;
+    const int32_t rounding = (abs_left_shift > 0) ? 1 << (abs_left_shift - 1) : 0;
     // Use the LUT for sigmoid and take into account, that
     // tanh(x) = 2*sigmoid(2*x) - 1
-    int32_t input_multiplier = ((int32_t)3) << left_shift;
 
     for (int i = 0; i < size; ++i, input++, output++)
     {
-        int32_t input_data = ((*input) * input_multiplier);
+        const int32_t input_data = ((*input) * input_multiplier + rounding) >> abs_left_shift;
 
         uint32_t abs_input_data = input_data > 0 ? input_data : -input_data;
 
