@@ -87,9 +87,9 @@ void svdf_int8_muriscv_nn_s8(void)
     ctx.buf = malloc(buf_size);
     ctx.size = buf_size;
 
-#if defined(ARM_MATH_MVEI)
+#if defined(USE_VEXT)
     int32_t *kernel_sum_buf = ctx.buf;
-    arm_vector_sum_s8(kernel_sum_buf, input_dims.h, weights_feature_dims.n, weights_feature_data);
+    muriscv_nn_vector_sum_s8(kernel_sum_buf, input_dims.h, weights_feature_dims.n, weights_feature_data, 1, NULL);
 #endif
 
     // + SVDF_INT8_TIME_BATCHES additional bytes to make sure it is not overwritten
@@ -202,9 +202,9 @@ void svdf_int8_2_muriscv_nn_s8(void)
     ctx.buf = malloc(buf_size);
     ctx.size = buf_size;
 
-#if defined(ARM_MATH_MVEI)
+#if defined(USE_VEXT)
     int32_t *kernel_sum_buf = ctx.buf;
-    arm_vector_sum_s8(kernel_sum_buf, input_dims.h, weights_feature_dims.n, weights_feature_data);
+    muriscv_nn_vector_sum_s8(kernel_sum_buf, input_dims.h, weights_feature_dims.n, weights_feature_data, 1, NULL);
 #endif
 
     const int state_data_size = sizeof(svdf_int8_2_state);
