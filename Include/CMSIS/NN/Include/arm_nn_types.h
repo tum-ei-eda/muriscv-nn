@@ -32,6 +32,7 @@ extern "C" {
 #define cmsis_nn_bias_data muriscv_nn_bias_data
 #define cmsis_nn_per_channel_quant_params muriscv_nn_per_channel_quant_params
 #define cmsis_nn_per_tensor_quant_params muriscv_nn_per_tensor_quant_params
+#define cmsis_nn_quant_params muriscv_nn_quant_params
 #define cmsis_nn_activation muriscv_nn_activation
 #define cmsis_nn_conv_params muriscv_nn_conv_params
 #define cmsis_nn_dw_conv_params muriscv_nn_dw_conv_params
@@ -39,6 +40,7 @@ extern "C" {
 #define cmsis_nn_fc_params muriscv_nn_fc_params
 #define cmsis_nn_svdf_params muriscv_nn_svdf_params
 #define cmsis_nn_softmax_lut_s16 muriscv_nn_softmax_lut_s16
+#define cmsis_nn_bmm_params muriscv_nn_bmm_params
 
 #define cmsis_nn_lstm_params muriscv_nn_lstm_params
 #define cmsis_nn_lstm_context muriscv_nn_lstm_context

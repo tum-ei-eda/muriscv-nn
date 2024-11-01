@@ -24,4 +24,8 @@ target_sources(${MURISCVNN_LIB} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_f
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_fully_connected_s4.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_fully_connected_get_buffer_sizes_s8.c
                                         ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_fully_connected_get_buffer_sizes_s16.c
-                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vector_sum_s8_s64.c)
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_vector_sum_s8_s64.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_fully_connected_per_channel_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_fully_connected_wrapper_s8.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_batch_matmul_s16.c
+                                        ${CMAKE_CURRENT_SOURCE_DIR}/muriscv_nn_batch_matmul_s8.c)

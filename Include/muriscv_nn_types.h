@@ -89,6 +89,17 @@ typedef struct
     int32_t shift;      /**< Shift value */
 } muriscv_nn_per_tensor_quant_params;
 
+/** MURISCV-NN object for quantization parameters.
+ *  This struct supports both per-tensor and per-channels requantization
+ *  and is recommended for new operators.
+ */
+typedef struct
+{
+    int32_t *multiplier;    /**< Multiplier values */
+    int32_t *shift;         /**< Shift values */
+    int32_t is_per_channel; /** Indicating if per channel or per tensor quantization */
+} muriscv_nn_quant_params;
+
 /** MURISCV-NN object for the quantized Relu activation */
 typedef struct
 {
@@ -147,6 +158,21 @@ typedef struct
     int32_t output_offset; /**< Zero value for the output tensor */
     muriscv_nn_activation activation;
 } muriscv_nn_fc_params;
+
+/** MURISCV-NN object for Batch Matmul layer parameters */
+typedef struct
+{
+    const bool adj_x;
+    const bool adj_y;
+    muriscv_nn_fc_params fc_params;
+} muriscv_nn_bmm_params;
+
+/** MURISCV-NN object for Transpose layer parameters */
+typedef struct
+{
+    const int32_t num_dims;
+    const uint32_t *permutations; /**< The dimensions applied to the input dimensions */
+} muriscv_nn_transpose_params;
 
 /** MURISCV-NN object for SVDF layer parameters */
 typedef struct
