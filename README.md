@@ -26,31 +26,18 @@ You can simulate muRISCV-NN using a number of different simulators. We provide s
 Please refer to the [`Sim/`](./Sim) directory for more information on each simulator and its corresponding files.
 
 ## Tests
-In order to ensure functional correctness on an individual kernel level, we provide a suite of unit tests in [`Tests/`](./Tests). The unit tests use the same data as upstream [CMSIS-NN](https://github.com/ARM-software/CMSIS_5/tree/develop/CMSIS/NN), thus ensuring functional equivalency.
+In order to ensure functional correctness on an individual kernel level, we provide a suite of unit tests in [`Tests/`](./Tests). The unit tests use the same data as upstream CMSIS-NN, thus ensuring functional equivalency.
 
 ## Toolchain
 muRISCV-NN supports both the [RISC-V GNU Compiler](https://github.com/riscv-collab/riscv-gnu-toolchain) vector toolchain and [LLVM](https://llvm.org/) (which has built-in RISC-V vector support). We provide pre-compiled toolchains in the [`Toolchain/`](./Toolchain) directory. Additionally, we also offer instructions on how to compile and install your own toolchain.
 
-## Upstream CMSIS-NN
-muRISCV-NN is not a GIT fork "in the traditional sense". Instead, we aim to pull in changes from "upstream" CMSIS-NN manually on a regular basis in order to stay consistent and up-to-date. A direct fork would not make much sense, as our code differs too much in functionality and naming compared to CMSIS-NN.
+## Compatibility
 
-The latest upstream CMSIS-NN commit muRISCV-NN is based on is `8ec46de` (only respecting commits affecting the [`CMSIS/NN/`](https://github.com/ARM-software/CMSIS_5/tree/develop/CMSIS/NN) directory).
+See [`COMPATIBILITY.md`](COMPATIBILITY.md) for details on supported Toolchains, Simulators, Frameworks and CMSIS-NN versions.
 
 ## Performance
-When running ResNet on [TensorFlow Lite for Microcontrollers](https://github.com/tensorflow/tflite-micro) (TFLM), muRISCV-NN delivers close to **100x** dynamic instruction count reduction:
 
-|Kernels    |Extension |VLEN |Dynamic Instr. [x10^6] |
-|-----------|----------|-----|-----------------------|
-|Baseline   |-         |-    |688                    |
-|muRISCV-NN |-         |-    |62.5                   |
-|muRISCV-NN |P-Ext.    |-    |49.5                   |
-|muRISCV-NN |V-Ext.    |64   |12.3                   |
-|muRISCV-NN |V-Ext.    |128  |9.67                   |
-|muRISCV-NN |V-Ext.    |256  |8.41                   |
-|muRISCV-NN |V-Ext.    |512  |7.47                   |
-|muRISCV-NN |V-Ext.    |1024 |7.21                   |
-
-Stay tuned for more performance numbers in the near future!
+See https://github.com/tum-ei-eda/muriscv-nn/wiki for detailed benchmark results.
 
 ## Publications
 
@@ -80,7 +67,7 @@ Stay tuned for more performance numbers in the near future!
   }
   ```
 
-  
+
 - **From Simulation to RVV Hardware: Evaluating the muRISCV-NN TinyML Inference Library on the CanMV K230 Platform** (https://mediatum.ub.tum.de/1747602?show_id=1759366&style=full_text)
 
   *Student research internship*
@@ -98,7 +85,7 @@ Stay tuned for more performance numbers in the near future!
 	  month = {Oct}
   }
   ```
-  
+
 
 ## Acknowledgment
 
