@@ -23,6 +23,8 @@ set -euo pipefail
 # Path to this script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+TFLM_REF=${TFLM_REF:-""}
+
 echo "Download TFLM sources."
 if [ ! -d "tflite-micro" ]; then
   git clone https://github.com/tensorflow/tflite-micro.git
