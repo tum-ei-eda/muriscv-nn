@@ -90,6 +90,8 @@ extern "C" {
 #define arm_depthwise_conv_s4_opt_get_buffer_size muriscv_nn_depthwise_conv_s4_opt_get_buffer_size
 #define arm_fully_connected_s4 muriscv_nn_fully_connected_s4
 #define arm_fully_connected_s8 muriscv_nn_fully_connected_s8
+#define arm_fully_connected_per_channel_s8 muriscv_nn_fully_connected_per_channel_s8
+#define arm_fully_connected_wrapper_s8 muriscv_nn_fully_connected_wrapper_s8
 #define arm_vector_sum_s8 muriscv_nn_vector_sum_s8
 #define arm_vector_sum_s8_s64 muriscv_nn_vector_sum_s8_s64
 #define arm_fully_connected_s8_get_buffer_size muriscv_nn_fully_connected_s8_get_buffer_size
@@ -122,6 +124,7 @@ extern "C" {
 #define arm_softmax_s16 muriscv_nn_softmax_s16
 #define arm_softmax_u8 muriscv_nn_softmax_u8
 #define arm_reshape_s8 muriscv_nn_reshape_s8
+#define arm_transpose_s8 muriscv_nn_transpose_s8
 #define arm_concatenation_s8_x muriscv_nn_concatenation_s8_x
 #define arm_concatenation_s8_y muriscv_nn_concatenation_s8_y
 #define arm_concatenation_s8_z muriscv_nn_concatenation_s8_z
@@ -133,6 +136,11 @@ extern "C" {
 #define arm_svdf_s8_get_buffer_size_mve muriscv_nn_svdf_s8_get_buffer_size_mve
 #define arm_lstm_unidirectional_s8 muriscv_nn_lstm_unidirectional_s8
 #define arm_lstm_unidirectional_s16 muriscv_nn_lstm_unidirectional_s16
+#define arm_batch_matmul_s8 muriscv_nn_batch_matmul_s8
+#define arm_batch_matmul_s16 muriscv_nn_batch_matmul_s16
+#define arm_pad_s8 muriscv_nn_pad_s8
+#define arm_minimum_s8 muriscv_nn_minimum_s8
+#define arm_maximum_s8 muriscv_nn_maximum_s8
 #ifdef __cplusplus
 }
 #endif

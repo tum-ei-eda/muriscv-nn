@@ -22,8 +22,8 @@
  * Title:        muriscv_nn_functions.h
  * Description:  Public header file for MURISCV NN Library
  *
- * $Date:        04 Jun 2024
- * $Revision:    V.16.1.0
+ * $Date:        23 October 2024
+ * $Revision:    V.17.3.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
@@ -1506,7 +1506,7 @@ int32_t muriscv_nn_depthwise_conv_s4_opt_get_buffer_size(const muriscv_nn_dims *
  *                               fc_params->filter_offset : 0
  *                               Range of fc_params->output_offset : [-128, 127]
  * @param[in]      quant_params  Per-tensor quantization info.
- *                               It contains the multiplier and shift values to be applied to the output tensor.
+ *                               It contains the multiplier and shift value to be applied to the output tensor.
  * @param[in]      input_dims    Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
  *                               Input dimension is taken as Nx(H * W * C_IN)
  * @param[in]      input_data    Input (activation) data pointer. Data type: int8
@@ -1554,7 +1554,7 @@ muriscv_nn_status muriscv_nn_fully_connected_s4(const muriscv_nn_context *ctx,
  *                               fc_params->filter_offset : 0
  *                               Range of fc_params->output_offset : [-128, 127]
  * @param[in]      quant_params  Per-tensor quantization info.
- *                               It contains the multiplier and shift values to be applied to the output tensor.
+ *                               It contains the multiplier and shift value to be applied to the output tensor.
  * @param[in]      input_dims    Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
  *                               Input dimension is taken as Nx(H * W * C_IN)
  * @param[in]      input_data    Input (activation) data pointer. Data type: int8
@@ -1592,12 +1592,113 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
                                            int8_t *output_data);
 
 /**
+ * @brief Basic s8 Fully Connected function using per channel quantization.
+ *
+ * @param[in, out] ctx           Function context (e.g. temporary buffer). Check the function
+ *                               definition file to see if an additional buffer is required.
+ *                               Optional function {API}_get_buffer_size() provides the buffer
+ *                               size if an additional buffer is required.
+ *                               The caller is expected to clear the buffer, if applicable, for security reasons.
+ * @param[in]      fc_params     Fully Connected layer parameters.
+ *                               Range of fc_params->input_offset  : [-127, 128]
+ *                               fc_params->filter_offset : 0
+ *                               Range of fc_params->output_offset : [-128, 127]
+ * @param[in]      quant_params  Per-channel quantization info.
+ *                               It contains the multiplier and shift values to be applied to each output channel
+ * @param[in]      input_dims    Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
+ *                               Input dimension is taken as Nx(H * W * C_IN)
+ * @param[in]      input_data    Input (activation) data pointer. Data type: int8
+ * @param[in]      filter_dims   Two dimensional filter dimensions. Format: [N, C]
+ *                               N : accumulation depth and equals (H * W * C_IN) from input_dims
+ *                               C : output depth and equals C_OUT in output_dims
+ *                               H & W : Not used
+ * @param[in]      filter_data   Filter data pointer. Data type: int8
+ * @param[in]      bias_dims     Bias tensor dimensions. Format: [C_OUT]
+ *                               N, H, W : Not used
+ * @param[in]      bias_data     Bias data pointer. Data type: int32
+ * @param[in]      output_dims   Output tensor dimensions. Format: [N, C_OUT]
+ *                               N : Batches
+ *                               C_OUT : Output depth
+ *                               H & W : Not used.
+ * @param[in, out] output_data    Output data pointer. Data type: int8
+ *
+ * @return     The function returns either
+ *                  <code>MURISCV_NN_ARG_ERROR</code> if argument constraints fail. or,
+ *                  <code>MURISCV_NN_SUCCESS</code> on successful completion.
+ *
+ * @details
+ *    - Supported framework: TensorFlow Lite
+ */
+muriscv_nn_status muriscv_nn_fully_connected_per_channel_s8(const muriscv_nn_context *ctx,
+                                                       const muriscv_nn_fc_params *fc_params,
+                                                       const muriscv_nn_per_channel_quant_params *quant_params,
+                                                       const muriscv_nn_dims *input_dims,
+                                                       const int8_t *input_data,
+                                                       const muriscv_nn_dims *filter_dims,
+                                                       const int8_t *filter_data,
+                                                       const muriscv_nn_dims *bias_dims,
+                                                       const int32_t *bias_data,
+                                                       const muriscv_nn_dims *output_dims,
+                                                       int8_t *output_data);
+
+/**
+ * @brief s8 Fully Connected layer wrapper function
+ *
+ * @param[in, out] ctx           Function context (e.g. temporary buffer). Check the function
+ *                               definition file to see if an additional buffer is required.
+ *                               Optional function {API}_get_buffer_size() provides the buffer
+ *                               size if an additional buffer is required.
+ *                               The caller is expected to clear the buffer, if applicable, for security reasons.
+ * @param[in]      fc_params     Fully Connected layer parameters.
+ *                               Range of fc_params->input_offset  : [-127, 128]
+ *                               fc_params->filter_offset : 0
+ *                               Range of fc_params->output_offset : [-128, 127]
+ * @param[in]      quant_params  Per-channel or per-tensor quantization info. Check struct defintion for details.
+ *                               It contains the multiplier and shift value(s) to be applied to each output channel
+ * @param[in]      input_dims    Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
+ *                               Input dimension is taken as Nx(H * W * C_IN)
+ * @param[in]      input_data    Input (activation) data pointer. Data type: int8
+ * @param[in]      filter_dims   Two dimensional filter dimensions. Format: [N, C]
+ *                               N : accumulation depth and equals (H * W * C_IN) from input_dims
+ *                               C : output depth and equals C_OUT in output_dims
+ *                               H & W : Not used
+ * @param[in]      filter_data   Filter data pointer. Data type: int8
+ * @param[in]      bias_dims     Bias tensor dimensions. Format: [C_OUT]
+ *                               N, H, W : Not used
+ * @param[in]      bias_data     Bias data pointer. Data type: int32
+ * @param[in]      output_dims   Output tensor dimensions. Format: [N, C_OUT]
+ *                               N : Batches
+ *                               C_OUT : Output depth
+ *                               H & W : Not used.
+ * @param[in, out] output_data    Output data pointer. Data type: int8
+ *
+ * @return     The function returns either
+ *                  <code>MURISCV_NN_ARG_ERROR</code> if argument constraints fail. or,
+ *                  <code>MURISCV_NN_SUCCESS</code> on successful completion.
+ *
+ * @details
+ *    - Supported framework: TensorFlow Lite
+ */
+muriscv_nn_status muriscv_nn_fully_connected_wrapper_s8(const muriscv_nn_context *ctx,
+                                                   const muriscv_nn_fc_params *fc_params,
+                                                   const muriscv_nn_quant_params *quant_params,
+                                                   const muriscv_nn_dims *input_dims,
+                                                   const int8_t *input_data,
+                                                   const muriscv_nn_dims *filter_dims,
+                                                   const int8_t *filter_data,
+                                                   const muriscv_nn_dims *bias_dims,
+                                                   const int32_t *bias_data,
+                                                   const muriscv_nn_dims *output_dims,
+                                                   int8_t *output_data);
+
+/**
  * @brief Calculate the sum of each row in vector_data, multiply by lhs_offset and optionally add s32 bias_data.
  * @param[in, out]      vector_sum_buf              Buffer for vector sums
  * @param[in]           vector_cols                 Number of vector columns
  * @param[in]           vector_rows                 Number of vector rows
  * @param[in]           vector_data                 Vector of weigths data
  * @param[in]           lhs_offset                  Constant multiplied with each sum
+ * @param[in]           rhs_offset                  Constant added to each vector element before sum
  * @param[in]           bias_data                   Vector of bias data, added to each sum.
  * @return              The function returns
  *                         <code>MURISCV_NN_SUCCESS</code> - Successful operation
@@ -1607,6 +1708,7 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
                                       const int32_t vector_rows,
                                       const int8_t *vector_data,
                                       const int32_t lhs_offset,
+                                      const int32_t rhs_offset,
                                       const int32_t *bias_data);
 
 /**
@@ -1669,7 +1771,7 @@ int32_t muriscv_nn_fully_connected_s8_get_buffer_size_mve(const muriscv_nn_dims 
  *                               fc_params->filter_offset : 0
  *                               fc_params->output_offset : 0
  * @param[in]      quant_params  Per-tensor quantization info.
- *                               It contains the multiplier and shift values to be applied to the output tensor.
+ *                               It contains the multiplier and shift value to be applied to the output tensor.
  * @param[in]      input_dims    Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
  *                               Input dimension is taken as Nx(H * W * C_IN)
  * @param[in]      input_data    Input (activation) data pointer. Data type: int16
@@ -2241,6 +2343,34 @@ void muriscv_nn_softmax_u8(const uint8_t *input,
 void muriscv_nn_reshape_s8(const int8_t *input, int8_t *output, const uint32_t total_size);
 
 /**
+ * @defgroup Transpose Transpose Functions
+ *
+ */
+
+/**
+ * @brief Basic transpose function
+ *
+ * @param[in]       input_data            Input (activation) data pointer. Data type: int8
+ * @param[out]      output_data           Output data pointer. Data type: int8
+ * @param[in]       input_dims            Input (activation) tensor dimensions. Format: [N, H, W, C_IN]
+ * @param[in]       output_dims           Output tensor dimensions. Format may be arbitrary relative to input format.
+ *                                        The output dimension will depend on the permutation dimensions.
+ *                                        In other words the out dimensions are the result of applying the permutation
+ *                                        to the input dimensions.
+ * @param[in]       transpose_params      Transpose parameters. Contains permutation dimensions.
+ *
+ * @return          The function returns either
+ *                      <code>MURISCV_NN_ARG_ERROR</code> if argument constraints fail. or,
+ *                      <code>MURISCV_NN_SUCCESS</code> on successful completion.
+ *
+ */
+muriscv_nn_status muriscv_nn_transpose_s8(const int8_t *input_data,
+                                     int8_t *const output_data,
+                                     const muriscv_nn_dims *const input_dims,
+                                     const muriscv_nn_dims *const output_dims,
+                                     const muriscv_nn_transpose_params *const transpose_params);
+
+/**
  * @defgroup Concatenation Concatenation Functions
  *
  */
@@ -2610,6 +2740,157 @@ muriscv_nn_status muriscv_nn_lstm_unidirectional_s16(const int16_t *input,
                                                 int16_t *output,
                                                 const muriscv_nn_lstm_params *params,
                                                 muriscv_nn_lstm_context *buffers);
+
+/**
+ * @brief Batch matmul function with 8 bit input and output.
+ *
+ * @param[in]   ctx                   Temporary scratch buffer
+ *                                    The caller is expected to clear the buffer, if applicable, for security reasons.
+ *                                    Optional function muriscv_nn_fully_connected_s8_get_buffer_size() provides the buffer
+ *                                    size if an additional buffer is required.
+ * @param[in]   bmm_params            Batch matmul Parameters
+ *                                    Adjoint flags are currently unused.
+ * @param[in]   quant_params          Quantization parameters
+ * @param[in]   input_lhs_dims        Input lhs tensor dimensions.
+ *                                    This should be NHWC where lhs C = rhs C
+ * @param[in]   input_lhs             Pointer to input tensor
+ * @param[in]   input_rhs_dims        Input lhs tensor dimensions.
+ *                                    This is expected to be transposed so
+ *                                    should be NHWC where lhs C = rhs C
+ * @param[in]   input_rhs             Pointer to transposed input tensor
+ * @param[in]   output_dims           Output tensor dimensions
+ * @param[out]  output                Pointer to the output tensor
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite Micro
+ *    2. Performs row * row matrix multiplication with the RHS transposed.
+ *
+ */
+muriscv_nn_status muriscv_nn_batch_matmul_s8(const muriscv_nn_context *ctx,
+                                        const muriscv_nn_bmm_params *bmm_params,
+                                        const muriscv_nn_per_tensor_quant_params *quant_params,
+                                        const muriscv_nn_dims *input_lhs_dims,
+                                        const int8_t *input_lhs,
+                                        const muriscv_nn_dims *input_rhs_dims,
+                                        const int8_t *input_rhs,
+                                        const muriscv_nn_dims *output_dims,
+                                        int8_t *output);
+
+/**
+ * @brief Batch matmul function with 16 bit input and output.
+ *
+ * @param[in]   ctx                   Temporary scratch buffer
+ *                                    The caller is expected to clear the buffer, if applicable, for security reasons.
+ *                                    Optional function muriscv_nn_fully_connected_s8_get_buffer_size() provides the buffer
+ *                                    size if an additional buffer is required.
+ * @param[in]   bmm_params            Batch matmul Parameters
+ *                                    Adjoint flags are currently unused.
+ * @param[in]   quant_params          Quantization parameters
+ * @param[in]   input_lhs_dims        Input lhs tensor dimensions.
+ *                                    This should be NHWC where LHS.C = RHS.C
+ * @param[in]   input_lhs             Pointer to input tensor
+ * @param[in]   input_rhs_dims        Input lhs tensor dimensions.
+ *                                    This is expected to be transposed so
+ *                                    should be NHWC where LHS.C = RHS.C
+ * @param[in]   input_rhs             Pointer to transposed input tensor
+ * @param[in]   output_dims           Output tensor dimensions
+ * @param[out]  output                Pointer to the output tensor
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite Micro
+ *    2. Performs row * row matrix multiplication with the RHS transposed.
+ *
+ */
+muriscv_nn_status muriscv_nn_batch_matmul_s16(const muriscv_nn_context *ctx,
+                                         const muriscv_nn_bmm_params *bmm_params,
+                                         const muriscv_nn_per_tensor_quant_params *quant_params,
+                                         const muriscv_nn_dims *input_lhs_dims,
+                                         const int16_t *input_lhs,
+                                         const muriscv_nn_dims *input_rhs_dims,
+                                         const int16_t *input_rhs,
+                                         const muriscv_nn_dims *output_dims,
+                                         int16_t *output);
+
+/**
+ * @defgroup Pad Pad Layer Functions:
+ *
+ */
+
+/**
+ * @brief Expands the size of the input by adding constant values before and after the data, in all dimensions.
+ *
+ * @param[in]   input                      Pointer to input data
+ * @param[out]  output                     Pointer to output data
+ * @param[in]   pad_value                  Value to pad with
+ * @param[in]   input_size                 Input tensor dimensions
+ * @param[in]   pre_pad                           Padding to apply before data in each dimension
+ * @param[in]        post_pad                   Padding to apply after data in each dimension
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ */
+muriscv_nn_status muriscv_nn_pad_s8(const int8_t *input,
+                               int8_t *output,
+                               const int8_t pad_value,
+                               const muriscv_nn_dims *input_size,
+                               const muriscv_nn_dims *pre_pad,
+                               const muriscv_nn_dims *post_pad);
+
+/**
+ * @brief Elementwise binary minimum with 8bit data.
+ *
+ * @param[in]   ctx                   Temporary scratch buffer
+ *                                    The caller is expected to clear the buffer, if applicable, for security reasons.
+ * @param[in]   input_1_data          Pointer to input1 tensor
+ * @param[in]   input_1_dims          Input1 tensor dimensions
+ * @param[in]   input_2_data          Pointer to input2 tensor
+ * @param[in]   input_2_dims          Input2 tensor dimensions
+ * @param[out]  output_data           Pointer to the output tensor
+ * @param[in]   output_dims           Output tensor dimensions
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite Micro
+ *
+ */
+muriscv_nn_status muriscv_nn_minimum_s8(const muriscv_nn_context *ctx,
+                                   const int8_t *input_1_data,
+                                   const muriscv_nn_dims *input_1_dims,
+                                   const int8_t *input_2_data,
+                                   const muriscv_nn_dims *input_2_dims,
+                                   int8_t *output_data,
+                                   const muriscv_nn_dims *output_dims);
+
+/**
+ * @brief Elementwise binary maximum with 8bit data.
+ *
+ * @param[in]   ctx                   Temporary scratch buffer
+ *                                    The caller is expected to clear the buffer, if applicable, for security reasons.
+ * @param[in]   input_1_data          Pointer to input1 tensor
+ * @param[in]   input_1_dims          Input1 tensor dimensions
+ * @param[in]   input_2_data          Pointer to input2 tensor
+ * @param[in]   input_2_dims          Input2 tensor dimensions
+ * @param[out]  output_data           Pointer to the output tensor
+ * @param[in]   output_dims           Output tensor dimensions
+ *
+ * @return     The function returns <code>MURISCV_NN_SUCCESS</code>
+ *
+ * @details
+ *    1. Supported framework: TensorFlow Lite Micro
+ *
+ */
+muriscv_nn_status muriscv_nn_maximum_s8(const muriscv_nn_context *ctx,
+                                   const int8_t *input_1_data,
+                                   const muriscv_nn_dims *input_1_dims,
+                                   const int8_t *input_2_data,
+                                   const muriscv_nn_dims *input_2_dims,
+                                   int8_t *output_data,
+                                   const muriscv_nn_dims *output_dims);
 
 #ifdef __cplusplus
 }

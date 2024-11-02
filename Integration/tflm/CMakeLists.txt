@@ -271,8 +271,8 @@ set(TFLM_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/micro_log.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/tflite_bridge/flatbuffer_conversions_bridge.h
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/micro/tflite_bridge/flatbuffer_conversions_bridge.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/core/api/error_reporter.cc
-  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/core/api/error_reporter.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/compiler/mlir/lite/core/api/error_reporter.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/compiler/mlir/lite/core/api/error_reporter.h
 #  ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/core/api/op_resolver.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/core/api/flatbuffer_conversions.cc
   ${CMAKE_CURRENT_SOURCE_DIR}/tensorflow/lite/core/api/tensor_utils.h
