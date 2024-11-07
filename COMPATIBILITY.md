@@ -11,7 +11,7 @@ While the git tags/versions you can find here are verified to work together, it 
 |   N/A (`3454f4e1`)  |  `v6.0.0`           |             |
 |   `v0.1.0` (`5474a6a6`)  |  `42a38b4c`           |             |
 
-_(Last updated: 07.11.2024)_
+_(Last Update: 07.11.2024)_
 
 ## Deployment Frameworks
 
