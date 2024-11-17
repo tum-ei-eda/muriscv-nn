@@ -80,7 +80,8 @@ jobs:
       run: |
         export PREBUILD_TVM=true
         python3 -m pip install --user virtualenv
-        ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike
+        # ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike
+        ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --enable-vext --enable-gcc --enable-llvm
 
     - name: Run ${{matrix.benchmark}} Benchmark
       working-directory: ./Integration/MLonMCU
@@ -90,7 +91,8 @@ jobs:
         source $VENV_DIR/bin/activate
         export MLONMCU_HOME=$WORKSPACE_DIR
         cat $MLONMCU_HOME/environment.yml
-        python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t spike --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 --post -p --parallel 4 -f muriscvnn -f vext -f pext --autotuned --toolchain ${{matrix.toolchain}} -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "32" ;; tvm*-llvm) echo -n "28" ;; tflm*-gcc) echo -n "8" ;; tflm*-llvm) echo -n "7" ;; *) echo -n "?" ;; esac) ${{matrix.benchmark}} --fail
+        # python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t spike --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 --post -p --parallel 4 -f muriscvnn -f vext -f pext --autotuned --toolchain ${{matrix.toolchain}} -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "32" ;; tvm*-llvm) echo -n "28" ;; tflm*-gcc) echo -n "8" ;; tflm*-llvm) echo -n "7" ;; *) echo -n "?" ;; esac) ${{matrix.benchmark}} --fail
+        python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t spike --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 --post -p --parallel 4 -f muriscvnn -f vext --toolchain ${{matrix.toolchain}} -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "14" ;; tvm*-llvm) echo -n "14" ;; tflm*-gcc) echo -n "7" ;; tflm*-llvm) echo -n "7" ;; *) echo -n "?" ;; esac) ${{matrix.benchmark}} --fail
 
     - name: Archive Benchmark Results
       uses: actions/upload-artifact@v4
@@ -124,6 +126,10 @@ jobs:
         working-directory: ./Wiki
         run: |
           source ../Integration/MLonMCU/common.sh
+          export RV32GC_VERSION=$(../Toolchain/rv32gc/bin/riscv32-unknown-elf-gcc --version | head -1)
+          export RV32GCV_VERSION=$(../Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version | head -1)
+          export RV32GCP_VERSION=$(../Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version | head -1)
+          export LLVM_VERSION=$(../Toolchain/llvm/bin/clang --version | head -1)
           python3 create_wiki.py */*.csv --split
 
       - name: Clone Wiki Repo
@@ -141,6 +147,7 @@ jobs:
           ls
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          python3 ../Wiki/gen_sidebar.py Benchmarks-*.md > _Sidebar.md
           git add *.md
           git add *.csv
           git commit -m "Added Benchmarks on ${{ steps.date-today.outputs.date }}"
