@@ -171,7 +171,7 @@ fi
 # Setup Python #
 ################
 
-virtualenv -p python3.8 $VENV_DIR
+virtualenv -p python3 $VENV_DIR
 
 source $VENV_DIR/bin/activate
 
