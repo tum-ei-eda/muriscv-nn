@@ -2,23 +2,24 @@
 
 ### Simulator
 
-{% if "spike" in target_names %}
+{% if "spike" in target_names or "spike_rv32" in target_names or "spike_rv64" in target_names %}
 - Spike ([`riscv-isa-sim `](https://github.com/riscv-software-src/riscv-isa-sim)) (ISS, CPI=1)
+  - Spike : {{ "?" | env_var('SPIKE_REF') }}
+  - Spike PK : {{ "?" | env_var('SPIKEPK_REF') }}
 {% endif %}
 
 ### Toolchains
 
-{% if "gcc" in toolchain_names %}
+{% if "gcc" in toolchain_names or "llvm" in toolchain_names %}
 - RISC-V GCC:
-  - **Scalar:** TODO: version & url
-  - **Vector:** TODO: version & url
+  - **Scalar:** `{{ "?" | env_var("RV32GC_VERSION") }}`
+  - **Vector:** `{{ "?" | env_var("RV32GCV_VERSION") }}`
   - **Packed:** Self compiled using patches found in https://github.com/riscv-collab/riscv-gcc/pull/258 and https://github.com/riscvarchive/riscv-binutils-gdb/pull/257
 {% endif %}
 {% if "llvm" in toolchain_names %}
 - LLVM/Clang:
-  - TODO: Version
+  - `{{ "?" | env_var("LLVM_VERSION") }}`
   - Linker: lld (TODO)
-  - RISC-V GCC for Headers, libc,...
 {% endif %}
 
 ### Models
@@ -28,18 +29,14 @@
 {% endif %}
 - TODO: others!
 
-### Package Versions
+### Frameworks
 
-- MLonMCU : {{ "default" | env_var('MLIF_REF') }}
+- MLonMCU : {{ "?" | env_var('MLIF_REF') }}
 {% if "tflm" in framework_names %}
-- TFLM :  {{ "default" | env_var('TFLM_REF') }}
+- TFLM :  {{ "?" | env_var('TFLM_REF') }}
 {% endif %}
 {% if "tvm" in framework_names %}
-- TVM : {% if "default" | env_var('PREBUILT_TVM') == '1' %} Nightly Pre-Build {% else %} {{ "default" | env_var('TVM_REF') }} {% endif %}
-{% endif %}
-{% if "spike" in target_names %}
-- Spike : {{ "default" | env_var('SPIKE_REF') }}
-- Spike PK : {{ "default" | env_var('SPIKEPK_REF') }}
+- TVM : {% if "?" | env_var('PREBUILT_TVM') == '1' %} Nightly Pre-Build {% else %} {{ "?" | env_var('TVM_REF') }} {% endif %}
 {% endif %}
 
 
@@ -52,16 +49,20 @@
 {% for framework_name, framework_data in data.items() %}
 {% for toolchain_name, toolchain_data in framework_data.items() %}
 {% for optimize_name, optimize_data in toolchain_data.items() %}
-{% for backend_name, backend_data in optimize_data.items() %}
-## Results (Framework: {{framework_name}}, Backend: {{backend_name}}, Toolchain: {{toolchain_name}}, Flags: -O{{optimize_name}})
+{% for target_name, target_data in optimize_data.items() %}
+{% for backend_name, backend_data in target_data.items() %}
+## Results (Framework: {{framework_name}}, Backend: {{backend_name}}, Toolchain: {{toolchain_name}}, Flags: -O{{optimize_name}}, Target: {{target_name}} )
 
 {% for model_name, model_data in backend_data.items() %}
+
+<a name="{{date_}}-{{framework_name}}-{{backend_name}}-{{toolchain_name}}-o{{optimize_name}}-{{target_name}}-{{model_name}}"></a>
 ### {{model_descriptions[model_name]}} (`{{model_name}}`)
 
 |  Cycles (Speedup) | Total ROM (rel.) | Total RAM (rel.) | VLEN | {% if "tvm" in backend_name %} Layout | {% endif%} Kernels    | Mode | Arch | Unroll | Auto-Vectorization |
 | -----------------:|-----------------:| ----------------:| ----:| {% if "tvm" in backend_name %} ------ | {% endif %} --------- | ---- | ---- | ---- | -------------------|
 {% for x in model_data %}| `{{x["Run Cycles"]}}` <br>({% if loop.index0 == x["Baseline"] %} **Base** {% else %} {{(1.0/x["Run Cycles (rel.)"]) | round(1) }}x {% endif %}) | `{{x["Total ROM"]}}` <br>({% if loop.index0 == x["Baseline"] %} **Base** {% else %} {{ x["Total ROM (rel.)"] | round3 }} {% endif %}) | `{{x["Total RAM"]}}` <br>({% if loop.index0 == x["Baseline"] %} **Base** {% else %} {{ x["Total RAM (rel.)"] | round3 }} {% endif %}) | {{x["VLEN"]}} | {% if "tvm" in backend_name %} {{x["Layout"]}} | {% endif %}{{x["Kernels"]}} | {{x["Mode"]}} | {{x["Arch"]}} | {{x["Unroll"]}} | {{x["AutoVectorize"]}} |
 {% endfor %}
+{% endfor %}
 {% endfor %}
 {% endfor %}
 {% endfor %}

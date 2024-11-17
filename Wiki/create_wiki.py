@@ -57,7 +57,8 @@ backend_names = []
 toolchain_names = []
 optimize_names = []
 model_names = []
-target_names = ["spike"]  # TODO: allow-multiple targets
+target_names = []
+# TODO: xlen, unroll, fuse-ld
 
 for framework_name, framework_df in df.groupby("Framework"):
     framework_names.append(framework_name)
@@ -68,14 +69,17 @@ for framework_name, framework_df in df.groupby("Framework"):
         for optimize_name, optimize_df in toolchain_df.groupby("Optimize"):
             optimize_names.append(optimize_name)
             data[framework_name][toolchain_name][optimize_name] = {}
-            for backend_name, backend_df in optimize_df.groupby("Backend"):
-                backend_names.append(backend_name)
-                data[framework_name][toolchain_name][optimize_name][backend_name] = {}
-                for model_name, model_df in backend_df.groupby("Model"):
-                    data[framework_name][toolchain_name][optimize_name][backend_name][model_name] = model_df.to_dict(
-                        "records"
-                    )
-                    model_names.append(model_name)
+            for target_name, target_df in optimize_df.groupby("Target"):
+                target_names.append(target_name)
+                data[framework_name][toolchain_name][optimize_name][target_name] = {}
+                for backend_name, backend_df in target_df.groupby("Backend"):
+                    backend_names.append(backend_name)
+                    data[framework_name][toolchain_name][optimize_name][target_name][backend_name] = {}
+                    for model_name, model_df in backend_df.groupby("Model"):
+                        data[framework_name][toolchain_name][optimize_name][target_name][backend_name][model_name] = model_df.to_dict(
+                            "records"
+                        )
+                        model_names.append(model_name)
 
 # data = {
 #     "tflmi": {
@@ -104,44 +108,58 @@ BACKEND_DESCS = {
     "tvmaot": "TVM",
 }
 
+TARGET_DESCS = {
+    "spike": "Spike (RV32)",
+    "spike_rv32": "Spike (RV32)",
+    "spike_rv64": "Spike (RV64)",
+}
+
 if args.split:
     for framework_name, framework_data in data.items():
         for toolchain_name, toolchain_data in framework_data.items():
             for optimize_name, optimize_data in toolchain_data.items():
-                filename = (
-                    "Benchmarks-"
-                    + date
-                    + "-"
-                    + framework_name.upper()
-                    + "-"
-                    + toolchain_name.upper()
-                    + "-O"
-                    + str(optimize_name)
-                )
-                # print("data", {framework_name: {toolchain_name: toolchain_data}})
-                data2 = {framework_name: {toolchain_name: {optimize_name: optimize_data}}}
-                df2 = df[
-                    (df["Framework"] == framework_name)
-                    & (df["Toolchain"] == toolchain_name)
-                    & (df["Optimize"] == optimize_name)
-                ]
-                content = template.render(
-                    data=data2,
-                    model_descriptions=MODEL_DESCS,
-                    backend_descriptions=BACKEND_DESCS,
-                    filename=filename,
-                    framework_names=[framework_name],
-                    backend_names=backend_names,
-                    toolchain_names=[toolchain_name],
-                    optimize_names=[optimize_name],
-                    model_names=model_names,
-                    target_names=target_names,
-                )
-                with open(filename + ".md", mode="w", encoding="utf-8") as message:
-                    message.write(content)
-                    print(f"... wrote {filename}.md")
-                df2.to_csv(filename + ".csv")
-                print(f"... wrote {filename}.csv")
+                for target_name, target_data in optimize_data.items():
+                    filename = (
+                        "Benchmarks-"
+                        + date
+                        + "-"
+                        + framework_name.upper()
+                        + "-"
+                        + toolchain_name.upper()
+                        + "-O"
+                        + str(optimize_name)
+                        + "-"
+                        + TARGET_DESCS[target_name].replace(" ", "").replace("(", "").replace(")", "")
+                    )
+                    # print("data", {framework_name: {toolchain_name: toolchain_data}})
+                    data2 = {framework_name: {toolchain_name: {optimize_name: {target_name: target_data}}}}
+                    print("data2", data2)
+                    df2 = df[
+                        (df["Framework"] == framework_name)
+                        & (df["Toolchain"] == toolchain_name)
+                        & (df["Optimize"] == optimize_name)
+                        & (df["Target"] == target_name)
+                    ]
+                    content = template.render(
+                        data=data2,
+                        date=date,
+                        date_=date.replace("-", ""),
+                        model_descriptions=MODEL_DESCS,
+                        backend_descriptions=BACKEND_DESCS,
+                        target_descriptions=TARGET_DESCS,
+                        filename=filename,
+                        framework_names=[framework_name],
+                        backend_names=backend_names,
+                        toolchain_names=[toolchain_name],
+                        optimize_names=[optimize_name],
+                        model_names=model_names,
+                        target_names=target_names,
+                    )
+                    with open(filename + ".md", mode="w", encoding="utf-8") as message:
+                        message.write(content)
+                        print(f"... wrote {filename}.md")
+                    df2.to_csv(filename + ".csv")
+                    print(f"... wrote {filename}.csv")
 else:
     filename = "Benchmarks-" + date
     # data2 = {}
@@ -151,8 +169,11 @@ else:
     # print("data", data)
     content = template.render(
         data=data,
+        date=date,
+        date_=date.replace("-", ""),
         model_descriptions=MODEL_DESCS,
         backend_descriptions=BACKEND_DESCS,
+        target_descriptions=TARGET_DESCS,
         filename=filename,
         framework_names=framework_names,
         backend_names=backend_names,
