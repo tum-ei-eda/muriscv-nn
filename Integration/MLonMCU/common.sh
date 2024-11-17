@@ -19,13 +19,14 @@ export VENV_DIR=$SCRIPT_DIR/venv
 
 # MLonMCU
 # export MLONMCU_REF=3ec39b1881535d7a0727b5afd6b78d816b556b73
-export MLONMCU_REF=main
+# export MLONMCU_REF=main
+export MLONMCU_REF=develop
 # export MLIF_REF=c7b0e7364c232666ebd5a17476181e3ff9a71d70
 export MLIF_REF=main
 
 # TFLM
 # export TFLM_REF=47f77ab6876f66a2d5e4b7f0266e374b4260181e
-export TFLM_REF=main
+export TFLM_REF=8eb6b23de4470d6a8da3131650d6a67514dfa130
 export ENABLE_TFLM=0
 
 # TVM
@@ -54,10 +55,10 @@ export ENABLE_ETISS=0
 export LOCAL_GCC=1
 export LOCAL_LLVM=1
 export ENABLE_DEFAULT=1
-export ENABLE_PEXT=1
-export ENABLE_VEXT=1
-export ENABLE_GCC=1
-export ENABLE_LLVM=1
+export ENABLE_PEXT=0
+export ENABLE_VEXT=0
+export ENABLE_GCC=0
+export ENABLE_LLVM=0
 
 # LLVM
 # Not supported

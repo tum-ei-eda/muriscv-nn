@@ -27,7 +27,7 @@ Further the script use Python3.8 and assumes that the Virtualenv package is inst
 Now setup MLonMCU and all its dependencies:
 
 ```
-./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike
+./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --enable-vext --enable-gcc --enable-llvm
 ```
 
 ## Usage

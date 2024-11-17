@@ -72,6 +72,12 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
         )
         if "config_tvmaot.desired_layout" in df.columns:
             df["Layout"] = df["config_tvmaot.desired_layout"].fillna("NHWC")
+        if "config_tvmaotplus.desired_layout" in df.columns:
+            df["Layout"] = df["config_tvmaotplus.desired_layout"].fillna("NHWC")
+        if "config_tvmrt.desired_layout" in df.columns:
+            df["Layout"] = df["config_tvmrt.desired_layout"].fillna("NHWC")
+        if "config_tvmllvm.desired_layout" in df.columns:
+            df["Layout"] = df["config_tvmllvm.desired_layout"].fillna("NHWC")
         df["AutoVectorize"] = df.apply(
             lambda row: (
                 "Loop+SLP"
@@ -104,7 +110,13 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
         #     ),
         #     axis=1,
         # )
-        df["Arch"] = df["config_spike.final_arch"].apply(lambda x: x.upper())  # TODO: generalize!
+        if "config_spike.final_arch" not in df.columns:
+            df["config_spike.final_arch"] = None
+        if "config_spike_rv32.final_arch" not in df.columns:
+            df["config_spike_rv32.final_arch"] = None
+        if "config_spike_rv64.final_arch" not in df.columns:
+            df["config_spike_rv64.final_arch"] = None
+        df["Arch"] = df["config_spike.final_arch"].combine_first(df["config_spike_rv32.final_arch"].combine_first(df["config_spike_rv64.final_arch"])).apply(lambda x: x.upper())  # TODO: generalize!
         del df["Backend"]
         report.post_df = df
 
@@ -113,6 +125,8 @@ FRONTEND = "tflite"
 
 RISCV_TARGETS = [
     "spike",
+    "spike_rv32",
+    "spike_rv64",
     "ovpsim",
     "etiss_pulpino",
 ]
@@ -124,10 +138,10 @@ OTHER_TARGETS = [
 TARGETS = RISCV_TARGETS + OTHER_TARGETS
 
 
-AUTOTUNED_TARGETS = ["spike", "ovpsim", "etiss_pulpino"]
+AUTOTUNED_TARGETS = ["spike", "spike_rv32", "ovpsim", "etiss_pulpino"]
 
 DEFAULT_TARGETS = [
-    "spike",
+    "spike_rv32",
     # "host_x86",
     # "etiss_pulpino",
     "corstone300",
@@ -138,11 +152,13 @@ PLATFORM = "mlif"
 BACKENDS = [
     "tflmi",
     "tvmaot",
-    # TODO: tvmllvm, tvmaotplus
+    "tvmaotplus",
+    "tvmllvm",
+    "tvmllvm",
 ]
 DEFAULT_BACKENDS = [
     "tflmi",
-    "tvmaot",
+    "tvmaotplus",
 ]
 
 FEATURES = [
@@ -168,7 +184,7 @@ DEFAULT_FEATURES = [
 
 TUNING_RECORDS = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "riscv_cpu_v0.01.log.best",
+    "riscv_cpu_v0.01.log.best",  # TODO: replace?
 )
 
 
@@ -198,6 +214,16 @@ def get_target_features(
     CMSISNN_MVEI = [["cmsisnn", "arm_mvei", "arm_dsp"] if enable_mvei else []]
     TARGET_FEATURES = {
         "spike": [
+            *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
+            *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
+            *([*CMSISNN_SCALAR] if enable_cmsisnn else []),
+        ],
+        "spike_rv32": [
+            *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
+            *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
+            *([*CMSISNN_SCALAR] if enable_cmsisnn else []),
+        ],
+        "spike_rv64": [
             *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
             *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
             *([*CMSISNN_SCALAR] if enable_cmsisnn else []),
@@ -243,6 +269,8 @@ VALIDATE_FEATURES = ["validate", "debug"]
 
 TARGET_ARCH = {
     "spike": "riscv",
+    "spike_rv32": "riscv",
+    "spike_rv64": "riscv",
     "ovpsim": "riscv",
     "x86": "x86",
     "etiss_pulpino": "riscv",
@@ -252,6 +280,9 @@ TARGET_ARCH = {
 BACKEND_DEFAULT_FEATURES = {
     "tflmi": [],
     "tvmaot": ["unpacked_api", "usmp"],
+    "tvmaotplus": [],
+    "tvmrt": [],
+    "tvmllvm": [],
 }
 
 
@@ -259,6 +290,9 @@ def get_backend_features(backend, target, enable_autotuned=False):
     BACKEND_FEATURES = {
         "tflmi": [[]],
         "tvmaot": [[], *([["autotuned"]] if enable_autotuned and target in AUTOTUNED_TARGETS else [])],
+        "tvmaotplus": [[], *([["autotuned"]] if enable_autotuned and target in AUTOTUNED_TARGETS else [])],
+        "tvmrt": [[], *([["autotuned"]] if enable_autotuned and target in AUTOTUNED_TARGETS else [])],
+        "tvmllvm": [[], *([["autotuned"]] if enable_autotuned and target in AUTOTUNED_TARGETS else [])],
     }
     return BACKEND_FEATURES[backend]
 
@@ -274,9 +308,33 @@ def get_backend_config(backend, features, enable_autotuned=False):
                 else []
             ),
         ],
+        "tvmaotplus": [
+            *([{}] if "muriscvnn" in features or "cmsisnn" in features else []),
+            *(
+                [{"tvmaotplus.desired_layout": "NCHW"}, {"tvmaotplus.desired_layout": "NHWC"}]
+                if "muriscvnn" not in features and "cmsisnn" not in features
+                else []
+            ),
+        ],
+        "tvmrt": [
+            *([{}] if "muriscvnn" in features or "cmsisnn" in features else []),
+            *(
+                [{"tvmrt.desired_layout": "NCHW"}, {"tvmrt.desired_layout": "NHWC"}]
+                if "muriscvnn" not in features and "cmsisnn" not in features
+                else []
+            ),
+        ],
+        "tvmllvm": [
+            *([{}] if "muriscvnn" in features or "cmsisnn" in features else []),
+            *(
+                [{"tvmllvm.desired_layout": "NCHW"}, {"tvmllvm.desired_layout": "NHWC"}]
+                if "muriscvnn" not in features and "cmsisnn" not in features
+                else []
+            ),
+        ],
     }
     ret = BACKEND_FEATURES[backend]
-    if enable_autotuned and backend == "tvmaot":
+    if enable_autotuned and backend in ["tvmaot", "tvmaotplus", "tvmrt", "tvmllvm"]:
         for cfg in ret:
             cfg.update({"autotuned.results_file": TUNING_RECORDS})
     return ret
@@ -295,6 +353,9 @@ DEFAULT_CONFIG = {
 BACKEND_DEFAULT_CONFIG = {
     "tflmi": {},
     "tvmaot": {"usmp.algorithm": "hill_climb"},
+    "tvmaotplus": {"usmp.algorithm": "hill_climb"},
+    "tvmrt": {},
+    "tvmllvm": {}
 }
 
 VLENS = [64, 128, 256, 512, 1024, 2048, 4096, 8192]
@@ -377,8 +438,13 @@ POSTPROCESS_CONFIG = {
     ],
     "rename_cols.mapping": {
         "config_spike.vlen": "VLEN",
+        "config_spike_rv32.vlen": "VLEN",
+        "config_spike_rv64.vlen": "VLEN",
         "config_ovpsim.vlen": "VLEN",
         "config_tvmaot.desired_layout": "Layout",
+        "config_tvmaotplus.desired_layout": "Layout",
+        "config_tvmrt.desired_layout": "Layout",
+        "config_tvmllvm.desired_layout": "Layout",
         "config_mlif.toolchain": "Toolchain",
         # "config_auto_vectorize.loop": "Loop",
         # "config_auto_vectorize.slp": "SLP",
@@ -408,7 +474,7 @@ def gen_features(backend, features, validate=False, auto_vectorize=False):
     ret.extend(BACKEND_DEFAULT_FEATURES[backend])
     if validate:
         ret += VALIDATE_FEATURES
-    if backend == "tvmaot":
+    if backend in ["tvmaot", "tvmaotplus", "tvmrt", "tvmllvm"]:
         # Rename muriscvnn -> muriscvnnbyoc etc.
         for feature in features:
             if "muriscvnn" in feature:
@@ -456,13 +522,13 @@ def gen_config(
         assert "vext" not in features
         assert vlen == 0
         if "muriscvnn" in features or "muriscvnnbyoc" in features:
-            if backend == "tvmaot":
+            if backend in ["tvmaot", "tvmaotplus", "tvmrt", "tvmllvm"]:
                 ret["muriscvnnbyoc.mcpu"] = "cortex-m33"
     if "vext" in features:
         if use_vext != 0:
             assert "pext" not in features
             if "muriscvnn" in features or "muriscvnnbyoc" in features:
-                if backend == "tvmaot":
+                if backend in ["tvmaot", "tvmaotplus", "tvmrt", "tvmllvm"]:
                     ret["muriscvnnbyoc.mcpu"] = "cortex-m55"
         # if not scalar_default_only or "muriscvnn" in features or "muriscvnnbyoc" in features:
         ret["vext.vlen"] = vlen
@@ -474,7 +540,7 @@ def gen_config(
     # else:
     # assert vlen == 0
     if "cmsisnnbyoc" in features:
-        assert backend == "tvmaot"
+        assert backend in ["tvmaot", "tvmaotplus", "tvmrt", "tvmllvm"]
         if "arm_mvei" in features:
             ret["cmsisnnbyoc.mcpu"] = "cortex-m55"
         elif "arm_dsp" in features:
@@ -546,7 +612,7 @@ def benchmark(args):
                                             if (
                                                 "cmsisnn" not in target_features
                                                 and "muriscvnn" not in target_features
-                                                and backend == "tvmaot"
+                                                and backend in ["tvmaot", "tvmaotplus", "tvmrt", "tvmllvm"]
                                             ):
                                                 enable_autotuned = True
                                         for backend_features in get_backend_features(
