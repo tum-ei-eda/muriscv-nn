@@ -59,6 +59,7 @@ export ENABLE_PEXT=0
 export ENABLE_VEXT=0
 export ENABLE_GCC=0
 export ENABLE_LLVM=0
+export ENABLE_RV64=0
 
 # LLVM
 # Not supported
