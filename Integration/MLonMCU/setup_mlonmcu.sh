@@ -44,6 +44,9 @@ while getopts ':h-:' 'OPTKEY'; do
             'enable-llvm')
                 ENABLE_LLVM=1
                 ;;
+            'enable-rv64')
+                ENABLE_RV64=1
+                ;;
             'local-etiss')
                 LOCAL_ETISS=1
                 ;;
@@ -194,7 +197,7 @@ fi
 # Initialize an environment from template
 
 
-TEMPLATE_ARGS="-c enable_tflm=$ENABLE_TFLM enable_tvm=$ENABLE_TVM enable_spike=$ENABLE_SPIKE enable_etiss=$ENABLE_ETISS enable_ovpsim=$ENABLE_OVPSIM enable_default=$ENABLE_DEFAULT enable_pext=$ENABLE_PEXT enable_vext=$ENABLE_VEXT local_etiss=$LOCAL_ETISS local_spike=$LOCAL_SPIKE local_ovpsim=$LOCAL_OVPSIM mlif_ref=$MLIF_REF tflm_ref=$TFLM_REF tvm_ref=$TVM_REF etiss_ref=$ETISS_REF spike_ref=$SPIKE_REF spikepk_ref=$SPIKEPK_REF prebuilt_tvm=$PREBUILT_TVM enable_gcc=$ENABLE_GCC enable_llvm=$ENABLE_LLVM local_gcc=$LOCAL_GCC local_llvm=$LOCAL_LLVM"
+TEMPLATE_ARGS="-c enable_tflm=$ENABLE_TFLM enable_tvm=$ENABLE_TVM enable_spike=$ENABLE_SPIKE enable_etiss=$ENABLE_ETISS enable_ovpsim=$ENABLE_OVPSIM enable_default=$ENABLE_DEFAULT enable_pext=$ENABLE_PEXT enable_vext=$ENABLE_VEXT local_etiss=$LOCAL_ETISS local_spike=$LOCAL_SPIKE local_ovpsim=$LOCAL_OVPSIM mlif_ref=$MLIF_REF tflm_ref=$TFLM_REF tvm_ref=$TVM_REF etiss_ref=$ETISS_REF spike_ref=$SPIKE_REF spikepk_ref=$SPIKEPK_REF prebuilt_tvm=$PREBUILT_TVM enable_gcc=$ENABLE_GCC enable_llvm=$ENABLE_LLVM local_gcc=$LOCAL_GCC local_llvm=$LOCAL_LLVM enable_rv64=$ENABLE_RV64"
 echo "TEMPLATE_ARGS=$TEMPLATE_ARGS"
 
 

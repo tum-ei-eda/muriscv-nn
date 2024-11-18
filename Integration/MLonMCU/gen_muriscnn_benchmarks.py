@@ -110,13 +110,11 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
         #     ),
         #     axis=1,
         # )
-        if "config_spike.final_arch" not in df.columns:
-            df["config_spike.final_arch"] = None
         if "config_spike_rv32.final_arch" not in df.columns:
             df["config_spike_rv32.final_arch"] = None
         if "config_spike_rv64.final_arch" not in df.columns:
             df["config_spike_rv64.final_arch"] = None
-        df["Arch"] = df["config_spike.final_arch"].combine_first(df["config_spike_rv32.final_arch"].combine_first(df["config_spike_rv64.final_arch"])).apply(lambda x: x.upper())  # TODO: generalize!
+        df["Arch"] = df["config_spike_rv32.final_arch"].combine_first(df["config_spike_rv64.final_arch"]).apply(lambda x: x.upper())  # TODO: generalize!
         del df["Backend"]
         report.post_df = df
 
@@ -124,7 +122,6 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
 FRONTEND = "tflite"
 
 RISCV_TARGETS = [
-    "spike",
     "spike_rv32",
     "spike_rv64",
     "ovpsim",
@@ -138,7 +135,7 @@ OTHER_TARGETS = [
 TARGETS = RISCV_TARGETS + OTHER_TARGETS
 
 
-AUTOTUNED_TARGETS = ["spike", "spike_rv32", "ovpsim", "etiss_pulpino"]
+AUTOTUNED_TARGETS = ["spike_rv32", "ovpsim", "etiss_pulpino"]
 
 DEFAULT_TARGETS = [
     "spike_rv32",
@@ -213,11 +210,6 @@ def get_target_features(
     CMSISNN_DSP = [["cmsisnn", "arm_dsp"] if enable_dsp else []]
     CMSISNN_MVEI = [["cmsisnn", "arm_mvei", "arm_dsp"] if enable_mvei else []]
     TARGET_FEATURES = {
-        "spike": [
-            *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
-            *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
-            *([*CMSISNN_SCALAR] if enable_cmsisnn else []),
-        ],
         "spike_rv32": [
             *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
             *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
@@ -268,7 +260,6 @@ def get_target_features(
 VALIDATE_FEATURES = ["validate", "debug"]
 
 TARGET_ARCH = {
-    "spike": "riscv",
     "spike_rv32": "riscv",
     "spike_rv64": "riscv",
     "ovpsim": "riscv",
@@ -437,7 +428,6 @@ POSTPROCESS_CONFIG = {
         "Abi2",
     ],
     "rename_cols.mapping": {
-        "config_spike.vlen": "VLEN",
         "config_spike_rv32.vlen": "VLEN",
         "config_spike_rv64.vlen": "VLEN",
         "config_ovpsim.vlen": "VLEN",
