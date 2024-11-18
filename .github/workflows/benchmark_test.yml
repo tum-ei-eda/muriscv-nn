@@ -149,6 +149,7 @@ jobs:
           export RV32GCP_VERSION=$(../Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version | head -1)
           export LLVM_VERSION=$(../Toolchain/llvm/bin/clang --version | head -1)
           python3 create_wiki.py */*.csv --split
+          cat Benchmarks-*.md >> $GITHUB_STEP_SUMMARY
 
       - name: Clone Wiki Repo
         uses: actions/checkout@v4
