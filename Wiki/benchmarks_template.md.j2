@@ -4,8 +4,8 @@
 
 {% if "spike" in target_names or "spike_rv32" in target_names or "spike_rv64" in target_names %}
 - Spike ([`riscv-isa-sim `](https://github.com/riscv-software-src/riscv-isa-sim)) (ISS, CPI=1)
-  - Spike : {{ "?" | env_var('SPIKE_REF') }}
-  - Spike PK : {{ "?" | env_var('SPIKEPK_REF') }}
+  - Spike : `{{ "?" | env_var('SPIKE_REF') }}`
+  - Spike PK : `{{ "?" | env_var('SPIKEPK_REF') }}`
 {% endif %}
 
 ### Toolchains
@@ -31,12 +31,12 @@
 
 ### Frameworks
 
-- MLonMCU : {{ "?" | env_var('MLIF_REF') }}
+- MLonMCU : `{{ "?" | env_var('MLIF_REF') }}`
 {% if "tflm" in framework_names %}
-- TFLM :  {{ "?" | env_var('TFLM_REF') }}
+- TFLM :  `{{ "?" | env_var('TFLM_REF') }}`
 {% endif %}
 {% if "tvm" in framework_names %}
-- TVM : {% if "?" | env_var('PREBUILT_TVM') == '1' %} Nightly Pre-Build {% else %} {{ "?" | env_var('TVM_REF') }} {% endif %}
+- TVM : `{% if "?" | env_var('PREBUILT_TVM') == '1' %} Nightly Pre-Build {% else %} {{ "?" | env_var('TVM_REF') }} {% endif %}`
 {% endif %}
 
 

@@ -6,6 +6,8 @@ import pandas as pd
 import jinja2
 from jinja2 import FileSystemLoader
 
+from wiki_utils import MODEL_DESCS, BACKEND_DESCS, TARGET_DESCS
+
 # pass_eval_context
 
 today = date.today()
@@ -76,8 +78,8 @@ for framework_name, framework_df in df.groupby("Framework"):
                     backend_names.append(backend_name)
                     data[framework_name][toolchain_name][optimize_name][target_name][backend_name] = {}
                     for model_name, model_df in backend_df.groupby("Model"):
-                        data[framework_name][toolchain_name][optimize_name][target_name][backend_name][model_name] = model_df.to_dict(
-                            "records"
+                        data[framework_name][toolchain_name][optimize_name][target_name][backend_name][model_name] = (
+                            model_df.to_dict("records")
                         )
                         model_names.append(model_name)
 
@@ -96,24 +98,6 @@ for framework_name, framework_df in df.groupby("Framework"):
 #     },
 # }
 
-MODEL_DESCS = {
-    "aww": "Audio Wake Words",
-    "vww": "Visual Wake Words",
-    "resnet": "Image Classification",
-    "toycar": "Anomaly Detection",
-}
-
-BACKEND_DESCS = {
-    "tfmli": "Tensorflow Lite for Microcontrollers",
-    "tvmaot": "TVM",
-}
-
-TARGET_DESCS = {
-    "spike": "Spike (RV32)",
-    "spike_rv32": "Spike (RV32)",
-    "spike_rv64": "Spike (RV64)",
-}
-
 if args.split:
     for framework_name, framework_data in data.items():
         for toolchain_name, toolchain_data in framework_data.items():
@@ -129,7 +113,7 @@ if args.split:
                         + "-O"
                         + str(optimize_name)
                         + "-"
-                        + TARGET_DESCS[target_name].replace(" ", "").replace("(", "").replace(")", "")
+                        + target_name
                     )
                     # print("data", {framework_name: {toolchain_name: toolchain_data}})
                     data2 = {framework_name: {toolchain_name: {optimize_name: {target_name: target_data}}}}

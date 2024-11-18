@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from wiki_utils import MODEL_DESCS, BACKEND_DESCS, TARGET_DESCS
+
 parser = argparse.ArgumentParser(description="TODO")
 parser.add_argument("files", nargs="+")
 args = parser.parse_args()
@@ -17,7 +19,7 @@ for file in files:
     with open(file, "r") as f:
         content = f.read()
     lines = content.split("\n")
-    labels = [line.split("\"", 1)[-1].split("\"", 1)[0] for line in lines if "<a name=" in line]
+    labels = [line.split('"', 1)[-1].split('"', 1)[0] for line in lines if "<a name=" in line]
     backends = list(set([label.split("-")[2] for label in labels]))
     models = list(set(["-".join(label.split("-")[6:]) for label in labels]))
     # print("name", name)
@@ -52,13 +54,32 @@ for file in files:
         backends = ["tvmaot" if "tvm" in framework.lower() else "tflmi"]
     for backend in backends:
         label = f"{date_}-{framework.lower()}-{backend.lower()}-{toolchain.lower()}-{opt.lower()}-{target.lower()}"
-        new = {"file": name, "date": date, "framework": framework, "backend": backend, "toolchain": toolchain, "opt": opt, "target": target, "label": label}
+        new = {
+            "file": name,
+            "date": date,
+            "framework": framework,
+            "backend": backend,
+            "toolchain": toolchain,
+            "opt": opt,
+            "target": target,
+            "label": label,
+        }
         data.append(new)
         if len(models) == 0:  # fallback
             models = ["aww", "resnet", "toycar", "vww"]
         for model in models:
             label2 = f"{label}-{model.lower()}"
-            new = {"file": name, "date": date, "framework": framework, "backend": backend, "toolchain": toolchain, "opt": opt, "target": target, "model": model, "label": label2}
+            new = {
+                "file": name,
+                "date": date,
+                "framework": framework,
+                "backend": backend,
+                "toolchain": toolchain,
+                "opt": opt,
+                "target": target,
+                "model": model,
+                "label": label2,
+            }
             data.append(new)
 
 # print("data", data)
@@ -98,14 +119,32 @@ for date, group_df in reversed(list(df.groupby("date"))):
                         assert len(main_df) == 1
                         file = main_df["file"].iloc[0]
                         # print("  " * indent + f"<li><a href=\"https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}\">{target}</a></li>")
-                        print("  " * indent + f"<b><a href=\"https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}\">{target}</a></b>")
+                        target_desc = TARGET_DESCS.get(target)
+                        target_desc_str = ""
+                        if target_desc:
+                            target_desc_str = f" ({target})"
+                            target = target_desc
+                            # desc_str = f" ({desc})"
+                        print(
+                            "  " * indent
+                            + f'<b><a href="https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}">{target}</a>{target_desc_str}</b>'
+                        )
                         print("  " * indent + "<ul>")
                         indent += 1
                         for model, group6_df in group5_df.groupby("model"):
                             assert len(group6_df) == 1
                             label = group6_df["label"].iloc[0]
                             file = group6_df["file"].iloc[0]
-                            print("  " * indent + f"<li><a href=\"https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}#{label}\">{model}</a></li>")
+                            model_desc = MODEL_DESCS.get(model)
+                            model_desc_str = ""
+                            if model_desc:
+                                model_desc_str = f" ({model})"
+                                model = model_desc
+                                # desc_str = f" ({desc})"
+                            print(
+                                "  " * indent
+                                + f'<li><a href="https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}#{label}">{model}</a>{model_desc_str}</li>'
+                            )
                         indent -= 1
                         print("  " * indent + "</ul>")
                     # indent -= 1
