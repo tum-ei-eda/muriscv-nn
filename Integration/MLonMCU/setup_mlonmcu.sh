@@ -202,7 +202,6 @@ echo "TEMPLATE_ARGS=$TEMPLATE_ARGS"
 
 
 mlonmcu init $WORKSPACE_DIR -t environment.yml.j2 --non-interactive --clone-models --allow-exists $TEMPLATE_ARGS
-cat $WORKSPACE_DIR/environment.yml
 
 # Install environment-specific Python pkgs
 mlonmcu setup -g -H $WORKSPACE_DIR
