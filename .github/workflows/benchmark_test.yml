@@ -83,7 +83,7 @@ jobs:
         export PREBUILD_TVM=true
         python3 -m pip install --user virtualenv
         # ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike
-        ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --enable-vext --enable-gcc --enable-llvm
+        ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --enable-vext --enable-gcc --enable-llvm --enable-rv64
 
     - name: Run ${{matrix.benchmark}} Benchmark
       working-directory: ./Integration/MLonMCU
