@@ -141,6 +141,7 @@ vars:
   riscv_gcc_rv32.name: "riscv32-unknown-elf"
   riscv_gcc_rv32.install_dir_default: "{{ home_dir }}/../../../Toolchain/rv32gc"
 {% if enable_rv64 | int %}
+  riscv_gcc.enable_rv64: true
   riscv_gcc_rv64.name: "riscv64-unknown-elf"
   riscv_gcc_rv64.install_dir_default: "{{ home_dir }}/../../../Toolchain/rv64gc"
 {% endif %}
