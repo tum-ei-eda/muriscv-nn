@@ -22,7 +22,8 @@ export VENV_DIR=$SCRIPT_DIR/venv
 # export MLONMCU_REF=main
 export MLONMCU_REF=develop
 # export MLIF_REF=c7b0e7364c232666ebd5a17476181e3ff9a71d70
-export MLIF_REF=main
+# export MLIF_REF=main
+export MLIF_REF=develop
 
 # TFLM
 # export TFLM_REF=47f77ab6876f66a2d5e4b7f0266e374b4260181e
