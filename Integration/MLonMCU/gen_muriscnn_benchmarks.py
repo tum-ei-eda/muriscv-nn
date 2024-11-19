@@ -59,7 +59,7 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
                 )
                 if not (row.get("feature_muriscvnn") or row.get("feature_muriscvnnbyoc"))
                 else (
-                    "Vector"
+                    "Vector" + (" (Portable)" if row.get("config_muriscvnn.use_portable") == 1 or row.get("config_muriscvnnbyoc.use_portable") == 1 else "")
                     if row.get("config_muriscvnn.use_vext") == 1 or row.get("config_muriscvnnbyoc.use_vext") == 1
                     else (
                         "Packed"
@@ -496,6 +496,7 @@ def gen_config(
     slp=True,
     use_vext="AUTO",
     use_pext="AUTO",
+    use_portable="AUTO",
     unroll=False,
     optimize="s",
     embedded=False,
@@ -514,9 +515,9 @@ def gen_config(
         if "muriscvnn" in features or "muriscvnnbyoc" in features:
             if backend in ["tvmaot", "tvmaotplus", "tvmrt", "tvmllvm"]:
                 ret["muriscvnnbyoc.mcpu"] = "cortex-m33"
-    if "vext" in features:
+    if "vext" in features or use_portable:
         if use_vext != 0:
-            assert "pext" not in features
+            assert "pext" not in features or use_portable
             if "muriscvnn" in features or "muriscvnnbyoc" in features:
                 if backend in ["tvmaot", "tvmaotplus", "tvmrt", "tvmllvm"]:
                     ret["muriscvnnbyoc.mcpu"] = "cortex-m55"
@@ -543,8 +544,10 @@ def gen_config(
     ret["auto_vectorize.slp"] = slp
     ret["muriscvnn.use_vext"] = use_vext
     ret["muriscvnn.use_pext"] = use_pext
+    ret["muriscvnn.use_portable"] = use_portable
     ret["muriscvnnbyoc.use_vext"] = use_vext
     ret["muriscvnnbyoc.use_pext"] = use_pext
+    ret["muriscvnnbyoc.use_portable"] = use_portable
     return ret
 
 
@@ -563,6 +566,7 @@ def benchmark(args):
                             # print("toolchain", toolchain, args.toolchain)
                             # input("1111")
                             enable_default = not args.skip_default
+                            enable_portable = args.portable
                             enable_vext = "vext" in args.feature
                             enable_pext = "pext" in args.feature
                             enable_dsp = "arm_dsp" in args.feature
@@ -622,20 +626,24 @@ def benchmark(args):
                                                 )
                                                 # print("features", features)
                                                 # input("AAA")
-                                                cfg = [(None, None)]
+                                                cfg = [(None, None, None)]
                                                 if "muriscvnn" in features or "muriscvnnbyoc" in features:
                                                     if "vext" in features:
-                                                        cfg = [(0, 0), (1, 0)]
+                                                        cfg = [(0, 0, 0), (1, 0, 0)]
+                                                        if enable_portable:
+                                                            cfg += [(1, 0, 1)]
                                                     elif "pext" in features:
-                                                        cfg = [(0, 0), (0, 1)]
+                                                        cfg = [(0, 0, 0), (0, 1, 0)]
                                                     else:
-                                                        cfg = [(0, 0)]
-                                                for use_vext, use_pext in cfg:
+                                                        cfg = [(0, 0, 0)]
+                                                        if enable_portable:
+                                                            cfg += [(1, 0, 1)]
+                                                for use_vext, use_pext, use_portable in cfg:
                                                     avs = [(0, 0)]
                                                     if enable_auto_vectorize:
                                                         if "vext" in features:
                                                             # avs.append((1, 1))
-                                                            if use_vext:
+                                                            if use_vext and not use_portable:
                                                                 avs = [(0, 0)]
                                                             else:
                                                                 avs = [(1, 1)]
@@ -660,6 +668,7 @@ def benchmark(args):
                                                                 slp=slp,
                                                                 use_vext=use_vext,
                                                                 use_pext=use_pext,
+                                                                use_portable=use_portable,
                                                                 unroll=unroll,
                                                                 optimize=opt,
                                                                 embedded=args.embedded,
@@ -803,6 +812,11 @@ def main():
         dest="embedded",
         action="store_true",
         help="Use embedded vector extension (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--portable",
+        action="store_true",
+        help="Use portable kernels (default: %(default)s)",
     )
     parser.add_argument(
         "--scalar-default-only",
