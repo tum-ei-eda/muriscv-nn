@@ -1,0 +1,49 @@
+#
+# Copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the License); you may
+# not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an AS IS BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Contains toolchain configurations and settings for using compiler for K230 real HW (provided in Canaan's SDK)
+
+# DOWNLOAD_URL=https://kendryte-download.canaan-creative.com/k230
+# RTT_TOOLCHAIN_URL = $(DOWNLOAD_URL)/toolchain/riscv64-unknown-linux-musl-rv64imafdcv-lp64d-20230420.tar.bz2
+# --> https://kendryte-download.canaan-creative.com/k230/toolchain/riscv64-unknown-linux-musl-rv64imafdcv-lp64d-20230420.tar.bz2
+
+# Path to your RISC-V GCC compiler
+set(RISCV_GCC_PREFIX "/opt/riscv" CACHE PATH "Install location of GCC RISC-V toolchain.") # gets overwritten in scripts for build or tests
+set(RISCV_GCC_BASENAME "riscv64-unknown-linux-musl" CACHE STRING "Base name of the toolchain executables.")
+set(TC_PREFIX "${RISCV_GCC_PREFIX}/bin/${RISCV_GCC_BASENAME}-")
+
+set(CMAKE_C_COMPILER ${TC_PREFIX}gcc)
+set(CMAKE_CXX_COMPILER ${TC_PREFIX}g++)
+set(CMAKE_ASM_COMPILER ${TC_PREFIX}gcc)
+set(CMAKE_LINKER ${TC_PREFIX}ld)
+set(CMAKE_OBJCOPY ${TC_PREFIX}objcopy)
+set(CMAKE_OBJDUMP ${TC_PREFIX}objdump)
+set(CMAKE_AR ${TC_PREFIX}ar)
+set(CMAKE_RANLIB ${TC_PREFIX}ranlib)
+set(CMAKE_STRIP ${TC_PREFIX}strip)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=${RISCV_ARCH} -mabi=${RISCV_ABI} -mcmodel=${RISCV_CMODEL}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=${RISCV_ARCH} -mabi=${RISCV_ABI} -mcmodel=${RISCV_CMODEL}")
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -march=${RISCV_ARCH} -mabi=${RISCV_ABI} -mcmodel=${RISCV_CMODEL}")
+
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -march=${RISCV_ARCH} -mabi=${RISCV_ABI} -mcmodel=${RISCV_CMODEL} -Wl,--whole-archive -Wl,--no-whole-archive -n --static")
+# Ensure the linker script is included only once
+string(FIND "${CMAKE_EXE_LINKER_FLAGS}" "-T ${CMAKE_CURRENT_SOURCE_DIR}/k230_rtsmart_linker_scripts/riscv64/link.lds" linker_script_already_in_flags)
+if(linker_script_already_in_flags EQUAL -1)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T ${CMAKE_CURRENT_SOURCE_DIR}/k230_rtsmart_linker_scripts/riscv64/link.lds")
+endif()

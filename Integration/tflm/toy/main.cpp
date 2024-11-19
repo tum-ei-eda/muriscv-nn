@@ -14,6 +14,8 @@
 #include "toy_data/toy_model_settings.h"
 #include "toy_data/toy_output_data_ref.h"
 
+#include "muriscv_nn_util.h"
+
 constexpr size_t tensor_arena_size = 256 * 1024;
 alignas(16) uint8_t tensor_arena[tensor_arena_size];
 
@@ -69,7 +71,17 @@ int run_test()
 
 int main(int argc, char *argv[])
 {
+    uint32_t start_cycles = muriscv_nn_prof_start();
+    uint32_t start_instructions = rdinstret();
     int ret = run_test();
+    uint32_t end_instructions = rdinstret();
+    uint32_t total_cycles = muriscv_nn_prof_stop(start_cycles);
+    uint32_t total_instructions = end_instructions - start_instructions;
+
+    const float K230_CYCLE_PER_SECONS = 1600000000.0;
+    printf("Execution time (sec): %f\n", ((float)total_cycles / K230_CYCLE_PER_SECONS));
+    printf("Instruction count: %d\n", total_instructions);
+
     if (ret != 0)
     {
         printf("Test Failed!\n");

@@ -31,6 +31,10 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
             ${CMAKE_SOURCE_DIR}/Tests/TestCases/${TEST_FILE_NAME}/${TEST_FILE_NAME}.c)
     endif()
 
+    if(NOT ENABLE_LIB_BUILD)
+        target_include_directories(${TEST_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/Include)
+    endif()
+
     target_link_libraries(${TEST_NAME} PUBLIC ${MURISCVNN_LIB}
                                               unity)
 
