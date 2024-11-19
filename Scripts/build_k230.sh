@@ -38,8 +38,9 @@ SIM_FLAGS=""
 VLEN=""
 ELEN=""
 INTG_TESTS=OFF
+OS=""
 
-while getopts 't:vpiab:s:l:e:h' flag; do
+while getopts 't:vpiab:s:l:e:o:h' flag; do
   case "${flag}" in
     v) USE_VEXT=ON
        GCC_PREFIX=${TC_DIR}/rv32gcv ;;
@@ -53,7 +54,9 @@ while getopts 't:vpiab:s:l:e:h' flag; do
     l) VLEN="-DVLEN=${OPTARG}";;
     e) ELEN="-DELEN=${OPTARG}";;
     a) INTG_TESTS=ON ;;
-    * | h) echo "Provide correct arguments.  Ex:  ./build.sh -t (GCC/LLVM/x86/K230) -v -i -b (Release/Debug)"
+    o) OS="${OPTARG}";;
+
+    * | h) echo "Provide correct arguments.  Ex:  ./build.sh -t (GCC/LLVM/x86/K230) -v -i -b (Release/Debug) -o (RTOS/Linux)"
        echo "-t : toolchain to use"
        echo "-v : enable/disable VEXT"
        echo "-p : enable/disable PEXT"
@@ -63,16 +66,23 @@ while getopts 't:vpiab:s:l:e:h' flag; do
        echo "-l : Vector Length"
        echo "-e : Element Width"
        echo "-a : enable/disable integration tests"
+       echo "-o : Operating System (OS) running on K230 board"
        exit 1;;
   esac
 done
 
-# For K230 build, set toolchain for first build of the muricvnn library
 if [ "${TOOLCHAIN}" == "K230" ]; then
+  if [ "${OS}" == "RTOS" ]; then
   if [ "${USE_VEXT}" == "ON" ]; then
     GCC_PREFIX=${TC_DIR}/rv64gcv_lp64d_linux_musl_medany
   else
     GCC_PREFIX=${TC_DIR}/rv64gc_lp64d_linux_musl_medany
+  fi
+  elif [ "${OS}" == "Linux" ]; then
+    GCC_PREFIX=${TC_DIR}/riscv64-glibc-ubuntu
+  else
+    echo "ERROR: NO VALID OPERATING SYSTEM (OS) SELECTED:  Please select an OS with - {RTOS/Linux}"
+    exit 1
   fi
 fi
 
@@ -158,6 +168,21 @@ elif [ "${USE_IMV}" == "ON" ];then
       )
     fi
   fi
+
+if [ "${INTG_TESTS}" == "ON" ]; then
+  echo "*** Checking if TVM has been setup ***"
+
+  INTG_DIR=../Integration
+  if [ ! -d ${INTG_DIR}/tvm/aww/mlf ]; then
+      ${INTG_DIR}/tvm/setup_tvm.sh
+  fi
+
+  echo "*** Checking if TFLITE has been setup ***"
+  if [ ! -d ${INTG_DIR}/tflm/tflite-micro ]; then
+      ${INTG_DIR}/tflm/setup_tflm.sh
+  fi
+fi
+
 # TODO: No checks for K230 HW build
 
 
@@ -166,7 +191,6 @@ elif [ "${USE_IMV}" == "ON" ];then
 ################## Build based on Desired Configuration ########################
 ################################################################################
 
-if [ "${TOOLCHAIN}" == "K230" ]; then
   # Build directories for different build configurations
   if [ "${USE_VEXT}" == "ON" ]; then
     BUILD_DIR_K230=${BUILD_DIR}_k230_VEXT
@@ -176,8 +200,9 @@ if [ "${TOOLCHAIN}" == "K230" ]; then
     BUILD_DIR=${BUILD_DIR}_muriscvnn_NOVEXT
   fi
 
+if [ "${TOOLCHAIN}" == "K230" ] && [ "${OS}" == "RTOS" ]; then
   # Build libmuriscvnn.a (with newer GCC compiler)
-  rm -rf ${BUILD_DIR}
+  sudo rm -rf ${BUILD_DIR}
   mkdir -p ${BUILD_DIR}
   echo $1
   echo ${TC_DIR}/$2
@@ -189,15 +214,27 @@ if [ "${TOOLCHAIN}" == "K230" ]; then
   GCC_PREFIX=${TC_DIR}/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu
 
   # Then build
-  rm -rf ${BUILD_DIR_K230}
+  sudo rm -rf ${BUILD_DIR_K230}
   mkdir -p ${BUILD_DIR_K230}
   echo $1
   echo ${TC_DIR}/$2
+  # cmake -B ${BUILD_DIR_K230} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX}/ -DRISCV_LLVM_PREFIX=${LLVM_PREFIX}  -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DENABLE_LIB_BUILD=OFF -DENABLE_INTG_TESTS=${INTG_TESTS} ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN}
   cmake -B ${BUILD_DIR_K230} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX}/ -DRISCV_LLVM_PREFIX=${LLVM_PREFIX}  -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DENABLE_LIB_BUILD=OFF -DENABLE_INTG_TESTS=${INTG_TESTS} -DDISABLE_TVM_INTG_TESTS=ON ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN}
   make -j $(nproc) -C ${BUILD_DIR_K230}
+
+elif [ "${TOOLCHAIN}" == "K230" ] && [ "${OS}" == "Linux" ]; then
+  TOOLCHAIN=${TOOLCHAIN}_linux
+
+  sudo rm -rf ${BUILD_DIR_K230}
+  mkdir -p ${BUILD_DIR_K230}
+  echo $1
+  echo ${TC_DIR}/$2
+  cmake -B ${BUILD_DIR_K230} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX}/ -DRISCV_LLVM_PREFIX=${LLVM_PREFIX}  -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DENABLE_INTG_TESTS=${INTG_TESTS} -DDISABLE_TVM_INTG_TESTS=ON ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN}
+  make -j $(nproc) -C ${BUILD_DIR_K230}
+
 else
   # If not K230, build everything with one toolchain
-  rm -rf ${BUILD_DIR}
+  sudo rm -rf ${BUILD_DIR}
   mkdir -p ${BUILD_DIR}
   echo $1
   echo ${TC_DIR}/$2
