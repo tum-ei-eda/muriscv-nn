@@ -173,9 +173,9 @@ if [ "${INTG_TESTS}" == "ON" ]; then
   echo "*** Checking if TVM has been setup ***"
 
   INTG_DIR=../Integration
-  if [ ! -d ${INTG_DIR}/tvm/aww/mlf ]; then
-      ${INTG_DIR}/tvm/setup_tvm.sh
-  fi
+  # if [ ! -d ${INTG_DIR}/tvm/aww/mlf ]; then
+  #     ${INTG_DIR}/tvm/setup_tvm.sh
+  # fi
 
   echo "*** Checking if TFLITE has been setup ***"
   if [ ! -d ${INTG_DIR}/tflm/tflite-micro ]; then
