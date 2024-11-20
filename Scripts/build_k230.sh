@@ -74,6 +74,14 @@ if [ "${TOOLCHAIN}" == "K230" ]; then
   else
     GCC_PREFIX=${TC_DIR}/rv64gc_lp64d_linux_musl_medany
   fi
+
+  # Get compilers if unavailable
+  if [ -d ${GCC_PREFIX} ]; then
+    echo "Found K230 GCC compilers in the Toolchain directory."
+  else
+    echo "No K230 GCC compilers in the Toolchain directory found. Unzip respective toolchains in Toolchain directory first! (If tflm sources are missing as well, run Integration/tflm/download_tflm.sh)."
+    exit 1
+  fi
 fi
 
 ################################################################################
