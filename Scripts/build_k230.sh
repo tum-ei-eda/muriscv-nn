@@ -84,6 +84,14 @@ if [ "${TOOLCHAIN}" == "K230" ]; then
     echo "ERROR: NO VALID OPERATING SYSTEM (OS) SELECTED:  Please select an OS with - {RTOS/Linux}"
     exit 1
   fi
+
+  # Get compilers if unavailable
+  if [ -d ${GCC_PREFIX} ]; then
+    echo "Found K230 GCC compilers in the Toolchain directory."
+  else
+    echo "No K230 GCC compilers in the Toolchain directory found. Unzip respective toolchains in Toolchain directory first! (If tflm sources are missing as well, run Integration/tflm/download_tflm.sh)."
+    exit 1
+  fi
 fi
 
 ################################################################################
