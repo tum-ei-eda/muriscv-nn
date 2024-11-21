@@ -19,4 +19,6 @@
 
 set -e
 
-./download_helper.sh rv32im_zve32x/ GCC default 2024.09.03 rv32im_zicsr_zifencei_zve32x_ilp32
+./download_helper_new.sh rv32im_zve32x/ gnu default 2024.09.03 rv32im_zicsr_zifencei_zve32x_ilp32
+# ./download_helper.sh rv32im_zve32x/ gnu default 2024.09.03 multilib_default
+# ./download_helper.sh rv32im_zicsr_zifencei_zve32x_ilp32/ gnu default 2024.09.03 rv32im_zicsr_zifencei_zve32x_ilp32

@@ -19,4 +19,4 @@
 
 set -e
 
-./download_helper.sh rv64gc/ GCC default 2024.09.03 rv64gc_lp64d
+./download_helper_new.sh rv64gc/ gnu default 2024.09.03 rv64gc_lp64d riscv64-unknown-elf

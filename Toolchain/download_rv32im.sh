@@ -19,4 +19,4 @@
 
 set -e
 
-./download_helper.sh rv32im/ GCC default 2024.09.03 rv32im_zicsr_zifencei_ilp32
+./download_helper_new.sh rv32im/ gnu default 2024.09.03 rv32im_zicsr_zifencei_ilp32
