@@ -12,6 +12,7 @@ BACKEND_DESCS = {
 
 TARGET_DESCS = {
     "spike_rv32": "Spike (RV32)",
+    "spike_rv32_min": "Spike (RV32, Embedded)",
     "spike_rv64": "Spike (RV64)",
     "spike": "Spike (RV32)",
 }
