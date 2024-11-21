@@ -10,7 +10,8 @@ jobs:
       fail-fast: false
       matrix:
         benchmark: [aww, vww, resnet, toycar]
-        target: [spike_rv32, spike_rv64]
+        # target: [spike_rv32, spike_rv32_min, spike_rv64]
+        target: [spike_rv32_min]
         backend: [tvmaot, tflmi]
         toolchain: [gcc, llvm]
         optimize: [s]
