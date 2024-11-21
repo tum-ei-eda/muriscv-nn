@@ -485,7 +485,7 @@ def gen_config(
     use_portable="AUTO",
     unroll=False,
     optimize="s",
-    embedded=False,
+    # embedded=False,
 ):
     ret = {}
     ret["mlif.toolchain"] = toolchain
@@ -509,11 +509,11 @@ def gen_config(
                     ret["muriscvnnbyoc.mcpu"] = "cortex-m55"
         # if not scalar_default_only or "muriscvnn" in features or "muriscvnnbyoc" in features:
         ret["vext.vlen"] = vlen
-        ret["vext.embedded"] = embedded
-    if embedded and target in RISCV_TARGETS:
-        ret[f"{target}.fpu"] = "none"
-        ret[f"{target}.compressed"] = False
-        ret[f"{target}.atomic"] = False
+        # ret["vext.embedded"] = embedded
+    # if embedded and target in RISCV_TARGETS:
+    #     ret[f"{target}.fpu"] = "none"
+    #     ret[f"{target}.compressed"] = False
+    #     ret[f"{target}.atomic"] = False
     # else:
     # assert vlen == 0
     if "cmsisnnbyoc" in features:
@@ -657,7 +657,7 @@ def benchmark(args):
                                                                 use_portable=use_portable,
                                                                 unroll=unroll,
                                                                 optimize=opt,
-                                                                embedded=args.embedded,
+                                                                # embedded=args.embedded,
                                                             )
                                                             config.update(user_config)  # TODO
                                                             # resolve_missing_configs(config, features, target, context)
@@ -793,12 +793,12 @@ def main():
         action="store_true",
         help="Do not generate benchmarks for reference runs (default: %(default)s)",
     )
-    parser.add_argument(
-        "--embedded",
-        dest="embedded",
-        action="store_true",
-        help="Use embedded vector extension (default: %(default)s)",
-    )
+    # parser.add_argument(
+    #     "--embedded",
+    #     dest="embedded",
+    #     action="store_true",
+    #     help="Use embedded vector extension (default: %(default)s)",
+    # )
     parser.add_argument(
         "--portable",
         action="store_true",
