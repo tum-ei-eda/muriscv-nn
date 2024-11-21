@@ -110,23 +110,20 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
         #     ),
         #     axis=1,
         # )
-        if "config_spike_rv32.final_arch" not in df.columns:
-            df["config_spike_rv32.final_arch"] = None
-        if "config_spike_rv64.final_arch" not in df.columns:
-            df["config_spike_rv64.final_arch"] = None
-        df["Arch"] = df["config_spike_rv32.final_arch"].combine_first(df["config_spike_rv64.final_arch"]).apply(lambda x: x.upper())  # TODO: generalize!
+        for t in SPIKE_TARGETS:
+            if f"config_{t}.final_arch" not in df.columns:
+                df[f"config_{t}.final_arch"] = None
+        df["Arch"] = df["config_spike_rv32.final_arch"].combine_first(df["config_spike_rv64.final_arch"].combine_first(df["config_spike_rv32_min.final_arch"])).apply(lambda x: x.upper())  # TODO: generalize!
         del df["Backend"]
         report.post_df = df
 
 
 FRONTEND = "tflite"
 
-RISCV_TARGETS = [
-    "spike_rv32",
-    "spike_rv64",
-    "ovpsim",
-    "etiss_pulpino",
-]
+
+SPIKE_TARGETS = ["spike_rv32", "spike_rv32_min", "spike_rv64"]
+RISCV_TARGETS = SPIKE_TARGETS + ["etiss", "etiss_pulpino", "ovpsim"]
+RVV_TARGETS = SPIKE_TARGETS + ["ovpsim"]
 OTHER_TARGETS = [
     "host_x86",
     "corstone300",
@@ -210,16 +207,11 @@ def get_target_features(
     CMSISNN_DSP = [["cmsisnn", "arm_dsp"] if enable_dsp else []]
     CMSISNN_MVEI = [["cmsisnn", "arm_mvei", "arm_dsp"] if enable_mvei else []]
     TARGET_FEATURES = {
-        "spike_rv32": [
+        **{t: [
             *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
             *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
             *([*CMSISNN_SCALAR] if enable_cmsisnn else []),
-        ],
-        "spike_rv64": [
-            *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
-            *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
-            *([*CMSISNN_SCALAR] if enable_cmsisnn else []),
-        ],
+        ] for t in SPIKE_TARGETS},
         "ovpsim": [
             *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
             *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
@@ -260,11 +252,8 @@ def get_target_features(
 VALIDATE_FEATURES = ["validate", "debug"]
 
 TARGET_ARCH = {
-    "spike_rv32": "riscv",
-    "spike_rv64": "riscv",
-    "ovpsim": "riscv",
+    **{t: "riscv" for t in RISCV_TARGETS},
     "x86": "x86",
-    "etiss_pulpino": "riscv",
     "corstone300": "arm",
 }
 
@@ -428,8 +417,7 @@ POSTPROCESS_CONFIG = {
         "Abi2",
     ],
     "rename_cols.mapping": {
-        "config_spike_rv32.vlen": "VLEN",
-        "config_spike_rv64.vlen": "VLEN",
+        **{f"config_{t}.vlen": "VLEN" for t in RVV_TARGETS},
         "config_ovpsim.vlen": "VLEN",
         "config_tvmaot.desired_layout": "Layout",
         "config_tvmaotplus.desired_layout": "Layout",
@@ -447,8 +435,6 @@ POSTPROCESS_CONFIG = {
         "config_mlif.fuse_ld": "Linker",
         "config_compare_rows.baseline": "Baseline",
         "config_auto_vectorize.custom_unroll": "Unroll",
-        # "config_spike.final_arch": "Arch2",
-        # "config_spike.final_abi": "Abi2",
     },
     "filter_cols.drop_nan": True,
     "compare_rows.to_compare": None,  # Figure out automatically (All metrics, expects those filtered out later)
