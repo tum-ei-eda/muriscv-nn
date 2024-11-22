@@ -31,6 +31,8 @@ for fname in args.files:
     temp_df = pd.read_csv(fname)
 
     df = pd.concat([df, temp_df])
+    if date is not None and "Date" not in df.columns:
+        df["Date"] = date
 
 df.fillna("-", inplace=True)
 df["Framework"] = df["Backend"].apply(lambda x: "tvm" if "tvm" in x else "tflm")
