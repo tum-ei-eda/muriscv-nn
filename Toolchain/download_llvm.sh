@@ -19,7 +19,7 @@
 
 set -e
 
-VERSION=${1:-"18"}
+VERSION=${1:-"19"}
 
 if [[ "$VERSION" == "15" ]]
 then
