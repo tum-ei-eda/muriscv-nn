@@ -39,7 +39,7 @@
 #if defined(USE_VEXT)
 #include <riscv_vector.h>
 #if (__clang_major__ >= 16) || (__GNUC__ >= 13)
-#if __clang_major__ >= 17
+#if (__clang_major__ >= 17) || (__GNUC__ >= 14)
 #define vsmul_vx_i32m8(a, b, c) __riscv_vsmul_vx_i32m8(a, b, __RISCV_VXRM_RNU, c)
 #define vsmul_vx_i32m4(a, b, c) __riscv_vsmul_vx_i32m4(a, b, __RISCV_VXRM_RNU, c)
 #define vsmul_vv_i32m2(a, b, c) __riscv_vsmul_vv_i32m2(a, b, __RISCV_VXRM_RNU, c)
