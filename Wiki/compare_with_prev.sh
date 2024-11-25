@@ -12,7 +12,7 @@ NEW2=${NEW/.csv/.md}
 FILES=$($DIR/get_prev_bench_files.sh $BASE $LIMIT)
 COUNT=$(echo $FILES | wc -w)
 
-if [[ $COUNT -lt 0 ]]
+if [[ $COUNT -gt 0 ]]
 then
     python3 $DIR/compare_benchmarks.py $BASE $FILES --output $NEW --rel --join outer --metric "Run Cycles" "ROM code" --ignore auto
     python3 $DIR/compare_benchmarks.py $BASE $FILES --output $NEW2 --rel --join outer --metric "Run Cycles" "ROM code" --ignore auto
