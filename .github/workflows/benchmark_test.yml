@@ -173,16 +173,18 @@ jobs:
       - name: Push New Page to Wiki
         working-directory: ./Wiki-repo
         run: |
-          ls
+          # ls
           cp ../Wiki/*.md .
           cp ../Wiki/*.csv .
-          ls
+          # ls
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          find . -name "Benchmarks-${{ steps.date-today.outputs.date }}-*.csv" -exec echo ../Wiki/compare_with_prev.sh {} 2 \;
           find . -name "Benchmarks-${{ steps.date-today.outputs.date }}-*.csv" -exec ../Wiki/compare_with_prev.sh {} 2 \;
           python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open first > _Sidebar.md
           python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open none --hide-models > _Footer.md
           git add *.md
           git add *.csv
+          git status
           git commit -m "Added Benchmarks on ${{ steps.date-today.outputs.date }}"
           git push origin master
