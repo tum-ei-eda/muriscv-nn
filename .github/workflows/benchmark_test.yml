@@ -174,7 +174,8 @@ jobs:
           ls
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          python3 ../Wiki/gen_sidebar.py Benchmarks-*.md > _Sidebar.md
+          python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open first > _Sidebar.md
+          python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open none --hide-models > _Footer.md
           git add *.md
           git add *.csv
           git commit -m "Added Benchmarks on ${{ steps.date-today.outputs.date }}"
