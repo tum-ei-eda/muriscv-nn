@@ -7,6 +7,9 @@ from wiki_utils import MODEL_DESCS, BACKEND_DESCS, TARGET_DESCS
 
 parser = argparse.ArgumentParser(description="TODO")
 parser.add_argument("files", nargs="+")
+parser.add_argument("--open", default="first", choices=["none", "first", "last", "all"])
+parser.add_argument("--reverse", action="store_true")
+parser.add_argument("--hide-models", action="store_true")
 args = parser.parse_args()
 
 files = args.files
@@ -88,10 +91,19 @@ df = pd.DataFrame(data)
 # print("df", df)
 
 indent = 0
-latest = True
-for date, group_df in reversed(list(df.groupby("date"))):
-    print("  " * indent + ("<details open>" if latest else "<details>"))
-    latest = False
+i = 0
+
+grouped_df = list(df.groupby("date"))
+
+if not args.reverse:
+    grouped_df = list(reversed(grouped_df))
+
+for date, group_df in grouped_df:
+    first = i == 0
+    last = i == (len(grouped_df) - 1)
+    open_ = (args.open == "all") or (args.open == "first" and first) or (args.open == "last" and last)
+    i += 1
+    print("  " * indent + ("<details open>" if open_ else "<details>"))
     indent += 1
     print("  " * indent + f"<summary><b>{date}</b></summary>")
     print("  " * indent + "<ul>")
@@ -129,6 +141,8 @@ for date, group_df in reversed(list(df.groupby("date"))):
                             "  " * indent
                             + f'<b><a href="https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}">{target}</a>{target_desc_str}</b>'
                         )
+                        if args.hide_models:
+                            continue
                         print("  " * indent + "<ul>")
                         indent += 1
                         for model, group6_df in group5_df.groupby("model"):
