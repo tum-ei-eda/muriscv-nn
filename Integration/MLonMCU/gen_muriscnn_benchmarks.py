@@ -1,4 +1,5 @@
 import os
+import re
 import argparse
 import multiprocessing
 import logging
@@ -113,7 +114,7 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
         for t in SPIKE_TARGETS:
             if f"config_{t}.final_arch" not in df.columns:
                 df[f"config_{t}.final_arch"] = None
-        df["Arch"] = df["config_spike_rv32.final_arch"].combine_first(df["config_spike_rv64.final_arch"].combine_first(df["config_spike_rv32_min.final_arch"])).apply(lambda x: x.upper())  # TODO: generalize!
+        df["Arch"] = df["config_spike_rv32.final_arch"].combine_first(df["config_spike_rv64.final_arch"].combine_first(df["config_spike_rv32_min.final_arch"])).apply(lambda x: re.sub(r"_ZVL\d+B", "", x.upper()))  # TODO: generalize!
         del df["Backend"]
         report.post_df = df
 
