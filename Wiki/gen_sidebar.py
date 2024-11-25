@@ -142,6 +142,7 @@ for date, group_df in grouped_df:
                             + f'<b><a href="https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}">{target}</a>{target_desc_str}</b>'
                         )
                         if args.hide_models:
+                            print("  " * indent + "<br>")
                             continue
                         print("  " * indent + "<ul>")
                         indent += 1
