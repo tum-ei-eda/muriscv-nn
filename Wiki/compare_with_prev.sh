@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 DIR=$(dirname $(readlink -f $0))
 
 BASE=$1

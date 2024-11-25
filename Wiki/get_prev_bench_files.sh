@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 
 BASE=$1
 LIMIT=${2:-10000000}
