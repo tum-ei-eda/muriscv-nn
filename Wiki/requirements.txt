@@ -1,3 +1,4 @@
 pandas
 numpy
 Jinja2
+tabulate
