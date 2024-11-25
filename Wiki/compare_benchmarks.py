@@ -47,6 +47,7 @@ for file in args.files:
     # workaround
     value_vars = args.metrics
     df_ = pd.melt(df, id_vars=id_vars, value_vars=value_vars, var_name="Metric", value_name="Value")
+    df_["Value"] = df_["Value"].replace("-", np.nan)
     df_["Value"] = df_["Value"].astype("float32")
     dfs.append(df_)
 
