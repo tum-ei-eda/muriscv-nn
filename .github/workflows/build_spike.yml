@@ -15,7 +15,7 @@ jobs:
         spike_ref:
         - master
         pk_ref:
-        - 1a52fa44aba49307137ea2ad5263613da33a877b
+        - abadfdc507d5a75b6272dc360e70a80a510c758a
 
     steps:
     - uses: actions/checkout@v4
