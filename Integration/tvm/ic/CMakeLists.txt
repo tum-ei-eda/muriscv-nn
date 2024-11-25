@@ -82,6 +82,7 @@ else()
     ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}_data/${TEST_NAME}_output_data_ref.h
   )
 endif()
+target_compile_options(${TEST_NAME}_tvm PRIVATE -Wno-incompatible-pointer-types)
 
 target_link_libraries(${TEST_NAME}_tvm PRIVATE muriscvnn)
 

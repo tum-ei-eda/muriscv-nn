@@ -83,6 +83,7 @@ else()
   )
 
 endif()
+target_compile_options(${TEST_NAME}_tvm PRIVATE -Wno-incompatible-pointer-types)
 
 target_link_libraries(${TEST_NAME}_tvm PRIVATE muriscvnn)
 
