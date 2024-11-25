@@ -179,12 +179,11 @@ jobs:
           # ls
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          find . -name "Benchmarks-${{ steps.date-today.outputs.date }}-*.csv" -exec echo ../Wiki/compare_with_prev.sh {} 2 \;
-          find . -name "Benchmarks-${{ steps.date-today.outputs.date }}-*.csv" -exec ../Wiki/compare_with_prev.sh {} 2 \;
+          find . -name "Benchmarks-${{ steps.date-today.outputs.today }}-*.csv" -exec ../Wiki/compare_with_prev.sh {} 2 \;
           python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open first > _Sidebar.md
           python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open none --hide-models > _Footer.md
           git add *.md
           git add *.csv
           git status
-          git commit -m "Added Benchmarks on ${{ steps.date-today.outputs.date }}"
+          git commit -m "Added Benchmarks on ${{ steps.date-today.outputs.today }}"
           git push origin master
