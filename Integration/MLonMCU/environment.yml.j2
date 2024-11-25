@@ -179,8 +179,11 @@ vars:
 {% endif %}
 {% if enable_spike | int %}
   spikepk.enable_rv32: true
+  spike.legacy: false
+  spike_rv32.legacy: false
 {% if enable_rv64 | int %}
   spikepk.enable_rv64: true
+  spike_rv64.legacy: false
 {% endif %}
 {% if enable_spike | int and local_spike | int %}
   spike.exe: "{{ home_dir }}/../../../Sim/Spike/bin/spike"
