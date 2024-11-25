@@ -49,7 +49,7 @@ jobs:
            ./download_rv64gcv.sh
            ./download_rv32im.sh
            ./download_rv32im_zve32x.sh
-           ./download_llvm.sh 18
+           ./download_llvm.sh 19
 
     - name: Cache GCC Binaries
       id: cache-gcc
