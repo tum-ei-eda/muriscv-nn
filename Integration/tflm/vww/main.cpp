@@ -62,12 +62,16 @@ int run_test()
 
         if (top_index != vww_output_data_ref[i])
         {
+#ifndef SIM_K230
             printf("ERROR: at #%d, top_index %d vww_output_data_ref %d \n", i, top_index, vww_output_data_ref[i]);
+#endif
             return -1;
         }
         else
         {
+#ifndef SIM_K230
             printf("Sample #%d pass, top_index %d matches ref %d \n", i, top_index, vww_output_data_ref[i]);
+#endif
         }
     }
     return 0;
@@ -82,8 +86,8 @@ int main(int argc, char *argv[])
     uint32_t total_cycles = muriscv_nn_prof_stop(start_cycles);
     uint32_t total_instructions = end_instructions - start_instructions;
 
-    const float K230_CYCLE_PER_SECONS = 1600000000.0;
-    printf("Execution time (sec): %f\n", ((float)total_cycles / K230_CYCLE_PER_SECONS));
+    const float K230_CYCLE_PER_SECOND = SIM_CYCLE_PER_SECOND;
+    printf("Execution time (sec): %f\n", ((float)total_cycles / K230_CYCLE_PER_SECOND));
     printf("Instruction count: %d\n", total_instructions);
 
     if (ret != 0)

@@ -57,12 +57,16 @@ int run_test()
         uint32_t diff = abs(sum - toy_output_data_ref[i]);
         if (diff > 1)
         {
+#ifndef SIM_K230
             printf("ERROR: at #%d, sum %d ref %d diff %d \n", i, sum, toy_output_data_ref[i], diff);
+#endif
             return -1;
         }
         else
         {
+#ifndef SIM_K230
             printf("Sample #%d pass, sum %d ref %d diff %d \n", i, sum, toy_output_data_ref[i], diff);
+#endif
         }
     }
 
@@ -78,8 +82,8 @@ int main(int argc, char *argv[])
     uint32_t total_cycles = muriscv_nn_prof_stop(start_cycles);
     uint32_t total_instructions = end_instructions - start_instructions;
 
-    const float K230_CYCLE_PER_SECONS = 1600000000.0;
-    printf("Execution time (sec): %f\n", ((float)total_cycles / K230_CYCLE_PER_SECONS));
+    const float K230_CYCLE_PER_SECOND = SIM_CYCLE_PER_SECOND;
+    printf("Execution time (sec): %f\n", ((float)total_cycles / K230_CYCLE_PER_SECOND));
     printf("Instruction count: %d\n", total_instructions);
 
     if (ret != 0)

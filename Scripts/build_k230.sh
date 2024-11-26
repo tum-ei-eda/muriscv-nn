@@ -53,7 +53,7 @@ while getopts 't:vpiab:s:l:e:h' flag; do
     l) VLEN="-DVLEN=${OPTARG}";;
     e) ELEN="-DELEN=${OPTARG}";;
     a) INTG_TESTS=ON ;;
-    * | h) echo "Provide correct arguments.  Ex:  ./build.sh -t (GCC/LLVM/x86/K230) -v -i -b (Release/Debug)"
+    * | h) echo "Provide correct arguments.  Ex:  ./build_k230.sh -t (GCC/LLVM/x86/K230) -v -i -b (Release/Debug)"
        echo "-t : toolchain to use"
        echo "-v : enable/disable VEXT"
        echo "-p : enable/disable PEXT"
@@ -69,6 +69,8 @@ done
 
 # For K230 build, set toolchain for first build of the muricvnn library
 if [ "${TOOLCHAIN}" == "K230" ]; then
+  SIM_FLAGS="-DSIMULATOR=K230_SIM"
+
   if [ "${USE_VEXT}" == "ON" ]; then
     GCC_PREFIX=${TC_DIR}/rv64gcv_lp64d_linux_musl_medany
   else
