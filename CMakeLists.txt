@@ -21,7 +21,7 @@ message(STATUS "CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CM
 
 # Choose a simulator to run on.
 set(SIMULATOR "Spike" CACHE STRING "Specify the simulator.")
-set_property(CACHE SIMULATOR PROPERTY STRINGS OVPsim Spike ETISS Vicuna K230_SIM)
+set_property(CACHE SIMULATOR PROPERTY STRINGS OVPsim Spike ETISS Vicuna)
 if(${SIMULATOR} STREQUAL "Vicuna")
   set(SIM_VICUNA "ON")
 endif()
@@ -66,6 +66,7 @@ elseif(${TOOLCHAIN} STREQUAL "K230") # K230 hardware only supports vector extens
   set(RISCV_ABI "lp64d" CACHE STRING "mabi argument to the compiler")
   set(RISCV_CMODEL "medany" CACHE STRING "mcmodel argument to the compiler")
 
+  add_compile_definitions(SIM_K230)
   set(SIM_CYCLE_PER_SECOND 1600000000 CACHE STRING "Number of simulation cycles per second")
   add_compile_definitions(SIM_CYCLE_PER_SECOND=${SIM_CYCLE_PER_SECOND})
 

@@ -69,8 +69,6 @@ done
 
 # For K230 build, set toolchain for first build of the muricvnn library
 if [ "${TOOLCHAIN}" == "K230" ]; then
-  SIM_FLAGS="-DSIMULATOR=K230_SIM"
-
   if [ "${USE_VEXT}" == "ON" ]; then
     GCC_PREFIX=${TC_DIR}/rv64gcv_lp64d_linux_musl_medany
   else
