@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Configuration
+# Configuration (REMOTE_USER, REMOTE_IP, UART_DEVICE have to be changed
+# according to connected device)
 BUILD_SCRIPT="./build_k230.sh"
 BUILD_DIR="../build_k230_NOVEXT"
 REMOTE_USER="root"
@@ -35,7 +36,9 @@ while getopts 'vsmb:t:f:i:o:h' flag; do
            echo "Use -m together to skip fresh build and only recompile by calling make"
            echo "Use -b {aww/vww/toy/ic} to select tvm benchmark to run, default: aww"
            echo "Use -t {GCC/LLVM/K230} to select toolchain. Currently only support for K230 special toolchain"
-           echo "-o : Operating System (OS) running on K230 board"
+           echo "Use -o to specify the Operating System (OS) running on K230 board"
+           echo "Use -f to specify the ML framework (tflm/tvm) for the integration tests (currently only tflm supported)"
+           echo "Use -i to specify the remote IP address, default: 192.168.0.117"
            exit 1 ;;
   esac
 done

@@ -23,3 +23,16 @@ There are multiple variables/dimensions we can change/we need to consider when r
 - Host `OS` - `Ubuntu 18.04`/`Ubuntu 20.04` (currently running all tests on `Ubuntu 18.04`, except integration tests)  
 
 Ideally, we would want to do exhaustive tests, i.e. test every possible combination of the parameters. But this is not possible since there exist too many combinations. So we will need to choose a subset that best covers our needs.
+
+## K230 Hardware Platform Integration
+Benchmarks on the K230 board are recorded by invocing the script `run_integration_tests_k230.sh`. In this script, the configuration parameters `REMOTE_USER, REMOTE_IP, UART_DEVICE` may need to be changed according to the connected device.
+
+Example: Run `aww` benchmark using TFLM on a K230 board with RT-Thread installed as real time operating system.
+```
+./run_integration_tests_k230.sh -t K230 -f tflm -b aww -o RTOS
+```
+
+Example: Run `ic` benchmark using TFLM on a K230 board with Linux installed as operating system with vectorization enabled.
+```
+./run_integration_tests_k230.sh -t K230 -f tflm -b ic -s -o Linux -v
+```
