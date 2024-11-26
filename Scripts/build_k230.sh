@@ -56,7 +56,7 @@ while getopts 't:vpiab:s:l:e:o:h' flag; do
     a) INTG_TESTS=ON ;;
     o) OS="${OPTARG}";;
 
-    * | h) echo "Provide correct arguments.  Ex:  ./build.sh -t (GCC/LLVM/x86/K230) -v -i -b (Release/Debug) -o (RTOS/Linux)"
+    * | h) echo "Provide correct arguments.  Ex:  ./build_k230.sh -t (GCC/LLVM/x86/K230) -v -i -b (Release/Debug) -o (RTOS/Linux)"
        echo "-t : toolchain to use"
        echo "-v : enable/disable VEXT"
        echo "-p : enable/disable PEXT"
@@ -73,11 +73,11 @@ done
 
 if [ "${TOOLCHAIN}" == "K230" ]; then
   if [ "${OS}" == "RTOS" ]; then
-  if [ "${USE_VEXT}" == "ON" ]; then
-    GCC_PREFIX=${TC_DIR}/rv64gcv_lp64d_linux_musl_medany
-  else
-    GCC_PREFIX=${TC_DIR}/rv64gc_lp64d_linux_musl_medany
-  fi
+    if [ "${USE_VEXT}" == "ON" ]; then
+      GCC_PREFIX=${TC_DIR}/rv64gcv_lp64d_linux_musl_medany
+    else
+      GCC_PREFIX=${TC_DIR}/rv64gc_lp64d_linux_musl_medany
+    fi
   elif [ "${OS}" == "Linux" ]; then
     GCC_PREFIX=${TC_DIR}/riscv64-glibc-ubuntu
   else

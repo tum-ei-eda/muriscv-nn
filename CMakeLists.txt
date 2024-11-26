@@ -66,6 +66,10 @@ elseif(${TOOLCHAIN} STREQUAL "K230") # K230 hardware only supports vector extens
   set(RISCV_ABI "lp64d" CACHE STRING "mabi argument to the compiler")
   set(RISCV_CMODEL "medany" CACHE STRING "mcmodel argument to the compiler")
 
+  add_compile_definitions(SIM_K230)
+  set(SIM_CYCLE_PER_SECOND 1600000000 CACHE STRING "Number of simulation cycles per second")
+  add_compile_definitions(SIM_CYCLE_PER_SECOND=${SIM_CYCLE_PER_SECOND})
+
 elseif(${TOOLCHAIN} STREQUAL "K230_linux")
   if(USE_VEXT)
     set(RISCV_ARCH "rv64gcv" CACHE STRING "march argument to the compiler, using the vector extension")
@@ -76,6 +80,10 @@ elseif(${TOOLCHAIN} STREQUAL "K230_linux")
   endif()
   set(RISCV_ABI "lp64d" CACHE STRING "mabi argument to the compiler")
   set(RISCV_CMODEL "medlow" CACHE STRING "mcmodel argument to the compiler")
+
+  add_compile_definitions(SIM_K230)
+  set(SIM_CYCLE_PER_SECOND 1600000000 CACHE STRING "Number of simulation cycles per second")
+  add_compile_definitions(SIM_CYCLE_PER_SECOND=${SIM_CYCLE_PER_SECOND})
 
 else() # All other (instruction level) simulator support the full RISC-V ISA
   if(USE_VEXT)
