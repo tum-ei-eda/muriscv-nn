@@ -79,7 +79,7 @@ elseif(${TOOLCHAIN} STREQUAL "K230_linux")
     set(RISCV_ARCH "rv64gc" CACHE STRING "march argument to the compiler, using only scalar instructions")
   endif()
   set(RISCV_ABI "lp64d" CACHE STRING "mabi argument to the compiler")
-  set(RISCV_CMODEL "medlow" CACHE STRING "mcmodel argument to the compiler")
+  set(RISCV_CMODEL "medany" CACHE STRING "mcmodel argument to the compiler")
 
   add_compile_definitions(SIM_K230)
   set(SIM_CYCLE_PER_SECOND 1600000000 CACHE STRING "Number of simulation cycles per second")
@@ -159,10 +159,8 @@ endif()
 # Set some compiler options for easier debug or faster builds
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g -ggdb")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -ggdb")
-# set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Ofast")
-# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast")
-set(CMAKE_C_FLAGS_RELEASE "-DNDEBUG -Os -fno-tree-loop-vectorize -fno-tree-slp-vectorize")
-set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -Os -fno-tree-loop-vectorize -fno-tree-slp-vectorize")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Ofast")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Ofast")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wshadow -Wno-format -std=c11") # TODO(fabianpedd): at a later point add -pedantic and -Werror
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 

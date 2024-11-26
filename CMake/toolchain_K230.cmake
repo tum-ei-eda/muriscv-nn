@@ -24,7 +24,7 @@
 
 # Path to your RISC-V GCC compiler
 set(RISCV_GCC_PREFIX "/opt/riscv" CACHE PATH "Install location of GCC RISC-V toolchain.") # gets overwritten in scripts for build or tests
-set(RISCV_GCC_BASENAME "riscv64-unknown-linux-musl" CACHE STRING "Base name of the toolchain executables.")
+set(RISCV_GCC_BASENAME "riscv64-unknown-linux-gnu" CACHE STRING "Base name of the toolchain executables.")
 set(TC_PREFIX "${RISCV_GCC_PREFIX}/bin/${RISCV_GCC_BASENAME}-")
 
 set(CMAKE_C_COMPILER ${TC_PREFIX}gcc)
