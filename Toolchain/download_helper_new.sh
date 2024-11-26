@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2021-2022 Chair of Electronic Design Automation, TUM.
+# Copyright (C) 2021-2024 Chair of Electronic Design Automation, TUM.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -19,9 +19,9 @@
 
 set -e
 
-if [ "$#" -lt 5 ]; then
+if [ "$#" -lt 4 ]; then
     echo "Illegal number of parameters!"
-    echo "Usage: ./download_helper.sh DEST {GCC|LLVM} {default|vext|pext} {2023.12.14|...} {rv32gc_ilp32d|...} [DIST [RELEASE]]"
+    echo "Usage: ./download_helper.sh DEST {GCC|LLVM} {2023.12.14|...} {rv32gc_ilp32d|...} [BASENAME [DIST [RELEASE]]]"
     exit 1
 fi
 
@@ -29,13 +29,12 @@ fi
 dest=$1  # Where to unpack the files
 toolchain=$2  # i.e. GCC/LLVM
 toolchain_lower=$(echo $toolchain | tr "[:upper:]" "[:lower:]")
-mode=$3  # i.e. default/vext/pext/corev/...
-version=$4  # i.e. 2023.12.14
-lib=$5
-basename=${6:-riscv32-unknown-elf}
-dist_lower=${7:-$(lsb_release -d | cut -f2 | cut -d' ' -f1 | tr "[:upper:]" "[:lower:]")}
-release=${8:-$(lsb_release -r --short)}
-ext=${9:-tar.xz}
+version=$3  # i.e. 2023.12.14
+lib=$4
+basename=${5:-riscv32-unknown-elf}
+dist_lower=${6:-$(lsb_release -d | cut -f2 | cut -d' ' -f1 | tr "[:upper:]" "[:lower:]")}
+release=${7:-$(lsb_release -r --short)}
+ext=${8:-tar.xz}
 cpu_arch=$(uname -p)
 
 if [[ "$toolchain_lower" == "llvm" ]]
