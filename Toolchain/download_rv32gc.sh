@@ -19,4 +19,4 @@
 
 set -e
 
-./download_helper_new.sh rv32gc/ gnu default 2024.09.03_gcc14 rv32gc_ilp32d
+./download_helper_new.sh rv32gc/ gnu 2024.09.03_gcc14 rv32gc_ilp32d
