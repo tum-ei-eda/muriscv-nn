@@ -182,6 +182,7 @@ jobs:
           find . -name "Benchmarks-${{ steps.date-today.outputs.today }}-*.csv" -exec ../Wiki/compare_with_prev.sh {} 2 \;
           python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open first > _Sidebar.md
           python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open none --hide-models > _Footer.md
+          rm README.md
           git add *.md
           git add *.csv
           git status
