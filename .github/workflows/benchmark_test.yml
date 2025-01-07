@@ -121,70 +121,79 @@ jobs:
     needs: Run_Benchmark
 
     steps:
+    - name: Maximize build space
+      uses: easimon/maximize-build-space@master
+      with:
+        root-reserve-mb: 32768
+        temp-reserve-mb: 1024
+        remove-dotnet: 'true'
+        remove-android: 'true'
+        remove-haskell: 'true'
+        remove-codeql: 'true'
 
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Download Cached GCC Binaries
-        id: cache-gcc
-        uses: actions/cache/restore@v4
-        env:
-            cache-name: cache-gcc-binaries
-        with:
-            path: |
-              ./Toolchain
-              !./Toolchain/*.sh
-            fail-on-cache-miss: true
-            key: gcc-binaries-${{ steps.dates.outputs.today }}
-            restore-keys: |
-              gcc-binaries-${{ steps.dates.outputs.yesterday }}
-              gcc-binaries-${{ steps.dates.outputs.date }}
-              gcc-binaries-
+    - name: Download Cached GCC Binaries
+      id: cache-gcc
+      uses: actions/cache/restore@v4
+      env:
+          cache-name: cache-gcc-binaries
+      with:
+          path: |
+            ./Toolchain
+            !./Toolchain/*.sh
+          fail-on-cache-miss: true
+          key: gcc-binaries-${{ steps.dates.outputs.today }}
+          restore-keys: |
+            gcc-binaries-${{ steps.dates.outputs.yesterday }}
+            gcc-binaries-${{ steps.dates.outputs.date }}
+            gcc-binaries-
 
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./Wiki
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./Wiki
 
-      - name: Download dependencies
-        run: |
-          pip install -r Wiki/requirements.txt
+    - name: Download dependencies
+      run: |
+        pip install -r Wiki/requirements.txt
 
-      - name: Get current date
-        id: date-today
-        run: echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+    - name: Get current date
+      id: date-today
+      run: echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-      - name: Create New Wiki Page
-        working-directory: ./Wiki
-        run: |
-          source ../Integration/MLonMCU/common.sh
-          export RV32GC_VERSION=$(../Toolchain/rv32gc/bin/riscv32-unknown-elf-gcc --version | head -1)
-          export RV32GCV_VERSION=$(../Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version | head -1)
-          export RV32GCP_VERSION=$(../Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version | head -1)
-          export LLVM_VERSION=$(../Toolchain/llvm/bin/clang --version | head -1)
-          python3 create_wiki.py */*.csv --split
-          cat Benchmarks-*.md >> $GITHUB_STEP_SUMMARY
+    - name: Create New Wiki Page
+      working-directory: ./Wiki
+      run: |
+        source ../Integration/MLonMCU/common.sh
+        export RV32GC_VERSION=$(../Toolchain/rv32gc/bin/riscv32-unknown-elf-gcc --version | head -1)
+        export RV32GCV_VERSION=$(../Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version | head -1)
+        export RV32GCP_VERSION=$(../Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version | head -1)
+        export LLVM_VERSION=$(../Toolchain/llvm/bin/clang --version | head -1)
+        python3 create_wiki.py */*.csv --split
+        cat Benchmarks-*.md >> $GITHUB_STEP_SUMMARY
 
-      - name: Clone Wiki Repo
-        uses: actions/checkout@v4
-        with:
-          repository: ${{github.repository}}.wiki
-          path: Wiki-repo
+    - name: Clone Wiki Repo
+      uses: actions/checkout@v4
+      with:
+        repository: ${{github.repository}}.wiki
+        path: Wiki-repo
 
-      - name: Push New Page to Wiki
-        working-directory: ./Wiki-repo
-        run: |
-          # ls
-          cp ../Wiki/*.md .
-          cp ../Wiki/*.csv .
-          # ls
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          find . -name "Benchmarks-${{ steps.date-today.outputs.today }}-*.csv" -exec ../Wiki/compare_with_prev.sh {} 2 \;
-          python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open first > _Sidebar.md
-          python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open none --hide-models > _Footer.md
-          rm README.md
-          git add *.md
-          git add *.csv
-          git status
-          git commit -m "Added Benchmarks on ${{ steps.date-today.outputs.today }}"
-          git push origin master
+    - name: Push New Page to Wiki
+      working-directory: ./Wiki-repo
+      run: |
+        # ls
+        cp ../Wiki/*.md .
+        cp ../Wiki/*.csv .
+        # ls
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        find . -name "Benchmarks-${{ steps.date-today.outputs.today }}-*.csv" -exec ../Wiki/compare_with_prev.sh {} 2 \;
+        python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open first > _Sidebar.md
+        python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open none --hide-models > _Footer.md
+        rm README.md
+        git add *.md
+        git add *.csv
+        git status
+        git commit -m "Added Benchmarks on ${{ steps.date-today.outputs.today }}"
+        git push origin master
