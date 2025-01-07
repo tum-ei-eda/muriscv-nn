@@ -24,9 +24,9 @@ set(RISCV_GCC_BASENAME "riscv32-unknown-elf" CACHE STRING "Base name of the tool
 
 set(RISCV_LLVM_PREFIX "/opt/llvm/bin" CACHE PATH "Install location of LLVM RISC-V toolchain.")
 
-set(CMAKE_C_COMPILER ${RISCV_LLVM_PREFIX}/clang-18)
-set(CMAKE_CXX_COMPILER ${RISCV_LLVM_PREFIX}/clang-18)
-set(CMAKE_ASM_COMPILER ${RISCV_LLVM_PREFIX}/clang-18)
+set(CMAKE_C_COMPILER ${RISCV_LLVM_PREFIX}/clang)
+set(CMAKE_CXX_COMPILER ${RISCV_LLVM_PREFIX}/clang)
+set(CMAKE_ASM_COMPILER ${RISCV_LLVM_PREFIX}/clang)
 set(CMAKE_OBJCOPY ${RISCV_LLVM_PREFIX}/llvm-objcopy)
 set(CMAKE_OBJDUMP ${RISCV_LLVM_PREFIX}/llvm-objdump)
 
