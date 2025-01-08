@@ -38,6 +38,8 @@
  * @{
  */
 
+
+
 /*
  * s8 vector(lhs) by matrix (transposed) multiplication
  *
@@ -566,11 +568,19 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             const q31_t rhs_value4 = (int8_t)*rhs_ptr_4;
             const q31_t lhs_value = (int8_t)*lhs_ptr + lhs_offset;
 
+#ifndef USE_COREV
             res00 += lhs_value * rhs_value0;
             res01 += lhs_value * rhs_value1;
             res02 += lhs_value * rhs_value2;
             res03 += lhs_value * rhs_value3;
             res04 += lhs_value * rhs_value4;
+#else
+            res00 = __builtin_riscv_cv_mac_mac(lhs_value, rhs_value0, res00);
+            res01 = __builtin_riscv_cv_mac_mac(lhs_value, rhs_value1, res01);
+            res02 = __builtin_riscv_cv_mac_mac(lhs_value, rhs_value2, res02);
+            res03 = __builtin_riscv_cv_mac_mac(lhs_value, rhs_value3, res03);
+            res04 = __builtin_riscv_cv_mac_mac(lhs_value, rhs_value3, res04);
+#endif
 
             ++rhs_ptr_0;
             ++rhs_ptr_1;
@@ -635,7 +645,11 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             q31_t rhs_value0 = (int8_t)rhs_ptr[0];
             q31_t lhs_value = (int8_t)lhs_ptr[0] + lhs_offset;
 
+#ifndef USE_COREV
             res00 += lhs_value * rhs_value0;
+#else
+            res00 = __builtin_riscv_cv_mac_mac(lhs_value, rhs_value0, res00);
+#endif
 
             ++rhs_ptr;
             ++lhs_ptr;

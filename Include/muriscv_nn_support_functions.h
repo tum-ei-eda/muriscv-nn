@@ -153,6 +153,16 @@
 //MURISCV_NN END OF NEW CODE
 #include <stdbool.h>
 
+// #define USE_COREV
+
+#ifdef USE_COREV
+#include <stdint.h>
+
+int32_t __builtin_riscv_cv_mac_mac(int32_t, int32_t, int32_t);
+
+#endif
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
