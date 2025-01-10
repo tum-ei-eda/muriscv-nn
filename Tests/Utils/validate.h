@@ -28,6 +28,7 @@
 
 static inline size_t validate_t(int8_t *act, const int8_t *ref, size_t size, int8_t tolerance)
 {
+    printf("validate_t!\n");
     size_t test_passed = true;
     size_t count = 0;
     size_t total = 0;

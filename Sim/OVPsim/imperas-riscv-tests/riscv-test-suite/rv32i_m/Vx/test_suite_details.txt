@@ -1,0 +1,83 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+Architectural Test Suite Data for RV32VX RISC-V "V" Vector Extension:
+    348 test source files
+    6 different instruction categories
+    50 different instructions
+    277,504 total instructions
+
+Instruction category: OPV_SAVS single-width averaging add subtract
+  vaadd.vv : 336
+  vaadd.vx : 336
+  vasub.vv : 336
+  vasub.vx : 336
+Instruction category: OPV_SWI single-width average add, subtract unsigned
+  vaaddu.vv : 336
+  vaaddu.vx : 336
+  vasubu.vv : 336
+  vasubu.vx : 336
+Instruction category: OPV_NFPC narrowing fixed-point clip
+  vnclip.wi : 160
+  vnclip.wv : 160
+  vnclip.wx : 160
+  vnclipu.wi : 160
+  vnclipu.wv : 160
+  vnclipu.wx : 160
+Instruction category: OPV_SAS single-width saturating add substract
+  vsadd.vi : 336
+  vsadd.vv : 336
+  vsadd.vx : 336
+  vsaddu.vi : 336
+  vsaddu.vv : 336
+  vsaddu.vx : 336
+  vssub.vv : 336
+  vssub.vx : 336
+  vssubu.vv : 336
+  vssubu.vx : 336
+Instruction category: OPV_FMRS single-width fractional multiply with rounding and saturation
+  vsmul.vv : 336
+  vsmul.vx : 336
+Instruction category: OPV_SWSS single-width scaling shift
+  vssra.vi : 336
+  vssra.vv : 336
+  vssra.vx : 336
+  vssrl.vi : 336
+  vssrl.vv : 336
+  vssrl.vx : 336
+
+Other instructions (those not the focus of this suite)
+  jal : 348
+  lui : 12,294
+  addi : 107,550
+  csrrs : 1,392
+  auipc : 18,708
+  csrrw : 1,044
+  mret : 348
+  vsetvli : 47,648
+  vle8.v : 8,512
+  add : 38,784
+  vse8.v : 3,392
+  fence : 348
+  ecall : 348
+  beq : 1,044
+  vle16.v : 9,872
+  vse16.v : 3,392
+  vle32.v : 9,872
+  vse32.v : 2,912
+

@@ -1,0 +1,58 @@
+# Imperas RISC-V Architecture Tests for RV64I_MSU/PRIVMMU_SV48
+
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd. All Rights Reserved.
+    #
+    # THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS
+    # OF IMPERAS SOFTWARE LTD. USE, DISCLOSURE, OR REPRODUCTION IS PROHIBITED
+    # EXCEPT AS MAY BE PROVIDED FOR IN A WRITTEN AGREEMENT WITH IMPERAS SOFTWARE LTD.
+    #
+    #
+
+
+| Test                               | Data Size | Program Size | Signature Size | Instructions Counted |
+| ---------------------------------- | --------- | ------------ | -------------- | -------------------- |
+| access-S_MXR_0                     |     7,340 |       8,208  |            32  |                 420  |
+| access-S_1                         |     7,340 |       8,208  |            32  |                 418  |
+| access-U_MXR_0                     |     7,340 |       8,208  |            32  |                 418  |
+| access-S_0                         |     7,340 |       8,208  |            32  |                 418  |
+| access-S_MXR_SUM_1                 |     7,340 |       8,208  |            32  |                 404  |
+| access-S_SUM_0                     |     7,340 |       8,208  |            32  |                 384  |
+| access-S_SUM_1                     |     7,340 |       8,208  |            32  |                 402  |
+| access-U_1                         |     7,340 |       8,208  |            32  |                 447  |
+| access-S_MXR_1                     |     7,340 |       8,208  |            32  |                 420  |
+| access-S_MXR_SUM_0                 |     7,340 |       8,208  |            32  |                 386  |
+| access-U_0                         |     7,340 |       8,208  |            32  |                 416  |
+| access-U_MXR_1                     |     7,340 |       8,208  |            32  |                 449  |
+| access-S_SUM_2                     |     4,524 |          48  |            96  |                 868  |
+| access-S_MXR_2                     |     4,524 |          48  |            96  |                 922  |
+| access-S_MXR_SUM_2                 |     4,524 |          48  |            96  |                 834  |
+| access-S_2                         |     4,268 |          48  |            96  |                 938  |
+| access-S_SUM_3                     |     6,060 |      32,832  |           224  |               1,550  |
+| access-S_3                         |     6,060 |      32,832  |           224  |               1,746  |
+| access-U_MXR_2                     |     4,524 |          48  |            96  |                 920  |
+| access-S_MXR_3                     |     6,060 |      32,832  |           224  |               1,712  |
+| access-U_MXR_3                     |     6,060 |      32,832  |           224  |               1,680  |
+| access-S_4                         |     8,108 |          48  |            80  |                 764  |
+| access-S_SUM_4                     |     8,108 |          48  |            80  |                 712  |
+| access-S_MXR_SUM_4                 |     8,108 |          48  |            80  |                 678  |
+| access-U_3                         |     6,060 |      32,832  |           224  |               1,714  |
+| access-U_2                         |     4,268 |          48  |            96  |                 936  |
+| access-S_MXR_4                     |     8,108 |          48  |            80  |                 748  |
+| access-S_MXR_SUM_3                 |     6,060 |      32,832  |           224  |               1,480  |
+| access-U_MXR_4                     |     8,108 |          48  |            80  |                 746  |
+| access-U_4                         |     8,108 |          48  |            80  |                 762  |
+| invalid-S_0                        |     8,876 |          48  |           144  |               1,282  |
+| invalid-U_0                        |     8,876 |          48  |           144  |               1,262  |
+| invalid-U_1                        |     8,876 |          48  |           144  |               1,231  |
+| invalid-S_1                        |     8,876 |          48  |           144  |               1,282  |
+| invalid-U_4                        |     8,876 |          48  |           144  |               1,231  |
+| invalid-U_3                        |     8,876 |          48  |           144  |               1,231  |
+| invalid-S_3                        |     8,876 |          48  |           144  |               1,282  |
+| invalid-S_2                        |     8,876 |          48  |           144  |               1,282  |
+| invalid-U_2                        |     8,876 |          48  |           144  |               1,231  |
+| invalid-S_4                        |     8,876 |          48  |           144  |               1,281  |
+| ---------------------------------- | --------- | ------------ | -------------- | -------------------- |
+
+
+

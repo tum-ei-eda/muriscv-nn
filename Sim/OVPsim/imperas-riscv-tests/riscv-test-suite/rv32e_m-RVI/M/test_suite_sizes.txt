@@ -1,0 +1,34 @@
+# Imperas RISC-V Architecture Tests for RV32E_M-RVI/M
+
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+| Test                               | Data Size | Program Size | Signature Size | Instructions Counted |
+| ---------------------------------- | --------- | ------------ | -------------- | -------------------- |
+| divu-01                            |     7,428 |      15,720  |         2,928  |               3,906  |
+| div-01                             |     6,916 |      12,720  |         2,336  |               3,166  |
+| mulhu-01                           |     7,428 |      15,592  |         2,896  |               3,886  |
+| remu-01                            |     7,428 |      15,664  |         2,912  |               3,890  |
+| rem-01                             |     6,916 |      12,844  |         2,352  |               3,194  |
+| mulh-01                            |     6,916 |      12,972  |         2,368  |               3,222  |
+| mul-01                             |     6,916 |      12,776  |         2,352  |               3,178  |
+| mulhsu-01                          |     7,172 |      14,196  |         2,624  |               3,534  |
+| ---------------------------------- | --------- | ------------ | -------------- | -------------------- |
+
+
+

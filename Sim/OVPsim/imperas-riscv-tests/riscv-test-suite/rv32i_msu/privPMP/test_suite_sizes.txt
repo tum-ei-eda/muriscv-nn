@@ -1,0 +1,60 @@
+# Imperas RISC-V Architecture Tests for RV32I_MSU/PRIVPMP
+
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd. All Rights Reserved.
+    #
+    # THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS
+    # OF IMPERAS SOFTWARE LTD. USE, DISCLOSURE, OR REPRODUCTION IS PROHIBITED
+    # EXCEPT AS MAY BE PROVIDED FOR IN A WRITTEN AGREEMENT WITH IMPERAS SOFTWARE LTD.
+    #
+    #
+
+
+| Test                               | Data Size | Program Size | Signature Size | Instructions Counted |
+| ---------------------------------- | --------- | ------------ | -------------- | -------------------- |
+| basic-M_OFF_0                      |       772 |      49,164  |           192  |                 831  |
+| basic-U_OFF_0                      |       772 |      49,164  |           192  |               1,465  |
+| basic-S_OFF_0                      |       772 |      49,164  |           192  |               1,467  |
+| basic-S_NAPOT_0                    |     3,500 |      45,068  |           192  |               1,161  |
+| basic-U_NAPOT_0                    |     3,500 |      45,068  |           192  |               1,159  |
+| basic-M_NAPOT_0                    |     3,500 |      45,068  |           192  |               1,064  |
+| basic-M_NAPOT_1                    |       772 |      49,164  |           192  |               1,033  |
+| basic-S_NAPOT_1                    |       772 |      49,164  |           192  |               1,130  |
+| basic-M_NAPOT_2                    |     3,500 |      45,068  |           192  |                 984  |
+| basic-U_NAPOT_1                    |       772 |      49,164  |           192  |               1,128  |
+| basic-U_NAPOT_2                    |     3,500 |      45,068  |           192  |               1,164  |
+| basic-M_NAPOT_3                    |       772 |      49,164  |           192  |               1,015  |
+| basic-S_NAPOT_2                    |     3,500 |      45,068  |           192  |               1,166  |
+| basic-S_NAPOT_3                    |       772 |      49,164  |           192  |               1,161  |
+| basic-M_NAPOT_4                    |     3,500 |      45,068  |           192  |                 984  |
+| basic-U_NAPOT_3                    |       772 |      49,164  |           192  |               1,159  |
+| basic-S_NAPOT_4                    |     3,500 |      45,068  |           192  |               1,130  |
+| basic-S_NA4_0                      |       772 |         204  |           192  |               1,165  |
+| basic-U_NAPOT_4                    |     3,500 |      45,068  |           192  |               1,128  |
+| basic-M_NA4_1                      |     3,500 |         188  |           192  |               1,030  |
+| basic-M_NA4_0                      |       772 |         204  |           192  |               1,019  |
+| basic-U_NA4_0                      |       772 |         204  |           192  |               1,163  |
+| basic-U_NA4_1                      |     3,500 |         188  |           192  |               1,156  |
+| basic-M_TOR_0                      |       772 |      49,164  |           192  |                 999  |
+| basic-S_NA4_1                      |     3,500 |         188  |           192  |               1,158  |
+| basic-S_TOR_0                      |       772 |      49,164  |           192  |               1,127  |
+| basic-U_TOR_0                      |       772 |      49,164  |           192  |               1,125  |
+| basic-U_TOR_1                      |       772 |      49,164  |           192  |               1,174  |
+| basic-S_TOR_1                      |       772 |      49,164  |           192  |               1,176  |
+| basic-M_TOR_1                      |       772 |      49,164  |           192  |               1,048  |
+| priority-M_NAPOT_0                 |       772 |       8,252  |           192  |                 909  |
+| priority-S_NAPOT_0                 |       772 |       8,252  |           192  |               1,088  |
+| priority-S_NAPOT_1                 |       772 |       8,252  |           192  |               1,122  |
+| priority-U_NAPOT_0                 |       772 |       8,252  |           192  |               1,086  |
+| priority-S_NAPOT_2                 |       772 |       8,268  |           192  |               1,156  |
+| priority-U_NAPOT_2                 |       772 |       8,268  |           192  |               1,154  |
+| priority-M_NAPOT_1                 |       772 |       8,252  |           192  |               1,123  |
+| priority-M_NAPOT_3                 |       772 |       8,252  |           192  |               1,206  |
+| priority-U_NAPOT_1                 |       772 |       8,252  |           192  |               1,120  |
+| priority-S_NAPOT_3                 |       772 |       8,252  |           192  |               1,257  |
+| priority-M_NAPOT_2                 |       772 |       8,268  |           192  |               1,157  |
+| priority-U_NAPOT_3                 |       772 |       8,252  |           192  |               1,255  |
+| ---------------------------------- | --------- | ------------ | -------------- | -------------------- |
+
+
+

@@ -35,19 +35,33 @@ muriscv_nn_status muriscv_nn_avgpool_s8(const muriscv_nn_context *ctx,
                                         const muriscv_nn_dims *output_dims,
                                         q7_t *dst)
 {
+    printf("muriscv_nn_avgpool_s8\n");
     const int32_t input_y = input_dims->h;
+    printf("input_y=%d\n", input_y);
     const int32_t input_x = input_dims->w;
+    printf("input_x=%d\n", input_x);
     const int32_t output_y = output_dims->h;
+    printf("output_y=%d\n", output_y);
     const int32_t output_x = output_dims->w;
+    printf("output_x=%d\n", output_x);
     const int32_t stride_y = pool_params->stride.h;
+    printf("stride_y=%d\n", stride_y);
     const int32_t stride_x = pool_params->stride.w;
+    printf("stride_x=%d\n", stride_x);
     const int32_t kernel_y = filter_dims->h;
+    printf("kernel_y=%d\n", kernel_y);
     const int32_t kernel_x = filter_dims->w;
+    printf("kernel_x=%d\n", kernel_x);
     const int32_t pad_y = pool_params->padding.h;
+    printf("pad_y=%d\n", pad_y);
     const int32_t pad_x = pool_params->padding.w;
+    printf("pad_x=%d\n", pad_x);
     const int32_t act_min = pool_params->activation.min;
+    printf("act_min=%d\n", act_min);
     const int32_t act_max = pool_params->activation.max;
+    printf("act_max=%d\n", act_max);
     const int32_t ch_src = input_dims->c;
+    printf("ch_src=%d\n", ch_src);
 
 // #if defined(USE_PEXT)
 //
@@ -156,6 +170,7 @@ muriscv_nn_status muriscv_nn_avgpool_s8(const muriscv_nn_context *ctx,
                 // Prevent static code issue DIVIDE_BY_ZERO.
                 if (count == 0)
                 {
+                    printf("ARG ERR\n");
                     return MURISCV_NN_ARG_ERROR;
                 }
 
@@ -202,6 +217,7 @@ muriscv_nn_status muriscv_nn_avgpool_s8(const muriscv_nn_context *ctx,
                 // Prevent static code issue DIVIDE_BY_ZERO.
                 if (count == 0)
                 {
+                    printf("ERR\n");
                     return MURISCV_NN_ARG_ERROR;
                 }
 

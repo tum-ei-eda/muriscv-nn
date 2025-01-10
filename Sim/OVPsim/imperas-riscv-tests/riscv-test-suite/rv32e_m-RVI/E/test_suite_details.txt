@@ -1,0 +1,69 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+Architectural Test Suite Data for RV32E Base Embedded (Integer) Instruction Set:
+    37 test source files
+    0 different instruction categories
+    42 different instructions
+    78,170 total instructions
+
+
+Other instructions (those not the focus of this suite)
+  jal : 7,684
+  lui : 14,988
+  addi : 29,873
+  csrrs : 111
+  auipc : 640
+  csrrw : 74
+  mret : 37
+  sw : 12,372
+  fence : 37
+  ecall : 37
+  beq : 716
+  add : 583
+  andi : 597
+  and : 588
+  bgeu : 728
+  bltu : 727
+  bge : 586
+  jalr : 59
+  xori : 602
+  sub : 907
+  blt : 586
+  bne : 585
+  lbu : 17
+  lh : 16
+  lb : 18
+  lhu : 16
+  sb : 78
+  lw : 16
+  sh : 71
+  or : 589
+  ori : 557
+  slt : 581
+  sll : 88
+  slli : 89
+  slti : 561
+  sltiu : 697
+  srai : 87
+  sltu : 722
+  srl : 89
+  srli : 88
+  xor : 583
+  sra : 90
+

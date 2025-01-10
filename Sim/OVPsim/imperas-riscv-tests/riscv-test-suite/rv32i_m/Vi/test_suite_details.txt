@@ -1,0 +1,194 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+Architectural Test Suite Data for RV32VI RISC-V "V" Vector Extension:
+    1,402 test source files
+    12 different instruction categories
+    155 different instructions
+    1,112,780 total instructions
+
+Instruction category: OPV_IA integer arithmetic
+  vadc.vim : 336
+  vadc.vvm : 336
+  vadc.vxm : 336
+  vadd.vi : 336
+  vadd.vv : 336
+  vadd.vx : 336
+  vand.vi : 336
+  vand.vv : 336
+  vand.vx : 336
+  vmadc.vim : 336
+  vmadc.vvm : 336
+  vmadc.vxm : 336
+  vmadc.vi : 336
+  vmadc.vv : 336
+  vmadc.vx : 336
+  vmsbc.vvm : 336
+  vmsbc.vxm : 336
+  vmsbc.vv : 336
+  vmsbc.vx : 336
+  vor.vi : 336
+  vor.vv : 336
+  vor.vx : 336
+  vrsub.vi : 336
+  vrsub.vx : 336
+  vsbc.vvm : 336
+  vsbc.vxm : 336
+  vsll.vi : 336
+  vsll.vv : 336
+  vsll.vx : 336
+  vsra.vi : 336
+  vsra.vv : 336
+  vsra.vx : 336
+  vsrl.vi : 336
+  vsrl.vv : 336
+  vsrl.vx : 336
+  vsub.vv : 336
+  vsub.vx : 336
+  vxor.vi : 336
+  vxor.vv : 336
+  vxor.vx : 336
+  vsext.vf2 : 160
+  vzext.vf2 : 160
+  vzext.vf4 : 48
+  vsext.vf4 : 48
+Instruction category: OPV_ID integer divide
+  vdiv.vv : 336
+  vdiv.vx : 336
+  vdivu.vv : 336
+  vdivu.vx : 336
+  vrem.vv : 336
+  vrem.vx : 336
+  vremu.vv : 336
+  vremu.vx : 336
+Instruction category: OPV_IMA single-width integer multiply-add
+  vmacc.vv : 336
+  vmacc.vx : 336
+  vmadd.vv : 336
+  vmadd.vx : 336
+  vnmsac.vv : 336
+  vnmsac.vx : 336
+  vnmsub.vv : 336
+  vnmsub.vx : 336
+Instruction category: OPV_MM min/max
+  vmax.vv : 336
+  vmax.vx : 336
+  vmaxu.vv : 336
+  vmaxu.vx : 336
+  vmin.vv : 336
+  vmin.vx : 336
+  vminu.vv : 336
+  vminu.vx : 336
+Instruction category: OPV_IME integer merge
+  vmerge.vim : 336
+  vmerge.vvm : 336
+  vmerge.vxm : 336
+Instruction category: OPV_IC integer comparison
+  vmseq.vi : 336
+  vmseq.vv : 336
+  vmseq.vx : 336
+  vmsgt.vi : 336
+  vmsgt.vx : 336
+  vmsgtu.vi : 336
+  vmsgtu.vx : 336
+  vmsle.vi : 336
+  vmsle.vv : 336
+  vmsle.vx : 336
+  vmsleu.vi : 336
+  vmsleu.vv : 336
+  vmsleu.vx : 336
+  vmslt.vv : 336
+  vmslt.vx : 336
+  vmsltu.vv : 336
+  vmsltu.vx : 336
+  vmsne.vi : 336
+  vmsne.vv : 336
+  vmsne.vx : 336
+Instruction category: OPV_IMUL single-width integer multiply
+  vmul.vv : 336
+  vmul.vx : 336
+  vmulh.vv : 336
+  vmulh.vx : 336
+  vmulhsu.vv : 336
+  vmulhsu.vx : 336
+  vmulhu.vv : 336
+  vmulhu.vx : 336
+Instruction category: OPV_IMO integer move
+  vmv.v.i : 336
+  vmv.v.v : 336
+  vmv.v.x : 336
+Instruction category: OPV_IAN narrowing integer arithmetic
+  vnsra.wi : 160
+  vnsra.wv : 160
+  vnsra.wx : 160
+  vnsrl.wi : 160
+  vnsrl.wv : 160
+  vnsrl.wx : 160
+Instruction category: OPV_IAW widening integer arithmetic
+  vwadd.vv : 160
+  vwadd.vx : 160
+  vwadd.wv : 160
+  vwadd.wx : 160
+  vwaddu.vv : 160
+  vwaddu.vx : 160
+  vwaddu.wv : 160
+  vwaddu.wx : 160
+  vwsub.vv : 160
+  vwsub.vx : 160
+  vwsub.wv : 160
+  vwsub.wx : 160
+  vwsubu.vv : 160
+  vwsubu.vx : 160
+  vwsubu.wv : 160
+  vwsubu.wx : 160
+Instruction category: OPV_IWMA widening integer multiply-add
+  vwmacc.vv : 160
+  vwmacc.vx : 160
+  vwmaccsu.vv : 160
+  vwmaccsu.vx : 160
+  vwmaccu.vv : 160
+  vwmaccu.vx : 160
+  vwmaccus.vx : 160
+Instruction category: OPV_IWMU widening integer multiply
+  vwmul.vv : 160
+  vwmul.vx : 160
+  vwmulsu.vv : 160
+  vwmulsu.vx : 160
+  vwmulu.vv : 160
+  vwmulu.vx : 160
+
+Other instructions (those not the focus of this suite)
+  jal : 1,402
+  lui : 49,648
+  addi : 431,550
+  csrrs : 5,608
+  auipc : 76,002
+  csrrw : 4,206
+  mret : 1,402
+  vsetvli : 189,768
+  vle16.v : 40,320
+  add : 155,776
+  vse16.v : 10,576
+  fence : 1,402
+  ecall : 1,402
+  beq : 4,206
+  vle8.v : 31,640
+  vse8.v : 18,176
+  vle32.v : 40,560
+  vse32.v : 10,192
+

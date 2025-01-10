@@ -1,0 +1,50 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+Architectural Test Suite Data for RV64ZBS B Bit Manipulation:
+    8 test source files
+    2 different instruction categories
+    21 different instructions
+    16,544 total instructions
+
+Instruction category: OPB_SBIT Single-Bit
+  bexti : 298
+  binv : 300
+  bclri : 298
+  bclr : 300
+  binvi : 298
+  bseti : 298
+  bset : 300
+Instruction category: OPB_EXDE Bit Extract/Deposit
+  bext : 300
+
+Other instructions (those not the focus of this suite)
+  jal : 8
+  lui : 1,440
+  addiw : 2,412
+  csrrs : 24
+  auipc : 520
+  addi : 4,100
+  csrrw : 16
+  mret : 8
+  slli : 3,192
+  sd : 2,392
+  fence : 8
+  ecall : 8
+  beq : 24
+

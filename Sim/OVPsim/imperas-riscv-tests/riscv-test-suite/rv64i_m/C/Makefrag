@@ -1,0 +1,61 @@
+# RISC-V Compliance Test C Makefrag
+#
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+#
+# Description: Makefrag for C compliance tests
+
+c_sc_tests = \
+	C-ADD-01 \
+	C-ADDW-01 \
+	C-MV-01 \
+	C-ADDI-01 \
+	C-ADDIW-01 \
+	C-ADDI16SP-01 \
+	C-ADDI4SPN-01 \
+	C-LI-01 \
+	C-LUI-01 \
+	C-AND-01 \
+	C-OR-01 \
+	C-SUB-01 \
+	C-SUBW-01 \
+	C-XOR-01 \
+	C-ANDI-01 \
+	C-BEQZ-01 \
+	C-BNEZ-01 \
+	C-J-01 \
+	C-JALR-01 \
+	C-JR-01 \
+	C-LW-01 \
+	C-LD-01 \
+	C-LWSP-01 \
+	C-LDSP-01 \
+	C-SLLI-01 \
+	C-SRAI-01 \
+	C-SRLI-01 \
+	C-SW-01 \
+	C-SD-01 \
+	C-SWSP-01 \
+	C-SDSP-01 \
+	I-C-EBREAK-01 \
+	I-C-NOP-01 \
+
+c_tests = $(addsuffix .elf, $(c_sc_tests))
+
+target_tests += $(c_tests)
+

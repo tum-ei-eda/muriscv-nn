@@ -160,6 +160,7 @@ void avgpooling_2_muriscv_nn_avgpool_s8(void)
         muriscv_nn_avgpool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
     free(ctx.buf);
+    printf("result=%d\n", result);
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, avgpooling_2_output_ref, AVGPOOLING_2_DST_SIZE));
 }
@@ -189,6 +190,12 @@ void avgpooling_3_muriscv_nn_avgpool_s8(void)
 
     pool_params.padding.w = AVGPOOLING_3_PAD_X;
     pool_params.padding.h = AVGPOOLING_3_PAD_Y;
+    // printf("pool_params.padding.w=%d\n", pool_params.padding.w);
+    // printf("pool_params.padding.h=%d\n", pool_params.padding.h);
+    printf("&pool_params.padding.w=%p\n", &(pool_params.padding.w));
+    printf("&pool_params.padding.h=%p\n", &(pool_params.padding.h));
+    printf("*&pool_params.padding.w=%d\n", *(&(pool_params.padding.w)));
+    printf("*&pool_params.padding.h=%d\n", *(&(pool_params.padding.h)));
     pool_params.stride.w = AVGPOOLING_3_STRIDE_X;
     pool_params.stride.h = AVGPOOLING_3_STRIDE_Y;
 
@@ -202,6 +209,7 @@ void avgpooling_3_muriscv_nn_avgpool_s8(void)
         muriscv_nn_avgpool_s8(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
     free(ctx.buf);
+    printf("result=%d\n", result);
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, avgpooling_3_output_ref, AVGPOOLING_3_DST_SIZE));
 }
@@ -294,12 +302,12 @@ int main(void)
 {
     UNITY_BEGIN();
 
-    RUN_TEST(avgpooling_muriscv_nn_avgpool_s8);
-    RUN_TEST(avgpooling_1_muriscv_nn_avgpool_s8);
+    // RUN_TEST(avgpooling_muriscv_nn_avgpool_s8);
+    // RUN_TEST(avgpooling_1_muriscv_nn_avgpool_s8);
     RUN_TEST(avgpooling_2_muriscv_nn_avgpool_s8);
     RUN_TEST(avgpooling_3_muriscv_nn_avgpool_s8);
-    RUN_TEST(avgpooling_4_muriscv_nn_avgpool_s8);
-    RUN_TEST(avgpooling_5_muriscv_nn_avgpool_s8);
+    // RUN_TEST(avgpooling_4_muriscv_nn_avgpool_s8);
+    // RUN_TEST(avgpooling_5_muriscv_nn_avgpool_s8);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */

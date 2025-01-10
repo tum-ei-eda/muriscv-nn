@@ -1,0 +1,36 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd. All Rights Reserved.
+    #
+    # THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS
+    # OF IMPERAS SOFTWARE LTD. USE, DISCLOSURE, OR REPRODUCTION IS PROHIBITED
+    # EXCEPT AS MAY BE PROVIDED FOR IN A WRITTEN AGREEMENT WITH IMPERAS SOFTWARE LTD.
+    #
+    #
+
+
+Architectural Test Suite Data for RV32PRIVMMU_SV32 MMU Sv32:
+    40 test source files
+    0 different instruction categories
+    17 different instructions
+    15,013 total instructions
+
+
+Other instructions (those not the focus of this suite)
+  jal : 392
+  lui : 2,144
+  addi : 6,408
+  csrrs : 1,025
+  auipc : 440
+  csrrw : 592
+  mret : 392
+  or : 500
+  srli : 40
+  lw : 140
+  sw : 980
+  jalr : 159
+  FETCH : 121
+  bne : 1,001
+  beq : 624
+  ecall : 40
+  csrrc : 15
+

@@ -43,6 +43,6 @@ if [ ! -d "verilator" ]; then
   git checkout tags/v4.210
   autoconf
   ./configure --prefix ${SCRIPT_DIR}/verilator/install
-  make all -j$(nproc)
-  make install 
+  make all -j`nproc`
+  make install -j`nproc`
 fi

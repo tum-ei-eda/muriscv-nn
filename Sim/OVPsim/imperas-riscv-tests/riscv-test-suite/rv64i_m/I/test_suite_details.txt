@@ -1,0 +1,94 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+Architectural Test Suite Data for RV64I RV64I Base Integer Instruction Set:
+    60 test source files
+    10 different instruction categories
+    57 different instructions
+    120,880 total instructions
+
+Instruction category: arithmetic 
+  lui : 11,141
+  addiw : 15,980
+  auipc : 7,477
+  addi : 33,924
+  sub : 896
+  add : 3,611
+  addw : 300
+  subw : 300
+Instruction category: logical 
+  andi : 322
+  ori : 299
+  xori : 299
+  xor : 301
+  and : 301
+  or : 301
+Instruction category: branch 
+  beq : 482
+  bltu : 302
+  bge : 302
+  blt : 333
+  bgeu : 302
+  bne : 302
+Instruction category: OPI_IMN 
+  ecall : 61
+  ebreak : 1
+Instruction category: synch 
+  fence : 60
+Instruction category: jump 
+  jal : 1,220
+  jalr : 306
+Instruction category: load 
+  lw : 303
+  lh : 302
+  lb : 298
+  lbu : 303
+  lhu : 303
+  ld : 1,494
+  lwu : 297
+Instruction category: store 
+  sd : 14,996
+  sb : 297
+  sw : 485
+  sh : 301
+Instruction category: shift 
+  slli : 17,385
+  srai : 299
+  sll : 301
+  srli : 299
+  srl : 301
+  sra : 301
+  slliw : 298
+  srliw : 298
+  sraiw : 298
+  srlw : 300
+  sllw : 300
+  sraw : 300
+Instruction category: compare 
+  slti : 299
+  sltiu : 299
+  sltu : 301
+  slt : 301
+
+Other instructions (those not the focus of this suite)
+  csrrs : 253
+  csrrw : 153
+  mret : 85
+  sext.w : 6
+  csrrci : 1
+

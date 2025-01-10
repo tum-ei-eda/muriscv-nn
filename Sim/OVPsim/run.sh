@@ -40,8 +40,8 @@ if [[ $2 == "rv32gcv" ]]; then
     --override riscvOVPsim/cpu/VLEN=$3 \
     --override riscvOVPsim/cpu/ELEN=$4 \
     --override riscvOVPsim/cpu/mstatus_FS=$5 \
-    --override riscvOVPsim/cpu/mstatus_VS=$5
-  # --trace
+    --override riscvOVPsim/cpu/mstatus_VS=$5 \
+    --trace --tracechange --tracemem SA --tracefile trace.txt
   # --port 3333
   # --gdbconsole
 

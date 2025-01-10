@@ -1,0 +1,39 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd. All Rights Reserved.
+    #
+    # THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS
+    # OF IMPERAS SOFTWARE LTD. USE, DISCLOSURE, OR REPRODUCTION IS PROHIBITED
+    # EXCEPT AS MAY BE PROVIDED FOR IN A WRITTEN AGREEMENT WITH IMPERAS SOFTWARE LTD.
+    #
+    #
+
+
+Architectural Test Suite Data for RV64PRIVMMU_SV48 MMU Sv48:
+    40 test source files
+    0 different instruction categories
+    20 different instructions
+    37,533 total instructions
+
+
+Other instructions (those not the focus of this suite)
+  lui : 3,175
+  addiw : 3,629
+  slli : 4,525
+  jalr : 434
+  jal : 775
+  csrrs : 2,049
+  auipc : 440
+  addi : 13,209
+  csrrw : 975
+  mret : 775
+  or : 1,058
+  srli : 40
+  ld : 326
+  bne : 2,150
+  beq : 1,390
+  sw : 1,956
+  sd : 326
+  FETCH : 246
+  ecall : 40
+  csrrc : 15
+

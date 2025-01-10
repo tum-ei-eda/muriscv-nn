@@ -1,0 +1,81 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+Architectural Test Suite Data for RV32I Base Integer Instruction Set:
+    48 test source files
+    10 different instruction categories
+    44 different instructions
+    43,980 total instructions
+
+Instruction category: arithmetic 
+  lui : 8,053
+  addi : 16,318
+  auipc : 3,634
+  sub : 512
+  add : 1,568
+Instruction category: logical 
+  ori : 171
+  andi : 194
+  xori : 171
+  or : 173
+  and : 173
+  xor : 173
+Instruction category: branch 
+  beq : 318
+  blt : 205
+  bgeu : 174
+  bge : 174
+  bne : 174
+  bltu : 174
+Instruction category: OPI_IMN 
+  ecall : 49
+  ebreak : 1
+Instruction category: synch 
+  fence : 48
+Instruction category: jump 
+  jal : 710
+  jalr : 178
+Instruction category: load 
+  lw : 691
+  lh : 174
+  lb : 170
+  lbu : 175
+  lhu : 175
+Instruction category: store 
+  sw : 6,737
+  sb : 169
+  sh : 173
+Instruction category: shift 
+  srli : 171
+  slli : 202
+  srai : 171
+  sll : 173
+  sra : 173
+  srl : 173
+Instruction category: compare 
+  sltiu : 171
+  slt : 173
+  slti : 171
+  sltu : 173
+
+Other instructions (those not the focus of this suite)
+  csrrs : 217
+  csrrw : 129
+  mret : 73
+  csrrci : 1
+

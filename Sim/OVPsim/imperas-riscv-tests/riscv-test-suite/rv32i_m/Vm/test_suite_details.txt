@@ -1,0 +1,64 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+Architectural Test Suite Data for RV32VM RISC-V "V" Vector Extension:
+    180 test source files
+    2 different instruction categories
+    35 different instructions
+    160,680 total instructions
+
+Instruction category: OPV_MASK mask
+  vfirst.m : 336
+  viota.m : 336
+  vmand.mm : 336
+  vmandn.mm : 336
+  vmnand.mm : 336
+  vmnor.mm : 336
+  vmor.mm : 336
+  vmorn.mm : 336
+  vmxnor.mm : 336
+  vmxor.mm : 336
+  vmsbf.m : 336
+  vmsif.m : 336
+  vmsof.m : 336
+  vcpop.m : 336
+Instruction category: OPV_INDXEX index
+  vid.v : 336
+
+Other instructions (those not the focus of this suite)
+  jal : 180
+  lui : 6,252
+  addi : 60,876
+  csrrs : 720
+  auipc : 8,376
+  csrrw : 540
+  mret : 180
+  vsetvli : 21,336
+  add : 16,800
+  vle8.v : 4,312
+  sw : 672
+  fence : 180
+  ecall : 180
+  beq : 540
+  vle16.v : 4,312
+  vle32.v : 4,312
+  vse8.v : 3,920
+  vse16.v : 224
+  vse32.v : 224
+  lw : 21,504
+

@@ -20,6 +20,7 @@
 
 # Path to your RISC-V GCC compiler (only used to get the headers and libraries, actual compiler is LLVM/Clang)
 set(RISCV_GCC_PREFIX "/opt/riscv" CACHE PATH "Install location of GCC RISC-V toolchain.")
+# set(RISCV_GCC_BASENAME "riscv64-unknown-elf" CACHE STRING "Base name of the toolchain executables.")
 set(RISCV_GCC_BASENAME "riscv32-unknown-elf" CACHE STRING "Base name of the toolchain executables.")
 
 set(CMAKE_C_COMPILER clang-17)

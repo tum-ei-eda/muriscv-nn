@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2021 Imperas Software Ltd., www.imperas.com
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied.
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+
+
+Architectural Test Suite Data for RV64ZBKB K Crypto/Scalar:
+    13 test source files
+    4 different instruction categories
+    32 different instructions
+    29,243 total instructions
+
+Instruction category: OPB_LWNE Logic With Negate
+  andn : 300
+  xnor : 300
+  orn : 300
+Instruction category: OPB_PACK Packing
+  packw : 300
+  packh : 300
+  pack : 300
+Instruction category: OPB_SEXT Sign Extend
+Instruction category: OPB_ROTS Rotations
+  rorw : 300
+  rolw : 300
+  rol : 300
+  roriw : 298
+  rori : 298
+  ror : 300
+
+Other instructions (those not the focus of this suite)
+  c-j : 13
+  c-lui : 41
+  addiw : 4,317
+  csrrs : 39
+  auipc : 845
+  addi : 7,549
+  csrrw : 26
+  mret : 13
+  lui : 2,565
+  slli : 5,573
+  sd : 3,714
+  c-sdsp : 180
+  c-addi : 80
+  fence : 13
+  ecall : 13
+  c-li : 66
+  beq : 39
+  c-slli : 223
+  grevi : 298
+  c-addiw : 40
+

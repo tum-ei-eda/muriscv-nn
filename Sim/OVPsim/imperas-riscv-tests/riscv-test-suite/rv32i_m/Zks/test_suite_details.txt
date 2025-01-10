@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2021 Imperas Software Ltd., www.imperas.com
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied.
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+
+
+Architectural Test Suite Data for RV32ZKS K Crypto/Scalar:
+    19 test source files
+    8 different instruction categories
+    28 different instructions
+    18,274 total instructions
+
+Instruction category: OPB_LWNE Logic With Negate
+  orn : 172
+  andn : 172
+  xnor : 172
+Instruction category: OPB_CLML Carry-less Multiply
+  clmul : 172
+  clmulh : 172
+Instruction category: OPB_PACK Packing
+  pack : 172
+  packh : 172
+Instruction category: OPB_SEXT Sign Extend
+Instruction category: OPB_ROTS Rotations
+  rori : 170
+  rol : 172
+  ror : 172
+Instruction category: OPK_Zksh ShangMi Suite SM3 Hash function instructions
+  sm3p1 : 170
+  sm3p0 : 170
+Instruction category: OPK_Zkse 
+  sm4ed : 428
+  sm4ks : 428
+Instruction category: OPB_XBAR Crossbar Permutation
+
+Other instructions (those not the focus of this suite)
+  jal : 19
+  lui : 4,367
+  addi : 6,043
+  csrrs : 57
+  auipc : 788
+  csrrw : 38
+  mret : 19
+  sw : 3,424
+  fence : 19
+  ecall : 19
+  beq : 57
+  grevi : 170
+  shfli : 170
+  unshfli : 170
+

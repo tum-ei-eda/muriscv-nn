@@ -1,0 +1,42 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+Architectural Test Suite Data for RV32ZBA B Bit Manipulation:
+    3 test source files
+    1 different instruction categories
+    14 different instructions
+    2,934 total instructions
+
+Instruction category: OPB_ADDR Address Calculation
+  sh1add : 172
+  sh3add : 172
+  sh2add : 172
+
+Other instructions (those not the focus of this suite)
+  jal : 3
+  lui : 687
+  addi : 1,059
+  csrrs : 9
+  auipc : 120
+  csrrw : 6
+  mret : 3
+  sw : 516
+  fence : 3
+  ecall : 3
+  beq : 9
+

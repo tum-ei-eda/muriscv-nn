@@ -1,0 +1,157 @@
+Group : RISCV_coverage_pkg::RISCV_coverage#(32,64,32,256,1,1)::rsc_mmu_sv48_cg
+
+===============================================================================
+Group : RISCV_coverage_pkg::RISCV_coverage#(32,64,32,256,1,1)::rsc_mmu_sv48_cg
+===============================================================================
+SCORE  INSTANCES WEIGHT GOAL   AT LEAST PER INSTANCE AUTO BIN MAX PRINT MISSING 
+ 56.84  56.84    1      100    1        1            64           64            
+
+
+Source File(s) : 
+
+output/sv_coverage/source/coverage/RSC_MMU_SV48_coverage.svh
+
+1 Instances:
+
+SCORE  WEIGHT GOAL   AT LEAST AUTO BIN MAX PRINT MISSING NAME             
+ 56.84 1      100    1        64           64            obj_rsc_mmu_sv48 
+
+
+
+
+-------------------------------------------------------------------------------
+
+Summary for Group   RISCV_coverage_pkg::RISCV_coverage#(32,64,32,256,1,1)::rsc_mmu_sv48_cg
+
+
+
+CATEGORY  EXPECTED UNCOVERED COVERED PERCENT 
+Variables 28       13        15      68.86   
+Crosses   456      416       40      8.77    
+
+
+Variables for Group  RISCV_coverage_pkg::RISCV_coverage#(32,64,32,256,1,1)::rsc_mmu_sv48_cg
+
+
+VARIABLE  EXPECTED UNCOVERED COVERED PERCENT GOAL WEIGHT AT LEAST AUTO BIN MAX COMMENT 
+cp_result 19       11        8       42.11   100  1      1        0                    
+cp_stage  3        2         1       33.33   100  1      1        0                    
+cp_mode   2        0         2       100.00  100  1      1        0                    
+cp_level  4        0         4       100.00  100  1      1        0                    
+
+
+Crosses for Group  RISCV_coverage_pkg::RISCV_coverage#(32,64,32,256,1,1)::rsc_mmu_sv48_cg
+
+
+CROSS                      EXPECTED UNCOVERED COVERED PERCENT GOAL WEIGHT AT LEAST PRINT MISSING COMMENT 
+cr_stage_mode_level_result 456      416       40      8.77    100  1      1        0                     
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_result
+
+
+CATEGORY                     EXPECTED UNCOVERED COVERED PERCENT 
+Automatically Generated Bins 19       11        8       42.11   
+
+
+Automatically Generated Bins for cp_result
+
+
+Uncovered bins
+
+NAME                                            COUNT AT LEAST NUMBER 
+auto_custom_entry_check_failed                  0     1        1      
+auto_page_table_entry_reserved_bits_not_zero    0     1        1      
+auto_page_table_entry_must_be_leaf_level        0     1        1      
+auto_page_table_entry_d_eq_0                    0     1        1      
+auto_va_has_invalid_extension                   0     1        1      
+auto_page_table_entry_is_a_misaligned_superpage 0     1        1      
+auto_page_table_entry_load_failed               0     1        1      
+auto_page_table_entry_svpbmt_invalid            0     1        1      
+auto_gpa_has_invalid_extension                  0     1        1      
+auto_page_table_entry_svnapot_invalid           0     1        1      
+auto_page_table_entry_store_failed              0     1        1      
+
+
+Covered bins
+
+NAME                                        COUNT AT LEAST 
+auto_page_table_entry_non_leaf_and_d_ne_0   30    1        
+auto_page_table_entry_r_eq_0_w_eq_1         30    1        
+auto_page_table_entry_v_eq_0                60    1        
+auto_page_table_entry_a_eq_0                30    1        
+auto_page_table_entry_non_leaf_and_a_ne_0   30    1        
+auto_page_table_entry_non_leaf_and_u_ne_0   30    1        
+auto_page_table_entry_does_not_allow_access 327   1        
+auto_successful_walk                        143   1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_stage
+
+
+CATEGORY                     EXPECTED UNCOVERED COVERED PERCENT 
+Automatically Generated Bins 3        2         1       33.33   
+
+
+Automatically Generated Bins for cp_stage
+
+
+Uncovered bins
+
+NAME                 COUNT AT LEAST NUMBER 
+auto_virtual_stage_2 0     1        1      
+auto_virtual_stage_1 0     1        1      
+
+
+Covered bins
+
+NAME    COUNT AT LEAST 
+auto_hs 680   1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_mode
+
+
+CATEGORY                     EXPECTED UNCOVERED COVERED PERCENT 
+Automatically Generated Bins 2        0         2       100.00  
+
+
+Automatically Generated Bins for cp_mode
+
+
+Bins
+
+NAME        COUNT AT LEAST 
+auto_u_mode 293   1        
+auto_s_mode 387   1        
+
+
+-------------------------------------------------------------------------------
+
+Summary for Variable cp_level
+
+
+CATEGORY                     EXPECTED UNCOVERED COVERED PERCENT 
+Automatically Generated Bins 4        0         4       100.00  
+
+
+Automatically Generated Bins for cp_level
+
+
+Bins
+
+NAME         COUNT AT LEAST 
+auto_level_0 190   1        
+auto_level_1 346   1        
+auto_level_2 116   1        
+auto_level_3 28    1        
+
+
+-------------------------------------------------------------------------------
+

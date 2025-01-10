@@ -1,0 +1,89 @@
+#
+# Copyright (c) 2021 Imperas Software Ltd., www.imperas.com
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied.
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+
+
+Architectural Test Suite Data for RV64K K Crypto/Scalar:
+    64 test source files
+    0 different instruction categories
+    60 different instructions
+    162,849 total instructions
+
+
+Other instructions (those not the focus of this suite)
+  c-j : 64
+  c-lui : 288
+  addiw : 20,185
+  csrrs : 192
+  auipc : 452
+  addi : 45,794
+  csrrw : 128
+  mret : 64
+  lui : 18,713
+  slli : 38,098
+  aes64ds : 109
+  sd : 11,498
+  c-sdsp : 124
+  c-addi : 691
+  fence : 64
+  ecall : 64
+  c-li : 338
+  beq : 192
+  c-slli : 8,883
+  xor : 774
+  aes64dsm : 109
+  c-addiw : 275
+  c-xor : 28
+  aes64es : 109
+  aes64esm : 109
+  aes64im : 259
+  sw : 2,377
+  xori : 594
+  add : 594
+  aes64ks2 : 220
+  clmul : 525
+  andn : 524
+  ld : 308
+  clmulh : 525
+  aes64ks1i : 86
+  orn : 525
+  pack : 524
+  packh : 525
+  packw : 525
+  rol : 525
+  grevi : 780
+  rolw : 525
+  roriw : 286
+  rorw : 525
+  ror : 525
+  rori : 289
+  sha256sig0 : 259
+  sha256sig1 : 259
+  sha256sum0 : 259
+  sha256sum1 : 259
+  c-swsp : 53
+  sha512sig0 : 259
+  sha512sig1 : 259
+  sha512sum0 : 259
+  sha512sum1 : 259
+  sm3p0 : 259
+  sm3p1 : 259
+  sm4ks : 385
+  sm4ed : 385
+  xnor : 525
+

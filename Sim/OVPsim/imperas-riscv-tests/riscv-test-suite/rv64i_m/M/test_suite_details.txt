@@ -1,0 +1,54 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+Architectural Test Suite Data for RV64M M Integer Multiplication and Division:
+    13 test source files
+    1 different instruction categories
+    26 different instructions
+    31,918 total instructions
+
+Instruction category: arithmetic 
+  div : 300
+  mulhsu : 300
+  mulhu : 300
+  mul : 300
+  rem : 300
+  divu : 300
+  remu : 300
+  mulh : 300
+  remw : 300
+  divw : 300
+  mulw : 300
+  divuw : 300
+  remuw : 300
+
+Other instructions (those not the focus of this suite)
+  jal : 13
+  lui : 2,834
+  addiw : 4,732
+  csrrs : 39
+  auipc : 1,165
+  addi : 8,913
+  csrrw : 26
+  mret : 13
+  slli : 6,318
+  sd : 3,900
+  fence : 13
+  ecall : 13
+  beq : 39
+

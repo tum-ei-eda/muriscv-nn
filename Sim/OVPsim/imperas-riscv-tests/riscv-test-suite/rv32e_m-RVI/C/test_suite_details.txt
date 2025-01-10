@@ -1,0 +1,63 @@
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+Architectural Test Suite Data for RV32C Base Embedded (Integer) Instruction Set:
+    26 test source files
+    0 different instruction categories
+    36 different instructions
+    24,094 total instructions
+
+
+Other instructions (those not the focus of this suite)
+  c-j : 229
+  c-lui : 41
+  addi : 7,925
+  csrrs : 78
+  auipc : 276
+  csrrw : 52
+  mret : 26
+  lui : 5,513
+  c-addi : 878
+  sw : 4,365
+  fence : 26
+  ecall : 26
+  c-li : 95
+  beq : 78
+  c-add : 580
+  c-and : 586
+  jal : 160
+  c-andi : 385
+  c-lwsp : 15
+  c-jalr : 15
+  xori : 48
+  sub : 187
+  andi : 37
+  c-swsp : 173
+  c-bnez : 84
+  c-beqz : 84
+  c-jr : 15
+  lw : 13
+  c-jal : 18
+  c-mv : 85
+  c-or : 582
+  c-slli : 86
+  c-srai : 85
+  c-srli : 87
+  c-sub : 581
+  c-xor : 580
+

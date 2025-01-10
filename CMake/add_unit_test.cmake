@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+MESSAGE(STATUS "ARA_DIR2=${ARA_DIR}")
+MESSAGE(STATUS "ARA_COMMON_DIR2=${ARA_COMMON_DIR}")
 
 # Simple macro that will create a test executable and register it with CTest
 macro(add_muriscv_nn_unit_test TEST_NAME)
@@ -80,6 +82,8 @@ macro(add_muriscv_nn_unit_test TEST_NAME)
                 COMMAND cp ${ARA_DIR}/apps/common/arch.link.ld $<TARGET_FILE:${TEST_NAME}>.ld
                 COMMAND ${ARA_DIR}/apps/common/script/align_sections.sh ${ARA_NR_LANES} $<TARGET_FILE:${TEST_NAME}>.ld
             )
+MESSAGE(STATUS "ARA_DIR3=${ARA_DIR}")
+MESSAGE(STATUS "ARA_COMMON_DIR3=${ARA_COMMON_DIR}")
             ADD_CUSTOM_TARGET(${TEST_NAME}_my_linkerscript DEPENDS ${TEST_NAME}.ld)
             # ADD_DEPENDENCIES(${TEST_NAME} ${TEST_NAME}_my_linkerscript)
             set_target_properties(${TARGET_NAME} PROPERTIES LINK_DEPENDS ${TEST_NAME}.ld)

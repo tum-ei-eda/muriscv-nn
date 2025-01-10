@@ -1,0 +1,63 @@
+# Imperas RISC-V Architecture Tests for RV32E_M-RVI/E
+
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd., www.imperas.com
+    #
+    # The contents of this file are provided under the Software License
+    # Agreement that you accepted before downloading this file.
+    #
+    # This source forms part of the Software and can be used for educational,
+    # training, and demonstration purposes but cannot be used for derivative
+    # works except in cases where the derivative works require OVP technology
+    # to run.
+    #
+    # For open source models released under licenses that you can use for
+    # derivative works, please visit www.OVPworld.org or www.imperas.com
+    # for the location of the open source models.
+    #
+    
+
+
+| Test                               | Data Size | Program Size | Signature Size | Instructions Counted |
+| ---------------------------------- | --------- | ------------ | -------------- | -------------------- |
+| addi-01                            |     6,660 |       8,556  |         2,256  |               2,122  |
+| add-01                             |     6,916 |      12,776  |         2,336  |               3,170  |
+| andi-01                            |     6,660 |       8,488  |         2,224  |               2,098  |
+| and-01                             |     6,916 |      12,916  |         2,352  |               3,210  |
+| bgeu-01                            |     7,428 |     283,248  |         2,912  |               6,808  |
+| bltu-01                            |     7,428 |     246,828  |         2,912  |               6,809  |
+| bge-01                             |     6,916 |     208,752  |         2,352  |               5,535  |
+| jalr-01                            |     4,612 |       2,024  |           112  |                 382  |
+| jal-01                             |     4,612 |  14,681,516  |            64  |                 280  |
+| blt-01                             |     6,916 |     223,080  |         2,352  |               5,531  |
+| beq-01                             |     6,916 |     236,012  |         2,368  |               5,575  |
+| bne-01                             |     6,916 |     222,956  |         2,352  |               5,532  |
+| auipc-01                           |     4,868 |       1,588  |           256  |                 374  |
+| lbu-align-01                       |     4,612 |         752  |            80  |                 162  |
+| lh-align-01                        |     4,612 |         688  |            64  |                 154  |
+| lb-align-01                        |     4,612 |         752  |            80  |                 166  |
+| lhu-align-01                       |     4,612 |         680  |            64  |                 154  |
+| lui-01                             |     4,868 |         808  |           256  |                 182  |
+| sb-align-01                        |     4,868 |       2,612  |           320  |                 630  |
+| lw-align-01                        |     4,612 |         680  |            64  |                 154  |
+| sh-align-01                        |     4,868 |       2,416  |           288  |                 582  |
+| or-01                              |     6,916 |      12,844  |         2,368  |               3,198  |
+| ori-01                             |     6,660 |       8,496  |         2,240  |               2,110  |
+| slt-01                             |     6,916 |      12,776  |         2,336  |               3,170  |
+| sll-01                             |     4,868 |       1,896  |           352  |                 450  |
+| slli-01                            |     4,868 |       1,516  |           368  |                 366  |
+| slti-01                            |     6,660 |       8,552  |         2,256  |               2,122  |
+| sltiu-01                           |     7,172 |      10,476  |         2,800  |               2,602  |
+| srai-01                            |     4,868 |       1,512  |           352  |                 358  |
+| sub-01                             |     6,916 |      12,840  |         2,336  |               3,186  |
+| sltu-01                            |     7,428 |      15,532  |         2,896  |               3,870  |
+| srl-01                             |     4,868 |       1,900  |           368  |                 458  |
+| xori-01                            |     6,660 |       8,560  |         2,240  |               2,122  |
+| srli-01                            |     4,868 |       1,516  |           352  |                 362  |
+| xor-01                             |     6,916 |      12,712  |         2,336  |               3,166  |
+| sw-align-01                        |     4,868 |       2,288  |           272  |                 558  |
+| sra-01                             |     4,868 |       1,904  |           368  |                 462  |
+| ---------------------------------- | --------- | ------------ | -------------- | -------------------- |
+
+
+

@@ -1,0 +1,75 @@
+#
+# Copyright (c) 2021 Imperas Software Ltd., www.imperas.com
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied.
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#
+
+
+Architectural Test Suite Data for RV64ZKS K Crypto/Scalar:
+    21 test source files
+    8 different instruction categories
+    38 different instructions
+    48,803 total instructions
+
+Instruction category: OPB_LWNE Logic With Negate
+  andn : 300
+  orn : 300
+  xnor : 300
+Instruction category: OPB_CLML Carry-less Multiply
+  clmulh : 300
+  clmul : 300
+Instruction category: OPB_PACK Packing
+  pack : 300
+  packh : 300
+  packw : 300
+Instruction category: OPB_SEXT Sign Extend
+Instruction category: OPB_ROTS Rotations
+  ror : 300
+  rol : 300
+  rori : 298
+  rolw : 300
+  rorw : 300
+  roriw : 298
+Instruction category: OPK_Zksh ShangMi Suite SM3 Hash function instructions
+  sm3p1 : 298
+  sm3p0 : 298
+Instruction category: OPK_Zkse 
+  sm4ks : 556
+  sm4ed : 556
+Instruction category: OPB_XBAR Crossbar Permutation
+
+Other instructions (those not the focus of this suite)
+  c-j : 21
+  c-lui : 105
+  addiw : 6,933
+  csrrs : 63
+  auipc : 1,349
+  addi : 12,625
+  csrrw : 42
+  mret : 21
+  lui : 4,545
+  slli : 9,433
+  c-slli : 669
+  sd : 5,842
+  c-addiw : 120
+  c-addi : 224
+  c-sdsp : 360
+  c-li : 144
+  fence : 21
+  ecall : 21
+  beq : 63
+  grevi : 298
+

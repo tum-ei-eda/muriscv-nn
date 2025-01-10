@@ -1,0 +1,102 @@
+# Imperas RISC-V Architecture Tests for RV32I_MSU/PRIVEPMP
+
+    #
+    # Copyright (c) 2005-2023 Imperas Software Ltd. All Rights Reserved.
+    #
+    # THIS SOFTWARE CONTAINS CONFIDENTIAL INFORMATION AND TRADE SECRETS
+    # OF IMPERAS SOFTWARE LTD. USE, DISCLOSURE, OR REPRODUCTION IS PROHIBITED
+    # EXCEPT AS MAY BE PROVIDED FOR IN A WRITTEN AGREEMENT WITH IMPERAS SOFTWARE LTD.
+    #
+    #
+
+
+| Test                               | Data Size | Program Size | Signature Size | Instructions Counted |
+| ---------------------------------- | --------- | ------------ | -------------- | -------------------- |
+| basic-S_MML0_OFF_0                 |       772 |      49,164  |           192  |               1,469  |
+| basic-M_MML1_OFF_0                 |       772 |      49,164  |           192  |               1,040  |
+| basic-S_MML1_OFF_0                 |       772 |      49,164  |           192  |               1,520  |
+| basic-M_MML0_OFF_0                 |       772 |      49,164  |           192  |                 833  |
+| basic-U_MML0_OFF_0                 |       772 |      49,164  |           192  |               1,467  |
+| basic-M_MML0_NAPOT_0               |     3,500 |      45,068  |           192  |               1,066  |
+| basic-M_MML1_NAPOT_0               |     3,500 |      45,068  |           192  |               1,380  |
+| basic-U_MML1_OFF_0                 |       772 |      49,164  |           192  |               1,518  |
+| basic-S_MML1_NAPOT_0               |     3,500 |      45,068  |           192  |               1,361  |
+| basic-S_MML0_NAPOT_0               |     3,500 |      45,068  |           192  |               1,163  |
+| basic-U_MML1_NAPOT_0               |     3,500 |      45,068  |           192  |               1,359  |
+| basic-M_MML1_NAPOT_1               |       772 |      49,164  |           192  |               1,380  |
+| basic-M_MML0_NAPOT_1               |       772 |      49,164  |           192  |               1,035  |
+| basic-U_MML0_NAPOT_0               |     3,500 |      45,068  |           192  |               1,161  |
+| basic-S_MML0_NAPOT_1               |       772 |      49,164  |           192  |               1,132  |
+| basic-S_MML1_NAPOT_1               |       772 |      49,164  |           192  |               1,343  |
+| basic-U_MML0_NAPOT_1               |       772 |      49,164  |           192  |               1,130  |
+| basic-M_MML0_NAPOT_2               |     3,500 |      45,068  |           192  |                 986  |
+| basic-S_MML0_NAPOT_2               |     3,500 |      45,068  |           192  |               1,168  |
+| basic-M_MML1_NAPOT_2               |     3,500 |      45,068  |           192  |               1,380  |
+| basic-U_MML0_NAPOT_2               |     3,500 |      45,068  |           192  |               1,166  |
+| basic-S_MML1_NAPOT_2               |     3,500 |      45,068  |           192  |               1,379  |
+| basic-M_MML0_NAPOT_3               |       772 |      49,164  |           192  |               1,017  |
+| basic-U_MML1_NAPOT_2               |     3,500 |      45,068  |           192  |               1,377  |
+| basic-U_MML1_NAPOT_1               |       772 |      49,164  |           192  |               1,341  |
+| basic-S_MML0_NAPOT_3               |       772 |      49,164  |           192  |               1,163  |
+| basic-U_MML0_NAPOT_3               |       772 |      49,164  |           192  |               1,161  |
+| basic-U_MML1_NAPOT_3               |       772 |      49,164  |           192  |               1,390  |
+| basic-S_MML1_NAPOT_3               |       772 |      49,164  |           192  |               1,392  |
+| basic-M_MML0_NAPOT_4               |     3,500 |      45,068  |           192  |                 986  |
+| basic-M_MML1_NAPOT_3               |       772 |      49,164  |           192  |               1,362  |
+| basic-M_MML1_NAPOT_4               |     3,500 |      45,068  |           192  |               1,380  |
+| basic-S_MML0_NAPOT_4               |     3,500 |      45,068  |           192  |               1,132  |
+| basic-U_MML0_NAPOT_4               |     3,500 |      45,068  |           192  |               1,130  |
+| basic-M_MML1_NA4_0                 |       772 |         204  |           192  |               1,366  |
+| basic-S_MML1_NA4_0                 |       772 |         204  |           192  |               1,391  |
+| basic-S_MML1_NAPOT_4               |     3,500 |      45,068  |           192  |               1,343  |
+| basic-U_MML0_NA4_0                 |       772 |         204  |           192  |               1,165  |
+| basic-U_MML1_NAPOT_4               |     3,500 |      45,068  |           192  |               1,341  |
+| basic-M_MML0_NA4_0                 |       772 |         204  |           192  |               1,021  |
+| basic-S_MML0_NA4_0                 |       772 |         204  |           192  |               1,167  |
+| basic-U_MML1_NA4_0                 |       772 |         204  |           192  |               1,389  |
+| basic-M_MML0_NA4_1                 |     3,500 |         188  |           192  |               1,032  |
+| basic-S_MML0_NA4_1                 |     3,500 |         188  |           192  |               1,160  |
+| basic-U_MML0_NA4_1                 |     3,500 |         188  |           192  |               1,158  |
+| basic-S_MML1_NA4_1                 |     3,500 |         188  |           192  |               1,420  |
+| basic-M_MML1_NA4_1                 |     3,500 |         188  |           192  |               1,328  |
+| basic-U_MML1_NA4_1                 |     3,500 |         188  |           192  |               1,418  |
+| basic-M_MML0_TOR_0                 |       772 |      49,164  |           192  |               1,001  |
+| basic-U_MML0_TOR_0                 |       772 |      49,164  |           192  |               1,127  |
+| basic-S_MML1_TOR_0                 |       772 |      49,164  |           192  |               1,371  |
+| basic-S_MML0_TOR_0                 |       772 |      49,164  |           192  |               1,129  |
+| basic-U_MML1_TOR_0                 |       772 |      49,164  |           192  |               1,369  |
+| basic-M_MML0_TOR_1                 |       772 |      49,164  |           192  |               1,050  |
+| basic-M_MML1_TOR_0                 |       772 |      49,164  |           192  |               1,346  |
+| basic-M_MML1_TOR_1                 |       772 |      49,164  |           192  |               1,364  |
+| priority-M_MML0_NAPOT_0            |       772 |       8,252  |           192  |                 911  |
+| basic-U_MML1_TOR_1                 |       772 |      49,164  |           192  |               1,387  |
+| basic-S_MML0_TOR_1                 |       772 |      49,164  |           192  |               1,178  |
+| basic-U_MML0_TOR_1                 |       772 |      49,164  |           192  |               1,176  |
+| priority-M_MML1_NAPOT_0            |       772 |       8,252  |           192  |               1,390  |
+| basic-S_MML1_TOR_1                 |       772 |      49,164  |           192  |               1,389  |
+| priority-S_MML0_NAPOT_0            |       772 |       8,252  |           192  |               1,090  |
+| priority-S_MML1_NAPOT_0            |       772 |       8,252  |           192  |               1,265  |
+| priority-U_MML0_NAPOT_0            |       772 |       8,252  |           192  |               1,088  |
+| priority-U_MML1_NAPOT_0            |       772 |       8,252  |           192  |               1,263  |
+| priority-M_MML0_NAPOT_1            |       772 |       8,252  |           192  |               1,125  |
+| priority-S_MML1_NAPOT_1            |       772 |       8,252  |           192  |               1,330  |
+| priority-U_MML0_NAPOT_1            |       772 |       8,252  |           192  |               1,122  |
+| priority-M_MML1_NAPOT_1            |       772 |       8,252  |           192  |               1,359  |
+| priority-U_MML1_NAPOT_1            |       772 |       8,252  |           192  |               1,328  |
+| priority-S_MML0_NAPOT_2            |       772 |       8,268  |           192  |               1,158  |
+| priority-M_MML0_NAPOT_2            |       772 |       8,268  |           192  |               1,159  |
+| priority-S_MML1_NAPOT_2            |       772 |       8,268  |           192  |               1,281  |
+| priority-S_MML0_NAPOT_1            |       772 |       8,252  |           192  |               1,124  |
+| priority-M_MML1_NAPOT_2            |       772 |       8,268  |           192  |               1,442  |
+| priority-M_MML1_NAPOT_3            |       772 |       8,252  |           192  |               1,442  |
+| priority-U_MML0_NAPOT_2            |       772 |       8,268  |           192  |               1,156  |
+| priority-M_MML0_NAPOT_3            |       772 |       8,252  |           192  |               1,208  |
+| priority-U_MML1_NAPOT_2            |       772 |       8,268  |           192  |               1,279  |
+| priority-S_MML0_NAPOT_3            |       772 |       8,252  |           192  |               1,259  |
+| priority-S_MML1_NAPOT_3            |       772 |       8,252  |           192  |               1,382  |
+| priority-U_MML0_NAPOT_3            |       772 |       8,252  |           192  |               1,257  |
+| priority-U_MML1_NAPOT_3            |       772 |       8,252  |           192  |               1,380  |
+| ---------------------------------- | --------- | ------------ | -------------- | -------------------- |
+
+
+
