@@ -506,7 +506,9 @@ def gen_config(
     unroll="AUTO",
     custom_unroll=False,
     optimize="s",
+    parallel=None,
     # embedded=False,
+    per_stage=False,
 ):
     ret = {}
     ret["mlif.toolchain"] = toolchain
@@ -820,6 +822,11 @@ def main():
         "--autotuned",
         action="store_true",
         help="Use tuning records, if available (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--runs-per-stage",
+        action="store_true",
+        help="Process one stage (build/compile/run) at a time (default: %(default)s)",
     )
     parser.add_argument(
         "--unroll",
