@@ -217,8 +217,8 @@ index 00000000..28546951
 +
 +else ifeq ($(TOOLCHAIN), llvm)
 +
-+  CXX_TOOL := $(LLVM_TOOLCHAIN_ROOT)/clang-18
-+  CC_TOOL := $(LLVM_TOOLCHAIN_ROOT)/clang-18
++  CXX_TOOL := $(LLVM_TOOLCHAIN_ROOT)/clang++
++  CC_TOOL := $(LLVM_TOOLCHAIN_ROOT)/clang
 +  AR_TOOL := $(LLVM_TOOLCHAIN_ROOT)/llvm-ar
 +  CP_TOOL := $(LLVM_TOOLCHAIN_ROOT)/llvm-objcopy
 +
