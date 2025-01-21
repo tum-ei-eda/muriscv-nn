@@ -337,8 +337,6 @@ def get_backend_config(backend, features, enable_autotuned=False):
 
 
 DEFAULT_CONFIG = {
-    "mlif.num_threads": 4,
-    # "mlif.num_threads": 12,
     # "mlif.optimize": "s",
     "mlif.fuse_ld": "none",
     "run.export_optional": True,
@@ -558,6 +556,7 @@ def gen_config(
         ret[f"{target}.username"] = SSH_USER
         ret[f"{target}.password"] = SSH_PASSWORD
         ret[f"{target}.workdir"] = SSH_WORKDIR
+    ret["mlif.num_threads"] = CPU_THREADS if per_stage and parallel == 1 else 4
     return ret
 
 
@@ -707,7 +706,7 @@ def benchmark(args):
             else:
                 stage = RunStage.RUN
             success = session.process_runs(
-                until=stage, num_workers=args.parallel, progress=args.progress, context=context
+                until=stage, num_workers=args.parallel, progress=args.progress, context=context, per_stage=args.runs_per_stage,
             )
             report = session.get_reports()
         report_file = args.output
