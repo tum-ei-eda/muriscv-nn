@@ -33,6 +33,7 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
 
     def post_session(self, report):
         """Called at the end of a session."""
+        targets = report.pre_df["Target"].unique()
         df = report.post_df.copy()
         df["Backend"] = report.pre_df["Backend"]
         df["Kernels"] = df.apply(
@@ -120,10 +121,12 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
         #     ),
         #     axis=1,
         # )
-        for t in SPIKE_TARGETS:
-            if f"config_{t}.final_arch" not in df.columns:
-                df[f"config_{t}.final_arch"] = None
-        df["Arch"] = df["config_spike_rv32.final_arch"].combine_first(df["config_spike_rv64.final_arch"].combine_first(df["config_spike_rv32_min.final_arch"])).apply(lambda x: re.sub(r"_ZVL\d+B", "", x.upper()))  # TODO: generalize!
+        df["Arch"] = None
+        for target in targets:
+            if f"config_{target}.final_arch" in df.columns:
+                df["Arch"] = df["Arch"].combine_first(df[f"config_{target}.final_arch"])
+        df["Arch"] = df["Arch"].fillna("?")
+        df["Arch"] = df["Arch"].apply(lambda x: re.sub(r"_ZVL\d+B", "", x.upper()))
         del df["Backend"]
         report.post_df = df
 
@@ -149,7 +152,7 @@ DEFAULT_TARGETS = [
     "spike_rv32",
     # "host_x86",
     # "etiss_pulpino",
-    "corstone300",
+    # "corstone300",
 ]
 
 PLATFORM = "mlif"
