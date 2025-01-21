@@ -15,6 +15,15 @@ logger = get_logger()
 
 # MURISCVNN_TOOLCHAIN = "gcc"
 
+CPU_THREADS = multiprocessing.cpu_count()
+
+
+SSH_HOST = "return.eda.cit.tum.de"
+SSH_PORT = 22
+SSH_USER = "ga87puy"
+SSH_PASSWORD = None
+SSH_WORKDIR = "/tmp/workdir"
+
 
 class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
     """TODO"""
@@ -123,8 +132,9 @@ FRONTEND = "tflite"
 
 
 SPIKE_TARGETS = ["spike_rv32", "spike_rv32_min", "spike_rv64"]
-RISCV_TARGETS = SPIKE_TARGETS + ["etiss", "etiss_pulpino", "ovpsim"]
-RVV_TARGETS = SPIKE_TARGETS + ["ovpsim"]
+RISCV_TARGETS = SPIKE_TARGETS + ["etiss", "etiss_pulpino", "ovpsim", "canmv_k230_ssh"]
+RVV_TARGETS = SPIKE_TARGETS + ["canmv_k230_ssh", "ovpsim"]
+SSH_TARGETS = ["canmv_k230_ssh", "host_x64_ssh"]
 OTHER_TARGETS = [
     "host_x86",
     "corstone300",
@@ -213,6 +223,11 @@ def get_target_features(
             *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
             *([*CMSISNN_SCALAR] if enable_cmsisnn else []),
         ] for t in SPIKE_TARGETS},
+        "canmv_k230_ssh": [
+            *([*DEFAULT_SCALAR, *DEFAULT_VEXT] if enable_default else []),
+            *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT] if enable_muriscvnn else []),
+            *([*CMSISNN_SCALAR] if enable_cmsisnn else []),
+        ],
         "ovpsim": [
             *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
             *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
@@ -535,6 +550,14 @@ def gen_config(
     ret["muriscvnnbyoc.use_vext"] = use_vext
     ret["muriscvnnbyoc.use_pext"] = use_pext
     ret["muriscvnnbyoc.use_portable"] = use_portable
+    is_ssh = target in SSH_TARGETS
+    if is_ssh:
+        assert parallel == 1
+        ret[f"{target}.hostname"] = SSH_HOST
+        ret[f"{target}.port"] = SSH_PORT
+        ret[f"{target}.username"] = SSH_USER
+        ret[f"{target}.password"] = SSH_PASSWORD
+        ret[f"{target}.workdir"] = SSH_WORKDIR
     return ret
 
 
