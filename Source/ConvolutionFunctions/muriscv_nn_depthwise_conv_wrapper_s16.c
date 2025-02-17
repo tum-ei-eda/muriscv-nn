@@ -91,28 +91,6 @@ muriscv_nn_status muriscv_nn_depthwise_conv_wrapper_s16(const muriscv_nn_context
     return status;
 }
 
-int32_t muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(const muriscv_nn_dw_conv_params *dw_conv_params,
-                                                              const muriscv_nn_dims *input_dims,
-                                                              const muriscv_nn_dims *filter_dims,
-                                                              const muriscv_nn_dims *output_dims)
-{
-    (void)dw_conv_params;
-    (void)input_dims;
-    (void)filter_dims;
-    (void)output_dims;
-    int32_t size = 0;
-
-    // TODO(fabianpedd): Uncomment when implementing above
-
-    // if (dw_conv_params->ch_mult == 1 && dw_conv_params->dilation.w == 1 && dw_conv_params->dilation.h == 1 &&
-    //     filter_dims->w * filter_dims->h * input_dims->c < 512)
-    // {
-    //     size = muriscv_nn_depthwise_conv_fast_s16_get_buffer_size(input_dims, filter_dims);
-    // }
-
-    return size;
-}
-
 /**
  * @} end of NNConv group
  */
