@@ -310,18 +310,6 @@ muriscv_nn_status muriscv_nn_depthwise_conv_fast_s16(const muriscv_nn_context *c
     return MURISCV_NN_SUCCESS;
 }
 
-int32_t muriscv_nn_depthwise_conv_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims,
-                                                           const muriscv_nn_dims *filter_dims)
-{
-#if defined(USE_PEXT) && !defined(USE_VEXT)
-    return ((input_dims->c * filter_dims->w * filter_dims->h) * sizeof(int16_t));
-#else
-    (void)input_dims;
-    (void)filter_dims;
-    return 0;
-#endif
-}
-
 /**
  * @} end of NNConv group
  */
