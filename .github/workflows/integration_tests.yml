@@ -63,7 +63,6 @@ jobs:
         sudo apt-get install python3-setuptools
         pip3 install wheel
         pip3 install Pillow
-        pip3 install Wave
         pip3 install numpy
 
     - name: Get dates
@@ -325,7 +324,6 @@ jobs:
         sudo apt-get install python3-setuptools
         pip3 install wheel
         pip3 install Pillow
-        pip3 install Wave
         pip3 install numpy
 
     - name: Download TFLM and build Source Tree
