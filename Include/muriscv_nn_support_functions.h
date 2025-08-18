@@ -155,6 +155,24 @@
 //MURISCV_NN END OF NEW CODE
 #include <stdbool.h>
 
+#if defined(USE_COREV)
+// TODO: sat or not?
+#define __rv_sunpkd810 __builtin_riscv_xcorevsimd_simd_sunpkd810
+#define __rv_sunpkd832 __builtin_riscv_xcorevsimd_simd_sunpkd832
+#define __rv_smax8 __builtin_riscv_xcorevsimd_simd_max_b
+#define __rv_smin8 __builtin_riscv_xcorevsimd_simd_min_b
+#define __rv_smax16 __builtin_riscv_xcorevsimd_simd_max_h
+#define __rv_smin16 __builtin_riscv_xcorevsimd_simd_min_h
+#define __rv_packu __builtin_riscv_xcorevsimd_simd_?
+#define __rv_kadd16 __builtin_riscv_xcorevsimd_simd_kadd16  // TODO
+#define __rv_kmabb __builtin_riscv_xcorevsimd_simd_kmabb  // TODO
+#define __rv_kmatt __builtin_riscv_xcorevsimd_simd_kmatt  // TODO
+#define __rv_add16 __builtin_riscv_xcorevsimd_simd_add_h
+#define __rv_add8 __builtin_riscv_xcorevsimd_simd_add_b
+#define __rv_kmada __builtin_riscv_xcorevsimd_simd_?
+#define __rv_smaqa __builtin_riscv_xcorevsimd_simd_?
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -1275,11 +1293,11 @@ static inline q31_t muriscv_nn_read_q15x2_ia_aligned(const q15_t **in_q15, const
     q31_t val;
     if(alignment == 0)
     {
-         val = (*((uint32_t*)(*in_q15)));       
+         val = (*((uint32_t*)(*in_q15)));
     }
     else
     {
-         val = (uint32_t)((*((uint64_t*)(*in_q15 - 1))) >> 16); 
+         val = (uint32_t)((*((uint64_t*)(*in_q15 - 1))) >> 16);
     }
     *in_q15 += 2;
 
@@ -1378,7 +1396,7 @@ static inline void muriscv_nn_write_q7x4(q7_t *in, q31_t value) { memcpy(in, &va
   @param[in]     in       Double pointer to input value
   @param[in]     value    Four bytes to copy
  */
-static inline void muriscv_nn_write_q7x4_fast(q7_t *in, q31_t value) 
+static inline void muriscv_nn_write_q7x4_fast(q7_t *in, q31_t value)
 {
     *((uint32_t*)(in)) = value;
 }
@@ -1592,7 +1610,7 @@ __STATIC_FORCEINLINE void read_and_pad_s4_uneven(const int8_t *source, int32_t *
     //*out2 = SXTB16_RORn(__sxtb16(inA1), 4);
     out1 = NULL;
     out2 = NULL;
-    
+
 }
 
 //MURISCV_NN CUSTOM CODE
@@ -1615,7 +1633,7 @@ __STATIC_FORCEINLINE void read_and_pad_s4_ordered(const int8_t *source, int32_t 
     #endif
     out1 = NULL;
     out2 = NULL;
-    
+
 }
 
 //MURISCV_NN CUSTOM CODE
