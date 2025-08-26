@@ -576,14 +576,13 @@ def benchmark(args):
         with context.create_session(label=args.label) as session:
             models = apply_modelgroups(args.models, context=context)
             for model in models:
-                # print("model", model)
+                print("model", model)
                 for backend in args.backend:
-                    # print("backend", backend)
+                    print("backend", backend)
                     for target in args.target:
-                        # print("target", target)
+                        print("target", target)
                         for toolchain in args.toolchain:
-                            # print("toolchain", toolchain, args.toolchain)
-                            # input("1111")
+                            print("toolchain", toolchain)
                             enable_default = not args.skip_default
                             enable_portable = args.portable
                             enable_vext = "vext" in args.feature
@@ -604,11 +603,12 @@ def benchmark(args):
                                 custom_unrolls = [None]
                             unrolls = args.unroll
                             for opt in opts:
+                                print("opt", opt)
                                 for unroll in unrolls:
-                                    # print("unroll", unroll)
+                                    print("unroll", unroll)
                                     custom_unrolls_ = custom_unrolls if unroll else [False]
                                     for custom_unroll in custom_unrolls_:
-                                        # print("custom_unroll", custom_unroll)
+                                        print("custom_unroll", custom_unroll)
                                         scalar_default_only = args.scalar_default_only
                                         for target_features in get_target_features(
                                             target,
@@ -621,7 +621,7 @@ def benchmark(args):
                                             enable_cmsisnn=enable_cmsisnn,
                                             scalar_default_only=scalar_default_only,
                                         ):
-                                            # print("tf", target_features)
+                                            print("tf", target_features)
                                             if toolchain == "llvm" and "pext" in target_features:
                                                 # print("CONT")
                                                 continue  # LLVM does not support pext!
@@ -636,12 +636,12 @@ def benchmark(args):
                                             for backend_features in get_backend_features(
                                                 backend, target, enable_autotuned=enable_autotuned
                                             ):
-                                                # print("bf", backend_features)
+                                                print("bf", backend_features)
                                                 features = list(set(target_features + backend_features))
                                                 for backend_config in get_backend_config(
                                                     backend, features, enable_autotuned=enable_autotuned
                                                 ):
-                                                    # print("bc", backend_config)
+                                                    print("bc", backend_config)
                                                     vlens = [0]
                                                     if "vext" in features:
                                                         vlens = args.vlen
@@ -663,7 +663,7 @@ def benchmark(args):
                                                             if enable_portable:
                                                                 cfg += [(1, 0, 1)]
                                                     for use_vext, use_pext, use_portable in cfg:
-                                                        # print("cfg", use_vext, use_pext, use_portable)
+                                                        print("cfg", use_vext, use_pext, use_portable)
                                                         avs = [(0, 0)]
                                                         if enable_auto_vectorize:
                                                             if "vext" in features:
@@ -675,9 +675,9 @@ def benchmark(args):
 
                                                         # print("fff", features)
                                                         for vlen in vlens:
-                                                            # print("vlen", vlen)
+                                                            print("vlen", vlen)
                                                             for av in avs:
-                                                                # print("av", av)
+                                                                print("av", av)
                                                                 loop, slp = av
                                                                 # print("vl", vlen)
                                                                 # input("9")
