@@ -1,61 +1,54 @@
+---
 name: Build Spike
-
 on:
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
-    - cron: '0 7 * * SAT'
-
+    - cron: 0 7 * * SAT
   workflow_dispatch:
-
 jobs:
   Build_Spike:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        spike_ref:
-        - master
-        pk_ref:
-        - abadfdc507d5a75b6272dc360e70a80a510c758a
-
+        spike_ref: [master]
+        pk_ref: [abadfdc507d5a75b6272dc360e70a80a510c758a]
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-    - uses: actions/checkout@v4
-
-    - name: Get dates
-      id: dates
-      run: |
-        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
-
-    - name: Download Cached GCC Binaries
-      id: cache-gcc
-      uses: actions/cache/restore@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Get dates
+        id: dates
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
+      - name: Download Cached GCC Binaries
+        id: cache-gcc
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
@@ -65,99 +58,88 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
-
-    - name: Install BOOST
-      run: |
-        sudo apt-get install libboost-all-dev
-        ls /usr/lib/x86_64-linux-gnu | grep regex
-
-    - name: Clone Spike Repo
-      working-directory: ./Sim/Spike
-      run: |
-        git clone https://github.com/riscv-software-src/riscv-isa-sim.git
-        git -C riscv-isa-sim checkout ${{ matrix.spike_ref }}
-
-    - name: Build Spike
-      working-directory: ./Sim/Spike/riscv-isa-sim
-      run: |
-        export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32gcv
-        export PATH=$PATH:$RISCV/bin
-        echo $PATH
-        sudo apt-get install device-tree-compiler
-        mkdir build
-        cd build
-        ../configure --prefix=$RISCV
-        make -j$(nproc)
-        sudo make install
-
-    - name: Clone PK Repo
-      working-directory: ./Sim/Spike
-      run: |
-        git clone https://github.com/riscv-software-src/riscv-pk.git
-        git -C riscv-pk checkout ${{ matrix.pk_ref }}
-
-    - name: Build PK for ilp32d
-      working-directory: ./Sim/Spike/riscv-pk
-      run: |
-        export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32gc
-        export PATH=$PATH:$RISCV/bin
-        echo $PATH
-        mkdir build
-        cd build
-        ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gc_zicsr_zifencei --with-abi=ilp32d
-        make -j$(nproc)
-        sudo make install
-
-    - name: Copy Spike and PK binaries to correct location
-      working-directory: ./Sim/Spike/bin
-      run: |
-        cp ../riscv-isa-sim/build/spike spike
-        cp ../riscv-pk/build/pk pk_ilp32d
-        ls
-
-    - name: Build PK for lp64d
-      working-directory: ./Sim/Spike/riscv-pk
-      run: |
-        rm -r build
-        export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv64gc
-        export PATH=$PATH:$RISCV/bin
-        echo $PATH
-        mkdir build
-        cd build
-        ../configure --prefix=$RISCV --host=riscv64-unknown-elf --with-arch=rv64gc_zicsr_zifencei --with-abi=lp64d
-        make -j$(nproc)
-        sudo make install
-
-    - name: Copy Spike and PK binaries to correct location
-      working-directory: ./Sim/Spike/bin
-      run: |
-        cp ../riscv-pk/build/pk pk_lp64d
-        ls
-
-    - name: Build PK for ilp32
-      working-directory: ./Sim/Spike/riscv-pk
-      run: |
-        rm -r build
-        export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32im_zve32x
-        export PATH=$PATH:$RISCV/bin
-        echo $PATH
-        mkdir build
-        cd build
-        ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32im_zicsr_zifencei --with-abi=ilp32
-        make -j$(nproc)
-        sudo make install
-
-    - name: PK Binary to correct location
-      working-directory: ./Sim/Spike/bin
-      run: |
-        cp ../riscv-pk/build/pk pk_ilp32
-        ls
-
-    - name: Setup Spike Cache
-      id: cache-Spike
-      uses: actions/cache/save@v4
-      env:
+      - name: Install BOOST
+        run: |
+          sudo apt-get install libboost-all-dev
+          ls /usr/lib/x86_64-linux-gnu | grep regex
+      - name: Clone Spike Repo
+        working-directory: ./Sim/Spike
+        run: |
+          git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+          git -C riscv-isa-sim checkout ${{ matrix.spike_ref }}
+      - name: Build Spike
+        working-directory: ./Sim/Spike/riscv-isa-sim
+        run: |
+          export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32gcv
+          export PATH=$PATH:$RISCV/bin
+          echo $PATH
+          sudo apt-get install device-tree-compiler
+          mkdir build
+          cd build
+          ../configure --prefix=$RISCV
+          make -j$(nproc)
+          sudo make install
+      - name: Clone PK Repo
+        working-directory: ./Sim/Spike
+        run: |
+          git clone https://github.com/riscv-software-src/riscv-pk.git
+          git -C riscv-pk checkout ${{ matrix.pk_ref }}
+      - name: Build PK for ilp32d
+        working-directory: ./Sim/Spike/riscv-pk
+        run: |
+          export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32gc
+          export PATH=$PATH:$RISCV/bin
+          echo $PATH
+          mkdir build
+          cd build
+          ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gc_zicsr_zifencei --with-abi=ilp32d
+          make -j$(nproc)
+          sudo make install
+      - name: Copy Spike and PK binaries to correct location
+        working-directory: ./Sim/Spike/bin
+        run: |
+          cp ../riscv-isa-sim/build/spike spike
+          cp ../riscv-pk/build/pk pk_ilp32d
+          ls
+      - name: Build PK for lp64d
+        working-directory: ./Sim/Spike/riscv-pk
+        run: |
+          rm -r build
+          export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv64gc
+          export PATH=$PATH:$RISCV/bin
+          echo $PATH
+          mkdir build
+          cd build
+          ../configure --prefix=$RISCV --host=riscv64-unknown-elf --with-arch=rv64gc_zicsr_zifencei --with-abi=lp64d
+          make -j$(nproc)
+          sudo make install
+      - name: Copy Spike and PK binaries to correct location
+        working-directory: ./Sim/Spike/bin
+        run: |
+          cp ../riscv-pk/build/pk pk_lp64d
+          ls
+      - name: Build PK for ilp32
+        working-directory: ./Sim/Spike/riscv-pk
+        run: |
+          rm -r build
+          export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32im_zve32x
+          export PATH=$PATH:$RISCV/bin
+          echo $PATH
+          mkdir build
+          cd build
+          ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32im_zicsr_zifencei --with-abi=ilp32
+          make -j$(nproc)
+          sudo make install
+      - name: PK Binary to correct location
+        working-directory: ./Sim/Spike/bin
+        run: |
+          cp ../riscv-pk/build/pk pk_ilp32
+          ls
+      - name: Setup Spike Cache
+        id: cache-Spike
+        uses: actions/cache/save@v4
+        env:
           cache-name: cache-spike-binaries
-      with:
+        with:
           path: ./Sim/Spike/bin
           key: spike-binaries-${{ steps.dates.outputs.today }}

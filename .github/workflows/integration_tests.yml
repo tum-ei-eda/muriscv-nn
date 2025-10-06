@@ -1,98 +1,97 @@
+---
 name: Integration Tests
-
 on:
-
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
-    - cron: '0 6 * * *'
+    - cron: 0 6 * * *
   push:
     branches:
-      - 'master'
-#      - 'sync'
+      - master
   pull_request:
-    branches: [ "master" ]
-
+    branches: [master]
   workflow_call:
   workflow_dispatch:
-
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request || github.ref }}
   cancel-in-progress: true
-
-
 jobs:
-
   TFLM_Built_In_Tests_with_Patch:
     strategy:
-        fail-fast: false
-        matrix:
-          tflm_ref:
+      fail-fast: false
+      matrix:
+        tflm_ref:
           - main  # latest upstream
           - 8eb6b23de4470d6a8da3131650d6a67514dfa130  # Last working commit (needs to be updated manually)
-          config:
-            - {vext: "OFF", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "native", vlen: 0, elen: 64, sim: "Native"}
-            - {vext: "OFF", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
-            - {vext: "OFF", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gc", vlen: 0, elen: 64, sim: "Spike"}
-            # - {vext: "OFF", portable: "OFF", pext: "ON", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcp", vlen: 0, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable: "OFF", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext: "ON", portable: "ON", pext: "OFF", mode: "release_with_logs", toolchain: "llvm", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-
+        config:
+          - {vext: OFF, portable: OFF, pext: OFF, mode: release_with_logs, toolchain: gcc,
+             arch: native, vlen: 0, elen: 64, sim: Native}
+          - {vext: OFF, portable: OFF, pext: OFF, mode: release_with_logs, toolchain: gcc,
+             arch: rv32gc, vlen: 0, elen: 64, sim: Spike}
+          - {vext: OFF, portable: OFF, pext: OFF, mode: release_with_logs, toolchain: llvm,
+             arch: rv32gc, vlen: 0, elen: 64, sim: Spike}
+          # - {vext: "OFF", portable: "OFF", pext: "ON", mode: "release_with_logs", toolchain: "gcc", arch: "rv32gcp", vlen: 0, elen: 64, sim: "Spike"}
+          - {vext: ON, portable: OFF, pext: OFF, mode: release_with_logs, toolchain: gcc,
+             arch: rv32gcv, vlen: 128, elen: 64, sim: Spike}
+          - {vext: ON, portable: OFF, pext: OFF, mode: release_with_logs, toolchain: llvm,
+             arch: rv32gcv, vlen: 128, elen: 64, sim: Spike}
+          - {vext: ON, portable: OFF, pext: OFF, mode: release_with_logs, toolchain: gcc,
+             arch: rv32gcv, vlen: 512, elen: 64, sim: Spike}
+          - {vext: ON, portable: OFF, pext: OFF, mode: release_with_logs, toolchain: llvm,
+             arch: rv32gcv, vlen: 512, elen: 64, sim: Spike}
+          - {vext: ON, portable: ON, pext: OFF, mode: release_with_logs, toolchain: gcc,
+             arch: rv32gcv, vlen: 128, elen: 64, sim: Spike}
+          - {vext: ON, portable: ON, pext: OFF, mode: release_with_logs, toolchain: llvm,
+             arch: rv32gcv, vlen: 128, elen: 64, sim: Spike}
+          - {vext: ON, portable: ON, pext: OFF, mode: release_with_logs, toolchain: gcc,
+             arch: rv32gcv, vlen: 512, elen: 64, sim: Spike}
+          - {vext: ON, portable: ON, pext: OFF, mode: release_with_logs, toolchain: llvm,
+             arch: rv32gcv, vlen: 512, elen: 64, sim: Spike}
     name: TFLM Built-In Tests
     runs-on: ubuntu-22.04
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-    - uses: actions/checkout@v4
-
-    - name: Install TFLM dependencies
-      run: |
-        sudo apt-get install python3-setuptools
-        pip3 install wheel
-        pip3 install Pillow
-        pip3 install numpy
-
-    - name: Get dates
-      id: dates
-      run: |
-        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
-
-    - name: Download Cached GCC + LLVM Binaries
-      if: ${{ matrix.config.sim }} != "Native"
-      id: cache-gcc
-      uses: actions/cache/restore@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Install TFLM dependencies
+        run: |
+          sudo apt-get install python3-setuptools
+          pip3 install wheel
+          pip3 install Pillow
+          pip3 install numpy
+      - name: Get dates
+        id: dates
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
+      - name: Download Cached GCC + LLVM Binaries
+        if: ${{ matrix.config.sim }} != "Native"
+        id: cache-gcc
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
@@ -102,20 +101,18 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
-
-    - name: Install Spike Dependencies
-      if: ${{ matrix.config.sim }} == "Spike"
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-
-    - name: Download Spike Cache
-      if: ${{ matrix.config.sim }} == "Spike"
-      id: cache-Spike
-      uses: actions/cache/restore@v4
-      env:
+      - name: Install Spike Dependencies
+        if: ${{ matrix.config.sim }} == "Spike"
+        run: |
+          sudo apt-get install libboost-all-dev
+          sudo apt-get install device-tree-compiler
+      - name: Download Spike Cache
+        if: ${{ matrix.config.sim }} == "Spike"
+        id: cache-Spike
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-spike-binaries
-      with:
+        with:
           path: ./Sim/Spike/bin
           fail-on-cache-miss: true
           key: spike-binaries-${{ steps.dates.outputs.today }}
@@ -123,88 +120,97 @@ jobs:
             spike-binaries-${{ steps.dates.outputs.yesterday }}
             spike-binaries-${{ steps.dates.outputs.date }}
             spike-binaries-
-
-    - name: Download TFLM
-      working-directory: ./Integration/tflm_builtin
-      run: |
-        git clone https://github.com/tensorflow/tflite-micro.git
-        if [[ "${{ matrix.tflm_ref }}" != "" ]]
-        then
-          git -C tflite-micro checkout ${{ matrix.tflm_ref }}
-        fi
-
-    - name: Patch TFLM
-      working-directory: ./Integration/tflm_builtin/tflite-micro
-      run: git apply ../muriscv_nn.patch
-
-    - name: TFLM Integration Test for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, SIM = ${{ matrix.config.sim }}
-      working-directory: ./Integration/tflm_builtin/tflite-micro
-      run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }} ${{ matrix.config.portable }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }} ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.elen }} ${{ matrix.config.sim }}
-
+      - name: Download TFLM
+        working-directory: ./Integration/tflm_builtin
+        run: |
+          git clone https://github.com/tensorflow/tflite-micro.git
+          if [[ "${{ matrix.tflm_ref }}" != "" ]]
+          then
+            git -C tflite-micro checkout ${{ matrix.tflm_ref }}
+          fi
+      - name: Patch TFLM
+        working-directory: ./Integration/tflm_builtin/tflite-micro
+        run: git apply ../muriscv_nn.patch
+      - name: TFLM Integration Test for ${{ matrix.config.arch }} muRISCV-NN with
+          ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, SIM =
+          ${{ matrix.config.sim }}
+        working-directory: ./Integration/tflm_builtin/tflite-micro
+        run: ../tflm_integration_tests.sh ${{ matrix.config.vext }} ${{ matrix.config.pext }}
+          ${{ matrix.config.portable }} ${{ matrix.config.mode }} ${{ matrix.config.toolchain }}
+          ${{ matrix.config.arch }} ${{ matrix.config.vlen }} ${{ matrix.config.elen }}
+          ${{ matrix.config.sim }}
   TVM_Integration_Tests:
     strategy:
-        fail-fast: false
-        matrix:
-          tvm_version:
+      fail-fast: false
+      matrix:
+        tvm_version:
           - stable  # latest stable release (on PyPI)
           - nightly  # latest nightly release (on PyPI)
-          - 0.11.1 # Last working release (on PyPI, needs to be updated manually)
-          config:
-            - {vext_flag: "", portable_flag: "", pext_flag: "", toolchain: "x86", arch: "", vlen: 0, elen: 0, sim: "Native"}
-            - {vext_flag: "", portable_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
-            - {vext_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
-            # - {vext_flag: "", portable_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "-x", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "-x", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "-x", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "-x", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-
+          - 0.11.1  # Last working release (on PyPI, needs to be updated manually)
+        config:
+          - {vext_flag: '', portable_flag: '', pext_flag: '', toolchain: x86, arch: '',
+             vlen: 0, elen: 0, sim: Native}
+          - {vext_flag: '', portable_flag: '', pext_flag: '', toolchain: GCC, arch: rv32gc,
+             vlen: 0, elen: 0, sim: Spike}
+          - {vext_flag: '', pext_flag: '', toolchain: LLVM, arch: rv32gc, vlen: 0,
+             elen: 0, sim: Spike}
+          # - {vext_flag: "", portable_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0, sim: "Spike"}
+          - {vext_flag: -v, portable_flag: '', pext_flag: '', toolchain: GCC, arch: rv32gcv,
+             vlen: 128, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: '', pext_flag: '', toolchain: LLVM, arch: rv32gcv,
+             vlen: 128, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: '', pext_flag: '', toolchain: GCC, arch: rv32gcv,
+             vlen: 512, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: '', pext_flag: '', toolchain: LLVM, arch: rv32gcv,
+             vlen: 512, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: -x, pext_flag: '', toolchain: GCC, arch: rv32gcv,
+             vlen: 128, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: -x, pext_flag: '', toolchain: LLVM, arch: rv32gcv,
+             vlen: 128, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: -x, pext_flag: '', toolchain: GCC, arch: rv32gcv,
+             vlen: 512, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: -x, pext_flag: '', toolchain: LLVM, arch: rv32gcv,
+             vlen: 512, elen: 64, sim: Spike}
     name: TVM Integration Tests
     runs-on: ubuntu-22.04
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-    - uses: actions/checkout@v4
-
-    - name: Get dates
-      id: dates
-      run: |
-        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
-
-    - name: Download Cached GCC + LLVM Binaries
-      if: ${{ matrix.config.sim }} != "Native"
-      id: cache-gcc
-      uses: actions/cache/restore@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Get dates
+        id: dates
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
+      - name: Download Cached GCC + LLVM Binaries
+        if: ${{ matrix.config.sim }} != "Native"
+        id: cache-gcc
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
@@ -214,20 +220,18 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
-
-    - name: Install Spike Dependencies
-      if: ${{ matrix.config.sim }} == "Spike"
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-
-    - name: Download Spike Cache
-      if: ${{ matrix.config.sim }} == "Spike"
-      id: cache-Spike
-      uses: actions/cache/restore@v4
-      env:
+      - name: Install Spike Dependencies
+        if: ${{ matrix.config.sim }} == "Spike"
+        run: |
+          sudo apt-get install libboost-all-dev
+          sudo apt-get install device-tree-compiler
+      - name: Download Spike Cache
+        if: ${{ matrix.config.sim }} == "Spike"
+        id: cache-Spike
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-spike-binaries
-      with:
+        with:
           path: ./Sim/Spike/bin
           fail-on-cache-miss: true
           key: spike-binaries-${{ steps.dates.outputs.today }}
@@ -235,100 +239,117 @@ jobs:
             spike-binaries-${{ steps.dates.outputs.yesterday }}
             spike-binaries-${{ steps.dates.outputs.date }}
             spike-binaries-
-
-
-    - name: TVM Integration Test AWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
-      working-directory: ./Integration/tvm
-      if: '!cancelled()'
-      run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b aww
-      env:
-        TVM_VERSION: ${{ matrix.tvm_version }}
-
-    - name: TVM Integration Test VWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
-      working-directory: ./Integration/tvm
-      if: '!cancelled()'
-      run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b vww -S
-      env:
-        TVM_VERSION: ${{ matrix.tvm_version }}
-
-    - name: TVM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
-      working-directory: ./Integration/tvm
-      if: '!cancelled()'
-      run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b ic -S
-      env:
-        TVM_VERSION: ${{ matrix.tvm_version }}
-
-    - name: TVM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
-      working-directory: ./Integration/tvm
-      if: '!cancelled()'
-      run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b toy -S
-      env:
-        TVM_VERSION: ${{ matrix.tvm_version }}
-
-
+      - name: TVM Integration Test AWW for ${{ matrix.config.arch }} muRISCV-NN with
+          ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN =
+          ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
+        working-directory: ./Integration/tvm
+        if: '!cancelled()'
+        run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }}
+          ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }}
+          -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b aww
+        env:
+          TVM_VERSION: ${{ matrix.tvm_version }}
+      - name: TVM Integration Test VWW for ${{ matrix.config.arch }} muRISCV-NN with
+          ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN =
+          ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
+        working-directory: ./Integration/tvm
+        if: '!cancelled()'
+        run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }}
+          ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }}
+          -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b vww -S
+        env:
+          TVM_VERSION: ${{ matrix.tvm_version }}
+      - name: TVM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN
+          with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN
+          = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
+        working-directory: ./Integration/tvm
+        if: '!cancelled()'
+        run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }}
+          ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }}
+          -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b ic -S
+        env:
+          TVM_VERSION: ${{ matrix.tvm_version }}
+      - name: TVM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN
+          with ${{ matrix.config.toolchain }}, VLEN = ${{ matrix.config.vlen }}, ELEN
+          = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
+        working-directory: ./Integration/tvm
+        if: '!cancelled()'
+        run: ./run_tvm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }}
+          ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }}
+          -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b toy -S
+        env:
+          TVM_VERSION: ${{ matrix.tvm_version }}
   TFLM_Integration_Tests:
     strategy:
-        fail-fast: false
-        matrix:
-          tflm_ref:
+      fail-fast: false
+      matrix:
+        tflm_ref:
           - main  # latest upstream
           - 8eb6b23de4470d6a8da3131650d6a67514dfa130  # Last working commit (needs to be updated manually)
-          config:
-            - {vext_flag: "", portable_flag: "", pext_flag: "", toolchain: "x86", arch: "", vlen: 0, elen: 0, sim: "Native"}
-            - {vext_flag: "", portable_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
-            - {vext_flag: "", portable_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gc", vlen: 0, elen: 0, sim: "Spike"}
-            # - {vext_flag: "", portable_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "-x", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "-x", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 128, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "-x", pext_flag: "", toolchain: "GCC", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-            - {vext_flag: "-v", portable_flag: "-x", pext_flag: "", toolchain: "LLVM", arch: "rv32gcv", vlen: 512, elen: 64, sim: "Spike"}
-
+        config:
+          - {vext_flag: '', portable_flag: '', pext_flag: '', toolchain: x86, arch: '',
+             vlen: 0, elen: 0, sim: Native}
+          - {vext_flag: '', portable_flag: '', pext_flag: '', toolchain: GCC, arch: rv32gc,
+             vlen: 0, elen: 0, sim: Spike}
+          - {vext_flag: '', portable_flag: '', pext_flag: '', toolchain: LLVM, arch: rv32gc,
+             vlen: 0, elen: 0, sim: Spike}
+          # - {vext_flag: "", portable_flag: "", pext_flag: "-p", toolchain: "GCC", arch: "rv32gcp", vlen: 0, elen: 0, sim: "Spike"}
+          - {vext_flag: -v, portable_flag: '', pext_flag: '', toolchain: GCC, arch: rv32gcv,
+             vlen: 128, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: '', pext_flag: '', toolchain: LLVM, arch: rv32gcv,
+             vlen: 128, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: '', pext_flag: '', toolchain: GCC, arch: rv32gcv,
+             vlen: 512, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: '', pext_flag: '', toolchain: LLVM, arch: rv32gcv,
+             vlen: 512, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: -x, pext_flag: '', toolchain: GCC, arch: rv32gcv,
+             vlen: 128, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: -x, pext_flag: '', toolchain: LLVM, arch: rv32gcv,
+             vlen: 128, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: -x, pext_flag: '', toolchain: GCC, arch: rv32gcv,
+             vlen: 512, elen: 64, sim: Spike}
+          - {vext_flag: -v, portable_flag: -x, pext_flag: '', toolchain: LLVM, arch: rv32gcv,
+             vlen: 512, elen: 64, sim: Spike}
     name: TFLM Integration Tests
     runs-on: ubuntu-22.04
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-    - uses: actions/checkout@v4
-
-    - name: Get dates
-      id: dates
-      run: |
-        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
-
-    - name: Download Cached GCC + LLVM Binaries
-      if: ${{ matrix.config.sim }} != "Native"
-      id: cache-gcc
-      uses: actions/cache/restore@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Get dates
+        id: dates
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
+      - name: Download Cached GCC + LLVM Binaries
+        if: ${{ matrix.config.sim }} != "Native"
+        id: cache-gcc
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
@@ -338,20 +359,18 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
-
-    - name: Install Spike Dependencies
-      if: ${{ matrix.config.sim }} == "Spike"
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-
-    - name: Download Spike Cache
-      if: ${{ matrix.config.sim }} == "Spike"
-      id: cache-Spike
-      uses: actions/cache/restore@v4
-      env:
+      - name: Install Spike Dependencies
+        if: ${{ matrix.config.sim }} == "Spike"
+        run: |
+          sudo apt-get install libboost-all-dev
+          sudo apt-get install device-tree-compiler
+      - name: Download Spike Cache
+        if: ${{ matrix.config.sim }} == "Spike"
+        id: cache-Spike
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-spike-binaries
-      with:
+        with:
           path: ./Sim/Spike/bin
           fail-on-cache-miss: true
           key: spike-binaries-${{ steps.dates.outputs.today }}
@@ -359,37 +378,46 @@ jobs:
             spike-binaries-${{ steps.dates.outputs.yesterday }}
             spike-binaries-${{ steps.dates.outputs.date }}
             spike-binaries-
-
-
-    - name: Install TFLM dependencies
-      run: |
-        sudo apt-get install python3-setuptools
-        pip3 install wheel
-        pip3 install Pillow
-        pip3 install numpy
-
-    - name: Download TFLM and build Source Tree
-      working-directory: ./Integration/tflm
-      run: ./download_tflm.sh
-      env:
-        TFLM_REF: ${{ matrix.tflm_ref }}
-
-    - name: TFLM Integration Test AWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
-      working-directory: ./Integration/tflm
-      if: '!cancelled()'
-      run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b aww
-
-    - name: TFLM Integration Test VWW for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
-      working-directory: ./Integration/tflm
-      if: '!cancelled()'
-      run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b vww -S
-
-    - name: TFLM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
-      working-directory: ./Integration/tflm
-      if: '!cancelled()'
-      run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b ic -S
-
-    - name: TFLM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }}, ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
-      working-directory: ./Integration/tflm
-      if: '!cancelled()'
-      run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }} ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }} -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b toy -S
+      - name: Install TFLM dependencies
+        run: |
+          sudo apt-get install python3-setuptools
+          pip3 install wheel
+          pip3 install Pillow
+          pip3 install numpy
+      - name: Download TFLM and build Source Tree
+        working-directory: ./Integration/tflm
+        run: ./download_tflm.sh
+        env:
+          TFLM_REF: ${{ matrix.tflm_ref }}
+      - name: TFLM Integration Test AWW for ${{ matrix.config.arch }} muRISCV-NN with
+          ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }},
+          ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
+        working-directory: ./Integration/tflm
+        if: '!cancelled()'
+        run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }}
+          ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }}
+          -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b aww
+      - name: TFLM Integration Test VWW for ${{ matrix.config.arch }} muRISCV-NN with
+          ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }},
+          ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
+        working-directory: ./Integration/tflm
+        if: '!cancelled()'
+        run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }}
+          ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }}
+          -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b vww -S
+      - name: TFLM Integration Test RESNET for ${{ matrix.config.arch }} muRISCV-NN
+          with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }},
+          ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
+        working-directory: ./Integration/tflm
+        if: '!cancelled()'
+        run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }}
+          ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }}
+          -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b ic -S
+      - name: TFLM Integration Test TOYCAR for ${{ matrix.config.arch }} muRISCV-NN
+          with ${{ matrix.config.toolchain }} with Spike, VLEN = ${{ matrix.config.vlen }},
+          ELEN = ${{ matrix.config.elen }}, SIM = ${{ matrix.config.sim }}
+        working-directory: ./Integration/tflm
+        if: '!cancelled()'
+        run: ./run_tflm_integration_tests.sh ${{ matrix.config.vext_flag }} ${{ matrix.config.portable_flag }}
+          ${{ matrix.config.pext_flag }} -t ${{ matrix.config.toolchain }} -l ${{ matrix.config.vlen }}
+          -e ${{ matrix.config.elen }} -s ${{ matrix.config.sim }} -b toy -S

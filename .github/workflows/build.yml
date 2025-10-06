@@ -1,76 +1,63 @@
+---
 name: Build
-
 on:
-
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
-    - cron: '0 4 * * *'
-
+    - cron: 0 4 * * *
   push:
-    branches:
-    - master
-    - develop
+    branches: [master, develop]
   pull_request:
-    branches:
-    - master
-    - develop
-
+    branches: [master, develop]
   workflow_call:
   workflow_dispatch:
-
 jobs:
   build_x86:
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Build Scalar x86
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t x86 -b Release
-
+      - uses: actions/checkout@v4
+      - name: Build Scalar x86
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t x86 -b Release
   build_llvm:
     runs-on: ubuntu-22.04
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-    - uses: actions/checkout@v4
-
-    - name: Get dates
-      id: dates
-      run: |
-        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
-
-
-    - name: Download Cached GCC + LLVM Binaries
-      id: cache-gcc
-      uses: actions/cache/restore@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Get dates
+        id: dates
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
+      - name: Download Cached GCC + LLVM Binaries
+        id: cache-gcc
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
@@ -80,63 +67,69 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
-
-    - name: Build Scalar LLVM
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t LLVM -b Release
-
-    - name: Build Vector LLVM
-      if: success() || failure()
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t LLVM -v -b Release
-
-    - name: Build Vector LLVM with IMV
-      if: success() || failure()
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t LLVM -v -i -b Release
-
-    - name: Build Portable Vector LLVM
-      if: success() || failure()
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t LLVM -v -b Release -x
-
-    - name: Build Portable Vector LLVM with IMV
-      if: success() || failure()
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t LLVM -v -i -b Release -x
-
+      - name: Build Scalar LLVM
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t LLVM -b Release
+      - name: Build Vector LLVM
+        if: success() || failure()
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t LLVM -v -b Release
+      - name: Build Vector LLVM with IMV
+        if: success() || failure()
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t LLVM -v -i -b Release
+      - name: Build Portable Vector LLVM
+        if: success() || failure()
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t LLVM -v -b Release -x
+      - name: Build Portable Vector LLVM with IMV
+        if: success() || failure()
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t LLVM -v -i -b Release -x
   build_gcc:
     runs-on: ubuntu-22.04
     steps:
-    - name: Maximize build space
-      uses: easimon/maximize-build-space@master
-      with:
-        root-reserve-mb: 32768
-        temp-reserve-mb: 1024
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-        remove-codeql: 'true'
-    - uses: actions/checkout@v4
-
-    - name: Get dates
-      id: dates
-      run: |
-        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
-
-    - name: Download Cached GCC + LLVM Binaries
-      id: cache-gcc
-      uses: actions/cache/restore@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Get dates
+        id: dates
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
+      - name: Download Cached GCC + LLVM Binaries
+        id: cache-gcc
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
@@ -146,38 +139,32 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
-
-    - name: Build Scalar GCC
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t GCC -b Release
-
-    - name: Build Vector GCC
-      if: success() || failure()
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t GCC -v -b Release
-
-    - name: Build Vector GCC with IMV
-      if: success() || failure()
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t GCC -v -i -b Release
-
-    - name: Build Portable Vector GCC
-      if: success() || failure()
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t GCC -v -b Release -x
-
-    - name: Build Portable Vector GCC with IMV
-      if: success() || failure()
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t GCC -v -i -b Release -x
-
-    - name: Build Packed GCC
-      if: success() || failure()
-      working-directory: ./Scripts
-      run: |
-        ./build.sh -t GCC -p -b Release
+      - name: Build Scalar GCC
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t GCC -b Release
+      - name: Build Vector GCC
+        if: success() || failure()
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t GCC -v -b Release
+      - name: Build Vector GCC with IMV
+        if: success() || failure()
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t GCC -v -i -b Release
+      - name: Build Portable Vector GCC
+        if: success() || failure()
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t GCC -v -b Release -x
+      - name: Build Portable Vector GCC with IMV
+        if: success() || failure()
+        working-directory: ./Scripts
+        run: |
+          ./build.sh -t GCC -v -i -b Release -x
+      - name: Build Packed GCC
+        if: success() || failure()
+        working-directory: ./Scripts
+        run: |-
+          ./build.sh -t GCC -p -b Release

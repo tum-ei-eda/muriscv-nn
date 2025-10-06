@@ -1,62 +1,56 @@
+---
 name: Quick Benchmark Tests
-
 on:
   workflow_dispatch:
-
 jobs:
   Run_Benchmarks:
     # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
     # You can convert this to a matrix build if you need cross-platform coverage.
     # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-22.04
-
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-
-    - uses: actions/checkout@v4
-
-    - name: Install TFLM dependencies
-      run: |
-        sudo apt-get install python3-setuptools
-        pip3 install wheel
-        pip3 install Pillow
-        pip3 install Wave
-
-    - name: Get dates
-      id: dates
-      run: |
-        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
-
-    - name: Download Cached GCC Binaries
-      id: cache-gcc
-      uses: actions/cache/restore@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Install TFLM dependencies
+        run: |
+          sudo apt-get install python3-setuptools
+          pip3 install wheel
+          pip3 install Pillow
+          pip3 install Wave
+      - name: Get dates
+        id: dates
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
+      - name: Download Cached GCC Binaries
+        id: cache-gcc
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
@@ -66,30 +60,25 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
-
-    - name: Install Spike Dependencies
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-
-    - name: Setup MLonMCU
-      working-directory: ./Integration/MLonMCU
-      run: |
-        export PREBUILD_TVM=true
-        python3 -m pip install --user virtualenv
-        ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --local-spike
-
-    - name: Run Benchmarks
-      working-directory: ./Integration/MLonMCU
-      run: |
-        source common.sh
-        source $VENV_DIR/bin/activate
-        export MLONMCU_HOME=$WORKSPACE_DIR
-        python gen_muriscnn_benchmarks.py -b tflmi -t spike --vlen 128 --post -p --parallel -f muriscvnn aww
-
-
-    - name: Archive Benchmark Results
-      uses: actions/upload-artifact@v4
-      with:
+      - name: Install Spike Dependencies
+        run: |
+          sudo apt-get install libboost-all-dev
+          sudo apt-get install device-tree-compiler
+      - name: Setup MLonMCU
+        working-directory: ./Integration/MLonMCU
+        run: |
+          export PREBUILD_TVM=true
+          python3 -m pip install --user virtualenv
+          ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --local-spike
+      - name: Run Benchmarks
+        working-directory: ./Integration/MLonMCU
+        run: |
+          source common.sh
+          source $VENV_DIR/bin/activate
+          export MLONMCU_HOME=$WORKSPACE_DIR
+          python gen_muriscnn_benchmarks.py -b tflmi -t spike --vlen 128 --post -p --parallel -f muriscvnn aww
+      - name: Archive Benchmark Results
+        uses: actions/upload-artifact@v4
+        with:
           name: quick-benchmarks-${{ steps.dates.outputs.today }}
           path: ./Integration/MLonMCU/out.csv

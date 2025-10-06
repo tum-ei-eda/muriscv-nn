@@ -1,8 +1,7 @@
+---
 name: Benchmark Tests
-
 on:
   workflow_dispatch:
-
 jobs:
   Run_Benchmark:
     runs-on: ubuntu-22.04
@@ -19,54 +18,49 @@ jobs:
         optimize: [s, 3]
         # optimize: [s]
         unroll: [0]
-
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-
-    - uses: actions/checkout@v4
-
-    - name: Install TFLM dependencies
-      run: |
-        sudo apt-get install python3-setuptools
-        pip3 install wheel
-        pip3 install Pillow
-        pip3 install Wave
-
-    - name: Get dates
-      id: dates
-      run: |
-        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
-
-    - name: Download Cached GCC Binaries
-      id: cache-gcc
-      uses: actions/cache/restore@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Install TFLM dependencies
+        run: |
+          sudo apt-get install python3-setuptools
+          pip3 install wheel
+          pip3 install Pillow
+          pip3 install Wave
+      - name: Get dates
+        id: dates
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
+      - name: Download Cached GCC Binaries
+        id: cache-gcc
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
@@ -76,97 +70,88 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
-
-    - name: TEST
-      run: |
-        ls Toolchain/
-        ls Toolchain/rv32gc
-        ls Toolchain/rv64gc
-        ls Toolchain/rv32gcp
-        ls Toolchain/rv32gcv
-        ls Toolchain/rv64gcv
-        ls Toolchain/rv32im
-        ls Toolchain/rv32im_zve32x
-        ls Toolchain/llvm
-        ./Toolchain/rv32gc/bin/riscv32-unknown-elf-gcc --version
-        ./Toolchain/rv64gc/bin/riscv64-unknown-elf-gcc --version
-        ./Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version
-        ./Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version
-        ./Toolchain/rv64gcv/bin/riscv64-unknown-elf-gcc --version
-        ./Toolchain/rv32im/bin/riscv32-unknown-elf-gcc --version
-        ./Toolchain/rv32im_zve32x/bin/riscv32-unknown-elf-gcc --version
-        ./Toolchain/llvm/bin/clang --version
-
-    - name: Install Spike Dependencies
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-        ls Toolchain/
-
-    - name: Setup MLonMCU
-      working-directory: ./Integration/MLonMCU
-      run: |
-        export PREBUILD_TVM=true
-        python3 -m pip install --user virtualenv
-        # ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike
-        ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --enable-vext --enable-gcc --enable-llvm --enable-rv64
-
-    - name: Run ${{matrix.benchmark}} Benchmark
-      working-directory: ./Integration/MLonMCU
-      run: |
-        set -e
-        source common.sh
-        source $VENV_DIR/bin/activate
-        export MLONMCU_HOME=$WORKSPACE_DIR
-        cat $MLONMCU_HOME/environment.yml
-        # python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t spike --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 --post -p --parallel 4 -f muriscvnn -f vext -f pext --autotuned --toolchain ${{matrix.toolchain}} -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "32" ;; tvm*-llvm) echo -n "28" ;; tflm*-gcc) echo -n "8" ;; tflm*-llvm) echo -n "7" ;; *) echo -n "?" ;; esac) ${{matrix.benchmark}} --fail
-        python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t ${{matrix.target}} --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 --post -p --parallel 4 -f muriscvnn -f vext --toolchain ${{matrix.toolchain}} -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "14" ;; tvm*-llvm) echo -n "14" ;; tflm*-gcc) echo -n "7" ;; tflm*-llvm) echo -n "7" ;; *) echo -n "?" ;; esac) ${{matrix.benchmark}} --portable
-        # TODO: add --fail
-
-    - name: Archive Benchmark Results
-      uses: actions/upload-artifact@v4
-      with:
-          name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{matrix.toolchain}}-${{matrix.optimize}}-${{matrix.unroll}}-${{matrix.target}}-${{ steps.dates.outputs.today }}
+      - name: TEST
+        run: |
+          ls Toolchain/
+          ls Toolchain/rv32gc
+          ls Toolchain/rv64gc
+          ls Toolchain/rv32gcp
+          ls Toolchain/rv32gcv
+          ls Toolchain/rv64gcv
+          ls Toolchain/rv32im
+          ls Toolchain/rv32im_zve32x
+          ls Toolchain/llvm
+          ./Toolchain/rv32gc/bin/riscv32-unknown-elf-gcc --version
+          ./Toolchain/rv64gc/bin/riscv64-unknown-elf-gcc --version
+          ./Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version
+          ./Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version
+          ./Toolchain/rv64gcv/bin/riscv64-unknown-elf-gcc --version
+          ./Toolchain/rv32im/bin/riscv32-unknown-elf-gcc --version
+          ./Toolchain/rv32im_zve32x/bin/riscv32-unknown-elf-gcc --version
+          ./Toolchain/llvm/bin/clang --version
+      - name: Install Spike Dependencies
+        run: |
+          sudo apt-get install libboost-all-dev
+          sudo apt-get install device-tree-compiler
+          ls Toolchain/
+      - name: Setup MLonMCU
+        working-directory: ./Integration/MLonMCU
+        run: |
+          export PREBUILD_TVM=true
+          python3 -m pip install --user virtualenv
+          # ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike
+          ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --enable-vext --enable-gcc --enable-llvm --enable-rv64
+      - name: Run ${{matrix.benchmark}} Benchmark
+        working-directory: ./Integration/MLonMCU
+        run: |
+          set -e
+          source common.sh
+          source $VENV_DIR/bin/activate
+          export MLONMCU_HOME=$WORKSPACE_DIR
+          cat $MLONMCU_HOME/environment.yml
+          # python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t spike --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 --post -p --parallel 4 -f muriscvnn -f vext -f pext --autotuned --toolchain ${{matrix.toolchain}} -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "32" ;; tvm*-llvm) echo -n "28" ;; tflm*-gcc) echo -n "8" ;; tflm*-llvm) echo -n "7" ;; *) echo -n "?" ;; esac) ${{matrix.benchmark}} --fail
+          python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t ${{matrix.target}} --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 --post -p --parallel 4 -f muriscvnn -f vext --toolchain ${{matrix.toolchain}} -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "14" ;; tvm*-llvm) echo -n "14" ;; tflm*-gcc) echo -n "7" ;; tflm*-llvm) echo -n "7" ;; *) echo -n "?" ;; esac) ${{matrix.benchmark}} --portable
+          # TODO: add --fail
+      - name: Archive Benchmark Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{matrix.toolchain}}-${{matrix.optimize}}-${{matrix.unroll}}-${{matrix.target}}-${{
+            steps.dates.outputs.today }}
           path: ./Integration/MLonMCU/out.csv
-
-
   Update_Wiki:
     runs-on: ubuntu-22.04
     needs: Run_Benchmark
-
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-
-    - uses: actions/checkout@v4
-
-    - name: Download Cached GCC Binaries
-      id: cache-gcc
-      uses: actions/cache/restore@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Download Cached GCC Binaries
+        id: cache-gcc
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
@@ -176,52 +161,46 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
-
-    - name: Download Artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: ./Wiki
-
-    - name: Download dependencies
-      run: |
-        pip install -r Wiki/requirements.txt
-
-    - name: Get current date
-      id: date-today
-      run: echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
-    - name: Create New Wiki Page
-      working-directory: ./Wiki
-      run: |
-        source ../Integration/MLonMCU/common.sh
-        export RV32GC_VERSION=$(../Toolchain/rv32gc/bin/riscv32-unknown-elf-gcc --version | head -1)
-        export RV32GCV_VERSION=$(../Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version | head -1)
-        export RV32GCP_VERSION=$(../Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version | head -1)
-        export LLVM_VERSION=$(../Toolchain/llvm/bin/clang --version | head -1)
-        python3 create_wiki.py */*.csv --split
-        cat Benchmarks-*.md >> $GITHUB_STEP_SUMMARY
-
-    - name: Clone Wiki Repo
-      uses: actions/checkout@v4
-      with:
-        repository: ${{github.repository}}.wiki
-        path: Wiki-repo
-
-    - name: Push New Page to Wiki
-      working-directory: ./Wiki-repo
-      run: |
-        # ls
-        cp ../Wiki/*.md .
-        cp ../Wiki/*.csv .
-        # ls
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        find . -name "Benchmarks-${{ steps.date-today.outputs.today }}-*.csv" -exec ../Wiki/compare_with_prev.sh {} 2 \;
-        python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open first > _Sidebar.md
-        python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open none --hide-models > _Footer.md
-        rm README.md
-        git add *.md
-        git add *.csv
-        git status
-        git commit -m "Added Benchmarks on ${{ steps.date-today.outputs.today }}"
-        git push origin master
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./Wiki
+      - name: Download dependencies
+        run: |
+          pip install -r Wiki/requirements.txt
+      - name: Get current date
+        id: date-today
+        run: echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+      - name: Create New Wiki Page
+        working-directory: ./Wiki
+        run: |
+          source ../Integration/MLonMCU/common.sh
+          export RV32GC_VERSION=$(../Toolchain/rv32gc/bin/riscv32-unknown-elf-gcc --version | head -1)
+          export RV32GCV_VERSION=$(../Toolchain/rv32gcv/bin/riscv32-unknown-elf-gcc --version | head -1)
+          export RV32GCP_VERSION=$(../Toolchain/rv32gcp/bin/riscv32-unknown-elf-gcc --version | head -1)
+          export LLVM_VERSION=$(../Toolchain/llvm/bin/clang --version | head -1)
+          python3 create_wiki.py */*.csv --split
+          cat Benchmarks-*.md >> $GITHUB_STEP_SUMMARY
+      - name: Clone Wiki Repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{github.repository}}.wiki
+          path: Wiki-repo
+      - name: Push New Page to Wiki
+        working-directory: ./Wiki-repo
+        run: |-
+          # ls
+          cp ../Wiki/*.md .
+          cp ../Wiki/*.csv .
+          # ls
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          find . -name "Benchmarks-${{ steps.date-today.outputs.today }}-*.csv" -exec ../Wiki/compare_with_prev.sh {} 2 \;
+          python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open first > _Sidebar.md
+          python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open none --hide-models > _Footer.md
+          rm README.md
+          git add *.md
+          git add *.csv
+          git status
+          git commit -m "Added Benchmarks on ${{ steps.date-today.outputs.today }}"
+          git push origin master

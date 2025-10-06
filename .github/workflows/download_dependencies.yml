@@ -1,85 +1,76 @@
+---
 name: Download Dependencies
-
 on:
   schedule:
-      # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
-    - cron: '0 5 * * SAT'
-
+    # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
+    - cron: 0 5 * * SAT
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-22.04
-
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-    - uses: actions/checkout@v4
-
-    - name: Get current date
-      id: date
-      run: echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
-    - name: Restore Scripts
-      working-directory: ./Toolchain
-      run: |
-           git status
-           git diff
-           git restore *.sh
-
-    - name: Cleanup old files
-      working-directory: ./Toolchain
-      run: |
-           test ! -d rv32gc || rm -rf rv32gc
-           test ! -d rv64gc || rm -rf rv64gc
-           test ! -d rv32gcp || rm -rf rv32gcp
-           test ! -d rv32gcv || rm -rf rv32gcv
-           test ! -d rv64gcv || rm -rf rv64gcv
-           test ! -d rv32imv || rm -rf rv32imv
-           test ! -d rv32im || rm -rf rv32im
-           test ! -d rv32im_zve32x || rm -rf rv32im_zve32x
-           test ! -d llvm || rm -rf llvm
-
-
-    - name: Download GCC Binaries
-      working-directory: ./Toolchain
-      run: |
-           ./download_rv32gc.sh
-           ./download_rv64gc.sh
-           ./download_rv32gcp.sh
-           ./download_rv32gcv.sh
-           ./download_rv64gcv.sh
-           ./download_rv32im.sh
-           ./download_rv32im_zve32x.sh
-           ./download_llvm.sh 19
-
-    - name: Cache GCC Binaries
-      id: cache-gcc
-      uses: actions/cache/save@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Get current date
+        id: date
+        run: echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+      - name: Restore Scripts
+        working-directory: ./Toolchain
+        run: |
+          git status
+          git diff
+          git restore *.sh
+      - name: Cleanup old files
+        working-directory: ./Toolchain
+        run: |
+          test ! -d rv32gc || rm -rf rv32gc
+          test ! -d rv64gc || rm -rf rv64gc
+          test ! -d rv32gcp || rm -rf rv32gcp
+          test ! -d rv32gcv || rm -rf rv32gcv
+          test ! -d rv64gcv || rm -rf rv64gcv
+          test ! -d rv32imv || rm -rf rv32imv
+          test ! -d rv32im || rm -rf rv32im
+          test ! -d rv32im_zve32x || rm -rf rv32im_zve32x
+          test ! -d llvm || rm -rf llvm
+      - name: Download GCC Binaries
+        working-directory: ./Toolchain
+        run: |
+          ./download_rv32gc.sh
+          ./download_rv64gc.sh
+          ./download_rv32gcp.sh
+          ./download_rv32gcv.sh
+          ./download_rv64gcv.sh
+          ./download_rv32im.sh
+          ./download_rv32im_zve32x.sh
+          ./download_llvm.sh 19
+      - name: Cache GCC Binaries
+        id: cache-gcc
+        uses: actions/cache/save@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh

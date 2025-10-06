@@ -1,129 +1,117 @@
+---
 name: Unit Tests
-
 on:
-
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
-    - cron: '0 4 * * *'
-
+    - cron: 0 4 * * *
   push:
     branches:
-      - 'master'
-#      - 'sync'
+      - master
   pull_request:
-    branches: [ "master" ]
-
+    branches: [master]
   workflow_call:
   workflow_dispatch:
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request || github.ref }}
   cancel-in-progress: true
-
 jobs:
   Test_x86:
     runs-on: ubuntu-22.04
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-    - uses: actions/checkout@v4
-
-    - name: Run Scalar Tests on x86
-      working-directory: ./Scripts
-      run: |
-        ./unit_tests.sh -t x86
-
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Run Scalar Tests on x86
+        working-directory: ./Scripts
+        run: |
+          ./unit_tests.sh -t x86
   Test_RISCV:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {args: "-t GCC -s Spike"}
-          - {args: "-t LLVM -s Spike"}
+          - {args: -t GCC -s Spike}
+          - {args: -t LLVM -s Spike}
           # - {args: "-t GCC -s Spike -p"}
           # - {args: "-t GCC -s Spike -v -l 64 -e 64"}
-          - {args: "-t GCC -s Spike -v -l 128 -e 64"}
-          - {args: "-t GCC -s Spike -v -l 512 -e 64"}
-          - {args: "-t GCC -s Spike -v -x -l 128 -e 64"}
-          - {args: "-t GCC -s Spike -v -x -l 512 -e 64"}
+          - {args: -t GCC -s Spike -v -l 128 -e 64}
+          - {args: -t GCC -s Spike -v -l 512 -e 64}
+          - {args: -t GCC -s Spike -v -x -l 128 -e 64}
+          - {args: -t GCC -s Spike -v -x -l 512 -e 64}
           # - {args: "-t LLVM -s Spike -v -l 64 -e 64"}  # LLVM 17 does not fully support VLEN=64
-          - {args: "-t LLVM -s Spike -v -l 128 -e 64"}
-          - {args: "-t LLVM -s Spike -v -l 512 -e 64"}
-          - {args: "-t LLVM -s Spike -v -x -l 128 -e 64"}
-          - {args: "-t LLVM -s Spike -v -x -l 512 -e 64"}
+          - {args: -t LLVM -s Spike -v -l 128 -e 64}
+          - {args: -t LLVM -s Spike -v -l 512 -e 64}
+          - {args: -t LLVM -s Spike -v -x -l 128 -e 64}
+          - {args: -t LLVM -s Spike -v -x -l 512 -e 64}
           # - {args: "-t GCC -s Spike -v -i -l 64 -e 64"}
-          - {args: "-t GCC -s Spike -v -i -l 128 -e 64"}
-          - {args: "-t GCC -s Spike -v -i -l 512 -e 64"}
-          - {args: "-t GCC -s Spike -v -x -i -l 128 -e 64"}
-          - {args: "-t GCC -s Spike -v -x -i -l 512 -e 64"}
+          - {args: -t GCC -s Spike -v -i -l 128 -e 64}
+          - {args: -t GCC -s Spike -v -i -l 512 -e 64}
+          - {args: -t GCC -s Spike -v -x -i -l 128 -e 64}
+          - {args: -t GCC -s Spike -v -x -i -l 512 -e 64}
           # - {args: "-t LLVM -s Spike -v -i -l 64 -e 64"}  # LLVM 17 does not fully support VLEN=64
-          - {args: "-t LLVM -s Spike -v -i -l 128 -e 64"}
-          - {args: "-t LLVM -s Spike -v -i -l 512 -e 64"}
-          - {args: "-t LLVM -s Spike -v -x -i -l 128 -e 64"}
-          - {args: "-t LLVM -s Spike -v -x -i -l 512 -e 64"}
-
-
+          - {args: -t LLVM -s Spike -v -i -l 128 -e 64}
+          - {args: -t LLVM -s Spike -v -i -l 512 -e 64}
+          - {args: -t LLVM -s Spike -v -x -i -l 128 -e 64}
+          - {args: -t LLVM -s Spike -v -x -i -l 512 -e 64}
     steps:
-    - name: Remove unused software
-      run: |
-        echo "Available storage before:"
-        sudo df -h
-        echo
-        sudo rm -rf /usr/share/dotnet
-        sudo rm -rf /usr/local/lib/android
-        sudo rm -rf /opt/ghc
-        sudo rm -rf /opt/hostedtoolcache/CodeQL
-        sudo docker image prune --force
-        sudo docker builder prune
-        echo "Available storage after:"
-        sudo df -h
-        echo
-    # - name: Maximize build space
-    #   uses: easimon/maximize-build-space@master
-    #   with:
-    #     root-reserve-mb: 32768
-    #     temp-reserve-mb: 4096
-    #     remove-dotnet: 'true'
-    #     remove-android: 'true'
-    #     remove-haskell: 'true'
-    #     remove-codeql: 'true'
-    - uses: actions/checkout@v4
-
-    - name: Get dates
-      id: dates
-      run: |
-        echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-        echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
-        echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
-
-    - name: Download GCC + LLVM Cache
-      id: cache-GCC
-      uses: actions/cache/restore@v4
-      env:
+      - name: Remove unused software
+        run: |
+          echo "Available storage before:"
+          sudo df -h
+          echo
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --force
+          sudo docker builder prune
+          echo "Available storage after:"
+          sudo df -h
+          echo
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 32768
+      #     temp-reserve-mb: 4096
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
+      #     remove-codeql: 'true'
+      - uses: actions/checkout@v4
+      - name: Get dates
+        id: dates
+        run: |
+          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
+      - name: Download GCC + LLVM Cache
+        id: cache-GCC
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-gcc-binaries
-      with:
+        with:
           path: |
             ./Toolchain
             !./Toolchain/*.sh
@@ -133,13 +121,12 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.yesterday }}
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
-
-    - name: Download Spike Cache
-      id: cache-Spike
-      uses: actions/cache/restore@v4
-      env:
+      - name: Download Spike Cache
+        id: cache-Spike
+        uses: actions/cache/restore@v4
+        env:
           cache-name: cache-spike-binaries
-      with:
+        with:
           path: ./Sim/Spike/bin
           fail-on-cache-miss: true
           key: spike-binaries-${{ steps.dates.outputs.today }}
@@ -147,25 +134,21 @@ jobs:
             spike-binaries-${{ steps.dates.outputs.yesterday }}
             spike-binaries-${{ steps.dates.outputs.date }}
             spike-binaries-
-
-    - name: Check Spike
-      run: |
-        ls ./Sim/Spike/
-        ls ./Sim/Spike/bin
-        ls ./Sim/Spike/bin/spike
-        ls ./Sim/Spike/bin/pk_ilp32d
-
-    - name: Install Spike Dependencies
-      run: |
-        sudo apt-get install libboost-all-dev
-        sudo apt-get install device-tree-compiler
-
-    - name: Run Unit Tests on Spike
-      # if: success() || failure()
-      working-directory: ./Scripts
-      run: |
-        ./unit_tests.sh ${{ matrix.config.args }}
-
+      - name: Check Spike
+        run: |
+          ls ./Sim/Spike/
+          ls ./Sim/Spike/bin
+          ls ./Sim/Spike/bin/spike
+          ls ./Sim/Spike/bin/pk_ilp32d
+      - name: Install Spike Dependencies
+        run: |
+          sudo apt-get install libboost-all-dev
+          sudo apt-get install device-tree-compiler
+      - name: Run Unit Tests on Spike
+        # if: success() || failure()
+        working-directory: ./Scripts
+        run: |
+          ./unit_tests.sh ${{ matrix.config.args }}
 #  Test_OVPsim:
 #    if: false
 #    strategy:

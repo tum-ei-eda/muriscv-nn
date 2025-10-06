@@ -1,77 +1,66 @@
+---
 name: CMSIS-NN AutoSync
-
 on:
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
-    - cron: '0 7 * * SAT'
+    - cron: 0 7 * * SAT
   workflow_dispatch:
-
 jobs:
   AutoSync:
     runs-on: ubuntu-22.04
     steps:
-
-    - uses: actions/checkout@v4
-      with:
-        persist-credentials: false
-
-    - name: Check if Sync Branch already exists
-      id: sync_mode
-      run: |
-        CHECK_SYNC=$(git ls-remote --heads origin sync | wc -l 2>&1)
-        echo "SYNC_EXISTS=$CHECK_SYNC" >> $GITHUB_OUTPUT   #1 if branch exists, 0 if not
-        
-
-    - name: Switch to Sync Branch
-      if: steps.sync_mode.outputs.SYNC_EXISTS == '1'
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git remote set-url origin https://x-access-token:${{ secrets.github_key }}@github.com/$GITHUB_REPOSITORY
-        git fetch --all
-        git checkout sync
-          
-
-    - name: Download dependencies
-      run: |
-        pip install GitPython
-        pip install numpy
-
-    - name: Run Sync Script
-      working-directory: ./Scripts
-      run: python3 CMSIS_NN_sync.py
-
-    - name: Create Pull Request
-      if: steps.sync_mode.outputs.SYNC_EXISTS == '0'
-      uses: peter-evans/create-pull-request@v6
-      with:
-        commit-message: |
-              Automated Sync with CMSIS-NN
-        title: Automated Sync with CMSIS-NN
-        branch: sync
-        token: ${{ secrets.CMSIS_SYNC_KEY }}
-
-    - name: Add and count changed files
-      if: steps.sync_mode.outputs.SYNC_EXISTS == '1'
-      id: count_files
-      working-directory: ./
-      run: |
-        git add Source/*
-        git add Include/*
-        NUM_STAGED=$(git diff --cached --numstat | wc -l 2>&1)
-        echo "NUM_CHANGED=$NUM_STAGED" >> $GITHUB_OUTPUT 
-    - name: Create Commit
-      working-directory: ./
-      if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '1'
-      run: |
-        git commit -m "Automated Sync from CMSIS-NN"
-    - name: Push changes
-      if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS == '1'
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.CMSIS_SYNC_KEY }}
-        branch: sync
-
-    
-
-
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check if Sync Branch already exists
+        id: sync_mode
+        run: |
+          CHECK_SYNC=$(git ls-remote --heads origin sync | wc -l 2>&1)
+          echo "SYNC_EXISTS=$CHECK_SYNC" >> $GITHUB_OUTPUT  # 1 if branch exists, 0 if not
+      - name: Switch to Sync Branch
+        if: steps.sync_mode.outputs.SYNC_EXISTS == '1'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git remote set-url origin https://x-access-token:${{ secrets.github_key }}@github.com/$GITHUB_REPOSITORY
+          git fetch --all
+          git checkout sync
+            
+      - name: Download dependencies
+        run: |
+          pip install GitPython
+          pip install numpy
+      - name: Run Sync Script
+        working-directory: ./Scripts
+        run: python3 CMSIS_NN_sync.py
+      - name: Create Pull Request
+        if: steps.sync_mode.outputs.SYNC_EXISTS == '0'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: |
+            Automated Sync with CMSIS-NN
+          title: Automated Sync with CMSIS-NN
+          branch: sync
+          token: ${{ secrets.CMSIS_SYNC_KEY }}
+      - name: Add and count changed files
+        if: steps.sync_mode.outputs.SYNC_EXISTS == '1'
+        id: count_files
+        working-directory: ./
+        run: |
+          git add Source/*
+          git add Include/*
+          NUM_STAGED=$(git diff --cached --numstat | wc -l 2>&1)
+          echo "NUM_CHANGED=$NUM_STAGED" >> $GITHUB_OUTPUT 
+      - name: Create Commit
+        working-directory: ./
+        if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS
+          == '1'
+        run: |
+          git commit -m "Automated Sync from CMSIS-NN"
+      - name: Push changes
+        if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS
+          == '1'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.CMSIS_SYNC_KEY }}
+          branch: sync
