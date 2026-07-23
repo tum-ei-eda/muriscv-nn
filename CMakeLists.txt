@@ -19,6 +19,7 @@
 cmake_minimum_required(VERSION 3.10)
 message(STATUS "CMake Version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}")
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Choose a simulator to run on.
 set(SIMULATOR "Spike" CACHE STRING "Specify the simulator.")
 set_property(CACHE SIMULATOR PROPERTY STRINGS OVPsim Spike ETISS Vicuna)
