@@ -34,16 +34,18 @@ python3 -m venv .venv
 source .venv/bin/activate
 # pip install numpy==1.26.4
 pip install numpy==1.24.4
-TVM_VERSION=${TVM_VERSION:-stable}
+TVM_VERSION=${TVM_VERSION:-"0.16.0"}
 if [[ "$TVM_VERSION" == "stable" ]]
 then
-  pip install apache-tvm
+  echo "no stable release available for TVM"
+  exit 1
 elif [[ "$TVM_VERSION" == "nightly" ]]
 then
-  pip install apache-tvm --pre
+  echo "no nightly release available for TVM"
+  exit 1
 elif [[ "$TVM_VERSION" != "" ]]
 then
-  pip install "apache-tvm==$TVM_VERSION" --pre
+  pip install "apache-tvm==$TVM_VERSION" --pre -f https://philippvk.github.io/tlc-pack.github.io/wheels
 else  # same as stable
   pip install apache-tvm
 fi

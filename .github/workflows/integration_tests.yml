@@ -144,9 +144,11 @@ jobs:
       fail-fast: false
       matrix:
         tvm_version:
-          - stable  # latest stable release (on PyPI)
-          - nightly  # latest nightly release (on PyPI)
-          - 0.11.1  # Last working release (on PyPI, needs to be updated manually)
+          - 0.15.0
+          - 0.16.0
+          - 0.17.0
+          - 0.18.0
+          - 0.19.0
         config:
           - {vext_flag: '', portable_flag: '', pext_flag: '', toolchain: x86, arch: '',
              vlen: 0, elen: 0, sim: Native}
