@@ -103,6 +103,7 @@ void basic_muriscv_nn_convolve_s8(void)
                                                       kernel_data,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
 
@@ -187,6 +188,7 @@ void stride2pad1_muriscv_nn_convolve_s8(void)
                                                       kernel_data,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
 
@@ -271,6 +273,7 @@ void conv_2_muriscv_nn_convolve_s8(void)
                                                       conv_2_weights,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
 
@@ -355,6 +358,7 @@ void conv_3_muriscv_nn_convolve_s8(void)
                                                       conv_3_weights,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
 
@@ -439,6 +443,7 @@ void conv_4_muriscv_nn_convolve_s8(void)
                                                       conv_4_weights,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
 
@@ -542,6 +547,7 @@ void conv_1_x_n_1_muriscv_nn_convolve_s8(void)
                                     kernel_data,
                                     &bias_dims,
                                     bias_data,
+                                    NULL,
                                     &output_dims,
                                     output);
     free(ctx.buf);
@@ -829,6 +835,7 @@ void conv_2x2_dilation_muriscv_nn_convolve_s8(void)
                                                       kernel_data,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
 
@@ -912,6 +919,7 @@ void conv_2x2_dilation_5x5_input_muriscv_nn_convolve_s8(void)
                                                       kernel_data,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
     free(ctx.buf);
@@ -994,6 +1002,7 @@ void conv_3x3_dilation_5x5_input_muriscv_nn_convolve_s8(void)
                                                       kernel_data,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
     free(ctx.buf);
@@ -1076,6 +1085,7 @@ void conv_2x3_dilation_muriscv_nn_convolve_s8(void)
                                                       kernel_data,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
     free(ctx.buf);
@@ -1158,6 +1168,7 @@ void conv_3x2_dilation_muriscv_nn_convolve_s8(void)
                                                       kernel_data,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
     free(ctx.buf);
@@ -1240,6 +1251,7 @@ void conv_dilation_golden_muriscv_nn_convolve_s8(void)
                                                       kernel_data,
                                                       &bias_dims,
                                                       bias_data,
+                                                      NULL,
                                                       &output_dims,
                                                       output);
     free(ctx.buf);
