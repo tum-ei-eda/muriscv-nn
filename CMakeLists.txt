@@ -100,9 +100,11 @@ project(muriscvnn LANGUAGES C CXX ASM DESCRIPTION "muRISCV-NN, a CMSIS-NN port f
 # See whats going in CMake while getting the build process up and running
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-# Using C and C++ 11
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 11)
+# Using C and C++ 14
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
 
 if(USE_VEXT AND USE_PEXT)
   message(FATAL_ERROR "V/P-Extension can not be enabled simultaneously.")
