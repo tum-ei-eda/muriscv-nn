@@ -505,7 +505,7 @@ int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims
  *    2. Additional memory is required for optimization. Refer to arguments 'ctx' and 'output_ctx' for details.
  *
  */
-muriscv_nn_status arm_transpose_conv_wrapper_s8(const muriscv_nn_context *ctx,
+muriscv_nn_status muriscv_nn_transpose_conv_wrapper_s8(const muriscv_nn_context *ctx,
                                                 const muriscv_nn_context *output_ctx,
                                                 const muriscv_nn_transpose_conv_params *transpose_conv_params,
                                                 const muriscv_nn_per_channel_quant_params *quant_params,

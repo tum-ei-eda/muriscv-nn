@@ -74,22 +74,13 @@ index 00000000..6e2cbe32
 +
 +}  // namespace tflite
 diff --git a/tensorflow/lite/micro/tools/make/Makefile b/tensorflow/lite/micro/tools/make/Makefile
-index 90b0c294..d66becd1 100644
+index db053388..de081ee0 100644
 --- a/tensorflow/lite/micro/tools/make/Makefile
 +++ b/tensorflow/lite/micro/tools/make/Makefile
-@@ -145,8 +145,6 @@ endif
- 
- CC_WARNINGS := \
-   -Wsign-compare \
--  -Wdouble-promotion \
--  -Wunused-variable \
-   -Wunused-function \
-   -Wswitch \
-   -Wvla \
-@@ -156,6 +154,16 @@ CC_WARNINGS := \
+@@ -173,6 +173,16 @@ CC_WARNINGS := \
    -Wstrict-aliasing \
    -Wno-unused-parameter
- 
+
 +ifeq ($(TOOLCHAIN), llvm)
 +  CC_WARNINGS += \
 +    -Wno-unused-but-set-variable
@@ -103,28 +94,20 @@ index 90b0c294..d66becd1 100644
  ifneq ($(TOOLCHAIN), gcc)
    # GCC can be overly aggressive with shadow warnings, such as warning when a
    # lambda has variable with the same name as a non-captured variable from the
-@@ -201,7 +209,6 @@ ifeq ($(TOOLCHAIN), gcc)
-     # GCC on MacOS uses an LLVM backend so we avoid the additional linker flags
-     # that are unsupported with LLVM.
-     LDFLAGS += \
--      -Wl,--fatal-warnings \
-       -Wl,--gc-sections
-   endif
- endif
-@@ -653,7 +660,8 @@ ifneq ($(OPTIMIZED_KERNEL_DIR),)
+@@ -379,7 +389,8 @@ ifneq ($(OPTIMIZED_KERNEL_DIR),)
      $(error Incorrect OPTIMIZED_KERNEL_DIR: $(RESULT))
    endif
- 
+
 -  include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
 +  # No need for the cmsis_nn external libs makefile when using muRISCV-NN.
-+  #include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
++  # include $(MAKEFILE_DIR)/ext_libs/$(OPTIMIZED_KERNEL_DIR).inc
    # Specialize for the optimized kernels
    MICROLITE_CC_KERNEL_SRCS := $(shell python3 $(MAKEFILE_DIR)/specialize_files.py \
  		--base_files "$(MICROLITE_CC_KERNEL_SRCS)" \
-@@ -865,6 +873,12 @@ ifeq ($(TOOLCHAIN), armclang)
+@@ -576,6 +587,12 @@ ifeq ($(TOOLCHAIN), armclang)
    $(BINDIR)%.bin: $(BINDIR)%
- 		@mkdir -p $(dir $@)
- 		$(FROMELF) --bin --output=$@ $<
+ 		$(Q)$(MKDIR_P) $(dir $@)
+ 		$(Q)$(FROMELF) --bin --output=$@ $<
 +# Introduce LLVM option. We want to use the LLVM objcopy when using LLVM compiler.
 +else ifeq ($(TOOLCHAIN), llvm)
 +  OBJCOPY := $(CP_TOOL)
@@ -132,11 +115,11 @@ index 90b0c294..d66becd1 100644
 +		@mkdir -p $(dir $@)
 +		$(OBJCOPY) $< $@ -O binary
  else
-   OBJCOPY := ${TARGET_TOOLCHAIN_ROOT}$(TARGET_TOOLCHAIN_PREFIX)objcopy
+   OBJCOPY := $(TARGET_TOOLCHAIN_ROOT)$(TARGET_TOOLCHAIN_PREFIX)objcopy
    $(BINDIR)%.bin: $(BINDIR)%
 diff --git a/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
 new file mode 100644
-index 00000000..28546951
+index 00000000..e5e7c7c5
 --- /dev/null
 +++ b/tensorflow/lite/micro/tools/make/targets/muriscv_nn_makefile.inc
 @@ -0,0 +1,98 @@
