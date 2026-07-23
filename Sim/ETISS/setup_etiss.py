@@ -6,7 +6,6 @@ import git
 import subprocess
 import multiprocessing
 
-
 logging.basicConfig(
     level=logging.INFO, format="### PYTHON ### [%(asctime)s] %(pathname)s:%(lineno)d %(levelname)s - %(message)s"
 )

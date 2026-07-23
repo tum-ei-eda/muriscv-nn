@@ -4,7 +4,6 @@ import os
 from git import Repo
 import datetime
 
-
 cmsis_filename_prefixes = ["arm_nn_", "arm_nn", "arm_"]
 
 cmsis_varnames = ["arm_cmsis_nn_", "arm_nn_", "arm_nn", "arm_", "cmsis_nn_"]

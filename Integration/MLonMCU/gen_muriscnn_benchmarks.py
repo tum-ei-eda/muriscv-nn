@@ -60,7 +60,13 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
                 )
                 if not (row.get("feature_muriscvnn") or row.get("feature_muriscvnnbyoc"))
                 else (
-                    "Vector" + (" (Portable)" if row.get("config_muriscvnn.use_portable") == 1 or row.get("config_muriscvnnbyoc.use_portable") == 1 else "")
+                    "Vector"
+                    + (
+                        " (Portable)"
+                        if row.get("config_muriscvnn.use_portable") == 1
+                        or row.get("config_muriscvnnbyoc.use_portable") == 1
+                        else ""
+                    )
                     if row.get("config_muriscvnn.use_vext") == 1 or row.get("config_muriscvnnbyoc.use_vext") == 1
                     else (
                         "Packed"
@@ -114,7 +120,11 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
         for t in SPIKE_TARGETS:
             if f"config_{t}.final_arch" not in df.columns:
                 df[f"config_{t}.final_arch"] = None
-        df["Arch"] = df["config_spike_rv32.final_arch"].combine_first(df["config_spike_rv64.final_arch"].combine_first(df["config_spike_rv32_min.final_arch"])).apply(lambda x: re.sub(r"_ZVL\d+B", "", x.upper()))  # TODO: generalize!
+        df["Arch"] = (
+            df["config_spike_rv32.final_arch"]
+            .combine_first(df["config_spike_rv64.final_arch"].combine_first(df["config_spike_rv32_min.final_arch"]))
+            .apply(lambda x: re.sub(r"_ZVL\d+B", "", x.upper()))
+        )  # TODO: generalize!
         del df["Backend"]
         report.post_df = df
 
@@ -208,11 +218,14 @@ def get_target_features(
     CMSISNN_DSP = [["cmsisnn", "arm_dsp"] if enable_dsp else []]
     CMSISNN_MVEI = [["cmsisnn", "arm_mvei", "arm_dsp"] if enable_mvei else []]
     TARGET_FEATURES = {
-        **{t: [
-            *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
-            *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
-            *([*CMSISNN_SCALAR] if enable_cmsisnn else []),
-        ] for t in SPIKE_TARGETS},
+        **{
+            t: [
+                *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
+                *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
+                *([*CMSISNN_SCALAR] if enable_cmsisnn else []),
+            ]
+            for t in SPIKE_TARGETS
+        },
         "ovpsim": [
             *([*DEFAULT_SCALAR, *DEFAULT_VEXT, *DEFAULT_PEXT] if enable_default else []),
             *([*MURISCVNN_SCALAR, *MURISCVNN_VEXT, *MURISCVNN_PEXT] if enable_muriscvnn else []),
@@ -336,7 +349,7 @@ BACKEND_DEFAULT_CONFIG = {
     "tvmaot": {"usmp.algorithm": "hill_climb"},
     "tvmaotplus": {"usmp.algorithm": "hill_climb"},
     "tvmrt": {},
-    "tvmllvm": {}
+    "tvmllvm": {},
 }
 
 VLENS = [64, 128, 256, 512, 1024, 2048, 4096, 8192]
