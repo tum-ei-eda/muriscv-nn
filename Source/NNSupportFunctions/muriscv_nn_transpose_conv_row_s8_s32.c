@@ -79,109 +79,111 @@ muriscv_nn_status muriscv_nn_transpose_conv_row_s8_s32(const int8_t *lhs,
                     int32_t result2 = 0;
                     int32_t result3 = 0;
 
-#if defined(USE_PEXT) && !defined(USE_VEXT)
-                    const int16_t lhs_offset_s16 = (int16_t)lhs_offset;
-                    const uint32_t lhs_offset_s16x2 = PKHBT(lhs_offset_s16, lhs_offset_s16, 16);
-
-                    for (int32_t channel_count = input_channels; channel_count > 3; channel_count -= 4)
-                    {
-                        const int8_t *lhs_temp = lhs_ptr0;
-                        int32_t lhs00 = muriscv_nn_read_s8x4(lhs_temp);
-                        int32_t lhs01 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs00, 8);
-                        lhs00 = SXTAB16(lhs_offset_s16x2, lhs00);
-                        lhs_temp += input_channels;
-                        int32_t lhs10 = muriscv_nn_read_s8x4(lhs_temp);
-                        int32_t lhs11 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs10, 8);
-                        lhs10 = SXTAB16(lhs_offset_s16x2, lhs10);
-                        lhs_temp += input_channels;
-                        int32_t lhs20 = muriscv_nn_read_s8x4(lhs_temp);
-                        int32_t lhs21 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs20, 8);
-                        lhs20 = SXTAB16(lhs_offset_s16x2, lhs20);
-                        lhs_temp += input_channels;
-                        int32_t lhs30 = muriscv_nn_read_s8x4(lhs_temp);
-                        int32_t lhs31 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs30, 8);
-                        lhs30 = SXTAB16(lhs_offset_s16x2, lhs30);
-                        lhs_ptr0 += 4;
-
-                        int32_t rhs0 = muriscv_nn_read_s8x4(rhs_ptr);
-                        int32_t rhs1 = SXTB16_RORn((uint32_t)rhs0, 8);
-                        rhs0 = SXTB16(rhs0);
-                        rhs_ptr += 4;
-
-                        result0 = SMLAD(lhs00, rhs0, result0);
-                        result0 = SMLAD(lhs01, rhs1, result0);
-                        result1 = SMLAD(lhs10, rhs0, result1);
-                        result1 = SMLAD(lhs11, rhs1, result1);
-                        result2 = SMLAD(lhs20, rhs0, result2);
-                        result2 = SMLAD(lhs21, rhs1, result2);
-                        result3 = SMLAD(lhs30, rhs0, result3);
-                        result3 = SMLAD(lhs31, rhs1, result3);
-                    }
-
-                    for (int32_t i = 0; i < (input_channels & 0b11); i++)
-                    {
-                        const int8_t *lhs_temp = lhs_ptr0;
-                        const int32_t lhs_val00 = *lhs_temp + lhs_offset;
-                        lhs_temp += input_channels;
-                        const int32_t lhs_val10 = *lhs_temp + lhs_offset;
-                        lhs_temp += input_channels;
-                        const int32_t lhs_val20 = *lhs_temp + lhs_offset;
-                        lhs_temp += input_channels;
-                        const int32_t lhs_val30 = *lhs_temp + lhs_offset;
-                        lhs_ptr0++;
-
-                        const int32_t rhs_val0 = *rhs_ptr++;
-
-                        result0 += lhs_val00 * rhs_val0;
-                        result1 += lhs_val10 * rhs_val0;
-                        result2 += lhs_val20 * rhs_val0;
-                        result3 += lhs_val30 * rhs_val0;
-                    }
-
-                    int32_t *output_temp = output_ptr0;
-                    *output_ptr0 += result0;
-                    output_temp += stride_x * output_channels;
-                    *output_temp += result1;
-                    output_temp += stride_x * output_channels;
-                    *output_temp += result2;
-                    output_temp += stride_x * output_channels;
-                    *output_temp += result3;
-
-                    output_ptr0 += output_channels;
-#else
+// #if defined(USE_PEXT) && !defined(USE_VEXT)
+//                     // TODO: PEXT port
+//                     const int16_t lhs_offset_s16 = (int16_t)lhs_offset;
+//                     const uint32_t lhs_offset_s16x2 = PKHBT(lhs_offset_s16, lhs_offset_s16, 16);
+//
+//                     for (int32_t channel_count = input_channels; channel_count > 3; channel_count -= 4)
+//                     {
+//                         const int8_t *lhs_temp = lhs_ptr0;
+//                         int32_t lhs00 = muriscv_nn_read_s8x4(lhs_temp);
+//                         int32_t lhs01 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs00, 8);
+//                         lhs00 = SXTAB16(lhs_offset_s16x2, lhs00);
+//                         lhs_temp += input_channels;
+//                         int32_t lhs10 = muriscv_nn_read_s8x4(lhs_temp);
+//                         int32_t lhs11 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs10, 8);
+//                         lhs10 = SXTAB16(lhs_offset_s16x2, lhs10);
+//                         lhs_temp += input_channels;
+//                         int32_t lhs20 = muriscv_nn_read_s8x4(lhs_temp);
+//                         int32_t lhs21 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs20, 8);
+//                         lhs20 = SXTAB16(lhs_offset_s16x2, lhs20);
+//                         lhs_temp += input_channels;
+//                         int32_t lhs30 = muriscv_nn_read_s8x4(lhs_temp);
+//                         int32_t lhs31 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs30, 8);
+//                         lhs30 = SXTAB16(lhs_offset_s16x2, lhs30);
+//                         lhs_ptr0 += 4;
+//
+//                         int32_t rhs0 = muriscv_nn_read_s8x4(rhs_ptr);
+//                         int32_t rhs1 = SXTB16_RORn((uint32_t)rhs0, 8);
+//                         rhs0 = SXTB16(rhs0);
+//                         rhs_ptr += 4;
+//
+//                         result0 = SMLAD(lhs00, rhs0, result0);
+//                         result0 = SMLAD(lhs01, rhs1, result0);
+//                         result1 = SMLAD(lhs10, rhs0, result1);
+//                         result1 = SMLAD(lhs11, rhs1, result1);
+//                         result2 = SMLAD(lhs20, rhs0, result2);
+//                         result2 = SMLAD(lhs21, rhs1, result2);
+//                         result3 = SMLAD(lhs30, rhs0, result3);
+//                         result3 = SMLAD(lhs31, rhs1, result3);
+//                     }
+//
+//                     for (int32_t i = 0; i < (input_channels & 0b11); i++)
+//                     {
+//                         const int8_t *lhs_temp = lhs_ptr0;
+//                         const int32_t lhs_val00 = *lhs_temp + lhs_offset;
+//                         lhs_temp += input_channels;
+//                         const int32_t lhs_val10 = *lhs_temp + lhs_offset;
+//                         lhs_temp += input_channels;
+//                         const int32_t lhs_val20 = *lhs_temp + lhs_offset;
+//                         lhs_temp += input_channels;
+//                         const int32_t lhs_val30 = *lhs_temp + lhs_offset;
+//                         lhs_ptr0++;
+//
+//                         const int32_t rhs_val0 = *rhs_ptr++;
+//
+//                         result0 += lhs_val00 * rhs_val0;
+//                         result1 += lhs_val10 * rhs_val0;
+//                         result2 += lhs_val20 * rhs_val0;
+//                         result3 += lhs_val30 * rhs_val0;
+//                     }
+//
+//                     int32_t *output_temp = output_ptr0;
+//                     *output_ptr0 += result0;
+//                     output_temp += stride_x * output_channels;
+//                     *output_temp += result1;
+//                     output_temp += stride_x * output_channels;
+//                     *output_temp += result2;
+//                     output_temp += stride_x * output_channels;
+//                     *output_temp += result3;
+//
+//                     output_ptr0 += output_channels;
+// #else
                     int32_t rhs_sum = 0;
-    #if defined(USE_VEXT)
+    // #if defined(USE_VEXT)
+    //                 // TODO: VEXT port
 
-                    int channel_count = input_channels;
-                    for (int channel_i = 0; channel_i < (input_channels + 15) / 16; channel_i++)
-                    {
-                        mve_pred16_t p0 = vctp8q((uint32_t)channel_count);
-                        channel_count -= 16;
+    //                 int channel_count = input_channels;
+    //                 for (int channel_i = 0; channel_i < (input_channels + 15) / 16; channel_i++)
+    //                 {
+    //                     mve_pred16_t p0 = vctp8q((uint32_t)channel_count);
+    //                     channel_count -= 16;
 
-                        const int8_t *lhs_temp = lhs_ptr0;
-                        int8x16_t v_lhs00 = vldrbq_z_s8(lhs_temp, p0);
-                        lhs_temp += input_channels;
-                        int8x16_t v_lhs10 = vldrbq_z_s8(lhs_temp, p0);
-                        lhs_temp += input_channels;
-                        int8x16_t v_lhs20 = vldrbq_z_s8(lhs_temp, p0);
-                        lhs_temp += input_channels;
-                        int8x16_t v_lhs30 = vldrbq_z_s8(lhs_temp, p0);
+    //                     const int8_t *lhs_temp = lhs_ptr0;
+    //                     int8x16_t v_lhs00 = vldrbq_z_s8(lhs_temp, p0);
+    //                     lhs_temp += input_channels;
+    //                     int8x16_t v_lhs10 = vldrbq_z_s8(lhs_temp, p0);
+    //                     lhs_temp += input_channels;
+    //                     int8x16_t v_lhs20 = vldrbq_z_s8(lhs_temp, p0);
+    //                     lhs_temp += input_channels;
+    //                     int8x16_t v_lhs30 = vldrbq_z_s8(lhs_temp, p0);
 
-                        lhs_ptr0 += 16;
-                        int8x16_t v_rhs0 = vldrbq_z_s8(rhs_ptr, p0);
-                        rhs_ptr += 16;
+    //                     lhs_ptr0 += 16;
+    //                     int8x16_t v_rhs0 = vldrbq_z_s8(rhs_ptr, p0);
+    //                     rhs_ptr += 16;
 
-                        result0 = vmladavaq_s8(result0, v_lhs00, v_rhs0);
-                        result1 = vmladavaq_s8(result1, v_lhs10, v_rhs0);
-                        result2 = vmladavaq_s8(result2, v_lhs20, v_rhs0);
-                        result3 = vmladavaq_s8(result3, v_lhs30, v_rhs0);
+    //                     result0 = vmladavaq_s8(result0, v_lhs00, v_rhs0);
+    //                     result1 = vmladavaq_s8(result1, v_lhs10, v_rhs0);
+    //                     result2 = vmladavaq_s8(result2, v_lhs20, v_rhs0);
+    //                     result3 = vmladavaq_s8(result3, v_lhs30, v_rhs0);
 
-                        rhs_sum = vaddvaq_s8(rhs_sum, v_rhs0);
-                    }
+    //                     rhs_sum = vaddvaq_s8(rhs_sum, v_rhs0);
+    //                 }
 
-                    rhs_ptr += channel_count;
+    //                 rhs_ptr += channel_count;
 
-    #else
+    // #else
                     for (int32_t channel_count = 0; channel_count < input_channels / 2; channel_count++)
                     {
                         const int8_t *lhs_temp = lhs_ptr0;
@@ -245,7 +247,7 @@ muriscv_nn_status muriscv_nn_transpose_conv_row_s8_s32(const int8_t *lhs,
 
                         rhs_sum += rhs_val0;
                     }
-    #endif
+    // #endif
                     int32_t *output_temp = output_ptr0;
                     *output_ptr0 += result0 + rhs_sum * lhs_offset;
                     output_temp += stride_x * output_channels;
@@ -256,7 +258,7 @@ muriscv_nn_status muriscv_nn_transpose_conv_row_s8_s32(const int8_t *lhs,
                     *output_temp += result3 + rhs_sum * lhs_offset;
 
                     output_ptr0 += output_channels;
-#endif
+// #endif
                 }
 
                 // Next row, wrapping around the circular buffer
@@ -292,79 +294,81 @@ muriscv_nn_status muriscv_nn_transpose_conv_row_s8_s32(const int8_t *lhs,
                     int32_t result0 = 0;
                     int32_t result1 = 0;
 
-#if defined(USE_PEXT) && !defined(USE_VEXT)
-                    const int16_t lhs_offset_s16 = (int16_t)lhs_offset;
-                    const uint32_t lhs_offset_s16x2 = PKHBT(lhs_offset_s16, lhs_offset_s16, 16);
-
-                    for (int32_t channel_count = input_channels; channel_count > 3; channel_count -= 4)
-                    {
-                        const int8_t *lhs_temp = lhs_ptr0;
-                        int32_t lhs00 = muriscv_nn_read_s8x4(lhs_temp);
-                        int32_t lhs01 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs00, 8);
-                        lhs00 = SXTAB16(lhs_offset_s16x2, lhs00);
-                        lhs_temp += input_channels;
-                        int32_t lhs10 = muriscv_nn_read_s8x4(lhs_temp);
-                        int32_t lhs11 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs10, 8);
-                        lhs10 = SXTAB16(lhs_offset_s16x2, lhs10);
-                        lhs_ptr0 += 4;
-
-                        int32_t rhs0 = muriscv_nn_read_s8x4(rhs_ptr);
-                        int32_t rhs1 = SXTB16_RORn((uint32_t)rhs0, 8);
-                        rhs0 = SXTB16(rhs0);
-                        rhs_ptr += 4;
-
-                        result0 = SMLAD(lhs00, rhs0, result0);
-                        result0 = SMLAD(lhs01, rhs1, result0);
-                        result1 = SMLAD(lhs10, rhs0, result1);
-                        result1 = SMLAD(lhs11, rhs1, result1);
-                    }
-
-                    for (int32_t i = 0; i < (input_channels & 0b11); i++)
-                    {
-                        const int8_t *lhs_temp = lhs_ptr0;
-                        const int32_t lhs_val00 = *lhs_temp + lhs_offset;
-                        lhs_temp += input_channels;
-                        const int32_t lhs_val10 = *lhs_temp + lhs_offset;
-                        lhs_ptr0++;
-
-                        const int32_t rhs_val0 = *rhs_ptr++;
-
-                        result0 += lhs_val00 * rhs_val0;
-                        result1 += lhs_val10 * rhs_val0;
-                    }
-
-                    int32_t *output_temp = output_ptr0;
-                    *output_ptr0 += result0;
-                    output_temp += stride_x * output_channels;
-                    *output_temp += result1;
-
-                    output_ptr0 += output_channels;
-#else
+// #if defined(USE_PEXT) && !defined(USE_VEXT)
+//                     // TODO: PEXT port
+//                     const int16_t lhs_offset_s16 = (int16_t)lhs_offset;
+//                     const uint32_t lhs_offset_s16x2 = PKHBT(lhs_offset_s16, lhs_offset_s16, 16);
+//
+//                     for (int32_t channel_count = input_channels; channel_count > 3; channel_count -= 4)
+//                     {
+//                         const int8_t *lhs_temp = lhs_ptr0;
+//                         int32_t lhs00 = muriscv_nn_read_s8x4(lhs_temp);
+//                         int32_t lhs01 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs00, 8);
+//                         lhs00 = SXTAB16(lhs_offset_s16x2, lhs00);
+//                         lhs_temp += input_channels;
+//                         int32_t lhs10 = muriscv_nn_read_s8x4(lhs_temp);
+//                         int32_t lhs11 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs10, 8);
+//                         lhs10 = SXTAB16(lhs_offset_s16x2, lhs10);
+//                         lhs_ptr0 += 4;
+//
+//                         int32_t rhs0 = muriscv_nn_read_s8x4(rhs_ptr);
+//                         int32_t rhs1 = SXTB16_RORn((uint32_t)rhs0, 8);
+//                         rhs0 = SXTB16(rhs0);
+//                         rhs_ptr += 4;
+//
+//                         result0 = SMLAD(lhs00, rhs0, result0);
+//                         result0 = SMLAD(lhs01, rhs1, result0);
+//                         result1 = SMLAD(lhs10, rhs0, result1);
+//                         result1 = SMLAD(lhs11, rhs1, result1);
+//                     }
+//
+//                     for (int32_t i = 0; i < (input_channels & 0b11); i++)
+//                     {
+//                         const int8_t *lhs_temp = lhs_ptr0;
+//                         const int32_t lhs_val00 = *lhs_temp + lhs_offset;
+//                         lhs_temp += input_channels;
+//                         const int32_t lhs_val10 = *lhs_temp + lhs_offset;
+//                         lhs_ptr0++;
+//
+//                         const int32_t rhs_val0 = *rhs_ptr++;
+//
+//                         result0 += lhs_val00 * rhs_val0;
+//                         result1 += lhs_val10 * rhs_val0;
+//                     }
+//
+//                     int32_t *output_temp = output_ptr0;
+//                     *output_ptr0 += result0;
+//                     output_temp += stride_x * output_channels;
+//                     *output_temp += result1;
+//
+//                     output_ptr0 += output_channels;
+// #else
                     int32_t rhs_sum = 0;
-    #if defined(USE_VEXT)
-                    int channel_count = input_channels;
-                    for (int channel_i = 0; channel_i < (input_channels + 15) / 16; channel_i++)
-                    {
-                        mve_pred16_t p0 = vctp8q((uint32_t)channel_count);
-                        channel_count -= 16;
+    // #if defined(USE_VEXT)
+    //                 // TODO: VEXT port
+    //                 int channel_count = input_channels;
+    //                 for (int channel_i = 0; channel_i < (input_channels + 15) / 16; channel_i++)
+    //                 {
+    //                     mve_pred16_t p0 = vctp8q((uint32_t)channel_count);
+    //                     channel_count -= 16;
 
-                        const int8_t *lhs_temp = lhs_ptr0;
-                        int8x16_t v_lhs00 = vldrbq_z_s8(lhs_temp, p0);
-                        lhs_temp += input_channels;
-                        int8x16_t v_lhs10 = vldrbq_z_s8(lhs_temp, p0);
-                        lhs_ptr0 += 16;
-                        int8x16_t v_rhs0 = vldrbq_z_s8(rhs_ptr, p0);
-                        rhs_ptr += 16;
+    //                     const int8_t *lhs_temp = lhs_ptr0;
+    //                     int8x16_t v_lhs00 = vldrbq_z_s8(lhs_temp, p0);
+    //                     lhs_temp += input_channels;
+    //                     int8x16_t v_lhs10 = vldrbq_z_s8(lhs_temp, p0);
+    //                     lhs_ptr0 += 16;
+    //                     int8x16_t v_rhs0 = vldrbq_z_s8(rhs_ptr, p0);
+    //                     rhs_ptr += 16;
 
-                        result0 = vmladavaq_s8(result0, v_lhs00, v_rhs0);
-                        result1 = vmladavaq_s8(result1, v_lhs10, v_rhs0);
+    //                     result0 = vmladavaq_s8(result0, v_lhs00, v_rhs0);
+    //                     result1 = vmladavaq_s8(result1, v_lhs10, v_rhs0);
 
-                        rhs_sum = vaddvaq_s8(rhs_sum, v_rhs0);
-                    }
+    //                     rhs_sum = vaddvaq_s8(rhs_sum, v_rhs0);
+    //                 }
 
-                    rhs_ptr += channel_count;
+    //                 rhs_ptr += channel_count;
 
-    #else
+    // #else
                     for (int32_t channel_count = 0; channel_count < input_channels; channel_count++)
                     {
                         const int8_t *lhs_temp = lhs_ptr0;
@@ -380,14 +384,14 @@ muriscv_nn_status muriscv_nn_transpose_conv_row_s8_s32(const int8_t *lhs,
 
                         rhs_sum += rhs_val0;
                     }
-    #endif
+    // #endif
                     int32_t *output_temp = output_ptr0;
                     *output_ptr0 += result0 + rhs_sum * lhs_offset;
                     output_temp += stride_x * output_channels;
                     *output_temp += result1 + rhs_sum * lhs_offset;
 
                     output_ptr0 += output_channels;
-#endif
+// #endif
                 }
 
                 // Next row, wrapping around the circular buffer
@@ -421,58 +425,60 @@ muriscv_nn_status muriscv_nn_transpose_conv_row_s8_s32(const int8_t *lhs,
                     const int8_t *lhs_ptr0 = lhs;
 
                     int32_t result0 = 0;
-#if defined(USE_PEXT) && !defined(USE_VEXT)
-                    const int16_t lhs_offset_s16 = (int16_t)lhs_offset;
-                    const uint32_t lhs_offset_s16x2 = PKHBT(lhs_offset_s16, lhs_offset_s16, 16);
+// #if defined(USE_PEXT) && !defined(USE_VEXT)
+//                     // TODO: PEXT port
+//                     const int16_t lhs_offset_s16 = (int16_t)lhs_offset;
+//                     const uint32_t lhs_offset_s16x2 = PKHBT(lhs_offset_s16, lhs_offset_s16, 16);
+//
+//                     for (int32_t channel_count = input_channels; channel_count > 3; channel_count -= 4)
+//                     {
+//                         const int8_t *lhs_temp = lhs_ptr0;
+//                         int32_t lhs00 = muriscv_nn_read_s8x4(lhs_temp);
+//                         int32_t lhs01 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs00, 8);
+//                         lhs00 = SXTAB16(lhs_offset_s16x2, lhs00);
+//                         lhs_ptr0 += 4;
+//
+//                         int32_t rhs0 = muriscv_nn_read_s8x4(rhs_ptr);
+//                         int32_t rhs1 = SXTB16_RORn((uint32_t)rhs0, 8);
+//                         rhs0 = SXTB16(rhs0);
+//                         rhs_ptr += 4;
+//
+//                         result0 = SMLAD(lhs00, rhs0, result0);
+//                         result0 = SMLAD(lhs01, rhs1, result0);
+//                     }
+//
+//                     for (int32_t i = 0; i < (input_channels & 0b11); i++)
+//                     {
+//                         const int8_t *lhs_temp = lhs_ptr0;
+//                         const int32_t lhs_val00 = *lhs_temp + lhs_offset;
+//                         lhs_ptr0++;
+//
+//                         const int32_t rhs_val0 = *rhs_ptr++;
+//
+//                         result0 += lhs_val00 * rhs_val0;
+//                     }
+// #else
+    // #if defined(USE_VEXT)
+    //                 // TODO: VEXT port
+    //                 int channel_count = input_channels;
+    //                 for (int channel_i = 0; channel_i < (input_channels + 15) / 16; channel_i++)
+    //                 {
+    //                     mve_pred16_t p0 = vctp8q((uint32_t)channel_count);
+    //                     channel_count -= 16;
 
-                    for (int32_t channel_count = input_channels; channel_count > 3; channel_count -= 4)
-                    {
-                        const int8_t *lhs_temp = lhs_ptr0;
-                        int32_t lhs00 = muriscv_nn_read_s8x4(lhs_temp);
-                        int32_t lhs01 = SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)lhs00, 8);
-                        lhs00 = SXTAB16(lhs_offset_s16x2, lhs00);
-                        lhs_ptr0 += 4;
+    //                     int8x16_t v_lhs00 = vldrbq_z_s8(lhs_ptr0, p0);
+    //                     lhs_ptr0 += 16;
+    //                     int8x16_t v_rhs0 = vldrbq_z_s8(rhs_ptr, p0);
+    //                     rhs_ptr += 16;
 
-                        int32_t rhs0 = muriscv_nn_read_s8x4(rhs_ptr);
-                        int32_t rhs1 = SXTB16_RORn((uint32_t)rhs0, 8);
-                        rhs0 = SXTB16(rhs0);
-                        rhs_ptr += 4;
+    //                     result0 = vmladavaq_s8(result0, v_lhs00, v_rhs0);
 
-                        result0 = SMLAD(lhs00, rhs0, result0);
-                        result0 = SMLAD(lhs01, rhs1, result0);
-                    }
+    //                     int32_t rhs_sum = vaddvaq_s8(0, v_rhs0);
+    //                     result0 += rhs_sum * lhs_offset;
+    //                 }
 
-                    for (int32_t i = 0; i < (input_channels & 0b11); i++)
-                    {
-                        const int8_t *lhs_temp = lhs_ptr0;
-                        const int32_t lhs_val00 = *lhs_temp + lhs_offset;
-                        lhs_ptr0++;
-
-                        const int32_t rhs_val0 = *rhs_ptr++;
-
-                        result0 += lhs_val00 * rhs_val0;
-                    }
-#else
-    #if defined(USE_VEXT)
-                    int channel_count = input_channels;
-                    for (int channel_i = 0; channel_i < (input_channels + 15) / 16; channel_i++)
-                    {
-                        mve_pred16_t p0 = vctp8q((uint32_t)channel_count);
-                        channel_count -= 16;
-
-                        int8x16_t v_lhs00 = vldrbq_z_s8(lhs_ptr0, p0);
-                        lhs_ptr0 += 16;
-                        int8x16_t v_rhs0 = vldrbq_z_s8(rhs_ptr, p0);
-                        rhs_ptr += 16;
-
-                        result0 = vmladavaq_s8(result0, v_lhs00, v_rhs0);
-
-                        int32_t rhs_sum = vaddvaq_s8(0, v_rhs0);
-                        result0 += rhs_sum * lhs_offset;
-                    }
-
-                    rhs_ptr += channel_count;
-    #else
+    //                 rhs_ptr += channel_count;
+    // #else
                     for (int32_t channel_count = 0; channel_count < input_channels; channel_count++)
                     {
                         const int32_t lhs_val00 = *lhs_ptr0;
@@ -482,8 +488,8 @@ muriscv_nn_status muriscv_nn_transpose_conv_row_s8_s32(const int8_t *lhs,
 
                         result0 += (lhs_val00 + lhs_offset) * rhs_val0;
                     }
-    #endif
-#endif
+    // #endif
+// #endif
                     *output_ptr0 += result0;
                     output_ptr0 += output_channels;
                 }

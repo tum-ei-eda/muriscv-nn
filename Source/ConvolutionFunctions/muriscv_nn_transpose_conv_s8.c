@@ -143,36 +143,36 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
                     int32_t *buf_out = buf + buf_row;
                     buf_out += output_ch * pad_x;
 
-#if defined(USE_VEXT)
-                    // TODO: port to RISC-V Vector
-                    for (int x = 0; x < output_x; x++)
-                    {
-                        const int32_t *mult_ptr = output_multiplier;
-                        const int32_t *shift_ptr = output_shift;
-
-                        int channel_count = output_ch;
-                        for (; channel_count > 0; channel_count -= 4)
-                        {
-                            mve_pred16_t p = vctp32q((uint32_t)channel_count);
-
-                            int32x4_t result = vldrwq_z_s32(buf_out, p);
-                            buf_out += 4;
-                            result =
-                                muriscv_nn_requantize_mve_32x4(result, vldrwq_z_s32(mult_ptr, p), vldrwq_z_s32(shift_ptr, p));
-                            mult_ptr += 4;
-                            shift_ptr += 4;
-                            result = vaddq_n_s32(result, out_offset);
-                            result = vmaxq_s32(result, vdupq_n_s32(activation_min));
-                            result = vminq_s32(result, vdupq_n_s32(activation_max));
-                            vstrbq_p_s32(output, result, p);
-                            output += 4;
-                        }
-
-                        // Correct pointer overshoot due to predication
-                        buf_out += channel_count;
-                        output += channel_count;
-                    }
-#else
+// #if defined(USE_VEXT)
+//                     // TODO: port to RISC-V Vector
+//                     for (int x = 0; x < output_x; x++)
+//                     {
+//                         const int32_t *mult_ptr = output_multiplier;
+//                         const int32_t *shift_ptr = output_shift;
+//
+//                         int channel_count = output_ch;
+//                         for (; channel_count > 0; channel_count -= 4)
+//                         {
+//                             mve_pred16_t p = vctp32q((uint32_t)channel_count);
+//
+//                             int32x4_t result = vldrwq_z_s32(buf_out, p);
+//                             buf_out += 4;
+//                             result =
+//                                 muriscv_nn_requantize_mve_32x4(result, vldrwq_z_s32(mult_ptr, p), vldrwq_z_s32(shift_ptr, p));
+//                             mult_ptr += 4;
+//                             shift_ptr += 4;
+//                             result = vaddq_n_s32(result, out_offset);
+//                             result = vmaxq_s32(result, vdupq_n_s32(activation_min));
+//                             result = vminq_s32(result, vdupq_n_s32(activation_max));
+//                             vstrbq_p_s32(output, result, p);
+//                             output += 4;
+//                         }
+//
+//                         // Correct pointer overshoot due to predication
+//                         buf_out += channel_count;
+//                         output += channel_count;
+//                     }
+// #else
 
                     for (int x = 0; x < output_x; x++)
                     {
@@ -188,7 +188,7 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
                             *output++ = result;
                         }
                     }
-#endif
+// #endif
 
                     // Reset the buffer which was just written
                     if (bias_data)
@@ -218,34 +218,34 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
             if ((input_y * stride_y + y >= pad_y) && (input_y * stride_y + y < pad_y + output_y))
             {
                 buf_out += output_ch * pad_x;
-#if defined(USE_VEXT)
-                for (int x = 0; x < output_x; x++)
-                {
-                    const int32_t *mult_ptr = output_multiplier;
-                    const int32_t *shift_ptr = output_shift;
-
-                    int channel_count = output_ch;
-                    for (; channel_count > 0; channel_count -= 4)
-                    {
-                        mve_pred16_t p = vctp32q((uint32_t)channel_count);
-
-                        int32x4_t result = vldrwq_z_s32(buf_out, p);
-                        buf_out += 4;
-                        result = muriscv_nn_requantize_mve_32x4(result, vldrwq_z_s32(mult_ptr, p), vldrwq_z_s32(shift_ptr, p));
-                        mult_ptr += 4;
-                        shift_ptr += 4;
-                        result = vaddq_n_s32(result, out_offset);
-                        result = vmaxq_s32(result, vdupq_n_s32(activation_min));
-                        result = vminq_s32(result, vdupq_n_s32(activation_max));
-                        vstrbq_p_s32(output, result, p);
-                        output += 4;
-                    }
-
-                    // Correct pointer overshoot due to predication
-                    buf_out += channel_count;
-                    output += channel_count;
-                }
-#else
+// #if defined(USE_VEXT)
+//                 for (int x = 0; x < output_x; x++)
+//                 {
+//                     const int32_t *mult_ptr = output_multiplier;
+//                     const int32_t *shift_ptr = output_shift;
+//
+//                     int channel_count = output_ch;
+//                     for (; channel_count > 0; channel_count -= 4)
+//                     {
+//                         mve_pred16_t p = vctp32q((uint32_t)channel_count);
+//
+//                         int32x4_t result = vldrwq_z_s32(buf_out, p);
+//                         buf_out += 4;
+//                         result = muriscv_nn_requantize_mve_32x4(result, vldrwq_z_s32(mult_ptr, p), vldrwq_z_s32(shift_ptr, p));
+//                         mult_ptr += 4;
+//                         shift_ptr += 4;
+//                         result = vaddq_n_s32(result, out_offset);
+//                         result = vmaxq_s32(result, vdupq_n_s32(activation_min));
+//                         result = vminq_s32(result, vdupq_n_s32(activation_max));
+//                         vstrbq_p_s32(output, result, p);
+//                         output += 4;
+//                     }
+//
+//                     // Correct pointer overshoot due to predication
+//                     buf_out += channel_count;
+//                     output += channel_count;
+//                 }
+// #else
                 for (int x = 0; x < output_x; x++)
                 {
                     const int32_t *output_multiplier_ptr = output_multiplier;
@@ -262,7 +262,7 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
                         *output++ = result;
                     }
                 }
-#endif
+// #endif
             }
             buf_row = (buf_row + buf_x) % buf_size;
         }
