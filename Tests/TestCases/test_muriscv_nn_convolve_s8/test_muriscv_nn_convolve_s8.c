@@ -72,6 +72,7 @@ void basic_muriscv_nn_convolve_s8(void)
     input_dims.c = BASIC_IN_CH;
     filter_dims.w = BASIC_FILTER_X;
     filter_dims.h = BASIC_FILTER_Y;
+    filter_dims.c = BASIC_IN_CH;
     output_dims.w = BASIC_OUTPUT_W;
     output_dims.h = BASIC_OUTPUT_H;
     output_dims.c = BASIC_OUT_CH;
@@ -157,6 +158,7 @@ void stride2pad1_muriscv_nn_convolve_s8(void)
     input_dims.c = STRIDE2PAD1_IN_CH;
     filter_dims.w = STRIDE2PAD1_FILTER_X;
     filter_dims.h = STRIDE2PAD1_FILTER_Y;
+    filter_dims.c = STRIDE2PAD1_IN_CH;
     output_dims.w = STRIDE2PAD1_OUTPUT_W;
     output_dims.h = STRIDE2PAD1_OUTPUT_H;
     output_dims.c = STRIDE2PAD1_OUT_CH;
@@ -242,6 +244,7 @@ void conv_2_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_2_IN_CH;
     filter_dims.w = CONV_2_FILTER_X;
     filter_dims.h = CONV_2_FILTER_Y;
+    filter_dims.c = CONV_2_IN_CH;
     output_dims.w = CONV_2_OUTPUT_W;
     output_dims.h = CONV_2_OUTPUT_H;
     output_dims.c = CONV_2_OUT_CH;
@@ -327,6 +330,7 @@ void conv_3_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_3_IN_CH;
     filter_dims.w = CONV_3_FILTER_X;
     filter_dims.h = CONV_3_FILTER_Y;
+    filter_dims.c = CONV_2_IN_CH;
     output_dims.w = CONV_3_OUTPUT_W;
     output_dims.h = CONV_3_OUTPUT_H;
     output_dims.c = CONV_3_OUT_CH;
@@ -412,6 +416,7 @@ void conv_4_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_4_IN_CH;
     filter_dims.w = CONV_4_FILTER_X;
     filter_dims.h = CONV_4_FILTER_Y;
+    filter_dims.c = CONV_4_IN_CH;
     output_dims.w = CONV_4_OUTPUT_W;
     output_dims.h = CONV_4_OUTPUT_H;
     output_dims.c = CONV_4_OUT_CH;
@@ -497,6 +502,7 @@ void conv_1_x_n_1_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_1_X_N_1_IN_CH;
     filter_dims.w = CONV_1_X_N_1_FILTER_X;
     filter_dims.h = CONV_1_X_N_1_FILTER_Y;
+    filter_dims.c = CONV_1_X_N_1_IN_CH;
     output_dims.w = CONV_1_X_N_1_OUTPUT_W;
     output_dims.h = CONV_1_X_N_1_OUTPUT_H;
     output_dims.c = CONV_1_X_N_1_OUT_CH;
@@ -580,6 +586,7 @@ void conv_1_x_n_2_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_1_X_N_2_IN_CH;
     filter_dims.w = CONV_1_X_N_2_FILTER_X;
     filter_dims.h = CONV_1_X_N_2_FILTER_Y;
+    filter_dims.c = CONV_1_X_N_2_IN_CH;
     output_dims.w = CONV_1_X_N_2_OUTPUT_W;
     output_dims.h = CONV_1_X_N_2_OUTPUT_H;
     output_dims.c = CONV_1_X_N_2_OUT_CH;
@@ -661,6 +668,7 @@ void conv_1_x_n_3_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_1_X_N_3_IN_CH;
     filter_dims.w = CONV_1_X_N_3_FILTER_X;
     filter_dims.h = CONV_1_X_N_3_FILTER_Y;
+    filter_dims.c = CONV_1_X_N_3_IN_CH;
     output_dims.w = CONV_1_X_N_3_OUTPUT_W;
     output_dims.h = CONV_1_X_N_3_OUTPUT_H;
     output_dims.c = CONV_1_X_N_3_OUT_CH;
@@ -741,6 +749,7 @@ void conv_out_activation_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_OUT_ACTIVATION_IN_CH;
     filter_dims.w = CONV_OUT_ACTIVATION_FILTER_X;
     filter_dims.h = CONV_OUT_ACTIVATION_FILTER_Y;
+    filter_dims.c = CONV_OUT_ACTIVATION_IN_CH;
     output_dims.w = CONV_OUT_ACTIVATION_OUTPUT_W;
     output_dims.h = CONV_OUT_ACTIVATION_OUTPUT_H;
     output_dims.c = CONV_OUT_ACTIVATION_OUT_CH;
@@ -804,6 +813,7 @@ void conv_2x2_dilation_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_2X2_DILATION_IN_CH;
     filter_dims.w = CONV_2X2_DILATION_FILTER_X;
     filter_dims.h = CONV_2X2_DILATION_FILTER_Y;
+    filter_dims.c = CONV_2X2_DILATION_IN_CH;
     output_dims.w = CONV_2X2_DILATION_OUTPUT_W;
     output_dims.h = CONV_2X2_DILATION_OUTPUT_H;
     output_dims.c = CONV_2X2_DILATION_OUT_CH;
@@ -889,6 +899,7 @@ void conv_2x2_dilation_5x5_input_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_2X2_DILATION_5X5_INPUT_IN_CH;
     filter_dims.w = CONV_2X2_DILATION_5X5_INPUT_FILTER_X;
     filter_dims.h = CONV_2X2_DILATION_5X5_INPUT_FILTER_Y;
+    filter_dims.c = CONV_2X2_DILATION_5X5_INPUT_IN_CH;
     output_dims.w = CONV_2X2_DILATION_5X5_INPUT_OUTPUT_W;
     output_dims.h = CONV_2X2_DILATION_5X5_INPUT_OUTPUT_H;
     output_dims.c = CONV_2X2_DILATION_5X5_INPUT_OUT_CH;
@@ -972,6 +983,7 @@ void conv_3x3_dilation_5x5_input_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_3X3_DILATION_5X5_INPUT_IN_CH;
     filter_dims.w = CONV_3X3_DILATION_5X5_INPUT_FILTER_X;
     filter_dims.h = CONV_3X3_DILATION_5X5_INPUT_FILTER_Y;
+    filter_dims.c = CONV_3X3_DILATION_5X5_INPUT_IN_CH;
     output_dims.w = CONV_3X3_DILATION_5X5_INPUT_OUTPUT_W;
     output_dims.h = CONV_3X3_DILATION_5X5_INPUT_OUTPUT_H;
     output_dims.c = CONV_3X3_DILATION_5X5_INPUT_OUT_CH;
@@ -1055,6 +1067,7 @@ void conv_2x3_dilation_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_2X3_DILATION_IN_CH;
     filter_dims.w = CONV_2X3_DILATION_FILTER_X;
     filter_dims.h = CONV_2X3_DILATION_FILTER_Y;
+    filter_dims.c = CONV_2X3_DILATION_IN_CH;
     output_dims.w = CONV_2X3_DILATION_OUTPUT_W;
     output_dims.h = CONV_2X3_DILATION_OUTPUT_H;
     output_dims.c = CONV_2X3_DILATION_OUT_CH;
@@ -1138,6 +1151,7 @@ void conv_3x2_dilation_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_3X2_DILATION_IN_CH;
     filter_dims.w = CONV_3X2_DILATION_FILTER_X;
     filter_dims.h = CONV_3X2_DILATION_FILTER_Y;
+    filter_dims.c = CONV_3X2_DILATION_IN_CH;
     output_dims.w = CONV_3X2_DILATION_OUTPUT_W;
     output_dims.h = CONV_3X2_DILATION_OUTPUT_H;
     output_dims.c = CONV_3X2_DILATION_OUT_CH;
@@ -1221,6 +1235,7 @@ void conv_dilation_golden_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_DILATION_GOLDEN_IN_CH;
     filter_dims.w = CONV_DILATION_GOLDEN_FILTER_X;
     filter_dims.h = CONV_DILATION_GOLDEN_FILTER_Y;
+    filter_dims.c = CONV_DILATION_GOLDEN_IN_CH;
     output_dims.w = CONV_DILATION_GOLDEN_OUTPUT_W;
     output_dims.h = CONV_DILATION_GOLDEN_OUTPUT_H;
     output_dims.c = CONV_DILATION_GOLDEN_OUT_CH;
