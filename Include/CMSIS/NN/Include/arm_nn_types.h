@@ -47,6 +47,7 @@ extern "C" {
 #define cmsis_nn_lstm_dims muriscv_nn_lstm_dims
 
 #define cmsis_nn_transpose_conv_params muriscv_nn_transpose_conv_params
+#define cmsis_nn_transpose_params muriscv_nn_transpose_params
 
 #define cmsis_nn_lstm_gate muriscv_nn_lstm_gate
 

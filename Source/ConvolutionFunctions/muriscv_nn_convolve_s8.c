@@ -55,6 +55,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
                                          const q7_t *filter_data,
                                          const muriscv_nn_dims *bias_dims,
                                          const int32_t *bias_data,
+                                         const muriscv_nn_dims *upscale_dims,
                                          const muriscv_nn_dims *output_dims,
                                          q7_t *output_data)
 {
@@ -72,6 +73,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
     const uint16_t input_ch = input_dims->c;
     const uint16_t kernel_x = filter_dims->w;
     const uint16_t kernel_y = filter_dims->h;
+    const uint16_t kernel_ch = filter_dims->c;
     const uint16_t output_x = output_dims->w;
     const uint16_t output_y = output_dims->h;
     const uint16_t output_ch = output_dims->c;
@@ -85,8 +87,31 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
     const int32_t out_offset = conv_params->output_offset;
     const int32_t out_activation_min = conv_params->activation.min;
     const int32_t out_activation_max = conv_params->activation.max;
+    const int32_t groups = input_ch / kernel_ch;
+    // const int32_t rhs_cols = kernel_x * kernel_y * kernel_ch;
+    // const int32_t output_ch_per_group = output_ch / groups;
     int32_t *output_mult = quant_params->multiplier;
     int32_t *output_shift = quant_params->shift;
+
+    if (input_ch % groups != 0 || output_ch % groups != 0)
+    {
+        return MURISCV_NN_ARG_ERROR;
+    }
+
+    // For upscale_dims == 2, the actual index of the input data is the index of the upscaled input divided by two. In
+    // the ordinary case, there is no difference. The division is implemented as a rshift for optimization purposes.
+    // uint32_t y_rshift = 0;
+    // uint32_t x_rshift = 0;
+
+    if (upscale_dims)
+    {
+        // TODO: implement
+        return MURISCV_NN_NO_IMPL_ERROR;
+        // y_rshift = upscale_dims->h == 2 ? 1 : 0;
+        // x_rshift = upscale_dims->w == 2 ? 1 : 0;
+    }
+
+    // TODO: port CMSIS-NN optimizations (transpose Conv2D?)
 
     for (int i_batch = 0; i_batch < input_batches; i_batch++)
     {
@@ -173,6 +198,7 @@ muriscv_nn_status muriscv_nn_convolve_s8(const muriscv_nn_context *ctx,
         /* Handle left over columns */
         if (buffer_fill_cnt != 0)
         {
+            // TODO: check unused return value?
             out = muriscv_nn_mat_mult_s8(filter_data,
                                          (q7_t *)buffer_a,
                                          output_ch,

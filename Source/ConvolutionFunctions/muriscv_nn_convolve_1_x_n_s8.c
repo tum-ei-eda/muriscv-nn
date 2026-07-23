@@ -184,6 +184,7 @@ muriscv_nn_status muriscv_nn_convolve_1_x_n_s8(const muriscv_nn_context *ctx,
                                     filter_data,
                                     bias_dims,
                                     bias_data,
+                                    NULL,
                                     output_dims,
                                     output_data);
 #endif

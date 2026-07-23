@@ -202,6 +202,10 @@ extern "C" {
 // to not loose precision.
 #define MAX_COL_COUNT (512)
 
+// CMSIS-NN has two implementations of the transpose conv operator, selected depending on the number of input
+// channels. This is based on heuristics and may be finetuned depending on other parameters of the operator
+#define REVERSE_TCOL_EFFICIENT_THRESHOLD (16)
+
 //MURISCV_NN CUSTOM CODE
 /**
  * @brief definition to pack four 8 bit values.
@@ -1145,6 +1149,47 @@ int16_t *muriscv_nn_depthwise_conv_nt_t_s16(const int16_t *lhs,
                                         int16_t *out);
 
 /**
+ * @brief Row of s8 scalars multiplicated with a s8 matrix ad accumulated into a s32 rolling scratch buffer.
+ * Helpfunction for transposed convolution.
+ *
+ * @param[in]      lhs             Input left-hand side scalars
+ * @param[in]      rhs             Input right-hand side matrix
+ * @param[out]     output_start    Output buffer start
+ * @param[in]      output_index    Output buffer current index
+ * @param[in]      output_max      Output buffer size
+ * @param[in]      rhs_rows        Number of rows in rhs matrix
+ * @param[in]      rhs_cols        Number of columns in rhs matrix
+ * @param[in]      input_channels  Number of input channels
+ * @param[in]      output_channels Number of output channels
+ * @param[in]      lhs_offset      Offset added to lhs before multiplication
+ * @param[in]      row_offset      Address offset between each row of data output
+ * @param[in]      input_x         Length of lhs scalar row.
+ * @param[in]      stride_x        Address offset between each scalar-matrix multiplication result.
+ * @param[in]      skip_row_top    Skip rows on top of the filter, used for padding.
+ * @param[in]      skip_row_bottom Skip rows in the bottom of the filter, used for padding.
+ *
+ * @return         The function returns ARM_CMSIS_NN_SUCCESS
+ *
+ * @note           Rolling buffer refers to how the function wraps around the scratch buffer, e.g. it starts writing at
+ * [output_start + output_index], writes to [output_start + output_max] and then continues at [output_start] again.
+ */
+muriscv_nn_status muriscv_nn_transpose_conv_row_s8_s32(const int8_t *lhs,
+                                                     const int8_t *rhs,
+                                                     int32_t *output_start,
+                                                     const int32_t output_index,
+                                                     const int32_t output_max,
+                                                     const int32_t rhs_rows,
+                                                     const int32_t rhs_cols,
+                                                     const int32_t input_channels,
+                                                     const int32_t output_channels,
+                                                     const int32_t lhs_offset,
+                                                     const int32_t row_offset,
+                                                     const int32_t input_x,
+                                                     const int32_t stride_x,
+                                                     const int32_t skip_row_top,
+                                                     const int32_t skip_row_bottom);
+
+/**
   @brief         Read 2 s16 elements and post increment pointer.
   @param[in]     in_q15   Pointer to pointer that holds address of input.
   @return        q31 value
@@ -1275,11 +1320,11 @@ static inline q31_t muriscv_nn_read_q15x2_ia_aligned(const q15_t **in_q15, const
     q31_t val;
     if(alignment == 0)
     {
-         val = (*((uint32_t*)(*in_q15)));       
+         val = (*((uint32_t*)(*in_q15)));
     }
     else
     {
-         val = (uint32_t)((*((uint64_t*)(*in_q15 - 1))) >> 16); 
+         val = (uint32_t)((*((uint64_t*)(*in_q15 - 1))) >> 16);
     }
     *in_q15 += 2;
 
@@ -1378,7 +1423,7 @@ static inline void muriscv_nn_write_q7x4(q7_t *in, q31_t value) { memcpy(in, &va
   @param[in]     in       Double pointer to input value
   @param[in]     value    Four bytes to copy
  */
-static inline void muriscv_nn_write_q7x4_fast(q7_t *in, q31_t value) 
+static inline void muriscv_nn_write_q7x4_fast(q7_t *in, q31_t value)
 {
     *((uint32_t*)(in)) = value;
 }
@@ -1592,7 +1637,7 @@ __STATIC_FORCEINLINE void read_and_pad_s4_uneven(const int8_t *source, int32_t *
     //*out2 = SXTB16_RORn(__sxtb16(inA1), 4);
     out1 = NULL;
     out2 = NULL;
-    
+
 }
 
 //MURISCV_NN CUSTOM CODE
@@ -1615,7 +1660,7 @@ __STATIC_FORCEINLINE void read_and_pad_s4_ordered(const int8_t *source, int32_t 
     #endif
     out1 = NULL;
     out2 = NULL;
-    
+
 }
 
 //MURISCV_NN CUSTOM CODE
