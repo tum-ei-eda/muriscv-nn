@@ -45,9 +45,10 @@ then
   exit 1
 elif [[ "$TVM_VERSION" != "" ]]
 then
-  pip install "apache-tvm==$TVM_VERSION" --pre -f https://philippvk.github.io/tlc-pack.github.io/wheels
+  pip install "tvm==$TVM_VERSION" --pre -f https://philippvk.github.io/tlc-pack.github.io/wheels
 else  # same as stable
-  pip install apache-tvm
+  echo "no version specified for TVM"
+  exit 1
 fi
 pip install -r requirements.txt
 pip install typing-extensions
