@@ -21,7 +21,7 @@ jobs:
       matrix:
         tflm_ref:
           - main  # latest upstream
-          - 8eb6b23de4470d6a8da3131650d6a67514dfa130  # Last working commit (needs to be updated manually)
+          - 8f1f3b2623dcfe477c7a07febdcbec21ea3bde50  # Last working commit (needs to be updated manually)
         config:
           - {vext: OFF, portable: OFF, pext: OFF, mode: release_with_logs, toolchain: gcc,
              arch: native, vlen: 0, elen: 64, sim: Native}
@@ -285,7 +285,7 @@ jobs:
       matrix:
         tflm_ref:
           - main  # latest upstream
-          - 8eb6b23de4470d6a8da3131650d6a67514dfa130  # Last working commit (needs to be updated manually)
+          - 8f1f3b2623dcfe477c7a07febdcbec21ea3bde50  # Last working commit (needs to be updated manually)
         config:
           - {vext_flag: '', portable_flag: '', pext_flag: '', toolchain: x86, arch: '',
              vlen: 0, elen: 0, sim: Native}
