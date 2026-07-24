@@ -111,7 +111,8 @@ class CustomPostprocess(SessionPostprocess):  # RunPostprocess?
         #             else (
         #                 "MVEI+DSP"
         #                 if row.get("feature_arm_mvei") and row.get("feature_arm_dsp")
-        #                 else ("MVEI" if row.get("feature_arm_mvei") else ("DSP" if row.get("feature_arm_dsp") else "RV32GC"))
+        #                 else ("MVEI" if row.get("feature_arm_mvei")
+        #                     else ("DSP" if row.get("feature_arm_dsp") else "RV32GC"))
         #             )
         #         )
         #     ),

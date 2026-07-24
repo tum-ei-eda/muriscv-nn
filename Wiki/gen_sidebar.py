@@ -3,7 +3,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from wiki_utils import MODEL_DESCS, BACKEND_DESCS, TARGET_DESCS
+# from wiki_utils import MODEL_DESCS, BACKEND_DESCS, TARGET_DESCS
+from wiki_utils import MODEL_DESCS, TARGET_DESCS
 
 parser = argparse.ArgumentParser(description="TODO")
 parser.add_argument("files", nargs="+")
@@ -130,7 +131,6 @@ for date, group_df in grouped_df:
                         main_df = group5_df[pd.isna(group5_df["model"])]
                         assert len(main_df) == 1
                         file = main_df["file"].iloc[0]
-                        # print("  " * indent + f"<li><a href=\"https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}\">{target}</a></li>")
                         target_desc = TARGET_DESCS.get(target)
                         target_desc_str = ""
                         if target_desc:
@@ -139,7 +139,10 @@ for date, group_df in grouped_df:
                             # desc_str = f" ({desc})"
                         print(
                             "  " * indent
-                            + f'<b><a href="https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}">{target}</a>{target_desc_str}</b>'
+                            + (
+                                f'<b><a href="https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}">'
+                                f"{target}</a>{target_desc_str}</b>"
+                            )
                         )
                         if args.hide_models:
                             print("  " * indent + "<br>")
@@ -158,7 +161,10 @@ for date, group_df in grouped_df:
                                 # desc_str = f" ({desc})"
                             print(
                                 "  " * indent
-                                + f'<li><a href="https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}#{label}">{model}</a>{model_desc_str}</li>'
+                                + (
+                                    f'<li><a href="https://github.com/tum-ei-eda/muriscv-nn/wiki/{file}#{label}">'
+                                    f"{model}</a>{model_desc_str}</li>"
+                                )
                             )
                         indent -= 1
                         print("  " * indent + "</ul>")

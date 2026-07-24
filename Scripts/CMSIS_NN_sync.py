@@ -671,7 +671,8 @@ for subdir_cmsis in subdir_cmsis_gen:
 #            cmakelist.writelines("add_muriscv_nn_unit_test(" + new_name + ")\n")
 #            cmakelist.close()
 #            #need to copy over new test source and update names
-#            create_muriscv_nn_file(new_name+".c", muriscv_dir + '/Tests/TestCases/' + new_name, test_dir + ".c", cmsis_dir + '/Tests/UnitTest/TestCases/' + test_dir)
+#            create_muriscv_nn_file(new_name+".c", muriscv_dir + '/Tests/TestCases/'
+#                + new_name, test_dir + ".c", cmsis_dir + '/Tests/UnitTest/TestCases/' + test_dir)
 #
 # #add new tests to cmakelists directory
 # if len(new_tests) > 0:
@@ -704,7 +705,8 @@ for subdir_cmsis in subdir_cmsis_gen:
 #        #need to copy over new test sources and update names
 #        new_test_files = next(os.walk(cmsis_dir + '/Tests/UnitTest/TestCases/TestData/' + data_dir))
 #        for file in new_test_files[2]:
-#            create_muriscv_nn_file(file, muriscv_dir + '/Tests/TestData/' + data_dir +"/" , file, cmsis_dir + '/Tests/UnitTest/TestCases/TestData/' + data_dir)
+#            create_muriscv_nn_file(file, muriscv_dir + '/Tests/TestData/' + data_dir +"/" , file, cmsis_dir
+#                + '/Tests/UnitTest/TestCases/TestData/' + data_dir)
 
 # update the functions file
 update_include_file("muriscv_nn_functions.h", muriscv_include_dir, "arm_nnfunctions.h", cmsis_include_dir)
