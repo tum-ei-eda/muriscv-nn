@@ -2,7 +2,7 @@
 
 set -e
 
-DIR=$(dirname $(readlink -f $0))
+DIR=$(dirname "$(readlink -f $0)")
 
 BASE=$1
 LIMIT=${2:-10000000}

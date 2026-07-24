@@ -7,10 +7,17 @@ BASE=$1
 LIMIT=${2:-10000000}
 
 
-BASE_DATE=$(echo $BASE | cut -d'-' -f2-4)
+BASE_DATE=$(printf '%s\n' "$BASE" | cut -d'-' -f2-4)
 # echo BASE_DATE=$BASE_DATE
-REST=$(echo $BASE | cut -d'-' -f5-)
+REST=$(printf '%s\n' "$BASE" | cut -d'-' -f5-)
 # echo REST=$REST
-FILES=$(ls Benchmarks-*-$REST | grep -v $BASE_DATE | sort -r | head -$LIMIT)
-# echo FILES=$FILES
-echo $FILES
+
+mapfile -t FILES < <(
+    for file in Benchmarks-*-"$REST"; do
+        [[ -e "$file" ]] || continue
+        [[ "$file" == *"$BASE_DATE"* ]] && continue
+        printf '%s\n' "$file"
+    done | sort -r | head -n "$LIMIT"
+)
+
+printf '%s\n' "${FILES[@]}"

@@ -31,12 +31,13 @@ toolchain=$2  # i.e. GCC/LLVM
 mode=$3  # i.e. default/vext/pext/corev/...
 version=$4  # i.e. 2023.12.14
 lib=$5
-basename=${6:-riscv32-unknown-elf}
+# basename=${6:-riscv32-unknown-elf}
 dist=${7:-$(lsb_release -d | cut -f2 | cut -d' ' -f1)}
 release=${8:-$(lsb_release -r --short)}
 ext=${9:-tar.xz}
 archive=$lib.$ext
 
+# TODO: move to GitHub (min)
 URL=https://syncandshare.lrz.de/dl/fiWBtDLWz17RBc1Yd4VDW7/$toolchain/$mode/$version/$dist/$release/$archive
 echo "URL=$URL"
 wget --progress=dot:giga $URL

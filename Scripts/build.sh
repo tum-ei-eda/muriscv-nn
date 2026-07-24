@@ -53,7 +53,7 @@ while getopts 't:vxpib:s:l:e:h' flag; do
     s) SIM_FLAGS="-DSIMULATOR=${OPTARG}";;
     l) VLEN="-DVLEN=${OPTARG}";;
     e) ELEN="-DELEN=${OPTARG}";;
-    * | h) echo "Provide correct arguments.  Ex:  ./build.sh -t (GCC/LLVM/x86) -v -i -b (Release/Debug)"
+    h | *) echo "Provide correct arguments.  Ex:  ./build.sh -t (GCC/LLVM/x86) -v -i -b (Release/Debug)"
        echo "-t : toolchain to use"
        echo "-x : enable portable mode"
        echo "-v : enable/disable VEXT"
@@ -79,7 +79,7 @@ elif [ "${USE_VEXT}" == "ON" ] && [ "${USE_PEXT}" == "ON" ];then
 elif [ "${USE_IMV}" == "ON" ] && [ "${USE_PEXT}" == "ON" ];then
     echo "Using rv32im_zve32x only supports VEXT.  Please disable PEXT"
     exit 1
-elif [ "${TOOLCHAIN}" == "x86" ] && ([ "${USE_PEXT}" == "ON" ] || [ "${USE_VEXT}" == "ON" ] || [ "${USE_IMV}" == "ON" ]);then
+elif [ "${TOOLCHAIN}" == "x86" ] && { [ "${USE_PEXT}" == "ON" ] || [ "${USE_VEXT}" == "ON" ] || [ "${USE_IMV}" == "ON" ]; };then
     if [ "${USE_PORTABLE}" != "ON" ];
     then
         echo "Using x86 does not support VEXT or PEXT.  Please disable these."
@@ -167,6 +167,6 @@ mkdir -p ${BUILD_DIR}
 echo $1
 echo ${TC_DIR}/$2
 cmake -B ${BUILD_DIR} -S .. -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DTOOLCHAIN=${TOOLCHAIN} -DRISCV_GCC_PREFIX=${GCC_PREFIX}/ -DRISCV_LLVM_PREFIX=${LLVM_PREFIX}  -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DUSE_PORTABLE=${USE_PORTABLE} ${IMV_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN}
-make -j $(nproc) -C ${BUILD_DIR}
+make -j "$(nproc)" -C ${BUILD_DIR}
 
 exit 0

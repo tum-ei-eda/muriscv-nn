@@ -69,7 +69,7 @@ make -f tensorflow/lite/micro/tools/make/Makefile clean
 
 for test in "${TESTS[@]}"; do
   echo test=${test}
-  make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
+  make -j "$(nproc)" -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \
     TARGET_ARCH=${TARGET_ARCH} \
     OPTIMIZED_KERNEL_DIR=${OPTIMIZED_KERNEL_DIR} \
@@ -107,7 +107,7 @@ done
 
 for bm in "${BENCHMARKS[@]}"; do
   echo bm=${bm}
-  make -j$(nproc) -f tensorflow/lite/micro/tools/make/Makefile \
+  make -j "$(nproc)" -f tensorflow/lite/micro/tools/make/Makefile \
     TARGET=${TARGET} \
     TARGET_ARCH=${TARGET_ARCH} \
     OPTIMIZED_KERNEL_DIR=${OPTIMIZED_KERNEL_DIR} \

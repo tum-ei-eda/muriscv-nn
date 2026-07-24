@@ -66,6 +66,7 @@ while getopts ':h-:' 'OPTKEY'; do
                 PREBUILT_TVM=1
                 ;;
             *)
+                    # shellcheck disable=SC2154
                     if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
                         echo "Unknown option --${OPTARG}" >&2
                     fi

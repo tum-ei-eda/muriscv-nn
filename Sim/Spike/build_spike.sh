@@ -23,13 +23,14 @@ SKIP_INSTALL=OFF;
 SPIKE_REF=master
 PK_REF=master  # Working commit: 1a52fa44aba49307137ea2ad5263613da33a877b
 
+
 while getopts 'sh-:' flag; do
   case "${flag}" in
     s) SKIP_INSTALL=ON ;;
     -)
         case "${OPTARG}" in
             spike_ref)
-                val="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+                val="${!OPTIND}"; OPTIND=$(( OPTIND + 1 ))
                 SPIKE_REF=${val}
                 ;;
             spike_ref=*)
@@ -37,7 +38,7 @@ while getopts 'sh-:' flag; do
                 SPIKE_REF=${val}
                 ;;
             pk_ref)
-                val="${!OPTIND}"; OPTIND=$(( $OPTIND + 1 ))
+                val="${!OPTIND}"; OPTIND=$(( OPTIND + 1 ))
                 PK_REF=${val}
                 ;;
             pk_ref=*)
@@ -45,6 +46,7 @@ while getopts 'sh-:' flag; do
                 PK_REF=${val}
                 ;;
             *)
+                # shellcheck disable=SC2154
                 if [ "$OPTERR" = 1 ] && [ "${optspec:0:1}" != ":" ]; then
                     echo "Unknown option --${OPTARG}. Use -h to see valid options." >&2
                     exit 1
@@ -96,7 +98,7 @@ echo $PATH
 mkdir -p build
 cd build
 ../configure --prefix=$RISCV
-make -j$(nproc)
+make -j "$(nproc)"
 sudo make install
 
 #build PK for ilp32d
@@ -111,7 +113,7 @@ echo $PATH
 mkdir -p build
 cd build
 ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gcv_zicsr_zifencei --with-abi=ilp32d
-make -j$(nproc)
+make -j "$(nproc)"
 sudo make install
 
 #Copy spike and pk_ilp32d to bin folder
@@ -131,7 +133,7 @@ echo $PATH
 mkdir -p build
 cd build
 ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32imv --with-abi=ilp32
-make -j $(nproc)
+make -j "$(nproc)"
 sudo make install
 
 #copy ilp32 to bin folder

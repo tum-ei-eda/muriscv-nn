@@ -40,7 +40,7 @@ while getopts 'xpvl:b:t:Se:s:h' flag; do
     x) USE_PORTABLE=ON ;;
     p) USE_PEXT=ON
        RV_ARCH=rv32gcp ;;
-  ``v) USE_VEXT=ON
+    v) USE_VEXT=ON
        RV_ARCH=rv32gcv ;;
     S) SKIP_BUILD=ON ;;
     l) VLEN="${OPTARG}"
@@ -52,7 +52,7 @@ while getopts 'xpvl:b:t:Se:s:h' flag; do
     b) BENCHMARK="${OPTARG}" ;;
     t) TOOLCHAIN="${OPTARG}" ;;
     s) SIMULATOR="${OPTARG}" ;;
-    * | h) echo "Add -x to enable portable mode"
+    h | *) echo "Add -x to enable portable mode"
            echo "Add -p to compile with rv32gcp"
            echo "Add -v to compile with rv32gcv"
            echo "Specify VLEN with -l {VLEN}"
@@ -135,9 +135,9 @@ if [ "${SKIP_BUILD}" == OFF ]; then
   then
     cmake -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DDISABLE_TFLM_INTG_TESTS=ON -DENABLE_UNIT_TESTS=OFF ..
   else
-    cmake -DRISCV_GCC_PREFIX=$(pwd)/../Toolchain/${RV_ARCH}/ -DRISCV_LLVM_PREFIX=$(pwd)/../Toolchain/llvm/bin/ -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DUSE_PORTABLE=${USE_PORTABLE} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DDISABLE_TFLM_INTG_TESTS=ON -DENABLE_UNIT_TESTS=OFF -DVLEN=${VLEN} -DELEN=${ELEN} ..
+    cmake -DRISCV_GCC_PREFIX="$(pwd)/../Toolchain/${RV_ARCH}/" -DRISCV_LLVM_PREFIX="$(pwd)/../Toolchain/llvm/bin/" -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DUSE_PORTABLE=${USE_PORTABLE} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DDISABLE_TFLM_INTG_TESTS=ON -DENABLE_UNIT_TESTS=OFF -DVLEN=${VLEN} -DELEN=${ELEN} ..
   fi
-  make all -j`nproc`
+  make all -j "$(nproc)"
 
 else
   echo "*** Skipping Build ***"

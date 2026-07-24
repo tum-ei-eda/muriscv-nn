@@ -6,7 +6,8 @@ then
     exit 1
 fi
 
-export SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export SCRIPT_DIR
 export WORKSPACE_DIR=$SCRIPT_DIR/workspace
 export MURISCVNN_DIR=$SCRIPT_DIR/../..
 export TOOLCHAINS_DIR=$MURISCVNN_DIR/Toolchain

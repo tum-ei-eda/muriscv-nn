@@ -56,7 +56,7 @@ while getopts 't:xvpis:b:l:e:h' flag; do
     b) BUILD_TYPE="${OPTARG}" ;;
     l) VLEN="-l ${OPTARG}";;
     e) ELEN="-e ${OPTARG}";;
-    * | h) echo "Provide correct arguments.  Ex:  ./unit_tests.sh -t (GCC/LLVM/x86) -v -s (Spike/OVPsim) -l 1024"
+    h | *) echo "Provide correct arguments.  Ex:  ./unit_tests.sh -t (GCC/LLVM/x86) -v -s (Spike/OVPsim) -l 1024"
        echo "-t : toolchain to use"
        echo "-x : enable portable mode"
        echo "-v : enable/disable VEXT"
@@ -78,16 +78,16 @@ done
 if [ $# -eq 0 ];then
     echo "No input arguments supplied.  Run ./unit_tests.sh -h to see required input"
     exit 1
-elif [ "${SIM}" == "" ] && ([ "${USE_VEXT}" == "ON" ] || [ "${USE_PEXT}" == "ON" ]);then
+elif [ "${SIM}" == "" ] && { [ "${USE_VEXT}" == "ON" ] || [ "${USE_PEXT}" == "ON" ]; };then
     if [ "${USE_PORTABLE}" != "ON" ];
     then
         echo "Native execution does not support VEXT or PEXT.  Please select a simulator with the -s flag"
         exit 1
     fi
-elif [ "${VLEN}" == "" ] && ([ "${USE_VEXT}" == "ON" ] || [ "${USE_IMV}" == "ON" ]); then
+elif [ "${VLEN}" == "" ] && { [ "${USE_VEXT}" == "ON" ] || [ "${USE_IMV}" == "ON" ]; }; then
     echo "Please specify a vector length"
     exit 1
-elif [ "${ELEN}" == "" ] && ([ "${USE_VEXT}" == "ON" ] || [ "${USE_IMV}" == "ON" ]); then
+elif [ "${ELEN}" == "" ] && { [ "${USE_VEXT}" == "ON" ] || [ "${USE_IMV}" == "ON" ]; }; then
     echo "Please specify a vector element width"
     exit 1
 fi
@@ -123,8 +123,8 @@ elif [ "${SIM}" == "Spike" ];then
       #   ./download.sh
       # )
       # Install Spike dependencies
-      sudo apt-get install libboost-all-dev
-      sudo apt-get install device-tree-compiler
+      # sudo apt-get install libboost-all-dev
+      # sudo apt-get install device-tree-compiler
     fi
 fi
 ################################################################################
@@ -135,7 +135,7 @@ echo -t ${TOOLCHAIN} ${BUILD_FLAGS} ${BUILD_TYPE} ${SIM_FLAGS}
 
 
 if ./build.sh -t ${TOOLCHAIN} ${BUILD_FLAGS} ${SIM_FLAGS} ${VLEN} ${ELEN} -b ${BUILD_TYPE};then
-    make -j $(nproc) -C ${BUILD_DIR}
+    make -j "$(nproc)" -C ${BUILD_DIR}
     (
       cd ${BUILD_DIR}
       ctest --verbose
