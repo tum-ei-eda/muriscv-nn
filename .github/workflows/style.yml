@@ -57,7 +57,7 @@ jobs:
           #                         Where to write the formatted file. Default is stdout.
           #   -c CONFIG_FILES [CONFIG_FILES ...], --config-files CONFIG_FILES [CONFIG_FILES ...]
           #                         path to configuration file(s)
-          args: --config-files .cmake-format.yaml --check
+          args: --config-files .cmake-format.yaml --
       - name: Check for changes
         run: |
           git status
