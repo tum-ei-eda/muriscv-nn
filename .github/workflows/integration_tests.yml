@@ -148,7 +148,9 @@ jobs:
           - 0.16.0
           - 0.17.0
           - 0.18.0
-          - 0.19.0
+          # - 0.19.0  # no microtvm support
+          # TODO: add custom tvm 0.19.0 version?
+          # TODO: add fork with custom optimizations
         config:
           - {vext_flag: '', portable_flag: '', pext_flag: '', toolchain: x86, arch: '',
              vlen: 0, elen: 0, sim: Native}
