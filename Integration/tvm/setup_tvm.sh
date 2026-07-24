@@ -52,7 +52,7 @@ else  # same as stable
 fi
 pip install -r requirements.txt
 pip install typing-extensions
-pip list | grep "apache-tvm"
+# pip list | grep "apache-tvm"
 
 echo "Generate TVM kernel from models."
 for test in "${TESTS[@]}"; do
