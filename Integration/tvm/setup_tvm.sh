@@ -54,6 +54,37 @@ pip install -r requirements.txt
 pip install typing-extensions
 # pip list | grep "apache-tvm"
 
+# Extract the numeric version in case the output contains additional text.
+INSTALLED_TVMC_VERSION="$(
+  python -m tvm.driver.tvmc --version |
+    grep -oE '[0-9]+\.[0-9]+\.[0-9]+' |
+    head -n 1
+)"
+
+if [[ -z "$INSTALLED_TVMC_VERSION" ]]; then
+  echo "Unable to determine the installed TVMC version."
+  exit 1
+fi
+
+echo "Installed TVMC version: $INSTALLED_TVMC_VERSION"
+
+version_at_least() {
+  local installed="$1"
+  local required="$2"
+
+  [[ "$(printf '%s\n' "$required" "$installed" |
+        sort -V |
+        head -n 1)" == "$required" ]]
+}
+
+if version_at_least "$INSTALLED_TVMC_VERSION" "0.18.0"; then
+  echo "TVM vesion >= 0.18.0"
+  TVMC_ALIGNMENT_ARGS=( --executor-aot-constant-byte-alignment 4 --executor-aot-workspace-byte-alignment 4 )
+else
+  echo "TVM vesion < 0.18.0"
+  TVMC_ALIGNMENT_ARGS=( --target-c-constants-byte-alignment 4 --target-c-workspace-byte-alignment 4 )
+fi
+
 echo "Generate TVM kernel from models."
 for test in "${TESTS[@]}"; do
   for build in "${BUILDS[@]}"; do
@@ -76,8 +107,7 @@ for test in "${TESTS[@]}"; do
       --opt-level 3 \
       --output-format mlf \
       --runtime-crt-system-lib 0 \
-      --target-c-constants-byte-alignment 4 \
-      --target-c-workspace-byte-alignment 4 \
+      "${TVMC_ALIGNMENT_ARGS[@]}" \
       --executor aot \
       --executor-aot-unpacked-api 1 \
       --executor-aot-interface-api c \
