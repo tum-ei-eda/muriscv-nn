@@ -3,7 +3,7 @@ name: Integration Tests
 on:
   schedule:
     # 6am UTC is 7am Central European Time (CET) or 8am Central European Summer Time (CEST).
-    - cron: 0 6 * * *
+    - cron: 0 6 * * 0
   push:
     branches:
       - master
