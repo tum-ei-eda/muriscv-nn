@@ -138,7 +138,6 @@ if [ "${SKIP_BUILD}" == OFF ]; then
   else
     cmake -DRISCV_GCC_PREFIX="$(pwd)/../Toolchain/${RV_ARCH}/" -DRISCV_LLVM_PREFIX="$(pwd)/../Toolchain/llvm/bin/" -DENABLE_INTG_TESTS=ON -DTOOLCHAIN=${TOOLCHAIN} -DUSE_PORTABLE=${USE_PORTABLE} -DUSE_VEXT=${USE_VEXT} -DUSE_PEXT=${USE_PEXT} -DDISABLE_TVM_INTG_TESTS=ON -DENABLE_UNIT_TESTS=OFF -DVLEN=${VLEN} -DELEN=${ELEN} ..
   fi
-  read -r -n 1
   make all -j "$(nproc)"
 
 else
