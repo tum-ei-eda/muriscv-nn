@@ -86,7 +86,7 @@ jobs:
           echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
           echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
       - name: Download Cached GCC + LLVM Binaries
-        if: ${{ matrix.config.sim != "Native" }}
+        if: ${{ matrix.config.sim != 'Native' }}
         id: cache-gcc
         uses: actions/cache/restore@v6
         env:
@@ -102,12 +102,12 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
       - name: Install Spike Dependencies
-        if: ${{ matrix.config.sim == "Spike" }}
+        if: ${{ matrix.config.sim == 'Spike' }}
         run: |
           sudo apt-get install libboost-all-dev
           sudo apt-get install device-tree-compiler
       - name: Download Spike Cache
-        if: ${{ matrix.config.sim == "Spike" }}
+        if: ${{ matrix.config.sim == 'Spike' }}
         id: cache-Spike
         uses: actions/cache/restore@v6
         env:
@@ -225,12 +225,12 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
       - name: Install Spike Dependencies
-        if: ${{ matrix.config.sim == "Spike"
+        if: ${{ matrix.config.sim == 'Spike' }}
         run: |
           sudo apt-get install libboost-all-dev
           sudo apt-get install device-tree-compiler
       - name: Download Spike Cache
-        if: ${{ matrix.config.sim == "Spike" }}
+        if: ${{ matrix.config.sim == 'Spike' }}
         id: cache-Spike
         uses: actions/cache/restore@v6
         env:
@@ -364,12 +364,12 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
       - name: Install Spike Dependencies
-        if: ${{ matrix.config.sim == "Spike" }}
+        if: ${{ matrix.config.sim == 'Spike' }}
         run: |
           sudo apt-get install libboost-all-dev
           sudo apt-get install device-tree-compiler
       - name: Download Spike Cache
-        if: ${{ matrix.config.sim == "Spike" }}
+        if: ${{ matrix.config.sim == 'Spike' }}
         id: cache-Spike
         uses: actions/cache/restore@v6
         env:

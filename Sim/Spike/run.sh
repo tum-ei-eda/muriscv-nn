@@ -37,7 +37,7 @@ elif [[ $2 == "rv32im" ]]; then
   $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm $SCRIPT_DIR/bin/pk_ilp32 $1
 elif [[ $2 == "rv32imv" ]]; then
   $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm_zve${4}d_zvl${3}b $SCRIPT_DIR/bin/pk_ilp32 $1
-elif [[ "rv32imzve32x" ]]; then
+elif [[ $2 == "rv32imzve32x" ]]; then
   $SCRIPT_DIR/bin/spike --isa=$2_zicntr_zihpm_zvl${3}b $SCRIPT_DIR/bin/pk_ilp32 $1
 else
   echo "Unsupported arch string $2"
