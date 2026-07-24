@@ -15,7 +15,7 @@ jobs:
       #   run: |
       #    git status
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Run CMake to generate compilation database
         run: |
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DTOOLCHAIN=x86 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Format CMake files
         id: cmake-format
         uses: PuneetMatharu/cmake-format-lint-action@v1.0.1
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       # - uses: psf/black@stable
       #   with:
       #     options: "--check --verbose --preview -l 120"
@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Run ShellCheck
         uses: azohra/shell-linter@latest
       - name: Check for changes
@@ -99,7 +99,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Install Python dependencies
         run: pip install licenseheaders
       - name: Download template file

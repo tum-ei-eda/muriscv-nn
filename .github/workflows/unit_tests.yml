@@ -41,7 +41,7 @@ jobs:
       #     remove-android: 'true'
       #     remove-haskell: 'true'
       #     remove-codeql: 'true'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Run Scalar Tests on x86
         working-directory: ./Scripts
         run: |
@@ -99,7 +99,7 @@ jobs:
       #     remove-android: 'true'
       #     remove-haskell: 'true'
       #     remove-codeql: 'true'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Get dates
         id: dates
         run: |
@@ -108,7 +108,7 @@ jobs:
           echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
       - name: Download GCC + LLVM Cache
         id: cache-GCC
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-gcc-binaries
         with:
@@ -123,7 +123,7 @@ jobs:
             gcc-binaries-
       - name: Download Spike Cache
         id: cache-Spike
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-spike-binaries
         with:
@@ -174,7 +174,7 @@ jobs:
 #
 #    runs-on: ubuntu-22.04
 #    steps:
-#    - uses: actions/checkout@v4
+#    - uses: actions/checkout@v7
 #
 #    - name: Get date of last cache build
 #      id: date
@@ -182,7 +182,7 @@ jobs:
 #
 #    - name: Download GCC Cache
 #      id: cache-GCC
-#      uses: actions/cache/restore@v4
+#      uses: actions/cache/restore@v6
 #      env:
 #          cache-name: cache-gcc-binaries
 #      with:

@@ -72,7 +72,7 @@ jobs:
       #     remove-android: 'true'
       #     remove-haskell: 'true'
       #     remove-codeql: 'true'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install TFLM dependencies
         run: |
           sudo apt-get install python3-setuptools
@@ -86,9 +86,9 @@ jobs:
           echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
           echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
       - name: Download Cached GCC + LLVM Binaries
-        if: ${{ matrix.config.sim }} != "Native"
+        if: ${{ matrix.config.sim != "Native" }}
         id: cache-gcc
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-gcc-binaries
         with:
@@ -102,14 +102,14 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
       - name: Install Spike Dependencies
-        if: ${{ matrix.config.sim }} == "Spike"
+        if: ${{ matrix.config.sim == "Spike" }}
         run: |
           sudo apt-get install libboost-all-dev
           sudo apt-get install device-tree-compiler
       - name: Download Spike Cache
-        if: ${{ matrix.config.sim }} == "Spike"
+        if: ${{ matrix.config.sim == "Spike" }}
         id: cache-Spike
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-spike-binaries
         with:
@@ -199,7 +199,7 @@ jobs:
       #     remove-android: 'true'
       #     remove-haskell: 'true'
       #     remove-codeql: 'true'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Get dates
         id: dates
         run: |
@@ -207,9 +207,9 @@ jobs:
           echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
           echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
       - name: Download Cached GCC + LLVM Binaries
-        if: ${{ matrix.config.sim }} != "Native"
+        if: ${{ matrix.config.sim != "Native" }}
         id: cache-gcc
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-gcc-binaries
         with:
@@ -223,14 +223,14 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
       - name: Install Spike Dependencies
-        if: ${{ matrix.config.sim }} == "Spike"
+        if: ${{ matrix.config.sim == "Spike"
         run: |
           sudo apt-get install libboost-all-dev
           sudo apt-get install device-tree-compiler
       - name: Download Spike Cache
-        if: ${{ matrix.config.sim }} == "Spike"
+        if: ${{ matrix.config.sim == "Spike" }}
         id: cache-Spike
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-spike-binaries
         with:
@@ -338,7 +338,7 @@ jobs:
       #     remove-android: 'true'
       #     remove-haskell: 'true'
       #     remove-codeql: 'true'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Get dates
         id: dates
         run: |
@@ -346,9 +346,9 @@ jobs:
           echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
           echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
       - name: Download Cached GCC + LLVM Binaries
-        if: ${{ matrix.config.sim }} != "Native"
+        if: ${{ matrix.config.sim != "Native" }}
         id: cache-gcc
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-gcc-binaries
         with:
@@ -362,14 +362,14 @@ jobs:
             gcc-binaries-${{ steps.dates.outputs.date }}
             gcc-binaries-
       - name: Install Spike Dependencies
-        if: ${{ matrix.config.sim }} == "Spike"
+        if: ${{ matrix.config.sim == "Spike" }}
         run: |
           sudo apt-get install libboost-all-dev
           sudo apt-get install device-tree-compiler
       - name: Download Spike Cache
-        if: ${{ matrix.config.sim }} == "Spike"
+        if: ${{ matrix.config.sim == "Spike" }}
         id: cache-Spike
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-spike-binaries
         with:

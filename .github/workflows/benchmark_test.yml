@@ -42,13 +42,12 @@ jobs:
       #     remove-android: 'true'
       #     remove-haskell: 'true'
       #     remove-codeql: 'true'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install TFLM dependencies
         run: |
           sudo apt-get install python3-setuptools
           pip3 install wheel
           pip3 install Pillow
-          pip3 install Wave
       - name: Get dates
         id: dates
         run: |
@@ -57,7 +56,7 @@ jobs:
           echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
       - name: Download Cached GCC Binaries
         id: cache-gcc
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-gcc-binaries
         with:
@@ -145,10 +144,10 @@ jobs:
       #     remove-android: 'true'
       #     remove-haskell: 'true'
       #     remove-codeql: 'true'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Download Cached GCC Binaries
         id: cache-gcc
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         env:
           cache-name: cache-gcc-binaries
         with:
@@ -182,7 +181,7 @@ jobs:
           python3 create_wiki.py */*.csv --split
           cat Benchmarks-*.md >> $GITHUB_STEP_SUMMARY
       - name: Clone Wiki Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{github.repository}}.wiki
           path: Wiki-repo

@@ -9,7 +9,7 @@ jobs:
   AutoSync:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Check if Sync Branch already exists
@@ -25,7 +25,7 @@ jobs:
           git remote set-url origin https://x-access-token:${{ secrets.github_key }}@github.com/$GITHUB_REPOSITORY
           git fetch --all
           git checkout sync
-            
+
       - name: Download dependencies
         run: |
           pip install GitPython
@@ -50,7 +50,7 @@ jobs:
           git add Source/*
           git add Include/*
           NUM_STAGED=$(git diff --cached --numstat | wc -l 2>&1)
-          echo "NUM_CHANGED=$NUM_STAGED" >> $GITHUB_OUTPUT 
+          echo "NUM_CHANGED=$NUM_STAGED" >> $GITHUB_OUTPUT
       - name: Create Commit
         working-directory: ./
         if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS
