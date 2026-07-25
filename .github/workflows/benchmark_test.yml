@@ -112,7 +112,7 @@ jobs:
           python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t ${{matrix.target}} --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 --post -p --parallel 4 -f muriscvnn -f vext --toolchain ${{matrix.toolchain}} -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "14" ;; tvm*-llvm) echo -n "14" ;; tflm*-gcc) echo -n "7" ;; tflm*-llvm) echo -n "7" ;; *) echo -n "?" ;; esac) ${{matrix.benchmark}} --portable
           # TODO: add --fail
       - name: Archive Benchmark Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{matrix.toolchain}}-${{matrix.optimize}}-${{matrix.unroll}}-${{matrix.target}}-${{
             steps.dates.outputs.today }}
