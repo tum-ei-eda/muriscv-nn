@@ -42,17 +42,18 @@ TVM_DLL int TVMFuncRegisterGlobal(const char *name, TVMFunctionHandle f, int ove
 
 int run_test()
 {
+    int8_t input_data_buf[ic_input_data_len[0]];
     for (size_t i = 0; i < ic_data_sample_cnt; i++)
     {
         int8_t *input_data = (int8_t *)ic_input_data[i];
         for (size_t j = 0; j < ic_input_data_len[i]; j++)
         {
-            input_data[j] += 128;
+            input_data_buf[j] = input_data[j] + 128;
         }
-        struct tvmgen_default_inputs tvmgen_default_inputs = {input_data};
+        struct tvmgen_default_inputs tvmgen_default_inputs = {&input_data_buf[0]};
         int8_t output_data[256] = {0}; // TODO(fabianpedd): Make this precise by using defines for the array sizes
         struct tvmgen_default_outputs tvmgen_default_outputs = {output_data};
-        
+
 #if defined(SIM_VICUNA)
         //These prints and CSR Reads are for benchmarking on Vicuna
         printf("Beginning Run\n");
@@ -62,7 +63,7 @@ int run_test()
 
         uint32_t instBefore;
         uint32_t instAfter;
-        
+
         __asm__ volatile("csrr %0, cycle;" : "=r" (timerBefore)  );
         __asm__ volatile("csrr %0, minstret;" : "=r" (instBefore)  );
 #endif
@@ -81,8 +82,8 @@ int run_test()
         printf("RetInst After  : %d\n", instAfter);
         printf("Total RetInst  : %d\n\n", abs(instAfter - instBefore));
 #endif
-        
-        
+
+
         if (ret_val)
         {
             TVMPlatformAbort(kTvmErrorPlatformCheckFailure);
