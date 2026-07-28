@@ -29,7 +29,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # List of tests to run
-TESTS=(hello_world hello_world_test micro_speech micro_speech_test network_tester_test person_detection_test kernel_conv_test kernel_transpose_conv_test unidirectional_sequence_lstm_test kernel_add_test kernel_depthwise_conv_test kernel_fully_connected_test kernel_mul_test kernel_pooling_test kernel_softmax_test kernel_svdf_test)
+TESTS=(hello_world hello_world_test micro_speech micro_speech_test network_tester_test person_detection_test dtln_test kernel_conv_test kernel_transpose_conv_test kernel_transpose_test unidirectional_sequence_lstm_test kernel_add_test kernel_depthwise_conv_test kernel_fully_connected_test kernel_mul_test kernel_pooling_test kernel_softmax_test kernel_svdf_test kernel_pad_test kernel_maximum_minimum_test integration_tests_seanet_quantize_test integration_tests_seanet_sub_test integration_tests_seanet_transpose_conv_test integration_tests_seanet_pad_test integration_tests_seanet_add_test integration_tests_seanet_conv_test integration_tests_seanet_leaky_relu_test integration_tests_seanet_strided_slice_test)
+TESTS=(kernel_batch_matmul_test)  # FAILING
 # TODO: kernel_lstm_eval_test?
 
 # List of benchmarks to run
