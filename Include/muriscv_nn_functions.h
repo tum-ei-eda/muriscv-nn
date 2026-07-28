@@ -40,6 +40,10 @@
 #include "muriscv_nn_math_types.h"
 #include "muriscv_nn_types.h"
 
+#if MURISCV_NN_FLOAT_API_ENABLED
+    #include "muriscv_nn_functions_flt.h"
+#endif
+
 #define USE_INTRINSIC
 
 //MURISCV_NN NEW CODE

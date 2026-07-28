@@ -39,6 +39,9 @@ option(USE_PORTABLE "Use the Portable Kernels" OFF)
 option(USE_VEXT "Use the RISC-V V Vector Extension" OFF)
 option(USE_PEXT "Use the RISC-V P Packed Extension" OFF)
 
+option(MURISCV_NN_ENABLE_F32 "Enable CMSIS-NN float32 extensions." OFF)
+option(MURISCV_NN_ENABLE_F16 "Enable CMSIS-NN float16 extensions." OFF)
+
 # Set the desired architecture and application binary interface. For more info, see here
 # https://www.sifive.com/blog/all-aboard-part-1-compiler-args Useful combinations are: - rv32gc / ilp32d -> scalar only
 # - rv32gcv / ilp32d -> vector support - rv32gcp / ilp32d -> packed support - rv32imzve32x / ilp32 -> integer only and
@@ -163,6 +166,21 @@ elseif(USE_PEXT)
     add_definitions(-DUSE_PEXT)
   endif()
 endif()
+
+if(MURISCV_NN_ENABLE_F32)
+    set(MURISCV_NN_ENABLE_F32_VALUE 1)
+else()
+    set(MURISCV_NN_ENABLE_F32_VALUE 0)
+endif()
+
+if(MURISCV_NN_ENABLE_F16)
+    set(MURISCV_NN_ENABLE_F16_VALUE 1)
+else()
+    set(MURISCV_NN_ENABLE_F16_VALUE 0)
+endif()
+
+add_definitions(-DMURISCV_NN_ENABLE_F32=${MURISCV_NN_ENABLE_F32_VALUE}
+                -DMURISCV_NN_ENABLE_F16=${MURISCV_NN_ENABLE_F16_VALUE})
 
 # Let preprocessor know which simulator we will be running on
 string(TOUPPER "${SIMULATOR}" SIMULATOR_UP)

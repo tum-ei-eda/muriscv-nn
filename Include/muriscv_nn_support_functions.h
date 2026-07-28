@@ -222,6 +222,10 @@ extern "C" {
     #define OPTIONAL_RESTRICT_KEYWORD
 #endif
 
+#if MURISCV_NN_FLOAT_API_ENABLED
+    #include "muriscv_nn_support_functions_flt.h"
+#endif
+
 //MURISCV_NN CUSTOM CODE
 /**
  * @brief definition to pack four 8 bit values.

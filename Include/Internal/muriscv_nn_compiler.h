@@ -36,6 +36,8 @@
 
 #define __RESTRICT __restrict
 
+#define MURISCV_NN_FLOAT_API_ENABLED (MURISCV_NN_ENABLE_F32 || MURISCV_NN_ENABLE_F16)
+
 /**
  *
  * @brief Arm C-Language Extension(ACLE) Includes
