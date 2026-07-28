@@ -610,6 +610,9 @@ if not os.path.isdir(cmsis_dir):
 subdir_cmsis_gen = os.walk(cmsis_dir + "/Source/")
 # loop over every directory in CMSIS Source and Compare to MURISCV-NN
 for subdir_cmsis in subdir_cmsis_gen:
+    if "Bindings" in subdir_cmsis[0]:
+        print(f"Skipping directory: {subdir_cmsis[0]}")
+        continue
 
     # get matching subdirectory in MURISCV-NN
     cur_dir_MURISCV = subdir_cmsis[0].replace(cmsis_dir, muriscv_dir)
@@ -624,6 +627,9 @@ for subdir_cmsis in subdir_cmsis_gen:
     # check all files in the current subdirectory
     new_files_this_subdirectory = []
     for file_cmsis in subdir_cmsis[2]:
+        if "f16" in file_cmsis or "f32" in file_cmsis or "flt" in file_cmsis:
+            print(f"Skipping file: {file_cmsis}")
+            continue
         present = False
         file_cmsis_updated = file_cmsis
         # adjust file name to match muriscv-nn conventions.
