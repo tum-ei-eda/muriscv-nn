@@ -23,6 +23,9 @@
 #include <unity.h>
 
 #include "../../TestData/avgpooling_int16/test_data.h"
+#include "../../TestData/avgpooling_int16_1/test_data.h"
+#include "../../TestData/avgpooling_int16_2/test_data.h"
+#include "../../TestData/avgpooling_int16_3/test_data.h"
 #include "../../Utils/validate.h"
 
 void setUp(void) { /* set stuff up here */ }
@@ -32,7 +35,8 @@ void tearDown(void) { /* clean stuff up here */ }
 void avgpooling_int16_muriscv_nn_avgpool_s16(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q15_t output[AVGPOOLING_INT16_DST_SIZE] = {0};
+    int16_t output[AVGPOOLING_INT16_OUTPUT_C * AVGPOOLING_INT16_OUTPUT_W * AVGPOOLING_INT16_OUTPUT_H *
+                   AVGPOOLING_INT16_BATCH_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_pool_params pool_params;
@@ -40,42 +44,275 @@ void avgpooling_int16_muriscv_nn_avgpool_s16(void)
     muriscv_nn_dims filter_dims;
     muriscv_nn_dims output_dims;
 
-    const q15_t *input_data = avgpooling_int16_input;
+    const int16_t *input_data = avgpooling_int16_input_tensor;
 
-    input_dims.n = AVGPOOLING_INT16_INPUT_BATCHES;
+    input_dims.n = AVGPOOLING_INT16_BATCH_SIZE;
     input_dims.w = AVGPOOLING_INT16_INPUT_W;
     input_dims.h = AVGPOOLING_INT16_INPUT_H;
-    input_dims.c = AVGPOOLING_INT16_IN_CH;
-    filter_dims.w = AVGPOOLING_INT16_FILTER_X;
-    filter_dims.h = AVGPOOLING_INT16_FILTER_Y;
+    input_dims.c = AVGPOOLING_INT16_INPUT_C;
+    filter_dims.w = AVGPOOLING_INT16_FILTER_W;
+    filter_dims.h = AVGPOOLING_INT16_FILTER_H;
     output_dims.w = AVGPOOLING_INT16_OUTPUT_W;
     output_dims.h = AVGPOOLING_INT16_OUTPUT_H;
-    output_dims.c = AVGPOOLING_INT16_OUT_CH;
+    output_dims.c = AVGPOOLING_INT16_INPUT_C;
 
-    pool_params.padding.w = AVGPOOLING_INT16_PAD_X;
-    pool_params.padding.h = AVGPOOLING_INT16_PAD_Y;
-    pool_params.stride.w = AVGPOOLING_INT16_STRIDE_X;
-    pool_params.stride.h = AVGPOOLING_INT16_STRIDE_Y;
+    pool_params.padding.w = AVGPOOLING_INT16_PADDING_W;
+    pool_params.padding.h = AVGPOOLING_INT16_PADDING_H;
+    pool_params.stride.w = AVGPOOLING_INT16_STRIDE_W;
+    pool_params.stride.h = AVGPOOLING_INT16_STRIDE_H;
 
-    pool_params.activation.min = AVGPOOLING_INT16_OUT_ACTIVATION_MIN;
-    pool_params.activation.max = AVGPOOLING_INT16_OUT_ACTIVATION_MAX;
+    pool_params.activation.min = AVGPOOLING_INT16_ACTIVATION_MIN;
+    pool_params.activation.max = AVGPOOLING_INT16_ACTIVATION_MAX;
 
-    ctx.size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_OUTPUT_W, AVGPOOLING_INT16_IN_CH);
+    ctx.size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_OUTPUT_W, AVGPOOLING_INT16_INPUT_C);
     ctx.buf = malloc(ctx.size);
 
     muriscv_nn_status result =
         muriscv_nn_avgpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        // The caller is responsible to clear the scratch buffers for security reasons if applicable.
+        memset(ctx.buf, 0, ctx.size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
-    TEST_ASSERT_TRUE(validate_s16(output, avgpooling_int16_output_ref, AVGPOOLING_INT16_DST_SIZE));
+    TEST_ASSERT_TRUE(validate_s16(output,
+                                  avgpooling_int16_output,
+                                  AVGPOOLING_INT16_OUTPUT_C * AVGPOOLING_INT16_OUTPUT_W * AVGPOOLING_INT16_OUTPUT_H *
+                                      AVGPOOLING_INT16_BATCH_SIZE));
 }
+
+void avgpooling_int16_1_muriscv_nn_avgpool_s16(void)
+{
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    int16_t output[AVGPOOLING_INT16_1_OUTPUT_C * AVGPOOLING_INT16_1_OUTPUT_W * AVGPOOLING_INT16_1_OUTPUT_H *
+                   AVGPOOLING_INT16_1_BATCH_SIZE] = {0};
+
+    muriscv_nn_context ctx;
+    muriscv_nn_pool_params pool_params;
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims output_dims;
+
+    const int16_t *input_data = avgpooling_int16_1_input_tensor;
+
+    input_dims.n = AVGPOOLING_INT16_1_BATCH_SIZE;
+    input_dims.w = AVGPOOLING_INT16_1_INPUT_W;
+    input_dims.h = AVGPOOLING_INT16_1_INPUT_H;
+    input_dims.c = AVGPOOLING_INT16_1_INPUT_C;
+    filter_dims.w = AVGPOOLING_INT16_1_FILTER_W;
+    filter_dims.h = AVGPOOLING_INT16_1_FILTER_H;
+    output_dims.w = AVGPOOLING_INT16_1_OUTPUT_W;
+    output_dims.h = AVGPOOLING_INT16_1_OUTPUT_H;
+    output_dims.c = AVGPOOLING_INT16_1_INPUT_C;
+
+    pool_params.padding.w = AVGPOOLING_INT16_1_PADDING_W;
+    pool_params.padding.h = AVGPOOLING_INT16_1_PADDING_H;
+    pool_params.stride.w = AVGPOOLING_INT16_1_STRIDE_W;
+    pool_params.stride.h = AVGPOOLING_INT16_1_STRIDE_H;
+
+    pool_params.activation.min = AVGPOOLING_INT16_1_ACTIVATION_MIN;
+    pool_params.activation.max = AVGPOOLING_INT16_1_ACTIVATION_MAX;
+
+    ctx.size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_1_OUTPUT_W, AVGPOOLING_INT16_1_INPUT_C);
+    ctx.buf = malloc(ctx.size);
+
+    muriscv_nn_status result =
+        muriscv_nn_avgpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, ctx.size);
+        free(ctx.buf);
+    }
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output,
+                                  avgpooling_int16_1_output,
+                                  AVGPOOLING_INT16_1_OUTPUT_C * AVGPOOLING_INT16_1_OUTPUT_W *
+                                      AVGPOOLING_INT16_1_OUTPUT_H * AVGPOOLING_INT16_1_BATCH_SIZE));
+}
+
+void avgpooling_int16_2_muriscv_nn_avgpool_s16(void)
+{
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    int16_t output[AVGPOOLING_INT16_2_OUTPUT_C * AVGPOOLING_INT16_2_OUTPUT_W * AVGPOOLING_INT16_2_OUTPUT_H *
+                   AVGPOOLING_INT16_2_BATCH_SIZE] = {0};
+
+    muriscv_nn_context ctx;
+    muriscv_nn_pool_params pool_params;
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims output_dims;
+
+    const int16_t *input_data = avgpooling_int16_2_input_tensor;
+
+    input_dims.n = AVGPOOLING_INT16_2_BATCH_SIZE;
+    input_dims.w = AVGPOOLING_INT16_2_INPUT_W;
+    input_dims.h = AVGPOOLING_INT16_2_INPUT_H;
+    input_dims.c = AVGPOOLING_INT16_2_INPUT_C;
+    filter_dims.w = AVGPOOLING_INT16_2_FILTER_W;
+    filter_dims.h = AVGPOOLING_INT16_2_FILTER_H;
+    output_dims.w = AVGPOOLING_INT16_2_OUTPUT_W;
+    output_dims.h = AVGPOOLING_INT16_2_OUTPUT_H;
+    output_dims.c = AVGPOOLING_INT16_2_INPUT_C;
+
+    pool_params.padding.w = AVGPOOLING_INT16_2_PADDING_W;
+    pool_params.padding.h = AVGPOOLING_INT16_2_PADDING_H;
+    pool_params.stride.w = AVGPOOLING_INT16_2_STRIDE_W;
+    pool_params.stride.h = AVGPOOLING_INT16_2_STRIDE_H;
+
+    pool_params.activation.min = AVGPOOLING_INT16_2_ACTIVATION_MIN;
+    pool_params.activation.max = AVGPOOLING_INT16_2_ACTIVATION_MAX;
+
+    ctx.size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_2_OUTPUT_W, AVGPOOLING_INT16_2_INPUT_C);
+    ctx.buf = malloc(ctx.size);
+
+    muriscv_nn_status result =
+        muriscv_nn_avgpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, ctx.size);
+        free(ctx.buf);
+    }
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output,
+                                  avgpooling_int16_2_output,
+                                  AVGPOOLING_INT16_2_OUTPUT_C * AVGPOOLING_INT16_2_OUTPUT_W *
+                                      AVGPOOLING_INT16_2_OUTPUT_H * AVGPOOLING_INT16_2_BATCH_SIZE));
+}
+
+void avgpooling_int16_3_muriscv_nn_avgpool_s16(void)
+{
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    int16_t output[AVGPOOLING_INT16_3_OUTPUT_C * AVGPOOLING_INT16_3_OUTPUT_W * AVGPOOLING_INT16_3_OUTPUT_H *
+                   AVGPOOLING_INT16_3_BATCH_SIZE] = {0};
+
+    muriscv_nn_context ctx;
+    muriscv_nn_pool_params pool_params;
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims output_dims;
+
+    const int16_t *input_data = avgpooling_int16_3_input_tensor;
+
+    input_dims.n = AVGPOOLING_INT16_3_BATCH_SIZE;
+    input_dims.w = AVGPOOLING_INT16_3_INPUT_W;
+    input_dims.h = AVGPOOLING_INT16_3_INPUT_H;
+    input_dims.c = AVGPOOLING_INT16_3_INPUT_C;
+    filter_dims.w = AVGPOOLING_INT16_3_FILTER_W;
+    filter_dims.h = AVGPOOLING_INT16_3_FILTER_H;
+    output_dims.w = AVGPOOLING_INT16_3_OUTPUT_W;
+    output_dims.h = AVGPOOLING_INT16_3_OUTPUT_H;
+    output_dims.c = AVGPOOLING_INT16_3_INPUT_C;
+
+    pool_params.padding.w = AVGPOOLING_INT16_3_PADDING_W;
+    pool_params.padding.h = AVGPOOLING_INT16_3_PADDING_H;
+    pool_params.stride.w = AVGPOOLING_INT16_3_STRIDE_W;
+    pool_params.stride.h = AVGPOOLING_INT16_3_STRIDE_H;
+
+    pool_params.activation.min = AVGPOOLING_INT16_3_ACTIVATION_MIN;
+    pool_params.activation.max = AVGPOOLING_INT16_3_ACTIVATION_MAX;
+
+    ctx.size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
+    ctx.buf = malloc(ctx.size);
+
+    muriscv_nn_status result =
+        muriscv_nn_avgpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, ctx.size);
+        free(ctx.buf);
+    }
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate_s16(output,
+                                  avgpooling_int16_3_output,
+                                  AVGPOOLING_INT16_3_OUTPUT_C * AVGPOOLING_INT16_3_OUTPUT_W *
+                                      AVGPOOLING_INT16_3_OUTPUT_H * AVGPOOLING_INT16_3_BATCH_SIZE));
+}
+
+void buffer_size_mve_muriscv_nn_avgpool_s16(void)
+{
+#if defined(USE_VEXT)
+    const int32_t buf_size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
+    const int32_t mve_buf_size =
+        muriscv_nn_avgpool_s16_get_buffer_size_mve(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
+
+    TEST_ASSERT_EQUAL(buf_size, mve_buf_size);
+#endif
+}
+
+void buffer_size_dsp_muriscv_nn_avgpool_s16(void)
+{
+#if defined(USE_PEXT) && !defined(USE_VEXT)
+    const int32_t buf_size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
+    const int32_t dsp_buf_size =
+        muriscv_nn_avgpool_s16_get_buffer_size_dsp(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
+
+    TEST_ASSERT_EQUAL(buf_size, dsp_buf_size);
+#endif
+}
+
+void avgpooling_int16_param_fail_muriscv_nn_avgpool_s16(void)
+{
+    const muriscv_nn_status expected = MURISCV_NN_ARG_ERROR;
+    int16_t output[AVGPOOLING_INT16_3_OUTPUT_C * AVGPOOLING_INT16_3_OUTPUT_W * AVGPOOLING_INT16_3_OUTPUT_H *
+                   AVGPOOLING_INT16_3_BATCH_SIZE] = {0};
+
+    muriscv_nn_context ctx;
+    muriscv_nn_pool_params pool_params;
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims output_dims;
+
+    const int16_t *input_data = avgpooling_int16_3_input_tensor;
+
+    input_dims.n = 0;
+    input_dims.w = AVGPOOLING_INT16_3_INPUT_W;
+    input_dims.h = AVGPOOLING_INT16_3_INPUT_H;
+    input_dims.c = AVGPOOLING_INT16_3_INPUT_C;
+    filter_dims.w = AVGPOOLING_INT16_3_FILTER_W;
+    filter_dims.h = AVGPOOLING_INT16_3_FILTER_H;
+    output_dims.w = AVGPOOLING_INT16_3_OUTPUT_W;
+    output_dims.h = AVGPOOLING_INT16_3_OUTPUT_H;
+    output_dims.c = AVGPOOLING_INT16_3_INPUT_C;
+
+    pool_params.padding.w = AVGPOOLING_INT16_3_PADDING_W;
+    pool_params.padding.h = AVGPOOLING_INT16_3_PADDING_H;
+    pool_params.stride.w = AVGPOOLING_INT16_3_STRIDE_W;
+    pool_params.stride.h = AVGPOOLING_INT16_3_STRIDE_H;
+
+    pool_params.activation.min = AVGPOOLING_INT16_3_ACTIVATION_MIN;
+    pool_params.activation.max = AVGPOOLING_INT16_3_ACTIVATION_MAX;
+
+    ctx.size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
+    ctx.buf = malloc(ctx.size);
+
+    muriscv_nn_status result =
+        muriscv_nn_avgpool_s16(&ctx, &pool_params, &input_dims, input_data, &filter_dims, &output_dims, output);
+
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, ctx.size);
+        free(ctx.buf);
+    }
+    TEST_ASSERT_EQUAL(expected, result);
+}
+
 
 int main(void)
 {
     UNITY_BEGIN();
 
     RUN_TEST(avgpooling_int16_muriscv_nn_avgpool_s16);
+    RUN_TEST(avgpooling_int16_1_muriscv_nn_avgpool_s16);
+    RUN_TEST(avgpooling_int16_2_muriscv_nn_avgpool_s16);
+    RUN_TEST(avgpooling_int16_3_muriscv_nn_avgpool_s16);
+    RUN_TEST(buffer_size_mve_muriscv_nn_avgpool_s16);
+    RUN_TEST(buffer_size_dsp_muriscv_nn_avgpool_s16);
+    RUN_TEST(avgpooling_int16_param_fail_muriscv_nn_avgpool_s16);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */

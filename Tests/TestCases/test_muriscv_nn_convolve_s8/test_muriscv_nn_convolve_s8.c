@@ -23,9 +23,6 @@
 #include <unity.h>
 
 #include "../../TestData/basic/test_data.h"
-#include "../../TestData/conv_1_x_n_1/test_data.h"
-#include "../../TestData/conv_1_x_n_2/test_data.h"
-#include "../../TestData/conv_1_x_n_3/test_data.h"
 #include "../../TestData/conv_2/test_data.h"
 #include "../../TestData/conv_2x2_dilation/test_data.h"
 #include "../../TestData/conv_2x2_dilation_5x5_input/test_data.h"
@@ -34,19 +31,22 @@
 #include "../../TestData/conv_3x2_dilation/test_data.h"
 #include "../../TestData/conv_3x3_dilation_5x5_input/test_data.h"
 #include "../../TestData/conv_4/test_data.h"
+#include "../../TestData/conv_5/test_data.h"
 #include "../../TestData/conv_dilation_golden/test_data.h"
 #include "../../TestData/conv_out_activation/test_data.h"
 #include "../../TestData/stride2pad1/test_data.h"
+
 #include "../../Utils/validate.h"
 
 void setUp(void) { /* set stuff up here */ }
 
 void tearDown(void) { /* clean stuff up here */ }
 
+
 void basic_muriscv_nn_convolve_s8(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q7_t output[BASIC_DST_SIZE] = {0};
+    int8_t output[BASIC_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -56,10 +56,10 @@ void basic_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = basic_biases;
-    const q7_t *kernel_data = basic_weights;
-    const q7_t *input_data = basic_input;
-    const q7_t *output_ref = basic_output_ref;
+    const int32_t *bias_data = basic_biases;
+    const int8_t *kernel_data = basic_weights;
+    const int8_t *input_data = basic_input;
+    const int8_t *output_ref = basic_output_ref;
     const int32_t output_ref_size = BASIC_DST_SIZE;
 
     input_dims.n = BASIC_INPUT_BATCHES;
@@ -92,39 +92,49 @@ void basic_muriscv_nn_convolve_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      kernel_data,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 kernel_data,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        // The caller is responsible to clear the scratch buffers for security reasons if applicable.
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
@@ -132,7 +142,7 @@ void basic_muriscv_nn_convolve_s8(void)
 void stride2pad1_muriscv_nn_convolve_s8(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q7_t output[STRIDE2PAD1_DST_SIZE] = {0};
+    int8_t output[STRIDE2PAD1_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -142,10 +152,10 @@ void stride2pad1_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = stride2pad1_biases;
-    const q7_t *kernel_data = stride2pad1_weights;
-    const q7_t *input_data = stride2pad1_input;
-    const q7_t *output_ref = stride2pad1_output_ref;
+    const int32_t *bias_data = stride2pad1_biases;
+    const int8_t *kernel_data = stride2pad1_weights;
+    const int8_t *input_data = stride2pad1_input;
+    const int8_t *output_ref = stride2pad1_output_ref;
     const int32_t output_ref_size = STRIDE2PAD1_DST_SIZE;
 
     input_dims.n = STRIDE2PAD1_INPUT_BATCHES;
@@ -178,39 +188,48 @@ void stride2pad1_muriscv_nn_convolve_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      kernel_data,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 kernel_data,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
@@ -218,7 +237,7 @@ void stride2pad1_muriscv_nn_convolve_s8(void)
 void conv_2_muriscv_nn_convolve_s8(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q7_t output[CONV_2_DST_SIZE] = {0};
+    int8_t output[CONV_2_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -228,10 +247,10 @@ void conv_2_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = conv_2_biases;
-    const q7_t *kernel_data = conv_2_weights;
-    const q7_t *input_data = conv_2_input;
-    const q7_t *output_ref = conv_2_output_ref;
+    const int32_t *bias_data = conv_2_biases;
+    const int8_t *kernel_data = conv_2_weights;
+    const int8_t *input_data = conv_2_input;
+    const int8_t *output_ref = conv_2_output_ref;
     const int32_t output_ref_size = CONV_2_DST_SIZE;
 
     input_dims.n = CONV_2_INPUT_BATCHES;
@@ -264,39 +283,48 @@ void conv_2_muriscv_nn_convolve_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      conv_2_weights,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 conv_2_weights,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
@@ -304,7 +332,7 @@ void conv_2_muriscv_nn_convolve_s8(void)
 void conv_3_muriscv_nn_convolve_s8(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q7_t output[CONV_3_DST_SIZE] = {0};
+    int8_t output[CONV_3_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -314,10 +342,10 @@ void conv_3_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = conv_3_biases;
-    const q7_t *kernel_data = conv_3_weights;
-    const q7_t *input_data = conv_3_input;
-    const q7_t *output_ref = conv_3_output_ref;
+    const int32_t *bias_data = conv_3_biases;
+    const int8_t *kernel_data = conv_3_weights;
+    const int8_t *input_data = conv_3_input;
+    const int8_t *output_ref = conv_3_output_ref;
     const int32_t output_ref_size = CONV_3_DST_SIZE;
 
     input_dims.n = CONV_3_INPUT_BATCHES;
@@ -326,7 +354,7 @@ void conv_3_muriscv_nn_convolve_s8(void)
     input_dims.c = CONV_3_IN_CH;
     filter_dims.w = CONV_3_FILTER_X;
     filter_dims.h = CONV_3_FILTER_Y;
-    filter_dims.c = CONV_2_IN_CH;
+    filter_dims.c = CONV_3_IN_CH;
     output_dims.w = CONV_3_OUTPUT_W;
     output_dims.h = CONV_3_OUTPUT_H;
     output_dims.c = CONV_3_OUT_CH;
@@ -350,39 +378,48 @@ void conv_3_muriscv_nn_convolve_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      conv_3_weights,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 conv_3_weights,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
@@ -390,7 +427,7 @@ void conv_3_muriscv_nn_convolve_s8(void)
 void conv_4_muriscv_nn_convolve_s8(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q7_t output[CONV_4_DST_SIZE] = {0};
+    int8_t output[CONV_4_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -400,10 +437,10 @@ void conv_4_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = conv_4_biases;
-    const q7_t *kernel_data = conv_4_weights;
-    const q7_t *input_data = conv_4_input;
-    const q7_t *output_ref = conv_4_output_ref;
+    const int32_t *bias_data = conv_4_biases;
+    const int8_t *kernel_data = conv_4_weights;
+    const int8_t *input_data = conv_4_input;
+    const int8_t *output_ref = conv_4_output_ref;
     const int32_t output_ref_size = CONV_4_DST_SIZE;
 
     input_dims.n = CONV_4_INPUT_BATCHES;
@@ -436,297 +473,55 @@ void conv_4_muriscv_nn_convolve_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      conv_4_weights,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 conv_4_weights,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
-    TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
-}
-
-void conv_1_x_n_1_muriscv_nn_convolve_s8(void)
-{
-    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q7_t output[CONV_1_X_N_1_DST_SIZE] = {0};
-
-    muriscv_nn_context ctx;
-    muriscv_nn_conv_params conv_params;
-    muriscv_nn_per_channel_quant_params quant_params;
-    muriscv_nn_dims input_dims;
-    muriscv_nn_dims filter_dims;
-    muriscv_nn_dims bias_dims;
-    muriscv_nn_dims output_dims;
-
-    const q31_t *bias_data = conv_1_x_n_1_biases;
-    const q7_t *kernel_data = conv_1_x_n_1_weights;
-    const q7_t *input_data = conv_1_x_n_1_input;
-    const q7_t *output_ref = conv_1_x_n_1_output_ref;
-    const int32_t output_ref_size = CONV_1_X_N_1_DST_SIZE;
-
-    input_dims.n = CONV_1_X_N_1_INPUT_BATCHES;
-    input_dims.w = CONV_1_X_N_1_INPUT_W;
-    input_dims.h = CONV_1_X_N_1_INPUT_H;
-    input_dims.c = CONV_1_X_N_1_IN_CH;
-    filter_dims.w = CONV_1_X_N_1_FILTER_X;
-    filter_dims.h = CONV_1_X_N_1_FILTER_Y;
-    filter_dims.c = CONV_1_X_N_1_IN_CH;
-    output_dims.w = CONV_1_X_N_1_OUTPUT_W;
-    output_dims.h = CONV_1_X_N_1_OUTPUT_H;
-    output_dims.c = CONV_1_X_N_1_OUT_CH;
-
-    conv_params.padding.w = CONV_1_X_N_1_PAD_X;
-    conv_params.padding.h = CONV_1_X_N_1_PAD_Y;
-    conv_params.stride.w = CONV_1_X_N_1_STRIDE_X;
-    conv_params.stride.h = CONV_1_X_N_1_STRIDE_Y;
-    conv_params.dilation.w = CONV_1_X_N_1_DILATION_X;
-    conv_params.dilation.h = CONV_1_X_N_1_DILATION_Y;
-
-    conv_params.input_offset = CONV_1_X_N_1_INPUT_OFFSET;
-    conv_params.output_offset = CONV_1_X_N_1_OUTPUT_OFFSET;
-    conv_params.activation.min = CONV_1_X_N_1_OUT_ACTIVATION_MIN;
-    conv_params.activation.max = CONV_1_X_N_1_OUT_ACTIVATION_MAX;
-    quant_params.multiplier = (int32_t *)conv_1_x_n_1_output_mult;
-    quant_params.shift = (int32_t *)conv_1_x_n_1_output_shift;
-
-    int32_t buf_size =
-        muriscv_nn_convolve_1_x_n_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
-    ctx.buf = malloc(buf_size);
-    ctx.size = 0;
-
-    muriscv_nn_status result = muriscv_nn_convolve_1_x_n_s8(&ctx,
-                                                            &conv_params,
-                                                            &quant_params,
-                                                            &input_dims,
-                                                            input_data,
-                                                            &filter_dims,
-                                                            kernel_data,
-                                                            &bias_dims,
-                                                            bias_data,
-                                                            &output_dims,
-                                                            output);
-
-    free(ctx.buf);
-    TEST_ASSERT_EQUAL(expected, result);
-    TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
-
-    buf_size = muriscv_nn_convolve_s8_get_buffer_size(&input_dims, &filter_dims);
-    ctx.buf = malloc(buf_size);
-
-    result = muriscv_nn_convolve_s8(&ctx,
-                                    &conv_params,
-                                    &quant_params,
-                                    &input_dims,
-                                    input_data,
-                                    &filter_dims,
-                                    kernel_data,
-                                    &bias_dims,
-                                    bias_data,
-                                    NULL,
-                                    &output_dims,
-                                    output);
-    free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-    TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
-}
-
-void conv_1_x_n_2_muriscv_nn_convolve_s8(void)
-{
-    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q7_t output[CONV_1_X_N_2_DST_SIZE] = {0};
-
-    muriscv_nn_context ctx;
-    muriscv_nn_conv_params conv_params;
-    muriscv_nn_per_channel_quant_params quant_params;
-    muriscv_nn_dims input_dims;
-    muriscv_nn_dims filter_dims;
-    muriscv_nn_dims bias_dims;
-    muriscv_nn_dims output_dims;
-
-    const q31_t *bias_data = conv_1_x_n_2_biases;
-    const q7_t *kernel_data = conv_1_x_n_2_weights;
-    const q7_t *input_data = conv_1_x_n_2_input;
-    const q7_t *output_ref = conv_1_x_n_2_output_ref;
-    const int32_t output_ref_size = CONV_1_X_N_2_DST_SIZE;
-
-    input_dims.n = CONV_1_X_N_2_INPUT_BATCHES;
-    input_dims.w = CONV_1_X_N_2_INPUT_W;
-    input_dims.h = CONV_1_X_N_2_INPUT_H;
-    input_dims.c = CONV_1_X_N_2_IN_CH;
-    filter_dims.w = CONV_1_X_N_2_FILTER_X;
-    filter_dims.h = CONV_1_X_N_2_FILTER_Y;
-    filter_dims.c = CONV_1_X_N_2_IN_CH;
-    output_dims.w = CONV_1_X_N_2_OUTPUT_W;
-    output_dims.h = CONV_1_X_N_2_OUTPUT_H;
-    output_dims.c = CONV_1_X_N_2_OUT_CH;
-
-    conv_params.padding.w = CONV_1_X_N_2_PAD_X;
-    conv_params.padding.h = CONV_1_X_N_2_PAD_Y;
-    conv_params.stride.w = CONV_1_X_N_2_STRIDE_X;
-    conv_params.stride.h = CONV_1_X_N_2_STRIDE_Y;
-    conv_params.dilation.w = CONV_1_X_N_2_DILATION_X;
-    conv_params.dilation.h = CONV_1_X_N_2_DILATION_Y;
-
-    conv_params.input_offset = CONV_1_X_N_2_INPUT_OFFSET;
-    conv_params.output_offset = CONV_1_X_N_2_OUTPUT_OFFSET;
-    conv_params.activation.min = CONV_1_X_N_2_OUT_ACTIVATION_MIN;
-    conv_params.activation.max = CONV_1_X_N_2_OUT_ACTIVATION_MAX;
-    quant_params.multiplier = (int32_t *)conv_1_x_n_2_output_mult;
-    quant_params.shift = (int32_t *)conv_1_x_n_2_output_shift;
-
-    int32_t buf_size =
-        muriscv_nn_convolve_1_x_n_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
-    ctx.buf = malloc(buf_size);
-    ctx.size = 0;
-
-    muriscv_nn_status result = muriscv_nn_convolve_1_x_n_s8(&ctx,
-                                                            &conv_params,
-                                                            &quant_params,
-                                                            &input_dims,
-                                                            input_data,
-                                                            &filter_dims,
-                                                            kernel_data,
-                                                            &bias_dims,
-                                                            bias_data,
-                                                            &output_dims,
-                                                            output);
-
-    free(ctx.buf);
-    TEST_ASSERT_EQUAL(expected, result);
-
-    buf_size = muriscv_nn_convolve_s8_get_buffer_size(&input_dims, &filter_dims);
-    ctx.buf = malloc(buf_size);
-
-    result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
-    free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
-    TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
-}
-
-void conv_1_x_n_3_muriscv_nn_convolve_s8(void)
-{
-    const muriscv_nn_status expected = MURISCV_NN_ARG_ERROR;
-    q7_t output[CONV_1_X_N_3_DST_SIZE] = {0};
-
-    muriscv_nn_context ctx;
-    muriscv_nn_conv_params conv_params;
-    muriscv_nn_per_channel_quant_params quant_params;
-    muriscv_nn_dims input_dims;
-    muriscv_nn_dims filter_dims;
-    muriscv_nn_dims bias_dims;
-    muriscv_nn_dims output_dims;
-
-    const q31_t *bias_data = conv_1_x_n_3_biases;
-    const q7_t *kernel_data = conv_1_x_n_3_weights;
-    const q7_t *input_data = conv_1_x_n_3_input;
-    const q7_t *output_ref = conv_1_x_n_3_output_ref;
-    const int32_t output_ref_size = CONV_1_X_N_3_DST_SIZE;
-
-    input_dims.n = CONV_1_X_N_3_INPUT_BATCHES;
-    input_dims.w = CONV_1_X_N_3_INPUT_W;
-    input_dims.h = CONV_1_X_N_3_INPUT_H;
-    input_dims.c = CONV_1_X_N_3_IN_CH;
-    filter_dims.w = CONV_1_X_N_3_FILTER_X;
-    filter_dims.h = CONV_1_X_N_3_FILTER_Y;
-    filter_dims.c = CONV_1_X_N_3_IN_CH;
-    output_dims.w = CONV_1_X_N_3_OUTPUT_W;
-    output_dims.h = CONV_1_X_N_3_OUTPUT_H;
-    output_dims.c = CONV_1_X_N_3_OUT_CH;
-
-    conv_params.padding.w = CONV_1_X_N_3_PAD_X;
-    conv_params.padding.h = CONV_1_X_N_3_PAD_Y;
-    conv_params.stride.w = CONV_1_X_N_3_STRIDE_X;
-    conv_params.stride.h = CONV_1_X_N_3_STRIDE_Y;
-    conv_params.dilation.w = CONV_1_X_N_3_DILATION_X;
-    conv_params.dilation.h = CONV_1_X_N_3_DILATION_Y;
-
-    conv_params.input_offset = CONV_1_X_N_3_INPUT_OFFSET;
-    conv_params.output_offset = CONV_1_X_N_3_OUTPUT_OFFSET;
-    conv_params.activation.min = CONV_1_X_N_3_OUT_ACTIVATION_MIN;
-    conv_params.activation.max = CONV_1_X_N_3_OUT_ACTIVATION_MAX;
-    quant_params.multiplier = (int32_t *)conv_1_x_n_3_output_mult;
-    quant_params.shift = (int32_t *)conv_1_x_n_3_output_shift;
-
-    int32_t buf_size =
-        muriscv_nn_convolve_1_x_n_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
-    ctx.buf = malloc(buf_size);
-    ctx.size = 0;
-
-    muriscv_nn_status result = muriscv_nn_convolve_1_x_n_s8(&ctx,
-                                                            &conv_params,
-                                                            &quant_params,
-                                                            &input_dims,
-                                                            input_data,
-                                                            &filter_dims,
-                                                            kernel_data,
-                                                            &bias_dims,
-                                                            bias_data,
-                                                            &output_dims,
-                                                            output);
-
-    free(ctx.buf);
-    TEST_ASSERT_EQUAL(expected, result);
-
-    buf_size = muriscv_nn_convolve_s8_get_buffer_size(&input_dims, &filter_dims);
-    ctx.buf = malloc(buf_size);
-
-    result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
-    free(ctx.buf);
-    TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
 
 void conv_out_activation_muriscv_nn_convolve_s8(void)
 {
-    q7_t output[CONV_OUT_ACTIVATION_DST_SIZE] = {0};
+    int8_t output[CONV_OUT_ACTIVATION_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -736,10 +531,10 @@ void conv_out_activation_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = conv_out_activation_biases;
-    const q7_t *kernel_data = conv_out_activation_weights;
-    const q7_t *input_data = conv_out_activation_input;
-    const q7_t *output_ref = conv_out_activation_output_ref;
+    const int32_t *bias_data = conv_out_activation_biases;
+    const int8_t *kernel_data = conv_out_activation_weights;
+    const int8_t *input_data = conv_out_activation_input;
+    const int8_t *output_ref = conv_out_activation_output_ref;
     const int32_t output_ref_size = CONV_OUT_ACTIVATION_DST_SIZE;
 
     input_dims.n = CONV_OUT_ACTIVATION_INPUT_BATCHES;
@@ -767,29 +562,32 @@ void conv_out_activation_muriscv_nn_convolve_s8(void)
     quant_params.multiplier = (int32_t *)conv_out_activation_output_mult;
     quant_params.shift = (int32_t *)conv_out_activation_output_shift;
 
-    int32_t buf_size =
-        muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
+    int32_t buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                                              &conv_params,
-                                                              &quant_params,
-                                                              &input_dims,
-                                                              input_data,
-                                                              &filter_dims,
-                                                              kernel_data,
-                                                              &bias_dims,
-                                                              bias_data,
-                                                              &output_dims,
-                                                              output);
-    free(ctx.buf);
+                                                         &conv_params,
+                                                         &quant_params,
+                                                         &input_dims,
+                                                         input_data,
+                                                         &filter_dims,
+                                                         kernel_data,
+                                                         &bias_dims,
+                                                         bias_data,
+                                                         &output_dims,
+                                                         output);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(MURISCV_NN_SUCCESS, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
 
 void conv_2x2_dilation_muriscv_nn_convolve_s8(void)
 {
-    q7_t output[CONV_2X2_DILATION_DST_SIZE] = {0};
+    int8_t output[CONV_2X2_DILATION_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -800,10 +598,10 @@ void conv_2x2_dilation_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims output_dims;
 
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    const q31_t *bias_data = conv_2x2_dilation_biases;
-    const q7_t *kernel_data = conv_2x2_dilation_weights;
-    const q7_t *input_data = conv_2x2_dilation_input;
-    const q7_t *output_ref = conv_2x2_dilation_output_ref;
+    const int32_t *bias_data = conv_2x2_dilation_biases;
+    const int8_t *kernel_data = conv_2x2_dilation_weights;
+    const int8_t *input_data = conv_2x2_dilation_input;
+    const int8_t *output_ref = conv_2x2_dilation_output_ref;
     const int32_t output_ref_size = CONV_2X2_DILATION_DST_SIZE;
 
     input_dims.n = CONV_2X2_DILATION_INPUT_BATCHES;
@@ -836,46 +634,55 @@ void conv_2x2_dilation_muriscv_nn_convolve_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      kernel_data,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 kernel_data,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
 
 void conv_2x2_dilation_5x5_input_muriscv_nn_convolve_s8(void)
 {
-    q7_t output[CONV_2X2_DILATION_5X5_INPUT_DST_SIZE] = {0};
+    int8_t output[CONV_2X2_DILATION_5X5_INPUT_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -885,10 +692,10 @@ void conv_2x2_dilation_5x5_input_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = conv_2x2_dilation_5x5_input_biases;
-    const q7_t *kernel_data = conv_2x2_dilation_5x5_input_weights;
-    const q7_t *input_data = conv_2x2_dilation_5x5_input_input;
-    const q7_t *output_ref = conv_2x2_dilation_5x5_input_output_ref;
+    const int32_t *bias_data = conv_2x2_dilation_5x5_input_biases;
+    const int8_t *kernel_data = conv_2x2_dilation_5x5_input_weights;
+    const int8_t *input_data = conv_2x2_dilation_5x5_input_input;
+    const int8_t *output_ref = conv_2x2_dilation_5x5_input_output_ref;
     const int32_t output_ref_size = CONV_2X2_DILATION_5X5_INPUT_DST_SIZE;
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
 
@@ -921,45 +728,54 @@ void conv_2x2_dilation_5x5_input_muriscv_nn_convolve_s8(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      kernel_data,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
-    free(ctx.buf);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 kernel_data,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
 
 void conv_3x3_dilation_5x5_input_muriscv_nn_convolve_s8(void)
 {
-    q7_t output[CONV_3X3_DILATION_5X5_INPUT_DST_SIZE] = {0};
+    int8_t output[CONV_3X3_DILATION_5X5_INPUT_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -969,10 +785,10 @@ void conv_3x3_dilation_5x5_input_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = conv_3x3_dilation_5x5_input_biases;
-    const q7_t *kernel_data = conv_3x3_dilation_5x5_input_weights;
-    const q7_t *input_data = conv_3x3_dilation_5x5_input_input;
-    const q7_t *output_ref = conv_3x3_dilation_5x5_input_output_ref;
+    const int32_t *bias_data = conv_3x3_dilation_5x5_input_biases;
+    const int8_t *kernel_data = conv_3x3_dilation_5x5_input_weights;
+    const int8_t *input_data = conv_3x3_dilation_5x5_input_input;
+    const int8_t *output_ref = conv_3x3_dilation_5x5_input_output_ref;
     const int32_t output_ref_size = CONV_3X3_DILATION_5X5_INPUT_DST_SIZE;
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
 
@@ -1005,45 +821,54 @@ void conv_3x3_dilation_5x5_input_muriscv_nn_convolve_s8(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      kernel_data,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
-    free(ctx.buf);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 kernel_data,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
 
 void conv_2x3_dilation_muriscv_nn_convolve_s8(void)
 {
-    q7_t output[CONV_2X3_DILATION_DST_SIZE] = {0};
+    int8_t output[CONV_2X3_DILATION_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -1053,10 +878,10 @@ void conv_2x3_dilation_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = conv_2x3_dilation_biases;
-    const q7_t *kernel_data = conv_2x3_dilation_weights;
-    const q7_t *input_data = conv_2x3_dilation_input;
-    const q7_t *output_ref = conv_2x3_dilation_output_ref;
+    const int32_t *bias_data = conv_2x3_dilation_biases;
+    const int8_t *kernel_data = conv_2x3_dilation_weights;
+    const int8_t *input_data = conv_2x3_dilation_input;
+    const int8_t *output_ref = conv_2x3_dilation_output_ref;
     const int32_t output_ref_size = CONV_2X3_DILATION_DST_SIZE;
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
 
@@ -1089,45 +914,54 @@ void conv_2x3_dilation_muriscv_nn_convolve_s8(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      kernel_data,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
-    free(ctx.buf);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 kernel_data,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
 
 void conv_3x2_dilation_muriscv_nn_convolve_s8(void)
 {
-    q7_t output[CONV_3X2_DILATION_DST_SIZE] = {0};
+    int8_t output[CONV_3X2_DILATION_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -1137,10 +971,10 @@ void conv_3x2_dilation_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = conv_3x2_dilation_biases;
-    const q7_t *kernel_data = conv_3x2_dilation_weights;
-    const q7_t *input_data = conv_3x2_dilation_input;
-    const q7_t *output_ref = conv_3x2_dilation_output_ref;
+    const int32_t *bias_data = conv_3x2_dilation_biases;
+    const int8_t *kernel_data = conv_3x2_dilation_weights;
+    const int8_t *input_data = conv_3x2_dilation_input;
+    const int8_t *output_ref = conv_3x2_dilation_output_ref;
     const int32_t output_ref_size = CONV_3X2_DILATION_DST_SIZE;
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
 
@@ -1173,45 +1007,54 @@ void conv_3x2_dilation_muriscv_nn_convolve_s8(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      kernel_data,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
-    free(ctx.buf);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 kernel_data,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
 
 void conv_dilation_golden_muriscv_nn_convolve_s8(void)
 {
-    q7_t output[CONV_DILATION_GOLDEN_DST_SIZE] = {0};
+    int8_t output[CONV_DILATION_GOLDEN_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_conv_params conv_params;
@@ -1221,10 +1064,10 @@ void conv_dilation_golden_muriscv_nn_convolve_s8(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q31_t *bias_data = conv_dilation_golden_biases;
-    const q7_t *kernel_data = conv_dilation_golden_weights;
-    const q7_t *input_data = conv_dilation_golden_input;
-    const q7_t *output_ref = conv_dilation_golden_output_ref;
+    const int32_t *bias_data = conv_dilation_golden_biases;
+    const int8_t *kernel_data = conv_dilation_golden_weights;
+    const int8_t *input_data = conv_dilation_golden_input;
+    const int8_t *output_ref = conv_dilation_golden_output_ref;
     const int32_t output_ref_size = CONV_DILATION_GOLDEN_DST_SIZE;
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
 
@@ -1257,41 +1100,263 @@ void conv_dilation_golden_muriscv_nn_convolve_s8(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
-                                                      &conv_params,
-                                                      &quant_params,
-                                                      &input_dims,
-                                                      input_data,
-                                                      &filter_dims,
-                                                      kernel_data,
-                                                      &bias_dims,
-                                                      bias_data,
-                                                      NULL,
-                                                      &output_dims,
-                                                      output);
-    free(ctx.buf);
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 kernel_data,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
 
     buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
     ctx.buf = malloc(buf_size);
     ctx.size = 0;
 
     result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                            &conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
 }
+
+void conv_5_muriscv_nn_convolve_s8(void)
+{
+    const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
+    int8_t output[CONV_5_DST_SIZE] = {0};
+
+    muriscv_nn_context ctx;
+    muriscv_nn_conv_params conv_params;
+    muriscv_nn_per_channel_quant_params quant_params;
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims bias_dims;
+    muriscv_nn_dims output_dims;
+
+    const int32_t *bias_data = conv_5_biases;
+    const int8_t *kernel_data = conv_5_weights;
+    const int8_t *input_data = conv_5_input;
+    const int8_t *output_ref = conv_5_output_ref;
+    const int32_t output_ref_size = CONV_5_DST_SIZE;
+
+    input_dims.n = CONV_5_INPUT_BATCHES;
+    input_dims.w = CONV_5_INPUT_W;
+    input_dims.h = CONV_5_INPUT_H;
+    input_dims.c = CONV_5_IN_CH;
+    filter_dims.w = CONV_5_FILTER_X;
+    filter_dims.h = CONV_5_FILTER_Y;
+    filter_dims.c = CONV_5_IN_CH;
+    output_dims.w = CONV_5_OUTPUT_W;
+    output_dims.h = CONV_5_OUTPUT_H;
+    output_dims.c = CONV_5_OUT_CH;
+
+    conv_params.padding.w = CONV_5_PAD_X;
+    conv_params.padding.h = CONV_5_PAD_Y;
+    conv_params.stride.w = CONV_5_STRIDE_X;
+    conv_params.stride.h = CONV_5_STRIDE_Y;
+    conv_params.dilation.w = CONV_5_DILATION_X;
+    conv_params.dilation.h = CONV_5_DILATION_Y;
+
+    conv_params.input_offset = CONV_5_INPUT_OFFSET;
+    conv_params.output_offset = CONV_5_OUTPUT_OFFSET;
+    conv_params.activation.min = CONV_5_OUT_ACTIVATION_MIN;
+    conv_params.activation.max = CONV_5_OUT_ACTIVATION_MAX;
+    quant_params.multiplier = (int32_t *)conv_5_output_mult;
+    quant_params.shift = (int32_t *)conv_5_output_shift;
+
+    int32_t buf_size = muriscv_nn_convolve_s8_get_buffer_size(&input_dims, &filter_dims);
+    ctx.buf = malloc(buf_size);
+    ctx.size = 0;
+
+    muriscv_nn_status result = muriscv_nn_convolve_s8(&ctx,
+                                                 &conv_params,
+                                                 &quant_params,
+                                                 &input_dims,
+                                                 input_data,
+                                                 &filter_dims,
+                                                 conv_5_weights,
+                                                 &bias_dims,
+                                                 bias_data,
+                                                 NULL,
+                                                 &output_dims,
+                                                 output);
+
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+    memset(output, 0, sizeof(output));
+
+    buf_size = muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
+    ctx.buf = malloc(buf_size);
+    ctx.size = 0;
+
+    result = muriscv_nn_convolve_wrapper_s8(&ctx,
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     bias_data,
+                                     &output_dims,
+                                     output);
+
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
+    TEST_ASSERT_EQUAL(expected, result);
+    TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
+}
+
+void buffer_size_muriscv_nn_convolve_s8(void)
+{
+    muriscv_nn_conv_params conv_params;
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims output_dims;
+
+    input_dims.n = CONV_5_INPUT_BATCHES;
+    input_dims.w = CONV_5_INPUT_W;
+    input_dims.h = CONV_5_INPUT_H;
+    input_dims.c = CONV_5_IN_CH;
+    filter_dims.w = CONV_5_FILTER_X;
+    filter_dims.h = CONV_5_FILTER_Y;
+    filter_dims.c = CONV_5_IN_CH;
+    output_dims.w = CONV_5_OUTPUT_W;
+    output_dims.h = CONV_5_OUTPUT_H;
+    output_dims.c = CONV_5_OUT_CH;
+
+    conv_params.padding.w = CONV_5_PAD_X;
+    conv_params.padding.h = CONV_5_PAD_Y;
+    conv_params.stride.w = CONV_5_STRIDE_X;
+    conv_params.stride.h = CONV_5_STRIDE_Y;
+    conv_params.dilation.w = CONV_5_DILATION_X;
+    conv_params.dilation.h = CONV_5_DILATION_Y;
+
+    conv_params.input_offset = CONV_5_INPUT_OFFSET;
+    conv_params.output_offset = CONV_5_OUTPUT_OFFSET;
+    conv_params.activation.min = CONV_5_OUT_ACTIVATION_MIN;
+    conv_params.activation.max = CONV_5_OUT_ACTIVATION_MAX;
+
+    const int32_t buf_size = muriscv_nn_convolve_s8_get_buffer_size(&input_dims, &filter_dims);
+    const int32_t wrapper_buf_size =
+        muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
+
+    TEST_ASSERT_EQUAL(wrapper_buf_size, buf_size);
+}
+
+void buffer_size_mve_muriscv_nn_convolve_s8(void)
+{
+#if defined(USE_VEXT)
+    muriscv_nn_conv_params conv_params;
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims output_dims;
+
+    input_dims.n = CONV_5_INPUT_BATCHES;
+    input_dims.w = CONV_5_INPUT_W;
+    input_dims.h = CONV_5_INPUT_H;
+    input_dims.c = CONV_5_IN_CH;
+    filter_dims.w = CONV_5_FILTER_X;
+    filter_dims.h = CONV_5_FILTER_Y;
+    filter_dims.c = CONV_5_IN_CH;
+    output_dims.w = CONV_5_OUTPUT_W;
+    output_dims.h = CONV_5_OUTPUT_H;
+    output_dims.c = CONV_5_OUT_CH;
+
+    conv_params.padding.w = CONV_5_PAD_X;
+    conv_params.padding.h = CONV_5_PAD_Y;
+    conv_params.stride.w = CONV_5_STRIDE_X;
+    conv_params.stride.h = CONV_5_STRIDE_Y;
+    conv_params.dilation.w = CONV_5_DILATION_X;
+    conv_params.dilation.h = CONV_5_DILATION_Y;
+
+    conv_params.input_offset = CONV_5_INPUT_OFFSET;
+    conv_params.output_offset = CONV_5_OUTPUT_OFFSET;
+    conv_params.activation.min = CONV_5_OUT_ACTIVATION_MIN;
+    conv_params.activation.max = CONV_5_OUT_ACTIVATION_MAX;
+
+    const int32_t wrapper_buf_size =
+        muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
+    const int32_t mve_wrapper_buf_size =
+        muriscv_nn_convolve_wrapper_s8_get_buffer_size_mve(&conv_params, &input_dims, &filter_dims, &output_dims);
+
+    TEST_ASSERT_EQUAL(wrapper_buf_size, mve_wrapper_buf_size);
+#endif
+}
+
+void buffer_size_dsp_muriscv_nn_convolve_s8(void)
+{
+#if defined(USE_PEXT) && !defined(USE_VEXT)
+    muriscv_nn_conv_params conv_params;
+    muriscv_nn_dims input_dims;
+    muriscv_nn_dims filter_dims;
+    muriscv_nn_dims output_dims;
+
+    input_dims.n = CONV_5_INPUT_BATCHES;
+    input_dims.w = CONV_5_INPUT_W;
+    input_dims.h = CONV_5_INPUT_H;
+    input_dims.c = CONV_5_IN_CH;
+    filter_dims.w = CONV_5_FILTER_X;
+    filter_dims.h = CONV_5_FILTER_Y;
+    filter_dims.c = CONV_5_IN_CH;
+    output_dims.w = CONV_5_OUTPUT_W;
+    output_dims.h = CONV_5_OUTPUT_H;
+    output_dims.c = CONV_5_OUT_CH;
+
+    conv_params.padding.w = CONV_5_PAD_X;
+    conv_params.padding.h = CONV_5_PAD_Y;
+    conv_params.stride.w = CONV_5_STRIDE_X;
+    conv_params.stride.h = CONV_5_STRIDE_Y;
+    conv_params.dilation.w = CONV_5_DILATION_X;
+    conv_params.dilation.h = CONV_5_DILATION_Y;
+
+    conv_params.input_offset = CONV_5_INPUT_OFFSET;
+    conv_params.output_offset = CONV_5_OUTPUT_OFFSET;
+    conv_params.activation.min = CONV_5_OUT_ACTIVATION_MIN;
+    conv_params.activation.max = CONV_5_OUT_ACTIVATION_MAX;
+
+    const int32_t wrapper_buf_size =
+        muriscv_nn_convolve_wrapper_s8_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
+    const int32_t dsp_wrapper_buf_size =
+        muriscv_nn_convolve_wrapper_s8_get_buffer_size_dsp(&conv_params, &input_dims, &filter_dims, &output_dims);
+
+    TEST_ASSERT_EQUAL(wrapper_buf_size, dsp_wrapper_buf_size);
+#endif
+}
+
 
 int main(void)
 {
@@ -1302,9 +1367,10 @@ int main(void)
     RUN_TEST(conv_2_muriscv_nn_convolve_s8);
     RUN_TEST(conv_3_muriscv_nn_convolve_s8);
     RUN_TEST(conv_4_muriscv_nn_convolve_s8);
-    RUN_TEST(conv_1_x_n_1_muriscv_nn_convolve_s8);
-    RUN_TEST(conv_1_x_n_2_muriscv_nn_convolve_s8);
-    RUN_TEST(conv_1_x_n_3_muriscv_nn_convolve_s8);
+    RUN_TEST(conv_5_muriscv_nn_convolve_s8);
+    // RUN_TEST(conv_1_x_n_1_muriscv_nn_convolve_s8);  // moved to new dir
+    // RUN_TEST(conv_1_x_n_2_muriscv_nn_convolve_s8);
+    // RUN_TEST(conv_1_x_n_3_muriscv_nn_convolve_s8);
     RUN_TEST(conv_out_activation_muriscv_nn_convolve_s8);
     RUN_TEST(conv_dilation_golden_muriscv_nn_convolve_s8);
     RUN_TEST(conv_2x2_dilation_muriscv_nn_convolve_s8);
@@ -1312,6 +1378,9 @@ int main(void)
     RUN_TEST(conv_3x2_dilation_muriscv_nn_convolve_s8);
     RUN_TEST(conv_3x3_dilation_5x5_input_muriscv_nn_convolve_s8);
     RUN_TEST(conv_2x2_dilation_5x5_input_muriscv_nn_convolve_s8);
+    RUN_TEST(buffer_size_muriscv_nn_convolve_s8);
+    RUN_TEST(buffer_size_mve_muriscv_nn_convolve_s8);
+    RUN_TEST(buffer_size_dsp_muriscv_nn_convolve_s8);
 
 #if defined(__riscv) || defined(__riscv__)
     /* If an error occurred make sure the simulator fails so CTest can detect that. */
