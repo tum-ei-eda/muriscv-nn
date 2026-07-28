@@ -1,6 +1,6 @@
-// Modifications copyright (C) 2024 Chair of Electronic Design Automation, TUM
+// Modifications copyright (C) 2026 Chair of Electronic Design Automation, TUM
 /*
- * SPDX-FileCopyrightText: Copyright 2010-2024 Arm Limited and/or its affiliates <open-source-office@arm.com>
+ * SPDX-FileCopyrightText: Copyright 2010-2024, 2026 Arm Limited and/or its affiliates <open-source-office@arm.com>
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -22,8 +22,8 @@
  * Title:        muriscv_nn_support_functions.h
  * Description:  Public header file of support functions for MURISCV NN Library
  *
- * $Date:        08 October 2024
- * $Revision:    V.22.4.0
+ * $Date:        15 June 2026
+ * $Revision:    V.22.11.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
@@ -183,6 +183,7 @@ extern "C" {
 //MURISCV_NN CUSTOM CODE
 #define MIN(A, B) MIN_RV(A, B)
 #define CLAMP(x, h, l) MAX(MIN((x), (h)), (l))
+#define MURISCV_NN_ROUND_UP(x, multiple) ((((x) + (multiple) - 1) / (multiple)) * (multiple))
 #define REDUCE_MULTIPLIER(_mult) ((_mult < 0x7FFF0000) ? ((_mult + (1 << 15)) >> 16) : 0x7FFF)
 
 // Number of channels processed in a block for DW Conv with Int8 weights(MVE)
@@ -205,6 +206,21 @@ extern "C" {
 // CMSIS-NN has two implementations of the transpose conv operator, selected depending on the number of input
 // channels. This is based on heuristics and may be finetuned depending on other parameters of the operator
 #define REVERSE_TCOL_EFFICIENT_THRESHOLD (16)
+
+// Threshold for number of output channels that decide whether to convert a depthwise conv to a
+// regular conv operation when number of input channels is one.
+// Only applicable for processors with MVE extension.
+#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
+    #define CONVERT_DW_CONV_WITH_ONE_INPUT_CH_AND_OUTPUT_CH_ABOVE_THRESHOLD (8)
+#else
+    #define CONVERT_DW_CONV_WITH_ONE_INPUT_CH_AND_OUTPUT_CH_ABOVE_THRESHOLD (1)
+#endif
+
+// By default this will have no effect. During compilation this may be set to __restrict,
+// which may be beneficial for performance. See README.md for more intformation.
+#ifndef OPTIONAL_RESTRICT_KEYWORD
+    #define OPTIONAL_RESTRICT_KEYWORD
+#endif
 
 //MURISCV_NN CUSTOM CODE
 /**
@@ -252,6 +268,49 @@ static inline vint32m8_t vicuna_sext_i32m8(vint8m2_t input, size_t vl)
  * Internal Support functions. Not intended to be called direclty by a CMSIS-NN user.
  *
  */
+
+/**
+ * @brief Check if convolution parameters correspond to a 1x1 convolution.
+ * @param[in]   conv_params   Convolution parameters
+ * @param[in]   input_dims    Input dimensions
+ * @param[in]   filter_dims   Filter dimensions
+ * @return      true if parameters describe a 1x1 convolution, false otherwise.
+ */
+__STATIC_INLINE bool muriscv_nn_is_convolve_1x1(const muriscv_nn_conv_params *conv_params,
+                                            const muriscv_nn_dims *input_dims,
+                                            const muriscv_nn_dims *filter_dims)
+{
+    return (conv_params->padding.w == 0) && (conv_params->padding.h == 0) && (filter_dims->w == 1) &&
+        (filter_dims->h == 1) && (conv_params->dilation.w == 1) && (conv_params->dilation.h == 1) &&
+        (input_dims->c == filter_dims->c);
+}
+
+/**
+ * @brief Check if a 1x1 convolution qualifies for the fast (unit stride) path.
+ * @param[in]   conv_params   Convolution parameters
+ * @return      true if stride is 1x1, false otherwise.
+ *
+ * @note Does not validate that the kernel is 1x1. Call muriscv_nn_is_convolve_1x1() first.
+ */
+__STATIC_INLINE bool muriscv_nn_is_convolve_1x1_fast(const muriscv_nn_conv_params *conv_params)
+{
+    return (conv_params->stride.w == 1) && (conv_params->stride.h == 1);
+}
+
+/**
+ * @brief Check if convolution parameters correspond to a 1xN convolution.
+ * @param[in]   conv_params   Convolution parameters
+ * @param[in]   input_dims    Input dimensions
+ * @param[in]   filter_dims   Filter dimensions
+ * @return      true if parameters describe a 1xN convolution, false otherwise.
+ */
+__STATIC_INLINE bool muriscv_nn_is_convolve_1_x_n(const muriscv_nn_conv_params *conv_params,
+                                              const muriscv_nn_dims *input_dims,
+                                              const muriscv_nn_dims *filter_dims)
+{
+    return (input_dims->h == 1) && (conv_params->dilation.w == 1) && (filter_dims->h == 1) &&
+        ((conv_params->stride.w * input_dims->c) % 4 == 0) && (input_dims->c == filter_dims->c);
+}
 
 /**
  * @defgroup genPrivTypes Structure Types
@@ -344,6 +403,18 @@ void muriscv_nn_q7_to_q15_with_offset(const int8_t *src, int16_t *dst, int32_t b
 void muriscv_nn_s8_to_s16_unordered_with_offset(const int8_t *src, int16_t *dst, int32_t block_size, int16_t offset);
 
 #endif
+
+/**
+ * @brief Get the required buffer size for optimized s8 convolution.
+ *        This is for processors with MVE extension.
+ *        Refer to muriscv_nn_convolve_s8_get_buffer_size() for function argument details.
+ *
+ * @note  Intended for compilation on Host. If compiling for an Arm target, use
+ *        muriscv_nn_convolve_s8_get_buffer_size(). Note also this is a support function,
+ *        so not recommended to call directly even on Host.
+ *
+ */
+int32_t muriscv_nn_convolve_s8_get_buffer_size_mve(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims);
 
 /**
  * @brief Get the required buffer size for optimized s8 depthwise convolution
@@ -1168,7 +1239,7 @@ int16_t *muriscv_nn_depthwise_conv_nt_t_s16(const int16_t *lhs,
  * @param[in]      skip_row_top    Skip rows on top of the filter, used for padding.
  * @param[in]      skip_row_bottom Skip rows in the bottom of the filter, used for padding.
  *
- * @return         The function returns ARM_CMSIS_NN_SUCCESS
+ * @return         The function returns MURISCV_NN_SUCCESS
  *
  * @note           Rolling buffer refers to how the function wraps around the scratch buffer, e.g. it starts writing at
  * [output_start + output_index], writes to [output_start + output_max] and then continues at [output_start] again.
