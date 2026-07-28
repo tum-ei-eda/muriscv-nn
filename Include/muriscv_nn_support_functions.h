@@ -155,6 +155,24 @@
 //MURISCV_NN END OF NEW CODE
 #include <stdbool.h>
 
+#if defined(USE_COREV)
+// TODO: sat or not?
+#define __rv_sunpkd810 __builtin_riscv_xcorevsimd_simd_sunpkd810
+#define __rv_sunpkd832 __builtin_riscv_xcorevsimd_simd_sunpkd832
+#define __rv_smax8 __builtin_riscv_xcorevsimd_simd_max_b
+#define __rv_smin8 __builtin_riscv_xcorevsimd_simd_min_b
+#define __rv_smax16 __builtin_riscv_xcorevsimd_simd_max_h
+#define __rv_smin16 __builtin_riscv_xcorevsimd_simd_min_h
+#define __rv_packu __builtin_riscv_xcorevsimd_simd_?
+#define __rv_kadd16 __builtin_riscv_xcorevsimd_simd_kadd16  // TODO
+#define __rv_kmabb __builtin_riscv_xcorevsimd_simd_kmabb  // TODO
+#define __rv_kmatt __builtin_riscv_xcorevsimd_simd_kmatt  // TODO
+#define __rv_add16 __builtin_riscv_xcorevsimd_simd_add_h
+#define __rv_add8 __builtin_riscv_xcorevsimd_simd_add_b
+#define __rv_kmada __builtin_riscv_xcorevsimd_simd_?
+#define __rv_smaqa __builtin_riscv_xcorevsimd_simd_?
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
