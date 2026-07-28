@@ -2028,8 +2028,67 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_doubling_high_mult(const int32_t m1, con
  *                  this function.
  *
  */
-__STATIC_FORCEINLINE int32_t muriscv_nn_doubling_high_mult_no_sat(const int32_t m1, const int32_t m2)
+__STATIC_FORCEINLINE int32_t muriscv_nn_doubling_high_mult_no_sat(int32_t m1, int32_t m2)
 {
+#ifdef MURISCV_NN_USE_REQUANTIZE_INLINE_ASSEMBLY
+#if __riscv_xlen == 32
+    int32_t hi;
+    uint32_t lo;
+
+    /*
+     * Let:
+     *     m1 * m2 = (hi << 32) | lo
+     *
+     * Required result:
+     *     (hi << 1) + (lo >> 31) + ((lo >> 30) & 1)
+     *
+     * The final two terms can be combined:
+     *     (lo >> 31) + ((lo >> 30) & 1) == lo >> 30
+     *
+     * because lo >> 30 contains exactly bits 31:30.
+     */
+    __asm volatile(
+        "mul     %[lo], %[a], %[b]\n\t"
+        "mulh    %[hi], %[a], %[b]\n\t"
+        "srli    %[lo], %[lo], 30\n\t"
+        "slli    %[hi], %[hi], 1\n\t"
+        "add     %[hi], %[hi], %[lo]"
+        : [hi] "=&r"(hi),
+          [lo] "=&r"(lo)
+        : [a] "r"(m1),
+          [b] "r"(m2));
+
+    return hi;
+
+#elif __riscv_xlen == 64
+
+    int64_t product;
+    int64_t rounding;
+
+    /*
+     * On RV64, the complete signed 32x32-bit product fits in one
+     * 64-bit register, so mulh is unnecessary.
+     *
+     * result = (product >> 31) + ((product >> 30) & 1)
+     */
+    __asm volatile(
+        "mul     %[product], %[a], %[b]\n\t"
+        "srli    %[rounding], %[product], 30\n\t"
+        "andi    %[rounding], %[rounding], 1\n\t"
+        "srai    %[product], %[product], 31\n\t"
+        "add     %[product], %[product], %[rounding]"
+        : [product] "=&r"(product),
+          [rounding] "=&r"(rounding)
+        : [a] "r"((int64_t)m1),
+          [b] "r"((int64_t)m2));
+
+    return (int32_t)product;
+
+#else
+#error "Unsupported RISC-V XLEN"
+#endif
+
+#else
     int32_t result = 0;
     union muriscv_nn_long_long mult;
 
@@ -2045,6 +2104,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_doubling_high_mult_no_sat(const int32_t 
     result = (int32_t)(mult.long_long >> 31);
 
     return result;
+#endif
 }
 
 /**
@@ -2057,6 +2117,61 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_doubling_high_mult_no_sat(const int32_t 
  */
 __STATIC_FORCEINLINE int32_t muriscv_nn_divide_by_power_of_two(const int32_t dividend, const int32_t exponent)
 {
+#ifdef MURISCV_NN_USE_REQUANTIZE_INLINE_ASSEMBLY
+    // This is a port of the arm assembly implementation to RISC-V. The portable one is probably more efficient.
+    int32_t temp;
+    int32_t adjust;
+    int32_t rounding;
+    int32_t shift;
+    int32_t result;
+
+    /*
+     * Expected exponent range: 1..31.
+     *
+     * ARM behavior:
+     *   temp = dividend;
+     *   if (temp < 0 && temp != INT32_MIN)
+     *       temp--;
+     *
+     *   result = ASR(temp, exponent);
+     *   result += last shifted-out bit;
+     *
+     * RISC-V has no carry flag, so the last shifted-out bit is:
+     *
+     *   (temp >> (exponent - 1)) & 1
+     */
+    __asm volatile(
+        /*
+         * Generate:
+         *   adjust = dividend < 0 && dividend != INT32_MIN
+         *
+         * First subtract tentatively. For INT32_MIN this wraps to
+         * INT32_MAX, so the signed comparison rejects the decrement.
+         */
+        "slt     %[adjust], %[dividend], zero\n\t"
+        "sub     %[temp], %[dividend], %[adjust]\n\t"
+        "slt     %[adjust], %[temp], %[dividend]\n\t"
+        "sub     %[temp], %[dividend], %[adjust]\n\t"
+
+        /* Extract the bit that ARM ASRS places in the carry flag. */
+        "addi    %[shift], %[exponent], -1\n\t"
+        "srl     %[rounding], %[temp], %[shift]\n\t"
+        "andi    %[rounding], %[rounding], 1\n\t"
+
+        /* Arithmetic division followed by rounding. */
+        "sra     %[result], %[temp], %[exponent]\n\t"
+        "add     %[result], %[result], %[rounding]\n\t"
+
+        : [result]   "=&r"(result),
+          [temp]     "=&r"(temp),
+          [adjust]   "=&r"(adjust),
+          [rounding] "=&r"(rounding),
+          [shift]    "=&r"(shift)
+        : [dividend] "r"(dividend),
+          [exponent] "r"(exponent));
+
+    return result;
+#else
     int32_t result = 0;
     const int32_t remainder_mask = (1 << exponent) - 1;
     int32_t remainder = remainder_mask & dividend;
@@ -2076,6 +2191,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_divide_by_power_of_two(const int32_t div
     }
 
     return result;
+#endif
 }
 
 /**
@@ -2099,14 +2215,26 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_divide_by_power_of_two(const int32_t div
  */
 __STATIC_FORCEINLINE int32_t muriscv_nn_requantize(const int32_t val, const int32_t multiplier, const int32_t shift)
 {
-#ifdef MURISCV_NN_USE_SINGLE_ROUNDING
+#if defined(MURISCV_NN_USE_SINGLE_ROUNDING)
+    // This is a port of the arm assembly implementation to RISC-V. The portable one is probably more efficient.
     const int64_t total_shift = 31 - shift;
     const int64_t new_val = val * (int64_t)multiplier;
 
-    int32_t result = new_val >> (total_shift - 1);
+    int64_t result = new_val >> (total_shift - 1);
     result = (result + 1) >> 1;
 
     return result;
+#elif defined(CMSIS_NN_USE_REQUANTIZE_INLINE_ASSEMBLY)
+    if (shift >= 0)
+    {
+        // left shift
+        return muriscv_nn_doubling_high_mult_no_sat(val * (1 << shift), multiplier);
+    }
+    else
+    {
+        // right shift
+        return muriscv_nn_divide_by_power_of_two(muriscv_nn_doubling_high_mult_no_sat(val, multiplier), -shift);
+    }
 #else
     return muriscv_nn_divide_by_power_of_two(muriscv_nn_doubling_high_mult_no_sat(val * (1 << LEFT_SHIFT(shift)), multiplier),
                                          RIGHT_SHIFT(shift));
