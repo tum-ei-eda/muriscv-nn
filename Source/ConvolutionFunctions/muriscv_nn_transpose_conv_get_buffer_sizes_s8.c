@@ -31,7 +31,7 @@
  */
 
 /*
- * Get the required buffer size for arm_transpose_conv_s8. This is the recommended transpose conv s8 get buffer size
+ * Get the required buffer size for muriscv_nn_transpose_conv_s8. This is the recommended transpose conv s8 get buffer size
  * function.
  *
  * Refer to header file for details.
