@@ -16,7 +16,7 @@ jobs:
         id: sync_mode
         run: |
           CHECK_SYNC=$(git ls-remote --heads origin sync | wc -l 2>&1)
-          echo "SYNC_EXISTS=$CHECK_SYNC" >> $GITHUB_OUTPUT  # 1 if branch exists, 0 if not
+          echo "SYNC_EXISTS=$CHECK_SYNC" >> "$GITHUB_OUTPUT"  # 1 if branch exists, 0 if not
       - name: Switch to Sync Branch
         if: steps.sync_mode.outputs.SYNC_EXISTS == '1'
         run: |
@@ -50,7 +50,7 @@ jobs:
           git add Source/*
           git add Include/*
           NUM_STAGED=$(git diff --cached --numstat | wc -l 2>&1)
-          echo "NUM_CHANGED=$NUM_STAGED" >> $GITHUB_OUTPUT
+          echo "NUM_CHANGED=$NUM_STAGED" >> "$GITHUB_OUTPUT"
       - name: Create Commit
         working-directory: ./
         if: steps.count_files.outputs.NUM_CHANGED != '0' && steps.sync_mode.outputs.SYNC_EXISTS

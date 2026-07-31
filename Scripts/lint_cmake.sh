@@ -44,7 +44,9 @@ while IFS= read -r -d '' file; do
   esac
 done < <(
   git ls-files -z \
+    'CMakeLists.txt' \
     '**/CMakeLists.txt' \
+    '*.cmake' \
     '**/*.cmake'
 )
 

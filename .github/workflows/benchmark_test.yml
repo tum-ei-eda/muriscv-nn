@@ -51,9 +51,9 @@ jobs:
       - name: Get dates
         id: dates
         run: |
-          echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> $GITHUB_OUTPUT
-          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> $GITHUB_OUTPUT
+          echo "today=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> "$GITHUB_OUTPUT"
+          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> "$GITHUB_OUTPUT"
       - name: Download Cached GCC Binaries
         id: cache-gcc
         uses: actions/cache/restore@v6
@@ -99,22 +99,29 @@ jobs:
           export PREBUILD_TVM=true
           python3 -m pip install --user virtualenv
           # ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike
-          ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --enable-vext --enable-gcc --enable-llvm --enable-rv64
+          ./setup_mlonmcu.sh --enable-tflm --enable-tvm --enable-spike --enable-vext \
+            --enable-gcc --enable-llvm --enable-rv64
       - name: Run ${{matrix.benchmark}} Benchmark
         working-directory: ./Integration/MLonMCU
         run: |
           set -e
           source common.sh
-          source $VENV_DIR/bin/activate
+          source $VENV_DIR/bin/activate"
           export MLONMCU_HOME=$WORKSPACE_DIR
           cat $MLONMCU_HOME/environment.yml
-          # python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t spike --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 --post -p --parallel 4 -f muriscvnn -f vext -f pext --autotuned --toolchain ${{matrix.toolchain}} -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "32" ;; tvm*-llvm) echo -n "28" ;; tflm*-gcc) echo -n "8" ;; tflm*-llvm) echo -n "7" ;; *) echo -n "?" ;; esac) ${{matrix.benchmark}} --fail
-          python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t ${{matrix.target}} --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 --post -p --parallel 4 -f muriscvnn -f vext --toolchain ${{matrix.toolchain}} -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "14" ;; tvm*-llvm) echo -n "14" ;; tflm*-gcc) echo -n "7" ;; tflm*-llvm) echo -n "7" ;; *) echo -n "?" ;; esac) ${{matrix.benchmark}} --portable
+          python gen_muriscnn_benchmarks.py --verbose -b ${{matrix.backend}} -t ${{matrix.target}} \
+            --vlen 128 --vlen 256 --vlen 512 --vlen 1024 --vlen 2048 --vlen 4096 \
+            --post -p --parallel 4 -f muriscvnn -f vext --toolchain ${{matrix.toolchain}} \
+            -f auto_vectorize --opt ${{matrix.optimize}} --unroll ${{matrix.unroll}} \
+            --baseline $(case "${{matrix.backend}}-${{matrix.toolchain}}" in tvm*-gcc) echo -n "14" ;; \
+            tvm*-llvm) echo -n "14" ;; tflm*-gcc) echo -n "7" ;; tflm*-llvm) echo -n "7" ;; \
+            *) echo -n "?" ;; esac) ${{matrix.benchmark}} --portable
           # TODO: add --fail
       - name: Archive Benchmark Results
         uses: actions/upload-artifact@v7
         with:
-          name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{matrix.toolchain}}-${{matrix.optimize}}-${{matrix.unroll}}-${{matrix.target}}-${{
+          name: ${{matrix.benchmark}}-benchmark-${{matrix.backend}}-${{matrix.toolchain}}-${{
+            matrix.optimize}}-${{matrix.unroll}}-${{matrix.target}}-${{
             steps.dates.outputs.today }}
           path: ./Integration/MLonMCU/out.csv
   Update_Wiki:
@@ -169,7 +176,7 @@ jobs:
           pip install -r Wiki/requirements.txt
       - name: Get current date
         id: date-today
-        run: echo "today=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+        run: echo "today=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
       - name: Create New Wiki Page
         working-directory: ./Wiki
         run: |
@@ -194,7 +201,8 @@ jobs:
           # ls
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          find . -name "Benchmarks-${{ steps.date-today.outputs.today }}-*.csv" -exec ../Wiki/compare_with_prev.sh {} 2 \;
+          find . -name "Benchmarks-${{ steps.date-today.outputs.today }}-*.csv" \
+            -exec ../Wiki/compare_with_prev.sh {} 2 \;
           python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open first > _Sidebar.md
           python3 ../Wiki/gen_sidebar.py Benchmarks-*.md --open none --hide-models > _Footer.md
           rm README.md
