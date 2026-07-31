@@ -12,7 +12,7 @@ on:
   workflow_call:
   workflow_dispatch:
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request || github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}-${{ github.event_name }}
   cancel-in-progress: true
 jobs:
   TFLM_Built_In_Tests_with_Patch:
