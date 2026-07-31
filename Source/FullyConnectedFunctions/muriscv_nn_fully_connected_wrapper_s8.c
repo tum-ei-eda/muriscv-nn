@@ -49,50 +49,50 @@
  */
 
 muriscv_nn_status muriscv_nn_fully_connected_wrapper_s8(const muriscv_nn_context *ctx,
-                                                   const muriscv_nn_fc_params *fc_params,
-                                                   const muriscv_nn_quant_params *quant_params,
-                                                   const muriscv_nn_dims *input_dims,
-                                                   const int8_t *input_data,
-                                                   const muriscv_nn_dims *filter_dims,
-                                                   const int8_t *filter_data,
-                                                   const muriscv_nn_dims *bias_dims,
-                                                   const int32_t *bias_data,
-                                                   const muriscv_nn_dims *output_dims,
-                                                   int8_t *output_data)
+                                                        const muriscv_nn_fc_params *fc_params,
+                                                        const muriscv_nn_quant_params *quant_params,
+                                                        const muriscv_nn_dims *input_dims,
+                                                        const int8_t *input_data,
+                                                        const muriscv_nn_dims *filter_dims,
+                                                        const int8_t *filter_data,
+                                                        const muriscv_nn_dims *bias_dims,
+                                                        const int32_t *bias_data,
+                                                        const muriscv_nn_dims *output_dims,
+                                                        int8_t *output_data)
 {
 
     if (quant_params->is_per_channel)
     {
         const muriscv_nn_per_channel_quant_params per_channel_quant_params = {quant_params->multiplier,
-                                                                            quant_params->shift};
+                                                                              quant_params->shift};
 
         return muriscv_nn_fully_connected_per_channel_s8(ctx,
-                                                  fc_params,
-                                                  &per_channel_quant_params,
-                                                  input_dims,
-                                                  input_data,
-                                                  filter_dims,
-                                                  filter_data,
-                                                  bias_dims,
-                                                  bias_data,
-                                                  output_dims,
-                                                  output_data);
+                                                         fc_params,
+                                                         &per_channel_quant_params,
+                                                         input_dims,
+                                                         input_data,
+                                                         filter_dims,
+                                                         filter_data,
+                                                         bias_dims,
+                                                         bias_data,
+                                                         output_dims,
+                                                         output_data);
     }
     else
     {
         const muriscv_nn_per_tensor_quant_params per_tensor_quant_params = {*quant_params->multiplier,
-                                                                          *quant_params->shift};
+                                                                            *quant_params->shift};
         return muriscv_nn_fully_connected_s8(ctx,
-                                      fc_params,
-                                      &per_tensor_quant_params,
-                                      input_dims,
-                                      input_data,
-                                      filter_dims,
-                                      filter_data,
-                                      bias_dims,
-                                      bias_data,
-                                      output_dims,
-                                      output_data);
+                                             fc_params,
+                                             &per_tensor_quant_params,
+                                             input_dims,
+                                             input_data,
+                                             filter_dims,
+                                             filter_data,
+                                             bias_dims,
+                                             bias_data,
+                                             output_dims,
+                                             output_data);
     }
 }
 

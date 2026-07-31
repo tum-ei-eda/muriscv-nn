@@ -39,38 +39,38 @@
  * @addtogroup supportConversion
  * @{
  */
-//#if defined(USE_PEXT)
-//void muriscv_nn_s8_to_s16_unordered_with_offset(const int8_t *src, int16_t *dst, int32_t block_size, int16_t offset)
+// #if defined(USE_PEXT)
+// void muriscv_nn_s8_to_s16_unordered_with_offset(const int8_t *src, int16_t *dst, int32_t block_size, int16_t offset)
 //{
-//    int32_t in_s8x4;
-//    int32_t in_s16x2_1;
-//    int32_t in_s16x2_2;
-//    int32_t block_cnt = block_size >> 2;
+//     int32_t in_s8x4;
+//     int32_t in_s16x2_1;
+//     int32_t in_s16x2_2;
+//     int32_t block_cnt = block_size >> 2;
 //
-//    /* Compute 4 outputs at a time. */
-//    const int32_t offset_s16x2 = PKHBT(offset, offset, 16);
-//    while (block_cnt > 0)
-//    {
-//        in_s8x4 = muriscv_nn_read_s8x4_ia(&src);
+//     /* Compute 4 outputs at a time. */
+//     const int32_t offset_s16x2 = PKHBT(offset, offset, 16);
+//     while (block_cnt > 0)
+//     {
+//         in_s8x4 = muriscv_nn_read_s8x4_ia(&src);
 //
-//        in_s16x2_1 = SXTAB16(offset_s16x2, in_s8x4);
-//        in_s16x2_2 = SXTAB16(offset_s16x2, ROR(in_s8x4, 8));
+//         in_s16x2_1 = SXTAB16(offset_s16x2, in_s8x4);
+//         in_s16x2_2 = SXTAB16(offset_s16x2, ROR(in_s8x4, 8));
 //
-//        muriscv_nn_write_q15x2_ia(&dst, in_s16x2_1);
-//        muriscv_nn_write_q15x2_ia(&dst, in_s16x2_2);
+//         muriscv_nn_write_q15x2_ia(&dst, in_s16x2_1);
+//         muriscv_nn_write_q15x2_ia(&dst, in_s16x2_2);
 //
-//        block_cnt--;
-//    }
+//         block_cnt--;
+//     }
 //
-//    /* Handle left over samples. */
-//    block_cnt = block_size % 4;
-//    while (block_cnt > 0)
-//    {
-//        *dst++ = (int16_t)*src++ + offset;
-//        block_cnt--;
-//    }
-//}
-//#endif
+//     /* Handle left over samples. */
+//     block_cnt = block_size % 4;
+//     while (block_cnt > 0)
+//     {
+//         *dst++ = (int16_t)*src++ + offset;
+//         block_cnt--;
+//     }
+// }
+// #endif
 
 /**
  * @} end of Doxygen group

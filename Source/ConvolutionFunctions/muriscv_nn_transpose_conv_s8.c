@@ -35,17 +35,17 @@
  *
  */
 muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
-                                          const muriscv_nn_context *output_ctx,
-                                          const muriscv_nn_transpose_conv_params *transpose_conv_params,
-                                          const muriscv_nn_per_channel_quant_params *quant_params,
-                                          const muriscv_nn_dims *input_dims,
-                                          const int8_t *input_data,
-                                          const muriscv_nn_dims *filter_dims,
-                                          const int8_t *filter_data,
-                                          const muriscv_nn_dims *bias_dims,
-                                          const int32_t *bias_data,
-                                          const muriscv_nn_dims *output_dims,
-                                          int8_t *output_data)
+                                               const muriscv_nn_context *output_ctx,
+                                               const muriscv_nn_transpose_conv_params *transpose_conv_params,
+                                               const muriscv_nn_per_channel_quant_params *quant_params,
+                                               const muriscv_nn_dims *input_dims,
+                                               const int8_t *input_data,
+                                               const muriscv_nn_dims *filter_dims,
+                                               const int8_t *filter_data,
+                                               const muriscv_nn_dims *bias_dims,
+                                               const int32_t *bias_data,
+                                               const muriscv_nn_dims *output_dims,
+                                               int8_t *output_data)
 {
     (void)bias_dims;
     (void)output_ctx;
@@ -95,7 +95,8 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
         {
             for (int x = 0; x < buf_x_elements * buf_y; x++)
             {
-                muriscv_nn_memcpy_s8((int8_t *)(buf + x * output_ch), (const int8_t *)bias_data, output_ch * sizeof(int32_t));
+                muriscv_nn_memcpy_s8(
+                    (int8_t *)(buf + x * output_ch), (const int8_t *)bias_data, output_ch * sizeof(int32_t));
             }
         }
         else
@@ -111,20 +112,20 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
 
             // Compute output for one row of input
             muriscv_nn_transpose_conv_row_s8_s32(input,
-                                             filter,
-                                             buf,
-                                             buf_row,
-                                             buf_size,
-                                             filter_y,
-                                             filter_x,
-                                             input_ch,
-                                             output_ch,
-                                             input_offset,
-                                             buf_x,
-                                             input_x,
-                                             stride_x,
-                                             skip_rows_top,
-                                             skip_rows_bottom);
+                                                 filter,
+                                                 buf,
+                                                 buf_row,
+                                                 buf_size,
+                                                 filter_y,
+                                                 filter_x,
+                                                 input_ch,
+                                                 output_ch,
+                                                 input_offset,
+                                                 buf_x,
+                                                 input_x,
+                                                 stride_x,
+                                                 skip_rows_top,
+                                                 skip_rows_bottom);
             input += input_ch * input_x;
 
             // Number of output rows that became final (no later input row can still add to
@@ -143,36 +144,37 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
                     int32_t *buf_out = buf + buf_row;
                     buf_out += output_ch * pad_x;
 
-// #if defined(USE_VEXT)
-//                     // TODO: port to RISC-V Vector
-//                     for (int x = 0; x < output_x; x++)
-//                     {
-//                         const int32_t *mult_ptr = output_multiplier;
-//                         const int32_t *shift_ptr = output_shift;
-//
-//                         int channel_count = output_ch;
-//                         for (; channel_count > 0; channel_count -= 4)
-//                         {
-//                             mve_pred16_t p = vctp32q((uint32_t)channel_count);
-//
-//                             int32x4_t result = vldrwq_z_s32(buf_out, p);
-//                             buf_out += 4;
-//                             result =
-//                                 muriscv_nn_requantize_mve_32x4(result, vldrwq_z_s32(mult_ptr, p), vldrwq_z_s32(shift_ptr, p));
-//                             mult_ptr += 4;
-//                             shift_ptr += 4;
-//                             result = vaddq_n_s32(result, out_offset);
-//                             result = vmaxq_s32(result, vdupq_n_s32(activation_min));
-//                             result = vminq_s32(result, vdupq_n_s32(activation_max));
-//                             vstrbq_p_s32(output, result, p);
-//                             output += 4;
-//                         }
-//
-//                         // Correct pointer overshoot due to predication
-//                         buf_out += channel_count;
-//                         output += channel_count;
-//                     }
-// #else
+                    // #if defined(USE_VEXT)
+                    //                     // TODO: port to RISC-V Vector
+                    //                     for (int x = 0; x < output_x; x++)
+                    //                     {
+                    //                         const int32_t *mult_ptr = output_multiplier;
+                    //                         const int32_t *shift_ptr = output_shift;
+                    //
+                    //                         int channel_count = output_ch;
+                    //                         for (; channel_count > 0; channel_count -= 4)
+                    //                         {
+                    //                             mve_pred16_t p = vctp32q((uint32_t)channel_count);
+                    //
+                    //                             int32x4_t result = vldrwq_z_s32(buf_out, p);
+                    //                             buf_out += 4;
+                    //                             result =
+                    //                                 muriscv_nn_requantize_mve_32x4(result, vldrwq_z_s32(mult_ptr, p),
+                    //                                 vldrwq_z_s32(shift_ptr, p));
+                    //                             mult_ptr += 4;
+                    //                             shift_ptr += 4;
+                    //                             result = vaddq_n_s32(result, out_offset);
+                    //                             result = vmaxq_s32(result, vdupq_n_s32(activation_min));
+                    //                             result = vminq_s32(result, vdupq_n_s32(activation_max));
+                    //                             vstrbq_p_s32(output, result, p);
+                    //                             output += 4;
+                    //                         }
+                    //
+                    //                         // Correct pointer overshoot due to predication
+                    //                         buf_out += channel_count;
+                    //                         output += channel_count;
+                    //                     }
+                    // #else
 
                     for (int x = 0; x < output_x; x++)
                     {
@@ -188,7 +190,7 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
                             *output++ = result;
                         }
                     }
-// #endif
+                    // #endif
 
                     // Reset the buffer which was just written
                     if (bias_data)
@@ -196,8 +198,8 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
                         for (int x = 0; x < buf_x_elements; x++)
                         {
                             muriscv_nn_memcpy_s8((int8_t *)(buf + buf_row + x * output_ch),
-                                          (const int8_t *)bias_data,
-                                          output_ch * sizeof(int32_t));
+                                                 (const int8_t *)bias_data,
+                                                 output_ch * sizeof(int32_t));
                         }
                     }
                     else
@@ -218,34 +220,31 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
             if ((input_y * stride_y + y >= pad_y) && (input_y * stride_y + y < pad_y + output_y))
             {
                 buf_out += output_ch * pad_x;
-// #if defined(USE_VEXT)
-//                 for (int x = 0; x < output_x; x++)
-//                 {
-//                     const int32_t *mult_ptr = output_multiplier;
-//                     const int32_t *shift_ptr = output_shift;
-//
-//                     int channel_count = output_ch;
-//                     for (; channel_count > 0; channel_count -= 4)
-//                     {
-//                         mve_pred16_t p = vctp32q((uint32_t)channel_count);
-//
-//                         int32x4_t result = vldrwq_z_s32(buf_out, p);
-//                         buf_out += 4;
-//                         result = muriscv_nn_requantize_mve_32x4(result, vldrwq_z_s32(mult_ptr, p), vldrwq_z_s32(shift_ptr, p));
-//                         mult_ptr += 4;
-//                         shift_ptr += 4;
-//                         result = vaddq_n_s32(result, out_offset);
-//                         result = vmaxq_s32(result, vdupq_n_s32(activation_min));
-//                         result = vminq_s32(result, vdupq_n_s32(activation_max));
-//                         vstrbq_p_s32(output, result, p);
-//                         output += 4;
-//                     }
-//
-//                     // Correct pointer overshoot due to predication
-//                     buf_out += channel_count;
-//                     output += channel_count;
-//                 }
-// #else
+                // #if defined(USE_VEXT)
+                //                 for (int x = 0; x < output_x; x++)
+                //                 {
+                //                     const int32_t *mult_ptr = output_multiplier;
+                //                     const int32_t *shift_ptr = output_shift;
+                //
+                //                     int channel_count = output_ch;
+                //                     for (; channel_count > 0; channel_count -= 4)
+                //                     {
+                //                         mve_pred16_t p = vctp32q((uint32_t)channel_count);
+                //
+                //                         int32x4_t result = vldrwq_z_s32(buf_out, p);
+                //                         buf_out += 4;
+                //                         result = muriscv_nn_requantize_mve_32x4(result, vldrwq_z_s32(mult_ptr, p),
+                //                         vldrwq_z_s32(shift_ptr, p)); mult_ptr += 4; shift_ptr += 4; result =
+                //                         vaddq_n_s32(result, out_offset); result = vmaxq_s32(result,
+                //                         vdupq_n_s32(activation_min)); result = vminq_s32(result,
+                //                         vdupq_n_s32(activation_max)); vstrbq_p_s32(output, result, p); output += 4;
+                //                     }
+                //
+                //                     // Correct pointer overshoot due to predication
+                //                     buf_out += channel_count;
+                //                     output += channel_count;
+                //                 }
+                // #else
                 for (int x = 0; x < output_x; x++)
                 {
                     const int32_t *output_multiplier_ptr = output_multiplier;
@@ -262,7 +261,7 @@ muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
                         *output++ = result;
                     }
                 }
-// #endif
+                // #endif
             }
             buf_row = (buf_row + buf_x) % buf_size;
         }

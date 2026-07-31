@@ -54,8 +54,6 @@ extern "C" {
 #define ARM_SIGMOID MURISCV_SIGMOID
 #define ARM_TANH MURISCV_TANH
 
-
-
 #ifdef __cplusplus
 }
 #endif

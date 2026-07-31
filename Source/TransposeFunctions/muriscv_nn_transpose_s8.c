@@ -42,10 +42,10 @@
  */
 
 static muriscv_nn_status muriscv_nn_transpose_s8_nhcw(const int8_t *input,
-                                                 int8_t *const output,
-                                                 const muriscv_nn_dims *const input_dims,
-                                                 const int32_t *const in_strides,
-                                                 const int32_t *const out_strides)
+                                                      int8_t *const output,
+                                                      const muriscv_nn_dims *const input_dims,
+                                                      const int32_t *const in_strides,
+                                                      const int32_t *const out_strides)
 {
     const int32_t n = input_dims->n;
     const int32_t h = input_dims->h;
@@ -58,13 +58,13 @@ static muriscv_nn_status muriscv_nn_transpose_s8_nhcw(const int8_t *input,
     const uint16_t src_rows = w;
     const uint16_t src_cols = c;
 
-//#if defined(USE_VEXT)
-//    uint16x8_t vec_offsets;
-//    uint16x8_t vec_input;
-//
-//    vec_offsets = vidupq_u16((uint32_t)0, 1);
-//    vec_offsets = vec_offsets * src_cols;
-//#endif
+    // #if defined(USE_VEXT)
+    //     uint16x8_t vec_offsets;
+    //     uint16x8_t vec_input;
+    //
+    //     vec_offsets = vidupq_u16((uint32_t)0, 1);
+    //     vec_offsets = vec_offsets * src_cols;
+    // #endif
 
     for (int32_t i = 0; i < n; i++)
     {
@@ -74,32 +74,32 @@ static muriscv_nn_status muriscv_nn_transpose_s8_nhcw(const int8_t *input,
         for (int32_t y = 0; y < h; y++)
         {
 
-//#if defined(USE_VEXT)
-//            const uint8_t *input_c = (const uint8_t *)input_h;
-//            uint8_t *output_c = (uint8_t *)output_h;
-//
-//            for (int32_t z = 0; z < src_cols; z++)
-//            {
-//                uint8_t const *input_w = (uint8_t const *)input_c;
-//                uint8_t *output_w = (uint8_t *)output_c;
-//
-//                int32_t block_count = src_rows;
-//                while (block_count > 0)
-//                {
-//                    mve_pred16_t p = vctp16q(block_count);
-//
-//                    vec_input = vldrbq_gather_offset_z_u16(input_w, vec_offsets, p);
-//                    vstrbq_p_u16(output_w, vec_input, p);
-//
-//                    input_w = input_w + src_cols * 8;
-//                    output_w += 8;
-//                    block_count -= 8;
-//                }
-//
-//                input_c++;
-//                output_c += src_rows;
-//            }
-//#else
+            // #if defined(USE_VEXT)
+            //             const uint8_t *input_c = (const uint8_t *)input_h;
+            //             uint8_t *output_c = (uint8_t *)output_h;
+            //
+            //             for (int32_t z = 0; z < src_cols; z++)
+            //             {
+            //                 uint8_t const *input_w = (uint8_t const *)input_c;
+            //                 uint8_t *output_w = (uint8_t *)output_c;
+            //
+            //                 int32_t block_count = src_rows;
+            //                 while (block_count > 0)
+            //                 {
+            //                     mve_pred16_t p = vctp16q(block_count);
+            //
+            //                     vec_input = vldrbq_gather_offset_z_u16(input_w, vec_offsets, p);
+            //                     vstrbq_p_u16(output_w, vec_input, p);
+            //
+            //                     input_w = input_w + src_cols * 8;
+            //                     output_w += 8;
+            //                     block_count -= 8;
+            //                 }
+            //
+            //                 input_c++;
+            //                 output_c += src_rows;
+            //             }
+            // #else
             const uint8_t *input_w = (const uint8_t *)input_h;
             uint8_t *output_w = (uint8_t *)output_h;
 
@@ -113,7 +113,7 @@ static muriscv_nn_status muriscv_nn_transpose_s8_nhcw(const int8_t *input,
                     output_w += src_rows;
                 }
             }
-//#endif
+            // #endif
             input_h += in_strides[1];
             output_h += out_strides[1];
         }
@@ -125,10 +125,10 @@ static muriscv_nn_status muriscv_nn_transpose_s8_nhcw(const int8_t *input,
 }
 
 static muriscv_nn_status muriscv_nn_transpose_s8_default(const int8_t *input,
-                                                    int8_t *const output,
-                                                    const muriscv_nn_dims *const input_dims,
-                                                    const int32_t *const in_strides,
-                                                    const int32_t *const out_strides)
+                                                         int8_t *const output,
+                                                         const muriscv_nn_dims *const input_dims,
+                                                         const int32_t *const in_strides,
+                                                         const int32_t *const out_strides)
 {
     const int32_t n = input_dims->n;
     const int32_t h = input_dims->h;
@@ -165,10 +165,10 @@ static muriscv_nn_status muriscv_nn_transpose_s8_default(const int8_t *input,
  *
  */
 muriscv_nn_status muriscv_nn_transpose_s8(const int8_t *input,
-                                     int8_t *const output,
-                                     const muriscv_nn_dims *const input_dims,
-                                     const muriscv_nn_dims *const output_dims,
-                                     const muriscv_nn_transpose_params *const transpose_params)
+                                          int8_t *const output,
+                                          const muriscv_nn_dims *const input_dims,
+                                          const muriscv_nn_dims *const output_dims,
+                                          const muriscv_nn_transpose_params *const transpose_params)
 {
     int32_t in_strides[4];
     int32_t out_strides[4] = {0};
@@ -229,12 +229,12 @@ muriscv_nn_status muriscv_nn_transpose_s8(const int8_t *input,
     out_strides[perm[2]] = output_dims->c;
     out_strides[perm[3]] = 1;
 
-//#if defined(USE_VEXT)
-//    if (perm[0] == 0 && perm[1] == 1)
-//    {
-//        return muriscv_nn_transpose_s8_nhcw(input, output, input_dims, in_strides, out_strides);
-//    }
-//#endif
+    // #if defined(USE_VEXT)
+    //     if (perm[0] == 0 && perm[1] == 1)
+    //     {
+    //         return muriscv_nn_transpose_s8_nhcw(input, output, input_dims, in_strides, out_strides);
+    //     }
+    // #endif
 
     return muriscv_nn_transpose_s8_default(input, output, input_dims, in_strides, out_strides);
 }

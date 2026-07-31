@@ -39,21 +39,21 @@
  */
 
 int8_t *muriscv_nn_mat_mult_kernel_row_offset_s8_s16(const int8_t *input_a,
-                                                 const int16_t *input_b,
-                                                 const uint16_t output_ch,
-                                                 const int32_t *out_shift,
-                                                 const int32_t *out_mult,
-                                                 const int32_t out_offset,
-                                                 const int16_t activation_min,
-                                                 const int16_t activation_max,
-                                                 const int32_t num_col_a,
-                                                 const int32_t aligned_num_col_a,
-                                                 const int32_t *const output_bias,
-                                                 const int32_t row_address_offset,
-                                                 int8_t *out_0)
+                                                     const int16_t *input_b,
+                                                     const uint16_t output_ch,
+                                                     const int32_t *out_shift,
+                                                     const int32_t *out_mult,
+                                                     const int32_t out_offset,
+                                                     const int16_t activation_min,
+                                                     const int16_t activation_max,
+                                                     const int32_t num_col_a,
+                                                     const int32_t aligned_num_col_a,
+                                                     const int32_t *const output_bias,
+                                                     const int32_t row_address_offset,
+                                                     int8_t *out_0)
 {
 
-//#if !defined(USE_VEXT)
+    // #if !defined(USE_VEXT)
     /* set up the second output pointers */
 
     int8_t *out_1 = out_0 + row_address_offset;
@@ -84,39 +84,39 @@ int8_t *muriscv_nn_mat_mult_kernel_row_offset_s8_s16(const int8_t *input_a,
             ch_1_out_1 = *bias++;
         }
 
-//    #if defined(USE_PEXT)
-//        int32_t col_count = num_col_a / 4;
-//        /* accumulate over the vector */
-//        while (col_count)
-//        {
-//            int32_t a01, a02, a11, a12;
-//            int32_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-//            int32_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-//
-//            ip_a0 = read_and_pad_reordered(ip_a0, &a01, &a02);
-//            ip_a1 = read_and_pad_reordered(ip_a1, &a11, &a12);
-//
-//            ch_0_out_0 = SMLAD(a01, b0, ch_0_out_0);
-//            ch_0_out_1 = SMLAD(a01, b1, ch_0_out_1);
-//            ch_1_out_0 = SMLAD(a11, b0, ch_1_out_0);
-//            ch_1_out_1 = SMLAD(a11, b1, ch_1_out_1);
-//
-//            b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-//            b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-//
-//            ch_0_out_0 = SMLAD(a02, b0, ch_0_out_0);
-//            ch_0_out_1 = SMLAD(a02, b1, ch_0_out_1);
-//            ch_1_out_0 = SMLAD(a12, b0, ch_1_out_0);
-//            ch_1_out_1 = SMLAD(a12, b1, ch_1_out_1);
-//
-//            col_count--;
-//        } /* while over col_count */
-//
-//        col_count = num_col_a & 0x3;
-//
-//    #else
+        //    #if defined(USE_PEXT)
+        //        int32_t col_count = num_col_a / 4;
+        //        /* accumulate over the vector */
+        //        while (col_count)
+        //        {
+        //            int32_t a01, a02, a11, a12;
+        //            int32_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
+        //            int32_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+        //
+        //            ip_a0 = read_and_pad_reordered(ip_a0, &a01, &a02);
+        //            ip_a1 = read_and_pad_reordered(ip_a1, &a11, &a12);
+        //
+        //            ch_0_out_0 = SMLAD(a01, b0, ch_0_out_0);
+        //            ch_0_out_1 = SMLAD(a01, b1, ch_0_out_1);
+        //            ch_1_out_0 = SMLAD(a11, b0, ch_1_out_0);
+        //            ch_1_out_1 = SMLAD(a11, b1, ch_1_out_1);
+        //
+        //            b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
+        //            b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+        //
+        //            ch_0_out_0 = SMLAD(a02, b0, ch_0_out_0);
+        //            ch_0_out_1 = SMLAD(a02, b1, ch_0_out_1);
+        //            ch_1_out_0 = SMLAD(a12, b0, ch_1_out_0);
+        //            ch_1_out_1 = SMLAD(a12, b1, ch_1_out_1);
+        //
+        //            col_count--;
+        //        } /* while over col_count */
+        //
+        //        col_count = num_col_a & 0x3;
+        //
+        //    #else
         int32_t col_count = num_col_a;
-//    #endif
+        //    #endif
         while (col_count)
         {
             int8_t a0 = *ip_a0++;
@@ -181,31 +181,31 @@ int8_t *muriscv_nn_mat_mult_kernel_row_offset_s8_s16(const int8_t *input_a,
             ch_0_out_1 = *bias++;
         }
 
-//    #if defined(USE_PEXT)
-//        int32_t col_count = num_col_a >> 2;
-//        while (col_count)
-//        {
-//            int32_t a01, a02;
-//            int32_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-//            int32_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-//
-//            ip_a0 = read_and_pad_reordered(ip_a0, &a01, &a02);
-//
-//            ch_0_out_0 = SMLAD(a01, b0, ch_0_out_0);
-//            ch_0_out_1 = SMLAD(a01, b1, ch_0_out_1);
-//
-//            b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-//            b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-//            ch_0_out_0 = SMLAD(a02, b0, ch_0_out_0);
-//            ch_0_out_1 = SMLAD(a02, b1, ch_0_out_1);
-//
-//            col_count--;
-//        }
-//        col_count = num_col_a & 0x3;
-//
-//    #else
+        //    #if defined(USE_PEXT)
+        //        int32_t col_count = num_col_a >> 2;
+        //        while (col_count)
+        //        {
+        //            int32_t a01, a02;
+        //            int32_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
+        //            int32_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+        //
+        //            ip_a0 = read_and_pad_reordered(ip_a0, &a01, &a02);
+        //
+        //            ch_0_out_0 = SMLAD(a01, b0, ch_0_out_0);
+        //            ch_0_out_1 = SMLAD(a01, b1, ch_0_out_1);
+        //
+        //            b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
+        //            b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+        //            ch_0_out_0 = SMLAD(a02, b0, ch_0_out_0);
+        //            ch_0_out_1 = SMLAD(a02, b1, ch_0_out_1);
+        //
+        //            col_count--;
+        //        }
+        //        col_count = num_col_a & 0x3;
+        //
+        //    #else
         int32_t col_count = num_col_a;
-//    #endif
+        //    #endif
         while (col_count)
         {
             int8_t a0 = *ip_a0++;
@@ -236,19 +236,19 @@ int8_t *muriscv_nn_mat_mult_kernel_row_offset_s8_s16(const int8_t *input_a,
 
     /* return the new output pointer with offset */
     return out_0;
-//#else
-//    (void)input_a;
-//    (void)input_b;
-//    (void)output_ch;
-//    (void)out_shift;
-//    (void)out_mult;
-//    (void)out_offset;
-//    (void)activation_min;
-//    (void)activation_max;
-//    (void)aligned_num_col_a, (void)num_col_a;
-//    (void)output_bias;
-//    (void)row_address_offset;
-//    (void)out_0;
-//    return NULL;
-//#endif
+    // #else
+    //     (void)input_a;
+    //     (void)input_b;
+    //     (void)output_ch;
+    //     (void)out_shift;
+    //     (void)out_mult;
+    //     (void)out_offset;
+    //     (void)activation_min;
+    //     (void)activation_max;
+    //     (void)aligned_num_col_a, (void)num_col_a;
+    //     (void)output_bias;
+    //     (void)row_address_offset;
+    //     (void)out_0;
+    //     return NULL;
+    // #endif
 }

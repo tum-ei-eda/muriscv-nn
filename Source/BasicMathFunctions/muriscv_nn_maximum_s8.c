@@ -44,21 +44,21 @@
 static muriscv_nn_status
 muriscv_nn_max_no_broadcast_s8(const int8_t *input_1, const int8_t *input_2, int8_t *output, int32_t flat_size)
 {
-//#if defined(USE_VEXT)
-//    while (flat_size > 0)
-//    {
-//        mve_pred16_t p = vctp8q(flat_size);
-//
-//        int8x16_t vec1 = vldrbq_z_s8(input_1, p);
-//        input_1 += 16;
-//        int8x16_t vec2 = vldrbq_z_s8(input_2, p);
-//        input_2 += 16;
-//
-//        vstrbq_p_s8(output, vmaxq_s8(vec1, vec2), p);
-//        output += 16;
-//        flat_size -= 16;
-//    }
-//#else
+    // #if defined(USE_VEXT)
+    //     while (flat_size > 0)
+    //     {
+    //         mve_pred16_t p = vctp8q(flat_size);
+    //
+    //         int8x16_t vec1 = vldrbq_z_s8(input_1, p);
+    //         input_1 += 16;
+    //         int8x16_t vec2 = vldrbq_z_s8(input_2, p);
+    //         input_2 += 16;
+    //
+    //         vstrbq_p_s8(output, vmaxq_s8(vec1, vec2), p);
+    //         output += 16;
+    //         flat_size -= 16;
+    //     }
+    // #else
     while (flat_size > 0)
     {
         int8_t in1 = *input_1++;
@@ -66,7 +66,7 @@ muriscv_nn_max_no_broadcast_s8(const int8_t *input_1, const int8_t *input_2, int
         *output++ = in1 >= in2 ? in1 : in2;
         --flat_size;
     }
-//#endif
+    // #endif
 
     return MURISCV_NN_SUCCESS;
 }
@@ -74,20 +74,20 @@ muriscv_nn_max_no_broadcast_s8(const int8_t *input_1, const int8_t *input_2, int
 static muriscv_nn_status
 muriscv_nn_max_scalar_s8(const int8_t *input_1, const int8_t *input_2, int8_t *output, int32_t flat_size)
 {
-//#if defined(USE_VEXT)
-//    int8x16_t scalar_vec = vdupq_n_s8(*input_1);
-//
-//    while (flat_size > 0)
-//    {
-//        mve_pred16_t p = vctp8q(flat_size);
-//        int8x16_t vec = vldrbq_z_s8(input_2, p);
-//        input_2 += 16;
-//
-//        vstrbq_p_s8(output, vmaxq_s8(scalar_vec, vec), p);
-//        output += 16;
-//        flat_size -= 16;
-//    }
-//#else
+    // #if defined(USE_VEXT)
+    //     int8x16_t scalar_vec = vdupq_n_s8(*input_1);
+    //
+    //     while (flat_size > 0)
+    //     {
+    //         mve_pred16_t p = vctp8q(flat_size);
+    //         int8x16_t vec = vldrbq_z_s8(input_2, p);
+    //         input_2 += 16;
+    //
+    //         vstrbq_p_s8(output, vmaxq_s8(scalar_vec, vec), p);
+    //         output += 16;
+    //         flat_size -= 16;
+    //     }
+    // #else
     int8_t in1 = *input_1;
     while (flat_size > 0)
     {
@@ -95,7 +95,7 @@ muriscv_nn_max_scalar_s8(const int8_t *input_1, const int8_t *input_2, int8_t *o
         *output++ = in1 >= in2 ? in1 : in2;
         --flat_size;
     }
-//#endif
+    // #endif
     return MURISCV_NN_SUCCESS;
 }
 
@@ -106,12 +106,12 @@ muriscv_nn_max_scalar_s8(const int8_t *input_1, const int8_t *input_2, int8_t *o
  *
  */
 muriscv_nn_status muriscv_nn_maximum_s8(const muriscv_nn_context *ctx,
-                                   const int8_t *input_1_data,
-                                   const muriscv_nn_dims *input_1_dims,
-                                   const int8_t *input_2_data,
-                                   const muriscv_nn_dims *input_2_dims,
-                                   int8_t *output_data,
-                                   const muriscv_nn_dims *output_dims)
+                                        const int8_t *input_1_data,
+                                        const muriscv_nn_dims *input_1_dims,
+                                        const int8_t *input_2_data,
+                                        const muriscv_nn_dims *input_2_dims,
+                                        int8_t *output_data,
+                                        const muriscv_nn_dims *output_dims)
 {
     (void)ctx;
     const int32_t output_batch = output_dims->n;
@@ -217,14 +217,16 @@ muriscv_nn_status muriscv_nn_maximum_s8(const muriscv_nn_context *ctx,
                             {
                                 if (input_1_channels == input_2_channels)
                                 {
-                                    muriscv_nn_max_no_broadcast_s8(input_1_ptr, input_2_ptr, output_data, input_1_channels);
+                                    muriscv_nn_max_no_broadcast_s8(
+                                        input_1_ptr, input_2_ptr, output_data, input_1_channels);
                                     output_data += input_1_channels;
                                     input_1_ptr += input_1_channels;
                                     input_2_ptr += input_1_channels;
                                 }
                                 else if (input_1_channels == 1)
                                 {
-                                    // muriscv_nn_max_scalar expects the tensor with the scalar value to be provided first
+                                    // muriscv_nn_max_scalar expects the tensor with the scalar value to be provided
+                                    // first
                                     muriscv_nn_max_scalar_s8(input_1_ptr, input_2_ptr, output_data, input_2_channels);
                                     output_data += input_2_channels;
                                     input_1_ptr++;
@@ -232,7 +234,8 @@ muriscv_nn_status muriscv_nn_maximum_s8(const muriscv_nn_context *ctx,
                                 }
                                 else if (input_2_channels == 1)
                                 {
-                                    // muriscv_nn_max_scalar expects the tensor with the scalar value to be provided first
+                                    // muriscv_nn_max_scalar expects the tensor with the scalar value to be provided
+                                    // first
                                     muriscv_nn_max_scalar_s8(input_2_ptr, input_1_ptr, output_data, input_1_channels);
                                     output_data += input_1_channels;
                                     input_1_ptr += input_1_channels;

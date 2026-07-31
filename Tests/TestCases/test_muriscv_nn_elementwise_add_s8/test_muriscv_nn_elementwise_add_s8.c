@@ -24,13 +24,9 @@
 #include "../../TestData/add/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void add_muriscv_nn_elementwise_add_s8(void)
 {

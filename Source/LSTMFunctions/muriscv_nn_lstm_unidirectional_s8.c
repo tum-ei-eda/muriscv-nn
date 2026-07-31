@@ -48,9 +48,9 @@
  */
 
 muriscv_nn_status muriscv_nn_lstm_unidirectional_s8(const int8_t *input,
-                                               int8_t *output,
-                                               const muriscv_nn_lstm_params *params,
-                                               muriscv_nn_lstm_context *buffers)
+                                                    int8_t *output,
+                                                    const muriscv_nn_lstm_params *params,
+                                                    muriscv_nn_lstm_context *buffers)
 {
 
     int8_t *hidden_in = NULL;

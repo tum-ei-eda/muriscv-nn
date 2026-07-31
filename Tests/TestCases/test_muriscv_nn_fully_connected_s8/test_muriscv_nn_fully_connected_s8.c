@@ -29,13 +29,9 @@
 #include "../../TestData/fully_connected_out_activation/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void fully_connected_muriscv_nn_fully_connected_s8(void)
 {

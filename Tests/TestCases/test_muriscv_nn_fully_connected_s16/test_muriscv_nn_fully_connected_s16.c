@@ -27,13 +27,9 @@
 #include "../../TestData/fully_connected_int16_big/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void fully_connected_int16_muriscv_nn_fully_connected_s16(void)
 {

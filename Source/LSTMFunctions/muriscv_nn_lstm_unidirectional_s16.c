@@ -48,9 +48,9 @@
  */
 
 muriscv_nn_status muriscv_nn_lstm_unidirectional_s16(const int16_t *input,
-                                                int16_t *output,
-                                                const muriscv_nn_lstm_params *params,
-                                                muriscv_nn_lstm_context *buffers)
+                                                     int16_t *output,
+                                                     const muriscv_nn_lstm_params *params,
+                                                     muriscv_nn_lstm_context *buffers)
 {
 
     int16_t *hidden_in = NULL;

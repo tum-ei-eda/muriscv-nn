@@ -38,16 +38,16 @@
  */
 
 int8_t *muriscv_nn_mat_mult_kernel_s4_s16(const int8_t *packed_input_a,
-                                      const int16_t *input_b,
-                                      const uint16_t output_ch,
-                                      const int32_t *out_shift,
-                                      const int32_t *out_mult,
-                                      const int32_t out_offset,
-                                      const int32_t activation_min,
-                                      const int32_t activation_max,
-                                      const int32_t num_col_a,
-                                      const int32_t *const output_bias,
-                                      int8_t *out_0)
+                                          const int16_t *input_b,
+                                          const uint16_t output_ch,
+                                          const int32_t *out_shift,
+                                          const int32_t *out_mult,
+                                          const int32_t out_offset,
+                                          const int32_t activation_min,
+                                          const int32_t activation_max,
+                                          const int32_t num_col_a,
+                                          const int32_t *const output_bias,
+                                          int8_t *out_0)
 {
 
     /* set up the second output pointers */
@@ -85,40 +85,40 @@ int8_t *muriscv_nn_mat_mult_kernel_s4_s16(const int8_t *packed_input_a,
             ch_1_out_1 = *bias--;
         }
 
-//#if defined(USE_PEXT)
-//        int32_t col_count = num_col_a / 4;
-//        /* accumulate over the vector */
-//
-//        while (col_count)
-//        {
-//            int32_t a01, a02, a11, a12;
-//            int32_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-//            int32_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-//
-//            read_and_pad_s4_ordered(packed_ip_a0, &a01, &a02);
-//            read_and_pad_s4_ordered(packed_ip_a1, &a11, &a12);
-//            packed_ip_a0 += 2;
-//            packed_ip_a1 += 2;
-//
-//            ch_0_out_0 = SMLAD(a01, b0, ch_0_out_0);
-//            ch_0_out_1 = SMLAD(a01, b1, ch_0_out_1);
-//            ch_1_out_0 = SMLAD(a11, b0, ch_1_out_0);
-//            ch_1_out_1 = SMLAD(a11, b1, ch_1_out_1);
-//
-//            b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-//            b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-//
-//            ch_0_out_0 = SMLAD(a02, b0, ch_0_out_0);
-//            ch_0_out_1 = SMLAD(a02, b1, ch_0_out_1);
-//            ch_1_out_0 = SMLAD(a12, b0, ch_1_out_0);
-//            ch_1_out_1 = SMLAD(a12, b1, ch_1_out_1);
-//
-//            col_count--;
-//        } /* while over col_count */
-//        col_count = (num_col_a & 0x3) >> 1;
-//#else
+        // #if defined(USE_PEXT)
+        //         int32_t col_count = num_col_a / 4;
+        //         /* accumulate over the vector */
+        //
+        //         while (col_count)
+        //         {
+        //             int32_t a01, a02, a11, a12;
+        //             int32_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
+        //             int32_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+        //
+        //             read_and_pad_s4_ordered(packed_ip_a0, &a01, &a02);
+        //             read_and_pad_s4_ordered(packed_ip_a1, &a11, &a12);
+        //             packed_ip_a0 += 2;
+        //             packed_ip_a1 += 2;
+        //
+        //             ch_0_out_0 = SMLAD(a01, b0, ch_0_out_0);
+        //             ch_0_out_1 = SMLAD(a01, b1, ch_0_out_1);
+        //             ch_1_out_0 = SMLAD(a11, b0, ch_1_out_0);
+        //             ch_1_out_1 = SMLAD(a11, b1, ch_1_out_1);
+        //
+        //             b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
+        //             b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+        //
+        //             ch_0_out_0 = SMLAD(a02, b0, ch_0_out_0);
+        //             ch_0_out_1 = SMLAD(a02, b1, ch_0_out_1);
+        //             ch_1_out_0 = SMLAD(a12, b0, ch_1_out_0);
+        //             ch_1_out_1 = SMLAD(a12, b1, ch_1_out_1);
+        //
+        //             col_count--;
+        //         } /* while over col_count */
+        //         col_count = (num_col_a & 0x3) >> 1;
+        // #else
         int32_t col_count = num_col_a >> 1;
-//#endif
+        // #endif
         while (col_count)
         {
             int8_t lower_a0 = (int8_t)(packed_ip_a0[0] << 4) >> 4;
@@ -232,39 +232,39 @@ int8_t *muriscv_nn_mat_mult_kernel_s4_s16(const int8_t *packed_input_a,
             ch_1_out_1 += spillover1 * b1;
         }
 
-//#if defined(USE_PEXT)
-//        col_count = num_col_a / 4;
-//        /* accumulate over the vector */
-//        while (col_count)
-//        {
-//            int32_t a01, a02, a11, a12;
-//            int32_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-//            int32_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-//
-//            read_and_pad_s4_ordered(packed_ip_a0, &a01, &a02);
-//            read_and_pad_s4_ordered(packed_ip_a1, &a11, &a12);
-//            packed_ip_a0 += 2;
-//            packed_ip_a1 += 2;
-//
-//            ch_0_out_0 = SMLAD(a01, b0, ch_0_out_0);
-//            ch_0_out_1 = SMLAD(a01, b1, ch_0_out_1);
-//            ch_1_out_0 = SMLAD(a11, b0, ch_1_out_0);
-//            ch_1_out_1 = SMLAD(a11, b1, ch_1_out_1);
-//
-//            b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-//            b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-//
-//            ch_0_out_0 = SMLAD(a02, b0, ch_0_out_0);
-//            ch_0_out_1 = SMLAD(a02, b1, ch_0_out_1);
-//            ch_1_out_0 = SMLAD(a12, b0, ch_1_out_0);
-//            ch_1_out_1 = SMLAD(a12, b1, ch_1_out_1);
-//
-//            col_count--;
-//        } /* while over col_count */
-//        col_count = (num_col_a & 0x3) >> 1;
-//#else
+        // #if defined(USE_PEXT)
+        //         col_count = num_col_a / 4;
+        //         /* accumulate over the vector */
+        //         while (col_count)
+        //         {
+        //             int32_t a01, a02, a11, a12;
+        //             int32_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
+        //             int32_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+        //
+        //             read_and_pad_s4_ordered(packed_ip_a0, &a01, &a02);
+        //             read_and_pad_s4_ordered(packed_ip_a1, &a11, &a12);
+        //             packed_ip_a0 += 2;
+        //             packed_ip_a1 += 2;
+        //
+        //             ch_0_out_0 = SMLAD(a01, b0, ch_0_out_0);
+        //             ch_0_out_1 = SMLAD(a01, b1, ch_0_out_1);
+        //             ch_1_out_0 = SMLAD(a11, b0, ch_1_out_0);
+        //             ch_1_out_1 = SMLAD(a11, b1, ch_1_out_1);
+        //
+        //             b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
+        //             b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+        //
+        //             ch_0_out_0 = SMLAD(a02, b0, ch_0_out_0);
+        //             ch_0_out_1 = SMLAD(a02, b1, ch_0_out_1);
+        //             ch_1_out_0 = SMLAD(a12, b0, ch_1_out_0);
+        //             ch_1_out_1 = SMLAD(a12, b1, ch_1_out_1);
+        //
+        //             col_count--;
+        //         } /* while over col_count */
+        //         col_count = (num_col_a & 0x3) >> 1;
+        // #else
         col_count = num_col_a >> 1;
-//#endif
+        // #endif
         while (col_count)
         {
             int8_t lower_a0 = (int8_t)(packed_ip_a0[0] << 4) >> 4;
@@ -359,32 +359,32 @@ int8_t *muriscv_nn_mat_mult_kernel_s4_s16(const int8_t *packed_input_a,
             ch_0_out_1 += spilled_column * b1;
         }
 
-//#if defined(USE_PEXT)
-//        int32_t col_count = num_col_a / 4;
-//        while (col_count)
-//        {
-//            int32_t a01, a02;
-//            int32_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-//            int32_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-//
-//            read_and_pad_s4_ordered(packed_ip_a0, &a01, &a02);
-//            packed_ip_a0 += 2;
-//
-//            ch_0_out_0 = SMLAD(a01, b0, ch_0_out_0);
-//            ch_0_out_1 = SMLAD(a01, b1, ch_0_out_1);
-//
-//            b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
-//            b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
-//            ch_0_out_0 = SMLAD(a02, b0, ch_0_out_0);
-//            ch_0_out_1 = SMLAD(a02, b1, ch_0_out_1);
-//
-//            col_count--;
-//        }
-//        col_count = (num_col_a & 0x3) >> 1;
-//
-//#else
+        // #if defined(USE_PEXT)
+        //         int32_t col_count = num_col_a / 4;
+        //         while (col_count)
+        //         {
+        //             int32_t a01, a02;
+        //             int32_t b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
+        //             int32_t b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+        //
+        //             read_and_pad_s4_ordered(packed_ip_a0, &a01, &a02);
+        //             packed_ip_a0 += 2;
+        //
+        //             ch_0_out_0 = SMLAD(a01, b0, ch_0_out_0);
+        //             ch_0_out_1 = SMLAD(a01, b1, ch_0_out_1);
+        //
+        //             b0 = muriscv_nn_read_q15x2_ia(&ip_b0);
+        //             b1 = muriscv_nn_read_q15x2_ia(&ip_b1);
+        //             ch_0_out_0 = SMLAD(a02, b0, ch_0_out_0);
+        //             ch_0_out_1 = SMLAD(a02, b1, ch_0_out_1);
+        //
+        //             col_count--;
+        //         }
+        //         col_count = (num_col_a & 0x3) >> 1;
+        //
+        // #else
         int32_t col_count = num_col_a >> 1;
-//#endif
+        // #endif
 
         while (col_count)
         {

@@ -58,15 +58,14 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
     (void)fc_params->filter_offset;
 
     int32_t batch_cnt = input_dims->n;
-    
-    
-    //#if defined(USE_VEXT)
-    //if (ctx->buf == NULL)
+
+    // #if defined(USE_VEXT)
+    // if (ctx->buf == NULL)
     //{
-    //    return (MURISCV_NN_ARG_ERROR);    //This condition causes error out with VEXT, why?
-    //}
-    //#endif
-    
+    //     return (MURISCV_NN_ARG_ERROR);    //This condition causes error out with VEXT, why?
+    // }
+    // #endif
+
     const int32_t *kernel_sum = ctx->buf;
 
     while (batch_cnt)
@@ -85,7 +84,7 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
                                      fc_params->activation.min,
                                      fc_params->activation.max,
                                      1L,
-                                     0); //RHS OFFSET CURRENTLY UNUSED
+                                     0); // RHS OFFSET CURRENTLY UNUSED
         input += filter_dims->n;
         output += output_dims->c;
         batch_cnt--;
@@ -93,11 +92,11 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
     return MURISCV_NN_SUCCESS;
 }
 
-//int32_t muriscv_nn_fully_connected_s8_get_buffer_size(const muriscv_nn_dims *filter_dims)
+// int32_t muriscv_nn_fully_connected_s8_get_buffer_size(const muriscv_nn_dims *filter_dims)
 //{
-//    (void)filter_dims;
-//    return 0;
-//}
+//     (void)filter_dims;
+//     return 0;
+// }
 
 /**
  * @} end of FC group

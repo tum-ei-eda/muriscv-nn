@@ -30,13 +30,9 @@
 
 static const uint16_t dilation = 1;
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void basic_muriscv_nn_depthwise_conv_s8_opt(void)
 {

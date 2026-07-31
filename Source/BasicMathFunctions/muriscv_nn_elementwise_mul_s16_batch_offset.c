@@ -48,14 +48,14 @@
  *
  */
 muriscv_nn_status muriscv_nn_elementwise_mul_s16_batch_offset(const int16_t *input_1_vect,
-                                                         const int16_t *input_2_vect,
-                                                         int16_t *output,
-                                                         const int32_t out_offset,
-                                                         const int32_t out_mult,
-                                                         const int32_t out_shift,
-                                                         const int32_t block_size,
-                                                         const int32_t batch_size,
-                                                         const int32_t batch_offset)
+                                                              const int16_t *input_2_vect,
+                                                              int16_t *output,
+                                                              const int32_t out_offset,
+                                                              const int32_t out_mult,
+                                                              const int32_t out_shift,
+                                                              const int32_t block_size,
+                                                              const int32_t batch_size,
+                                                              const int32_t batch_offset)
 {
 
     int32_t loop_count;
@@ -63,42 +63,42 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_batch_offset(const int16_t *inp
     for (int i = 0; i < batch_size; i++)
     {
 
-//#if defined(USE_VEXT)
-//
-//        const int16_t *input_1_ptr = input_1_vect;
-//        const int16_t *input_2_ptr = input_2_vect;
-//        int16_t *output_ptr = output;
-//
-//        loop_count = block_size;
-//
-//        while (loop_count > 0)
-//        {
-//            mve_pred16_t pred = vctp32q(loop_count);
-//
-//            int32x4_t input_1 = vldrhq_z_s32(input_1_ptr, pred);
-//            int32x4_t input_2 = vldrhq_z_s32(input_2_ptr, pred);
-//
-//            int32x4_t res_0 = vmulq_s32(input_1, input_2);
-//
-//            res_0 = muriscv_nn_requantize_mve_32x4(res_0, vdupq_n_s32(out_mult), vdupq_n_s32(out_shift));
-//            res_0 = vaddq_n_s32(res_0, out_offset);
-//
-//            res_0 = vmaxq_s32(res_0, vdupq_n_s32(NN_Q15_MIN));
-//            res_0 = vminq_s32(res_0, vdupq_n_s32(NN_Q15_MAX));
-//
-//            vstrhq_p_s32(output_ptr, res_0, pred);
-//            input_1_ptr += 4;
-//            input_2_ptr += 4;
-//
-//            output_ptr += 4;
-//            loop_count -= 4;
-//        }
-//
-//        input_1_vect += block_size;
-//        input_2_vect += block_size;
-//        output += block_size;
-//
-//#else
+        // #if defined(USE_VEXT)
+        //
+        //         const int16_t *input_1_ptr = input_1_vect;
+        //         const int16_t *input_2_ptr = input_2_vect;
+        //         int16_t *output_ptr = output;
+        //
+        //         loop_count = block_size;
+        //
+        //         while (loop_count > 0)
+        //         {
+        //             mve_pred16_t pred = vctp32q(loop_count);
+        //
+        //             int32x4_t input_1 = vldrhq_z_s32(input_1_ptr, pred);
+        //             int32x4_t input_2 = vldrhq_z_s32(input_2_ptr, pred);
+        //
+        //             int32x4_t res_0 = vmulq_s32(input_1, input_2);
+        //
+        //             res_0 = muriscv_nn_requantize_mve_32x4(res_0, vdupq_n_s32(out_mult), vdupq_n_s32(out_shift));
+        //             res_0 = vaddq_n_s32(res_0, out_offset);
+        //
+        //             res_0 = vmaxq_s32(res_0, vdupq_n_s32(NN_Q15_MIN));
+        //             res_0 = vminq_s32(res_0, vdupq_n_s32(NN_Q15_MAX));
+        //
+        //             vstrhq_p_s32(output_ptr, res_0, pred);
+        //             input_1_ptr += 4;
+        //             input_2_ptr += 4;
+        //
+        //             output_ptr += 4;
+        //             loop_count -= 4;
+        //         }
+        //
+        //         input_1_vect += block_size;
+        //         input_2_vect += block_size;
+        //         output += block_size;
+        //
+        // #else
         int32_t input_1;
         int32_t input_2;
         int32_t mul_res;
@@ -111,25 +111,25 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_batch_offset(const int16_t *inp
             two_halfword_1 = muriscv_nn_read_q15x2_ia(&input_1_vect);
             two_halfword_2 = muriscv_nn_read_q15x2_ia(&input_2_vect);
 
-//    #if defined(USE_PEXT)
-//            mul_res = SMULBB(two_halfword_1, two_halfword_2);
-//    #else
+            //    #if defined(USE_PEXT)
+            //            mul_res = SMULBB(two_halfword_1, two_halfword_2);
+            //    #else
             input_1 = (int16_t)(two_halfword_1 & 0xFFFF);
             input_2 = (int16_t)(two_halfword_2 & 0xFFFF);
             mul_res = input_1 * input_2;
-//    #endif
+            //    #endif
             mul_res = muriscv_nn_requantize(mul_res, out_mult, out_shift) + out_offset;
             mul_res = MAX(mul_res, NN_Q15_MIN);
             mul_res = MIN(mul_res, NN_Q15_MAX);
             mul_1 = (int16_t)mul_res;
 
-//    #if defined(USE_PEXT)
-//            mul_res = SMULTT(two_halfword_1, two_halfword_2);
-//    #else
+            //    #if defined(USE_PEXT)
+            //            mul_res = SMULTT(two_halfword_1, two_halfword_2);
+            //    #else
             input_1 = (int16_t)(two_halfword_1 >> 16);
             input_2 = (int16_t)(two_halfword_2 >> 16);
             mul_res = input_1 * input_2;
-//    #endif
+            //    #endif
             mul_res = muriscv_nn_requantize(mul_res, out_mult, out_shift) + out_offset;
             mul_res = MAX(mul_res, NN_Q15_MIN);
             mul_res = MIN(mul_res, NN_Q15_MAX);
@@ -155,7 +155,7 @@ muriscv_nn_status muriscv_nn_elementwise_mul_s16_batch_offset(const int16_t *inp
 
             *output++ = (int16_t)mul_res;
         }
-//#endif // #if defined(USE_VEXT)
+        // #endif // #if defined(USE_VEXT)
 
         output += (batch_offset - 1) * block_size;
     }

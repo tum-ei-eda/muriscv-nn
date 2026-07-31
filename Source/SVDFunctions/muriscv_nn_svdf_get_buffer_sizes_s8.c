@@ -53,11 +53,11 @@ int32_t muriscv_nn_svdf_s8_get_buffer_size_mve(const muriscv_nn_dims *weights_fe
 
 int32_t muriscv_nn_svdf_s8_get_buffer_size(const muriscv_nn_dims *weights_feature_dims)
 {
-//#if defined(USE_VEXT)
-//    return muriscv_nn_svdf_s8_get_buffer_size_mve(weights_feature_dims);
-//#else
+    // #if defined(USE_VEXT)
+    //     return muriscv_nn_svdf_s8_get_buffer_size_mve(weights_feature_dims);
+    // #else
     return muriscv_nn_svdf_s8_get_buffer_size_dsp(weights_feature_dims);
-//#endif
+    // #endif
 }
 
 /**

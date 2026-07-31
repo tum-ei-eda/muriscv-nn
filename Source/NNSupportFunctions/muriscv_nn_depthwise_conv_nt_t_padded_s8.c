@@ -45,18 +45,18 @@
  */
 
 muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_padded_s8(const int8_t *lhs,
-                                                         const int8_t *rhs,
-                                                         const int32_t lhs_offset,
-                                                         const int32_t active_ch,
-                                                         const int32_t total_ch,
-                                                         const int32_t *out_shift,
-                                                         const int32_t *out_mult,
-                                                         const int32_t out_offset,
-                                                         const int32_t activation_min,
-                                                         const int32_t activation_max,
-                                                         const uint16_t row_x_col,
-                                                         const int32_t *const output_bias,
-                                                         int8_t *out)
+                                                           const int8_t *rhs,
+                                                           const int32_t lhs_offset,
+                                                           const int32_t active_ch,
+                                                           const int32_t total_ch,
+                                                           const int32_t *out_shift,
+                                                           const int32_t *out_mult,
+                                                           const int32_t out_offset,
+                                                           const int32_t activation_min,
+                                                           const int32_t activation_max,
+                                                           const uint16_t row_x_col,
+                                                           const int32_t *const output_bias,
+                                                           int8_t *out)
 {
 #if defined(USE_VEXT)
     const int32_t *bias = output_bias;
@@ -76,7 +76,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_nt_t_padded_s8(const int8_t *lhs,
 
         const int8_t *rhs_0 = rhs + offset;
         const int8_t *lhs_0 = lhs + offset;
-        const int8_t *lhs_1 = lhs + row_x_col * CH_IN_BLOCK_MVE + offset;        //Maybe VL here instead of num_ch
+        const int8_t *lhs_1 = lhs + row_x_col * CH_IN_BLOCK_MVE + offset; // Maybe VL here instead of num_ch
         const int8_t *lhs_2 = lhs + (row_x_col * CH_IN_BLOCK_MVE * 2) + offset;
         const int8_t *lhs_3 = lhs + (row_x_col * CH_IN_BLOCK_MVE * 3) + offset;
         offset += vl;

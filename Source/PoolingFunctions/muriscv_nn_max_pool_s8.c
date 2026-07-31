@@ -131,7 +131,7 @@ static inline void clamp_output(int8_t *source, int32_t length, const int32_t ac
 
         int32_t *s = (int32_t *)(source + idx);
         *s = __rv_smin8(__rv_smax8(*s, min_packed), max_packed);
-        *(s+1) = __rv_smin8(__rv_smax8(*(s+1), min_packed), max_packed);
+        *(s + 1) = __rv_smin8(__rv_smax8(*(s + 1), min_packed), max_packed);
 
         idx += 8;
     }
@@ -163,12 +163,12 @@ static inline void clamp_output(int8_t *source, int32_t length, const int32_t ac
  */
 
 muriscv_nn_status muriscv_nn_max_pool_s8(const muriscv_nn_context *ctx,
-                                        const muriscv_nn_pool_params *pool_params,
-                                        const muriscv_nn_dims *input_dims,
-                                        const q7_t *src,
-                                        const muriscv_nn_dims *filter_dims,
-                                        const muriscv_nn_dims *output_dims,
-                                        q7_t *dst)
+                                         const muriscv_nn_pool_params *pool_params,
+                                         const muriscv_nn_dims *input_dims,
+                                         const q7_t *src,
+                                         const muriscv_nn_dims *filter_dims,
+                                         const muriscv_nn_dims *output_dims,
+                                         q7_t *dst)
 {
     const int32_t input_y = input_dims->h;
     const int32_t input_x = input_dims->w;

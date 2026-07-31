@@ -50,10 +50,10 @@
  */
 
 muriscv_nn_status muriscv_nn_activation_s16(const int16_t *input,
-                           int16_t *output,
-                           const int32_t size,
-                           const int32_t left_shift,
-                           const muriscv_nn_activation_type type)
+                                            int16_t *output,
+                                            const int32_t size,
+                                            const int32_t left_shift,
+                                            const muriscv_nn_activation_type type)
 {
     uint32_t abs_input_shift, max_saturation;
     switch (type)
@@ -117,7 +117,7 @@ muriscv_nn_status muriscv_nn_activation_s16(const int16_t *input,
         }
         *output = (int16_t)result;
     }
-    
+
     return MURISCV_NN_SUCCESS;
 }
 

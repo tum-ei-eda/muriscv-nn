@@ -45,23 +45,23 @@
  * Refer to header file for details.
  */
 muriscv_nn_status muriscv_nn_batch_matmul_s8(const muriscv_nn_context *ctx,
-                                        const muriscv_nn_bmm_params *bmm_params,
-                                        const muriscv_nn_per_tensor_quant_params *quant_params,
-                                        const muriscv_nn_dims *input_lhs_dims,
-                                        const int8_t *input_lhs,
-                                        const muriscv_nn_dims *input_rhs_dims,
-                                        const int8_t *input_rhs,
-                                        const muriscv_nn_dims *output_dims,
-                                        int8_t *output)
+                                             const muriscv_nn_bmm_params *bmm_params,
+                                             const muriscv_nn_per_tensor_quant_params *quant_params,
+                                             const muriscv_nn_dims *input_lhs_dims,
+                                             const int8_t *input_lhs,
+                                             const muriscv_nn_dims *input_rhs_dims,
+                                             const int8_t *input_rhs,
+                                             const muriscv_nn_dims *output_dims,
+                                             int8_t *output)
 {
     (void)ctx;
-//#if defined(USE_VEXT)
-//    if (ctx->buf == NULL)
-//    {
-//        return MURISCV_NN_ARG_ERROR;
-//    }
-//    int32_t *vector_sum_buf = (int32_t *)ctx->buf;
-//#endif
+    // #if defined(USE_VEXT)
+    //     if (ctx->buf == NULL)
+    //     {
+    //         return MURISCV_NN_ARG_ERROR;
+    //     }
+    //     int32_t *vector_sum_buf = (int32_t *)ctx->buf;
+    // #endif
     const int32_t output_batch = output_dims->n;
     const int32_t output_height = output_dims->h;
     const int32_t lhs_rows = input_lhs_dims->w;
@@ -81,36 +81,36 @@ muriscv_nn_status muriscv_nn_batch_matmul_s8(const muriscv_nn_context *ctx,
         for (int i_out_height = 0; i_out_height < output_height; i_out_height++)
         {
 
-//#if defined(USE_VEXT)
-//            muriscv_nn_vector_sum_s8(vector_sum_buf,
-//                              rhs_cols,
-//                              rhs_rows,
-//                              input_rhs,
-//                              bmm_params->fc_params.input_offset,
-//                              bmm_params->fc_params.filter_offset,
-//                              NULL);
-//#endif
+            // #if defined(USE_VEXT)
+            //             muriscv_nn_vector_sum_s8(vector_sum_buf,
+            //                               rhs_cols,
+            //                               rhs_rows,
+            //                               input_rhs,
+            //                               bmm_params->fc_params.input_offset,
+            //                               bmm_params->fc_params.filter_offset,
+            //                               NULL);
+            // #endif
             for (int i_lhs_rows = 0; i_lhs_rows < lhs_rows; i_lhs_rows++)
             {
                 muriscv_nn_vec_mat_mult_t_s8(input_lhs,
-                                         input_rhs,
-//#if defined(USE_VEXT)
-//                                         vector_sum_buf,
-//#else
-                                         NULL,
-//#endif
-                                         NULL,
-                                         output,
-                                         bmm_params->fc_params.input_offset,
-                                         bmm_params->fc_params.output_offset,
-                                         quant_params->multiplier,
-                                         quant_params->shift,
-                                         rhs_cols,
-                                         rhs_rows,
-                                         bmm_params->fc_params.activation.min,
-                                         bmm_params->fc_params.activation.max,
-                                         1,
-                                         bmm_params->fc_params.filter_offset);
+                                             input_rhs,
+                                             // #if defined(USE_VEXT)
+                                             //                                          vector_sum_buf,
+                                             // #else
+                                             NULL,
+                                             // #endif
+                                             NULL,
+                                             output,
+                                             bmm_params->fc_params.input_offset,
+                                             bmm_params->fc_params.output_offset,
+                                             quant_params->multiplier,
+                                             quant_params->shift,
+                                             rhs_cols,
+                                             rhs_rows,
+                                             bmm_params->fc_params.activation.min,
+                                             bmm_params->fc_params.activation.max,
+                                             1,
+                                             bmm_params->fc_params.filter_offset);
 
                 input_lhs += rhs_cols;
                 output += rhs_rows;

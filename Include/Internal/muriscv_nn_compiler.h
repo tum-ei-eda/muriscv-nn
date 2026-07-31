@@ -162,9 +162,9 @@
 // as __GNUC__ is defined by non-GCC compilers as well
 
 /* Common intrinsics for all architectures */
-//#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050) || defined(__ICCARM__)
-//    #define CLZ __clz
-//#elif defined(__GNUC__)
+// #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050) || defined(__ICCARM__)
+//     #define CLZ __clz
+// #elif defined(__GNUC__)
 /**
   \brief   Count leading zeros
   \details Counts the number of leading zeros of a data value.
@@ -173,22 +173,22 @@
  */
 //__STATIC_FORCEINLINE uint8_t CLZ(uint32_t value)
 //{
-    /* Even though __builtin_clz produces a CLZ instruction on ARM, formally
-       __builtin_clz(0) is undefined behaviour, so handle this case specially.
-       This guarantees Arm-compatible results if compiling on a non-Arm
-       target, and ensures the compiler doesn't decide to activate any
-       optimisations using the logic "value was passed to __builtin_clz, so it
-       is non-zero".
-       ARM GCC 7.3 and possibly earlier will optimise this test away, leaving a
-       single CLZ instruction.
-     */
+/* Even though __builtin_clz produces a CLZ instruction on ARM, formally
+   __builtin_clz(0) is undefined behaviour, so handle this case specially.
+   This guarantees Arm-compatible results if compiling on a non-Arm
+   target, and ensures the compiler doesn't decide to activate any
+   optimisations using the logic "value was passed to __builtin_clz, so it
+   is non-zero".
+   ARM GCC 7.3 and possibly earlier will optimise this test away, leaving a
+   single CLZ instruction.
+ */
 //    if (value == 0U)
 //    {
 //        return 32U;
 //    }
 //    return __builtin_clz(value);
 //}
-//#endif
+// #endif
 
 // ACLE intrinsics under groups __ARM_FEATURE_QBIT, __ARM_FEATURE_DSP , __ARM_FEATURE_SAT, __ARM_FEATURE_SIMD32
 

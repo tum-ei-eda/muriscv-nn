@@ -42,21 +42,22 @@
  */
 
 __STATIC_INLINE int32_t muriscv_nn_convolve_fast_s16_get_buffer_size_dsp(const muriscv_nn_dims *input_dims,
-                                                                  const muriscv_nn_dims *filter_dims)
+                                                                         const muriscv_nn_dims *filter_dims)
 {
     return (2 * input_dims->c * filter_dims->w * filter_dims->h) * (int32_t)sizeof(int16_t);
 }
 
-//int32_t muriscv_nn_convolve_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
+// int32_t muriscv_nn_convolve_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims
+// *filter_dims)
 //{
-//#if defined(USE_PEXT) && !defined(USE_VEXT)
-//    return muriscv_nn_convolve_fast_s16_get_buffer_size_dsp(input_dims, filter_dims);
-//#else
-//    (void)input_dims;
-//    (void)filter_dims;
-//    return 0;
-//#endif
-//}
+// #if defined(USE_PEXT) && !defined(USE_VEXT)
+//     return muriscv_nn_convolve_fast_s16_get_buffer_size_dsp(input_dims, filter_dims);
+// #else
+//     (void)input_dims;
+//     (void)filter_dims;
+//     return 0;
+// #endif
+// }
 
 int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
 {
@@ -66,16 +67,16 @@ int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dim
 }
 
 /*
- * Get the required buffer size for muriscv_nn_convolve_wrapper_s16. This is the recommended function convolve wrapper s16
- * function.
+ * Get the required buffer size for muriscv_nn_convolve_wrapper_s16. This is the recommended function convolve wrapper
+ * s16 function.
  *
  * Refer to header file for details.
  *
  */
 int32_t muriscv_nn_convolve_wrapper_s16_get_buffer_size(const muriscv_nn_conv_params *conv_params,
-                                                 const muriscv_nn_dims *input_dims,
-                                                 const muriscv_nn_dims *filter_dims,
-                                                 const muriscv_nn_dims *output_dims)
+                                                        const muriscv_nn_dims *input_dims,
+                                                        const muriscv_nn_dims *filter_dims,
+                                                        const muriscv_nn_dims *output_dims)
 {
 
 #if defined(USE_PEXT) && !defined(USE_VEXT)
@@ -90,9 +91,9 @@ int32_t muriscv_nn_convolve_wrapper_s16_get_buffer_size(const muriscv_nn_conv_pa
 }
 
 int32_t muriscv_nn_convolve_wrapper_s16_get_buffer_size_dsp(const muriscv_nn_conv_params *conv_params,
-                                                     const muriscv_nn_dims *input_dims,
-                                                     const muriscv_nn_dims *filter_dims,
-                                                     const muriscv_nn_dims *output_dims)
+                                                            const muriscv_nn_dims *input_dims,
+                                                            const muriscv_nn_dims *filter_dims,
+                                                            const muriscv_nn_dims *output_dims)
 {
     (void)output_dims;
 
@@ -109,9 +110,9 @@ int32_t muriscv_nn_convolve_wrapper_s16_get_buffer_size_dsp(const muriscv_nn_con
 }
 
 int32_t muriscv_nn_convolve_wrapper_s16_get_buffer_size_mve(const muriscv_nn_conv_params *conv_params,
-                                                     const muriscv_nn_dims *input_dims,
-                                                     const muriscv_nn_dims *filter_dims,
-                                                     const muriscv_nn_dims *output_dims)
+                                                            const muriscv_nn_dims *input_dims,
+                                                            const muriscv_nn_dims *filter_dims,
+                                                            const muriscv_nn_dims *output_dims)
 {
     return muriscv_nn_convolve_wrapper_s16_get_buffer_size(conv_params, input_dims, filter_dims, output_dims);
 }

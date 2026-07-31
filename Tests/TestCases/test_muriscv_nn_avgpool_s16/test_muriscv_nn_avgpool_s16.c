@@ -25,13 +25,9 @@
 #include "../../TestData/avgpooling_int16/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void avgpooling_int16_muriscv_nn_avgpool_s16(void)
 {

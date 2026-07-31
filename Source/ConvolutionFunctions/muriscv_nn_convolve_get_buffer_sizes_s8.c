@@ -42,7 +42,7 @@
  */
 
 __STATIC_INLINE int32_t muriscv_nn_convolve_s8_get_buffer_size_mve(const muriscv_nn_dims *input_dims,
-                                                            const muriscv_nn_dims *filter_dims)
+                                                                   const muriscv_nn_dims *filter_dims)
 {
     int32_t col_length = input_dims->c * filter_dims->w * filter_dims->h;
     // Get number of complete int16 lanes(multiple of 8) for given col_length. This is dependent on
@@ -73,7 +73,7 @@ int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims
 }
 
 int32_t muriscv_nn_convolve_1_x_n_s8_get_buffer_size(const muriscv_nn_conv_params *conv_params,
-                                                     const muriscv_nn_dims *input_dims, 
+                                                     const muriscv_nn_dims *input_dims,
                                                      const muriscv_nn_dims *filter_dims,
                                                      const muriscv_nn_dims *output_dims)
 {
@@ -131,9 +131,9 @@ int32_t muriscv_nn_convolve_1x1_s8_fast_get_buffer_size(const muriscv_nn_dims *i
 }*/
 
 int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size_mve(const muriscv_nn_conv_params *conv_params,
-                                                    const muriscv_nn_dims *input_dims,
-                                                    const muriscv_nn_dims *filter_dims,
-                                                    const muriscv_nn_dims *output_dims)
+                                                           const muriscv_nn_dims *input_dims,
+                                                           const muriscv_nn_dims *filter_dims,
+                                                           const muriscv_nn_dims *output_dims)
 {
     (void)output_dims;
     if ((conv_params->padding.w == 0) && (conv_params->padding.h == 0) && (filter_dims->w == 1) &&
@@ -160,9 +160,9 @@ int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size_mve(const muriscv_nn_conv
 }
 
 int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size_dsp(const muriscv_nn_conv_params *conv_params,
-                                                    const muriscv_nn_dims *input_dims,
-                                                    const muriscv_nn_dims *filter_dims,
-                                                    const muriscv_nn_dims *output_dims)
+                                                           const muriscv_nn_dims *input_dims,
+                                                           const muriscv_nn_dims *filter_dims,
+                                                           const muriscv_nn_dims *output_dims)
 {
     return muriscv_nn_convolve_wrapper_s8_get_buffer_size(conv_params, input_dims, filter_dims, output_dims);
 }

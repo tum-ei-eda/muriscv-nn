@@ -114,18 +114,17 @@ muriscv_nn_status muriscv_nn_elementwise_add_s8(const int8_t *input_1_vect,
 
 #else /* defined(USE_VEXT) */
 #if defined(USE_PEXT)
-    
-    //Should be using __rv_pack() here.  RVP intrinsics are wrong, invert packu and pack
-    //Assumes that all offsets are int8_t
+
+    // Should be using __rv_pack() here.  RVP intrinsics are wrong, invert packu and pack
+    // Assumes that all offsets are int8_t
     int32_t input_1_offset_packed = __rv_packu(input_1_offset, input_1_offset);
     int32_t input_2_offset_packed = __rv_packu(input_2_offset, input_2_offset);
-    
+
     int32_t out_offset_packed = __rv_packu(out_offset, out_offset);
     int32_t out_activation_max_packed = __rv_packu(out_activation_max, out_activation_max);
     int32_t out_activation_min_packed = __rv_packu(out_activation_min, out_activation_min);
-    
+
     loop_count = block_size >> 2;
-    
 
     while (loop_count > 0)
     {
@@ -140,7 +139,6 @@ muriscv_nn_status muriscv_nn_elementwise_add_s8(const int8_t *input_1_vect,
         input_upper_2 = __rv_kadd16(input_upper_2, input_2_offset_packed);
         int32_t input_lower_2 = __rv_sunpkd810(input_packed);
         input_lower_2 = __rv_kadd16(input_lower_2, input_2_offset_packed);
-
 
         int32_t input_1_1 = ((input_lower_1 & 0xFFFF)) << left_shift;
         int32_t input_1_2 = ((input_lower_2 & 0xFFFF)) << left_shift;
@@ -175,7 +173,7 @@ muriscv_nn_status muriscv_nn_elementwise_add_s8(const int8_t *input_1_vect,
         sum_3 = muriscv_nn_requantize(sum_3, out_mult, out_shift);
 
         int32_t sum_1_3_packed = __rv_packu(sum_1, sum_3);
-        
+
         sum_1_3_packed = __rv_kadd16(sum_1_3_packed, out_offset_packed);
         sum_1_3_packed = __rv_smax16(sum_1_3_packed, out_activation_min_packed);
         sum_1_3_packed = __rv_smin16(sum_1_3_packed, out_activation_max_packed);
@@ -184,7 +182,7 @@ muriscv_nn_status muriscv_nn_elementwise_add_s8(const int8_t *input_1_vect,
         sum_4 = muriscv_nn_requantize(sum_4, out_mult, out_shift);
 
         int32_t sum_2_4_packed = __rv_packu(sum_2, sum_4);
-        
+
         sum_2_4_packed = __rv_kadd16(sum_2_4_packed, out_offset_packed);
         sum_2_4_packed = __rv_smax16(sum_2_4_packed, out_activation_min_packed);
         sum_2_4_packed = __rv_smin16(sum_2_4_packed, out_activation_max_packed);
@@ -197,7 +195,7 @@ muriscv_nn_status muriscv_nn_elementwise_add_s8(const int8_t *input_1_vect,
     }
 
     loop_count = block_size & 0x3;
-#endif /* defined(USE_PEXT) */ 
+#endif /* defined(USE_PEXT) */
 
     while (loop_count > 0)
     {

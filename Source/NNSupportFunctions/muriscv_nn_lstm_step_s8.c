@@ -44,11 +44,11 @@
  * Refer to header file for details.
  */
 muriscv_nn_status muriscv_nn_lstm_step_s8(const int8_t *data_in,
-                                        const int8_t *hidden_in,
-                                        int8_t *hidden_out,
-                                        const muriscv_nn_lstm_params *params,
-                                        muriscv_nn_lstm_context *buffers,
-                                        const int32_t batch_offset)
+                                          const int8_t *hidden_in,
+                                          int8_t *hidden_out,
+                                          const muriscv_nn_lstm_params *params,
+                                          muriscv_nn_lstm_context *buffers,
+                                          const int32_t batch_offset)
 {
     int16_t *forget_gate = buffers->temp1;
     int16_t *input_gate = buffers->temp1;
@@ -62,32 +62,32 @@ muriscv_nn_status muriscv_nn_lstm_step_s8(const int8_t *data_in,
 
     // Calculate first term of cell state in place early to maximise reuse of scratch-buffers
     muriscv_nn_elementwise_mul_s16(forget_gate,
-                            cell_state,
-                            0,
-                            0,
-                            cell_state,
-                            0,
-                            params->forget_to_cell_multiplier,
-                            params->forget_to_cell_shift,
-                            NN_Q15_MIN,
-                            NN_Q15_MAX,
-                            params->hidden_size * params->batch_size);
+                                   cell_state,
+                                   0,
+                                   0,
+                                   cell_state,
+                                   0,
+                                   params->forget_to_cell_multiplier,
+                                   params->forget_to_cell_shift,
+                                   NN_Q15_MIN,
+                                   NN_Q15_MAX,
+                                   params->hidden_size * params->batch_size);
 
     muriscv_nn_lstm_calculate_gate_s8_s16(data_in, hidden_in, &params->input_gate, params, input_gate, batch_offset);
     muriscv_nn_lstm_calculate_gate_s8_s16(data_in, hidden_in, &params->cell_gate, params, cell_gate, batch_offset);
 
     // Reminder of cell state calculation, multiply and add to previous result.
     muriscv_nn_elementwise_mul_acc_s16(forget_gate,
-                                cell_gate,
-                                0,
-                                0,
-                                cell_state,
-                                0,
-                                params->input_to_cell_multiplier,
-                                params->input_to_cell_shift,
-                                -params->cell_clip,
-                                params->cell_clip,
-                                params->hidden_size * params->batch_size);
+                                       cell_gate,
+                                       0,
+                                       0,
+                                       cell_state,
+                                       0,
+                                       params->input_to_cell_multiplier,
+                                       params->input_to_cell_shift,
+                                       -params->cell_clip,
+                                       params->cell_clip,
+                                       params->hidden_size * params->batch_size);
 
     muriscv_nn_lstm_calculate_gate_s8_s16(data_in, hidden_in, &params->output_gate, params, output_gate, batch_offset);
 
@@ -95,14 +95,14 @@ muriscv_nn_status muriscv_nn_lstm_step_s8(const int8_t *data_in,
     muriscv_nn_activation_s16(
         cell_state, hidden_temp, params->hidden_size * params->batch_size, params->cell_scale_power + 12, MURISCV_TANH);
     muriscv_nn_elementwise_mul_s16_s8(output_gate,
-                               hidden_temp,
-                               hidden_out,
-                               params->output_offset,
-                               params->output_multiplier,
-                               params->output_shift,
-                               params->hidden_size,
-                               params->batch_size,
-                               batch_offset);
+                                      hidden_temp,
+                                      hidden_out,
+                                      params->output_offset,
+                                      params->output_multiplier,
+                                      params->output_shift,
+                                      params->hidden_size,
+                                      params->batch_size,
+                                      batch_offset);
 
     return MURISCV_NN_SUCCESS;
 }

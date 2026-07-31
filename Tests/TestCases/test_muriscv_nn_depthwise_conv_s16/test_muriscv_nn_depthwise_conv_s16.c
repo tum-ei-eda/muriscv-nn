@@ -27,13 +27,9 @@
 #include "../../TestData/dw_int16xint8_mult4/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void dw_int16xint8_muriscv_nn_depthwise_conv_s16(void)
 {

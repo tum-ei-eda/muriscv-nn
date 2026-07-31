@@ -121,7 +121,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_svdf_s8(const q7_t *lhs,
 
         for (int32_t rhs_cols_idx = 0; rhs_cols_idx < rhs_cols; ++rhs_cols_idx)
         {
-            //q31_t rhs_value0 = (int8_t)rhs_ptr[0] + rhs_offset;
+            // q31_t rhs_value0 = (int8_t)rhs_ptr[0] + rhs_offset;
             q31_t rhs_value0 = (int8_t)rhs_ptr[0];
             q31_t lhs_value = (int8_t)lhs_ptr[0] + lhs_offset;
 

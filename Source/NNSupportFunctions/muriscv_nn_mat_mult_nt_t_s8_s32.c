@@ -35,13 +35,13 @@
  *
  */
 muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8_s32(const int8_t *lhs,
-                                                const int8_t *rhs,
-                                                int32_t *dst,
-                                                const int32_t lhs_rows,
-                                                const int32_t rhs_rows,
-                                                const int32_t rhs_cols,
-                                                const int32_t lhs_offset,
-                                                const int32_t dst_idx_offset)
+                                                  const int8_t *rhs,
+                                                  int32_t *dst,
+                                                  const int32_t lhs_rows,
+                                                  const int32_t rhs_rows,
+                                                  const int32_t rhs_cols,
+                                                  const int32_t lhs_offset,
+                                                  const int32_t dst_idx_offset)
 {
     const int32_t dst_idx_col_offset = dst_idx_offset * rhs_cols;
 

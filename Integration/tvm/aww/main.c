@@ -15,16 +15,12 @@
 #define printf uart_printf
 #endif
 
-
-
-
-
 void TVMLogf(const char *msg, ...)
 {
     va_list args;
     va_start(args, msg);
 #if !defined(SIM_VICUNA)
-    vfprintf(stdout, msg, args);//Vicuna does not currently support this print statement to the UART device
+    vfprintf(stdout, msg, args); // Vicuna does not currently support this print statement to the UART device
 #endif
     va_end(args);
 }
@@ -53,7 +49,7 @@ int run_test()
         struct tvmgen_default_outputs tvmgen_default_outputs = {output_data};
 
 #if defined(SIM_VICUNA)
-        //These prints and CSR Reads are for benchmarking on Vicuna
+        // These prints and CSR Reads are for benchmarking on Vicuna
         printf("Beginning Run\n");
 
         uint32_t timerBefore;
@@ -61,16 +57,16 @@ int run_test()
 
         uint32_t instBefore;
         uint32_t instAfter;
-        
-        __asm__ volatile("csrr %0, cycle;" : "=r" (timerBefore)  );
-        __asm__ volatile("csrr %0, minstret;" : "=r" (instBefore)  );
+
+        __asm__ volatile("csrr %0, cycle;" : "=r"(timerBefore));
+        __asm__ volatile("csrr %0, minstret;" : "=r"(instBefore));
 #endif
 
         int ret_val = tvmgen_default_run(&tvmgen_default_inputs, &tvmgen_default_outputs);
 
 #if defined(SIM_VICUNA)
-        __asm__ volatile("csrr %0, cycle;" : "=r" (timerAfter)  );
-        __asm__ volatile("csrr %0, minstret;" : "=r" (instAfter)  );
+        __asm__ volatile("csrr %0, cycle;" : "=r"(timerAfter));
+        __asm__ volatile("csrr %0, minstret;" : "=r"(instAfter));
 
         printf("Value Before : %d\n", timerBefore);
         printf("Value After  : %d\n", timerAfter);
@@ -80,8 +76,6 @@ int run_test()
         printf("RetInst After  : %d\n", instAfter);
         printf("Total RetInst  : %d\n\n", abs(instAfter - instBefore));
 #endif
-
-
 
         if (ret_val)
         {

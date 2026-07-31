@@ -45,14 +45,14 @@
  * Refer to header file for details.
  */
 muriscv_nn_status muriscv_nn_batch_matmul_s16(const muriscv_nn_context *ctx,
-                                         const muriscv_nn_bmm_params *bmm_params,
-                                         const muriscv_nn_per_tensor_quant_params *quant_params,
-                                         const muriscv_nn_dims *input_lhs_dims,
-                                         const int16_t *input_lhs,
-                                         const muriscv_nn_dims *input_rhs_dims,
-                                         const int16_t *input_rhs,
-                                         const muriscv_nn_dims *output_dims,
-                                         int16_t *output)
+                                              const muriscv_nn_bmm_params *bmm_params,
+                                              const muriscv_nn_per_tensor_quant_params *quant_params,
+                                              const muriscv_nn_dims *input_lhs_dims,
+                                              const int16_t *input_lhs,
+                                              const muriscv_nn_dims *input_rhs_dims,
+                                              const int16_t *input_rhs,
+                                              const muriscv_nn_dims *output_dims,
+                                              int16_t *output)
 {
     (void)ctx;
     const int32_t output_batch = output_dims->n;
@@ -79,15 +79,15 @@ muriscv_nn_status muriscv_nn_batch_matmul_s16(const muriscv_nn_context *ctx,
             for (int j = 0; j < lhs_rows; j++)
             {
                 muriscv_nn_vec_mat_mult_t_s16_s16(input_lhs,
-                                              input_rhs,
-                                              NULL,
-                                              output,
-                                              reduced_multiplier,
-                                              quant_params->shift,
-                                              rhs_cols,
-                                              rhs_rows,
-                                              bmm_params->fc_params.activation.min,
-                                              bmm_params->fc_params.activation.max);
+                                                  input_rhs,
+                                                  NULL,
+                                                  output,
+                                                  reduced_multiplier,
+                                                  quant_params->shift,
+                                                  rhs_cols,
+                                                  rhs_rows,
+                                                  bmm_params->fc_params.activation.min,
+                                                  bmm_params->fc_params.activation.max);
                 input_lhs += rhs_cols;
                 output += rhs_rows;
             }

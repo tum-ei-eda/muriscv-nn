@@ -45,6 +45,9 @@ static inline int muriscv_nn_checked_size_mul(size_t lhs, size_t rhs, size_t *ou
     return 1;
 }
 
-static inline int32_t muriscv_nn_size_to_i32_or_zero(size_t size) { return (size > (size_t)INT32_MAX) ? 0 : (int32_t)size; }
+static inline int32_t muriscv_nn_size_to_i32_or_zero(size_t size)
+{
+    return (size > (size_t)INT32_MAX) ? 0 : (int32_t)size;
+}
 
-//#endif /* ARM_GET_BUFFER_SIZE_COMMON_H */
+// #endif /* ARM_GET_BUFFER_SIZE_COMMON_H */

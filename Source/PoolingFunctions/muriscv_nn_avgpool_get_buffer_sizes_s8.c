@@ -56,7 +56,7 @@ int32_t muriscv_nn_avgpool_s8_get_buffer_size(const int output_x, const int ch_s
 int32_t muriscv_nn_avgpool_s8_get_buffer_size_dsp(const int output_x, const int ch_src)
 {
     (void)output_x;
-    return (ch_src * sizeof(int32_t));  //Our function originally used sizeof(int16_t)
+    return (ch_src * sizeof(int32_t)); // Our function originally used sizeof(int16_t)
 }
 
 int32_t muriscv_nn_avgpool_s8_get_buffer_size_mve(const int output_x, const int ch_src)

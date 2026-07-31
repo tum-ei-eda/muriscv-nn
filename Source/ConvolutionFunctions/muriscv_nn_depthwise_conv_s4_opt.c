@@ -50,16 +50,16 @@
  */
 
 muriscv_nn_status muriscv_nn_depthwise_conv_s4_opt(const muriscv_nn_context *ctx,
-                                              const muriscv_nn_dw_conv_params *dw_conv_params,
-                                              const muriscv_nn_per_channel_quant_params *quant_params,
-                                              const muriscv_nn_dims *input_dims,
-                                              const int8_t *input,
-                                              const muriscv_nn_dims *filter_dims,
-                                              const int8_t *kernel,
-                                              const muriscv_nn_dims *bias_dims,
-                                              const int32_t *bias,
-                                              const muriscv_nn_dims *output_dims,
-                                              int8_t *output)
+                                                   const muriscv_nn_dw_conv_params *dw_conv_params,
+                                                   const muriscv_nn_per_channel_quant_params *quant_params,
+                                                   const muriscv_nn_dims *input_dims,
+                                                   const int8_t *input,
+                                                   const muriscv_nn_dims *filter_dims,
+                                                   const int8_t *kernel,
+                                                   const muriscv_nn_dims *bias_dims,
+                                                   const int32_t *bias,
+                                                   const muriscv_nn_dims *output_dims,
+                                                   int8_t *output)
 {
     (void)bias_dims;
 
@@ -139,9 +139,9 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s4_opt(const muriscv_nn_context *ctx
                     else
                     {
                         muriscv_nn_q7_to_q15_with_offset((int8_t *)input + (idx_y * input_x + idx_x) * input_ch,
-                                                  &col_buffer[index],
-                                                  input_ch,
-                                                  (int16_t)input_offset);
+                                                         &col_buffer[index],
+                                                         input_ch,
+                                                         (int16_t)input_offset);
                     }
                     index += input_ch;
                 }
@@ -187,40 +187,42 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s4_opt(const muriscv_nn_context *ctx
 
                     while (col_count)
                     {
-//#ifdef USE_PEXT
-//                        /* General idea is to read 4 + 4 (input, kernel) pair and re-arrange them in the right order to
-//                           use in a SMLAD instruction . One run of this loop produces 4 partial outputs with 8 MACs. */
-//                        /* Note: variable names can be improved here to align with rows and columns. */
-//                        int32_t ip_a1, ip_a2, ip_b1, ip_b2, op_a, op_b, op_c;
-//
-//                        /* Read 4 weights */
-//                        read_and_pad_s4(row_pos, &ip_a2, &ip_b1);
-//                        read_and_pad_s4_uneven(row_pos + (input_ch >> 1), &ip_a1, &ip_b2);
-//
-//                        op_a = muriscv_nn_read_s16x2(col_pos);
-//                        op_b = muriscv_nn_read_s16x2(col_pos + input_ch);
-//
-//                        op_c = PKHBT(op_b, op_a, 16);
-//                        op_a = PKHTB(op_b, op_a, 16);
-//                        op_b = PKHBT(ip_b2, ip_a2, 16);
-//                        sum = SMLAD(op_c, op_b, sum);
-//
-//                        op_b = PKHBT(ip_b1, ip_a1, 16);
-//
-//                        sum_2 = SMLAD(op_a, op_b, sum_2);
-//
-//                        op_a = muriscv_nn_read_s16x2(col_pos + 2);
-//                        op_b = muriscv_nn_read_s16x2(col_pos + input_ch + 2);
-//
-//                        op_c = PKHBT(op_b, op_a, 16);
-//                        op_a = PKHTB(op_b, op_a, 16);
-//                        op_b = PKHTB(ip_a2, ip_b2, 16);
-//                        sum_3 = SMLAD(op_c, op_b, sum_3);
-//
-//                        op_b = PKHTB(ip_a1, ip_b1, 16);
-//                        sum_4 = SMLAD(op_a, op_b, sum_4);
-//
-//#else
+                        // #ifdef USE_PEXT
+                        //                         /* General idea is to read 4 + 4 (input, kernel) pair and re-arrange
+                        //                         them in the right order to
+                        //                            use in a SMLAD instruction . One run of this loop produces 4
+                        //                            partial outputs with 8 MACs. */
+                        //                         /* Note: variable names can be improved here to align with rows and
+                        //                         columns. */ int32_t ip_a1, ip_a2, ip_b1, ip_b2, op_a, op_b, op_c;
+                        //
+                        //                         /* Read 4 weights */
+                        //                         read_and_pad_s4(row_pos, &ip_a2, &ip_b1);
+                        //                         read_and_pad_s4_uneven(row_pos + (input_ch >> 1), &ip_a1, &ip_b2);
+                        //
+                        //                         op_a = muriscv_nn_read_s16x2(col_pos);
+                        //                         op_b = muriscv_nn_read_s16x2(col_pos + input_ch);
+                        //
+                        //                         op_c = PKHBT(op_b, op_a, 16);
+                        //                         op_a = PKHTB(op_b, op_a, 16);
+                        //                         op_b = PKHBT(ip_b2, ip_a2, 16);
+                        //                         sum = SMLAD(op_c, op_b, sum);
+                        //
+                        //                         op_b = PKHBT(ip_b1, ip_a1, 16);
+                        //
+                        //                         sum_2 = SMLAD(op_a, op_b, sum_2);
+                        //
+                        //                         op_a = muriscv_nn_read_s16x2(col_pos + 2);
+                        //                         op_b = muriscv_nn_read_s16x2(col_pos + input_ch + 2);
+                        //
+                        //                         op_c = PKHBT(op_b, op_a, 16);
+                        //                         op_a = PKHTB(op_b, op_a, 16);
+                        //                         op_b = PKHTB(ip_a2, ip_b2, 16);
+                        //                         sum_3 = SMLAD(op_c, op_b, sum_3);
+                        //
+                        //                         op_b = PKHTB(ip_a1, ip_b1, 16);
+                        //                         sum_4 = SMLAD(op_a, op_b, sum_4);
+                        //
+                        // #else
                         int8_t ker0, ker1, ker2, ker3, ker00, ker11;
 
                         ker00 = row_pos[0];
@@ -246,7 +248,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s4_opt(const muriscv_nn_context *ctx
                         sum_3 += ker2 * col_pos[2 + input_ch];
                         sum_4 += ker3 * col_pos[3 + input_ch];
 
-//#endif
+                        // #endif
                         row_pos += (input_ch);
                         col_pos += input_ch << 1;
 
@@ -385,51 +387,53 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s4_opt(const muriscv_nn_context *ctx
                     row_shift += 2;
                     col_shift += 4;
 
-//#ifdef USE_PEXT
-//                    while (col_count)
-//                    {
-//                        /* General idea is to read 4 + 4 (input, kernel) pair and re-arrange them in the right order to
-//                           use in a SMLAD instruction . One run of this loop produces 4 partial outputs with 8 MACs. */
-//                        /* Note: variable names can be improved here to align with rows and columns. */
-//                        int32_t ip_a1, ip_a2, ip_b1, ip_b2, op_a, op_b, op_c;
-//
-//                        /* Read 4 weights */
-//                        read_and_pad_s4(row_pos, &ip_a2, &ip_b1);
-//                        read_and_pad_s4(row_pos + (input_ch >> 1), &ip_b2, &ip_a1);
-//
-//                        op_a = muriscv_nn_read_s16x2(col_pos);
-//                        op_b = muriscv_nn_read_s16x2(col_pos + input_ch);
-//
-//                        op_c = PKHBT(op_b, op_a, 16);
-//                        op_a = PKHTB(op_b, op_a, 16);
-//                        op_b = PKHBT(ip_b2, ip_a2, 16);
-//                        sum = SMLAD(op_c, op_b, sum);
-//
-//                        op_b = PKHBT(ip_b1, ip_a1, 16);
-//
-//                        sum_2 = SMLAD(op_a, op_b, sum_2);
-//
-//                        op_a = muriscv_nn_read_s16x2(col_pos + 2);
-//                        op_b = muriscv_nn_read_s16x2(col_pos + input_ch + 2);
-//
-//                        op_c = PKHBT(op_b, op_a, 16);
-//                        op_a = PKHTB(op_b, op_a, 16);
-//                        op_b = PKHTB(ip_a2, ip_b2, 16);
-//                        sum_3 = SMLAD(op_c, op_b, sum_3);
-//
-//                        op_b = PKHTB(ip_a1, ip_b1, 16);
-//                        sum_4 = SMLAD(op_a, op_b, sum_4);
-//
-//                        row_pos += (input_ch);
-//                        col_pos += input_ch << 1;
-//
-//                        col_count--;
-//                    }
-//
-//                    col_count = num_cols & 0x1;
-//#else
+                    // #ifdef USE_PEXT
+                    //                     while (col_count)
+                    //                     {
+                    //                         /* General idea is to read 4 + 4 (input, kernel) pair and re-arrange them
+                    //                         in the right order to
+                    //                            use in a SMLAD instruction . One run of this loop produces 4 partial
+                    //                            outputs with 8 MACs. */
+                    //                         /* Note: variable names can be improved here to align with rows and
+                    //                         columns. */ int32_t ip_a1, ip_a2, ip_b1, ip_b2, op_a, op_b, op_c;
+                    //
+                    //                         /* Read 4 weights */
+                    //                         read_and_pad_s4(row_pos, &ip_a2, &ip_b1);
+                    //                         read_and_pad_s4(row_pos + (input_ch >> 1), &ip_b2, &ip_a1);
+                    //
+                    //                         op_a = muriscv_nn_read_s16x2(col_pos);
+                    //                         op_b = muriscv_nn_read_s16x2(col_pos + input_ch);
+                    //
+                    //                         op_c = PKHBT(op_b, op_a, 16);
+                    //                         op_a = PKHTB(op_b, op_a, 16);
+                    //                         op_b = PKHBT(ip_b2, ip_a2, 16);
+                    //                         sum = SMLAD(op_c, op_b, sum);
+                    //
+                    //                         op_b = PKHBT(ip_b1, ip_a1, 16);
+                    //
+                    //                         sum_2 = SMLAD(op_a, op_b, sum_2);
+                    //
+                    //                         op_a = muriscv_nn_read_s16x2(col_pos + 2);
+                    //                         op_b = muriscv_nn_read_s16x2(col_pos + input_ch + 2);
+                    //
+                    //                         op_c = PKHBT(op_b, op_a, 16);
+                    //                         op_a = PKHTB(op_b, op_a, 16);
+                    //                         op_b = PKHTB(ip_a2, ip_b2, 16);
+                    //                         sum_3 = SMLAD(op_c, op_b, sum_3);
+                    //
+                    //                         op_b = PKHTB(ip_a1, ip_b1, 16);
+                    //                         sum_4 = SMLAD(op_a, op_b, sum_4);
+                    //
+                    //                         row_pos += (input_ch);
+                    //                         col_pos += input_ch << 1;
+                    //
+                    //                         col_count--;
+                    //                     }
+                    //
+                    //                     col_count = num_cols & 0x1;
+                    // #else
                     col_count = num_cols;
-//#endif
+                    // #endif
                     while (col_count)
                     {
                         int8_t ker0, ker1, ker2, ker3, ker00, ker11;

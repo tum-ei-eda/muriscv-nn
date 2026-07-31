@@ -46,39 +46,39 @@
  * Refer to header file for details
  */
 muriscv_nn_status muriscv_nn_lstm_calculate_gate_s16(const int16_t *data_in,
-                                                   const int16_t *hidden_in,
-                                                   const muriscv_nn_lstm_gate *gate,
-                                                   const muriscv_nn_lstm_params *params,
-                                                   int16_t *output,
-                                                   const int32_t batch_offset)
+                                                     const int16_t *hidden_in,
+                                                     const muriscv_nn_lstm_gate *gate,
+                                                     const muriscv_nn_lstm_params *params,
+                                                     int16_t *output,
+                                                     const int32_t batch_offset)
 {
 
     memset(output, 0, params->hidden_size * params->batch_size * sizeof(int16_t));
 
     muriscv_nn_vec_mat_mul_result_acc_s16(data_in,
-                                      gate->input_weights,
-                                      gate->input_effective_bias,
-                                      output,
-                                      gate->input_multiplier,
-                                      gate->input_shift,
-                                      params->input_size,
-                                      params->hidden_size,
-                                      params->batch_size,
-                                      batch_offset);
+                                          gate->input_weights,
+                                          gate->input_effective_bias,
+                                          output,
+                                          gate->input_multiplier,
+                                          gate->input_shift,
+                                          params->input_size,
+                                          params->hidden_size,
+                                          params->batch_size,
+                                          batch_offset);
 
     if (hidden_in)
     {
 
         muriscv_nn_vec_mat_mul_result_acc_s16(hidden_in,
-                                          gate->hidden_weights,
-                                          gate->hidden_effective_bias,
-                                          output,
-                                          gate->hidden_multiplier,
-                                          gate->hidden_shift,
-                                          params->hidden_size,
-                                          params->hidden_size,
-                                          params->batch_size,
-                                          batch_offset);
+                                              gate->hidden_weights,
+                                              gate->hidden_effective_bias,
+                                              output,
+                                              gate->hidden_multiplier,
+                                              gate->hidden_shift,
+                                              params->hidden_size,
+                                              params->hidden_size,
+                                              params->batch_size,
+                                              batch_offset);
     }
 
     muriscv_nn_activation_s16(output, output, params->hidden_size * params->batch_size, 0, gate->activation_type);

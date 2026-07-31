@@ -31,13 +31,9 @@
 
 #define REPEAT_NUM (1)
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 static bool check_null_bias(const int32_t *bias, int32_t size)
 {

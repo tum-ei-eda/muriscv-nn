@@ -224,16 +224,16 @@ static void depthwise_conv_s4_generic(const int8_t *input,
  *
  */
 muriscv_nn_status muriscv_nn_depthwise_conv_s4(const muriscv_nn_context *ctx,
-                                          const muriscv_nn_dw_conv_params *dw_conv_params,
-                                          const muriscv_nn_per_channel_quant_params *quant_params,
-                                          const muriscv_nn_dims *input_dims,
-                                          const int8_t *input,
-                                          const muriscv_nn_dims *filter_dims,
-                                          const int8_t *kernel,
-                                          const muriscv_nn_dims *bias_dims,
-                                          const int32_t *bias,
-                                          const muriscv_nn_dims *output_dims,
-                                          int8_t *output)
+                                               const muriscv_nn_dw_conv_params *dw_conv_params,
+                                               const muriscv_nn_per_channel_quant_params *quant_params,
+                                               const muriscv_nn_dims *input_dims,
+                                               const int8_t *input,
+                                               const muriscv_nn_dims *filter_dims,
+                                               const int8_t *kernel,
+                                               const muriscv_nn_dims *bias_dims,
+                                               const int32_t *bias,
+                                               const muriscv_nn_dims *output_dims,
+                                               int8_t *output)
 {
     (void)bias_dims;
     (void)ctx;

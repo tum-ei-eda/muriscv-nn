@@ -25,13 +25,9 @@
 #include "../../TestData/kernel1x1/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 // TODO(fabianpedd): Use tests from convolve_s8 here too
 

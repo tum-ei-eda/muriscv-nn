@@ -27,13 +27,9 @@
 #include "../../TestData/dw_int16xint8_fast_stride/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void dw_int16xint8_fast_muriscv_nn_depthwise_conv_fast_s16(void)
 {

@@ -25,13 +25,9 @@
 #include "../../TestData/mul_s16_spill/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void mul_s16_muriscv_nn_elementwise_mul_s16(void)
 {

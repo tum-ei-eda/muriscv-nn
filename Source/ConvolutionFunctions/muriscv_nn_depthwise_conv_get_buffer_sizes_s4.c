@@ -41,15 +41,16 @@
  * @{
  */
 
-int32_t muriscv_nn_depthwise_conv_s4_opt_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims)
+int32_t muriscv_nn_depthwise_conv_s4_opt_get_buffer_size(const muriscv_nn_dims *input_dims,
+                                                         const muriscv_nn_dims *filter_dims)
 {
     return muriscv_nn_depthwise_conv_s8_opt_get_buffer_size_dsp(input_dims, filter_dims);
 }
 
 int32_t muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size(const muriscv_nn_dw_conv_params *dw_conv_params,
-                                                      const muriscv_nn_dims *input_dims,
-                                                      const muriscv_nn_dims *filter_dims,
-                                                      const muriscv_nn_dims *output_dims)
+                                                             const muriscv_nn_dims *input_dims,
+                                                             const muriscv_nn_dims *filter_dims,
+                                                             const muriscv_nn_dims *output_dims)
 {
     int32_t size = 0;
 
@@ -63,17 +64,17 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size(const muriscv_nn_dw
 }
 
 int32_t muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size_dsp(const muriscv_nn_dw_conv_params *dw_conv_params,
-                                                          const muriscv_nn_dims *input_dims,
-                                                          const muriscv_nn_dims *filter_dims,
-                                                          const muriscv_nn_dims *output_dims)
+                                                                 const muriscv_nn_dims *input_dims,
+                                                                 const muriscv_nn_dims *filter_dims,
+                                                                 const muriscv_nn_dims *output_dims)
 {
     return muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size(dw_conv_params, input_dims, filter_dims, output_dims);
 }
 
 int32_t muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size_mve(const muriscv_nn_dw_conv_params *dw_conv_params,
-                                                          const muriscv_nn_dims *input_dims,
-                                                          const muriscv_nn_dims *filter_dims,
-                                                          const muriscv_nn_dims *output_dims)
+                                                                 const muriscv_nn_dims *input_dims,
+                                                                 const muriscv_nn_dims *filter_dims,
+                                                                 const muriscv_nn_dims *output_dims)
 {
     return muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size(dw_conv_params, input_dims, filter_dims, output_dims);
 }

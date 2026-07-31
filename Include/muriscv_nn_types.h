@@ -253,7 +253,6 @@ typedef struct
     void *cell_state;
 } muriscv_nn_lstm_context;
 
-
 #ifdef __cplusplus
 }
 #endif

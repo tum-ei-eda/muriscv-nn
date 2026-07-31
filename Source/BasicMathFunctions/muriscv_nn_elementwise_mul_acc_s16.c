@@ -48,16 +48,16 @@
  *
  */
 muriscv_nn_status muriscv_nn_elementwise_mul_acc_s16(const int16_t *input_1_vect,
-                                                const int16_t *input_2_vect,
-                                                const int32_t input_1_offset,
-                                                const int32_t input_2_offset,
-                                                int16_t *output,
-                                                const int32_t out_offset,
-                                                const int32_t out_mult,
-                                                const int32_t out_shift,
-                                                const int32_t out_activation_min,
-                                                const int32_t out_activation_max,
-                                                const int32_t block_size)
+                                                     const int16_t *input_2_vect,
+                                                     const int32_t input_1_offset,
+                                                     const int32_t input_2_offset,
+                                                     int16_t *output,
+                                                     const int32_t out_offset,
+                                                     const int32_t out_mult,
+                                                     const int32_t out_shift,
+                                                     const int32_t out_activation_min,
+                                                     const int32_t out_activation_max,
+                                                     const int32_t block_size)
 {
     (void)input_1_offset;
     (void)input_2_offset;
@@ -67,35 +67,35 @@ muriscv_nn_status muriscv_nn_elementwise_mul_acc_s16(const int16_t *input_1_vect
     const int32_t activation_max = (out_activation_max > 0) ? out_activation_max : NN_Q15_MAX;
     const int32_t activation_min = (out_activation_max > 0) ? out_activation_min : NN_Q15_MIN;
 
-//#if defined(USE_VEXT)
-//
-//    loop_count = block_size;
-//
-//    while (loop_count > 0)
-//    {
-//        mve_pred16_t pred = vctp32q(loop_count);
-//
-//        int32x4_t input_1 = vldrhq_z_s32(input_1_vect, pred);
-//        int32x4_t input_2 = vldrhq_z_s32(input_2_vect, pred);
-//
-//        int32x4_t res_0 = vmulq_s32(input_1, input_2);
-//
-//        res_0 = muriscv_nn_requantize_mve_32x4(res_0, vdupq_n_s32(out_mult), vdupq_n_s32(out_shift));
-//
-//        res_0 = vaddq_s32(res_0, vldrhq_z_s32(output, pred));
-//
-//        res_0 = vmaxq_s32(res_0, vdupq_n_s32(activation_min));
-//        res_0 = vminq_s32(res_0, vdupq_n_s32(activation_max));
-//
-//        vstrhq_p_s32(output, res_0, pred);
-//        input_1_vect += 4;
-//        input_2_vect += 4;
-//
-//        output += 4;
-//        loop_count -= 4;
-//    }
-//
-//#else
+    // #if defined(USE_VEXT)
+    //
+    //     loop_count = block_size;
+    //
+    //     while (loop_count > 0)
+    //     {
+    //         mve_pred16_t pred = vctp32q(loop_count);
+    //
+    //         int32x4_t input_1 = vldrhq_z_s32(input_1_vect, pred);
+    //         int32x4_t input_2 = vldrhq_z_s32(input_2_vect, pred);
+    //
+    //         int32x4_t res_0 = vmulq_s32(input_1, input_2);
+    //
+    //         res_0 = muriscv_nn_requantize_mve_32x4(res_0, vdupq_n_s32(out_mult), vdupq_n_s32(out_shift));
+    //
+    //         res_0 = vaddq_s32(res_0, vldrhq_z_s32(output, pred));
+    //
+    //         res_0 = vmaxq_s32(res_0, vdupq_n_s32(activation_min));
+    //         res_0 = vminq_s32(res_0, vdupq_n_s32(activation_max));
+    //
+    //         vstrhq_p_s32(output, res_0, pred);
+    //         input_1_vect += 4;
+    //         input_2_vect += 4;
+    //
+    //         output += 4;
+    //         loop_count -= 4;
+    //     }
+    //
+    // #else
     int32_t input_1;
     int32_t input_2;
     int32_t mul_res;
@@ -108,13 +108,13 @@ muriscv_nn_status muriscv_nn_elementwise_mul_acc_s16(const int16_t *input_1_vect
         two_halfword_1 = muriscv_nn_read_q15x2_ia(&input_1_vect);
         two_halfword_2 = muriscv_nn_read_q15x2_ia(&input_2_vect);
 
-//    #if defined(USE_PEXT)
-//        mul_res = SMULBB(two_halfword_1, two_halfword_2);
-//    #else
+        //    #if defined(USE_PEXT)
+        //        mul_res = SMULBB(two_halfword_1, two_halfword_2);
+        //    #else
         input_1 = (int16_t)(two_halfword_1 & 0xFFFF);
         input_2 = (int16_t)(two_halfword_2 & 0xFFFF);
         mul_res = input_1 * input_2;
-//    #endif
+        //    #endif
         mul_res = muriscv_nn_requantize(mul_res, out_mult, out_shift);
         mul_res += output[0];
 
@@ -122,13 +122,13 @@ muriscv_nn_status muriscv_nn_elementwise_mul_acc_s16(const int16_t *input_1_vect
         mul_res = MIN(mul_res, activation_max);
         mul_1 = (int16_t)mul_res;
 
-//    #if defined(USE_PEXT)
-//        mul_res = SMULTT(two_halfword_1, two_halfword_2);
-//    #else
+        //    #if defined(USE_PEXT)
+        //        mul_res = SMULTT(two_halfword_1, two_halfword_2);
+        //    #else
         input_1 = (int16_t)(two_halfword_1 >> 16);
         input_2 = (int16_t)(two_halfword_2 >> 16);
         mul_res = input_1 * input_2;
-//    #endif
+        //    #endif
         mul_res = muriscv_nn_requantize(mul_res, out_mult, out_shift);
         mul_res += output[1];
         mul_res = MAX(mul_res, activation_min);
@@ -159,7 +159,7 @@ muriscv_nn_status muriscv_nn_elementwise_mul_acc_s16(const int16_t *input_1_vect
 
         loop_count--;
     }
-//#endif // #if defined(USE_VEXT)
+    // #endif // #if defined(USE_VEXT)
     return MURISCV_NN_SUCCESS;
 }
 //

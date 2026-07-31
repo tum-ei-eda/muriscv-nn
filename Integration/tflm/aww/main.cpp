@@ -16,7 +16,7 @@
 constexpr size_t tensor_arena_size = 256 * 1024;
 alignas(16) uint8_t tensor_arena[tensor_arena_size];
 
-//commit before array.h added - 6f2828619641503942f2bd69ddee006ff7823130
+// commit before array.h added - 6f2828619641503942f2bd69ddee006ff7823130
 
 int run_test()
 {

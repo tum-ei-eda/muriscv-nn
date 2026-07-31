@@ -213,12 +213,12 @@ static void clamp_output(int16_t *source, int32_t length, const int16_t act_min,
  */
 
 muriscv_nn_status muriscv_nn_max_pool_s16(const muriscv_nn_context *ctx,
-                                         const muriscv_nn_pool_params *pool_params,
-                                         const muriscv_nn_dims *input_dims,
-                                         const int16_t *src,
-                                         const muriscv_nn_dims *filter_dims,
-                                         const muriscv_nn_dims *output_dims,
-                                         int16_t *dst)
+                                          const muriscv_nn_pool_params *pool_params,
+                                          const muriscv_nn_dims *input_dims,
+                                          const int16_t *src,
+                                          const muriscv_nn_dims *filter_dims,
+                                          const muriscv_nn_dims *output_dims,
+                                          int16_t *dst)
 {
     const int32_t input_y = input_dims->h;
     const int32_t input_x = input_dims->w;

@@ -48,27 +48,27 @@
  *
  */
 muriscv_nn_status muriscv_nn_fully_connected_per_channel_s8(const muriscv_nn_context *ctx,
-                                                       const muriscv_nn_fc_params *fc_params,
-                                                       const muriscv_nn_per_channel_quant_params *quant_params,
-                                                       const muriscv_nn_dims *input_dims,
-                                                       const int8_t *input_data,
-                                                       const muriscv_nn_dims *filter_dims,
-                                                       const int8_t *kernel,
-                                                       const muriscv_nn_dims *bias_dims,
-                                                       const int32_t *bias_data,
-                                                       const muriscv_nn_dims *output_dims,
-                                                       int8_t *output_data)
+                                                            const muriscv_nn_fc_params *fc_params,
+                                                            const muriscv_nn_per_channel_quant_params *quant_params,
+                                                            const muriscv_nn_dims *input_dims,
+                                                            const int8_t *input_data,
+                                                            const muriscv_nn_dims *filter_dims,
+                                                            const int8_t *kernel,
+                                                            const muriscv_nn_dims *bias_dims,
+                                                            const int32_t *bias_data,
+                                                            const muriscv_nn_dims *output_dims,
+                                                            int8_t *output_data)
 {
     (void)bias_dims;
 
     int32_t batch_cnt = input_dims->n;
 
-//#if defined(USE_VEXT)
-//    if (ctx->buf == NULL)
-//    {
-//        return (MURISCV_NN_ARG_ERROR);
-//    }
-//#endif
+    // #if defined(USE_VEXT)
+    //     if (ctx->buf == NULL)
+    //     {
+    //         return (MURISCV_NN_ARG_ERROR);
+    //     }
+    // #endif
 
     const int32_t *kernel_sum = (const int32_t *)ctx->buf;
 
@@ -76,20 +76,20 @@ muriscv_nn_status muriscv_nn_fully_connected_per_channel_s8(const muriscv_nn_con
     {
 
         muriscv_nn_vec_mat_mult_t_per_ch_s8(input_data,
-                                        kernel,
-                                        kernel_sum,
-                                        bias_data,
-                                        output_data,
-                                        fc_params->input_offset,
-                                        fc_params->output_offset,
-                                        quant_params->multiplier,
-                                        quant_params->shift,
-                                        filter_dims->n, /* col_dim or accum_depth */
-                                        output_dims->c, /* row_dim or output_depth */
-                                        fc_params->activation.min,
-                                        fc_params->activation.max,
-                                        1L,
-                                        fc_params->filter_offset);
+                                            kernel,
+                                            kernel_sum,
+                                            bias_data,
+                                            output_data,
+                                            fc_params->input_offset,
+                                            fc_params->output_offset,
+                                            quant_params->multiplier,
+                                            quant_params->shift,
+                                            filter_dims->n, /* col_dim or accum_depth */
+                                            output_dims->c, /* row_dim or output_depth */
+                                            fc_params->activation.min,
+                                            fc_params->activation.max,
+                                            1L,
+                                            fc_params->filter_offset);
 
         input_data += filter_dims->n;
         output_data += output_dims->c;

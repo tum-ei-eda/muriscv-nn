@@ -61,9 +61,9 @@ int32_t muriscv_nn_convolve_1x1_s4_fast_get_buffer_size(const muriscv_nn_dims *i
  *
  */
 int32_t muriscv_nn_convolve_wrapper_s4_get_buffer_size(const muriscv_nn_conv_params *conv_params,
-                                                const muriscv_nn_dims *input_dims,
-                                                const muriscv_nn_dims *filter_dims,
-                                                const muriscv_nn_dims *output_dims)
+                                                       const muriscv_nn_dims *input_dims,
+                                                       const muriscv_nn_dims *filter_dims,
+                                                       const muriscv_nn_dims *output_dims)
 {
     (void)output_dims;
     if ((conv_params->padding.w == 0) && (conv_params->padding.h == 0) && (filter_dims->w == 1) &&
@@ -85,18 +85,18 @@ int32_t muriscv_nn_convolve_wrapper_s4_get_buffer_size(const muriscv_nn_conv_par
 }
 
 int32_t muriscv_nn_convolve_wrapper_s4_get_buffer_size_mve(const muriscv_nn_conv_params *conv_params,
-                                                    const muriscv_nn_dims *input_dims,
-                                                    const muriscv_nn_dims *filter_dims,
-                                                    const muriscv_nn_dims *output_dims)
+                                                           const muriscv_nn_dims *input_dims,
+                                                           const muriscv_nn_dims *filter_dims,
+                                                           const muriscv_nn_dims *output_dims)
 
 {
     return muriscv_nn_convolve_wrapper_s4_get_buffer_size(conv_params, input_dims, filter_dims, output_dims);
 }
 
 int32_t muriscv_nn_convolve_wrapper_s4_get_buffer_size_dsp(const muriscv_nn_conv_params *conv_params,
-                                                    const muriscv_nn_dims *input_dims,
-                                                    const muriscv_nn_dims *filter_dims,
-                                                    const muriscv_nn_dims *output_dims)
+                                                           const muriscv_nn_dims *input_dims,
+                                                           const muriscv_nn_dims *filter_dims,
+                                                           const muriscv_nn_dims *output_dims)
 {
     return muriscv_nn_convolve_wrapper_s4_get_buffer_size(conv_params, input_dims, filter_dims, output_dims);
 }

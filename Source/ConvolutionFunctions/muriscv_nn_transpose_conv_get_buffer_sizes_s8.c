@@ -17,7 +17,7 @@
  * Modifications copyright (C) 2023 Chair of Electronic Design Automation, TUM
  */
 
-//#include "Internal/arm_nn_compiler.h"?
+// #include "Internal/arm_nn_compiler.h"?
 #include "muriscv_nn_functions.h"
 #include "muriscv_nn_support_functions.h"
 
@@ -64,9 +64,10 @@ int32_t muriscv_nn_transpose_conv_s8_get_buffer_size_mve(const muriscv_nn_transp
     return muriscv_nn_transpose_conv_s8_get_buffer_size(transpose_conv_params, input_dims, filter_dims, output_dims);
 }
 
-int32_t arm_transpose_conv_s8_get_reverse_conv_buffer_size(const muriscv_nn_transpose_conv_params *transpose_conv_params,
-                                                           const muriscv_nn_dims *input_dims,
-                                                           const muriscv_nn_dims *filter_dims)
+int32_t
+arm_transpose_conv_s8_get_reverse_conv_buffer_size(const muriscv_nn_transpose_conv_params *transpose_conv_params,
+                                                   const muriscv_nn_dims *input_dims,
+                                                   const muriscv_nn_dims *filter_dims)
 {
     const bool reverse_conv_possible =
         ((transpose_conv_params->stride.w <= 2) && (transpose_conv_params->stride.h <= 2));
@@ -81,7 +82,6 @@ int32_t arm_transpose_conv_s8_get_reverse_conv_buffer_size(const muriscv_nn_tran
         return 0;
     }
 }
-
 
 /**
  * @} end of GetBufferSizeNNConv group

@@ -29,14 +29,9 @@
 
 #define REPEAT_NUM (1)
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
-
+void tearDown(void) { /* clean stuff up here */ }
 
 void svdf_int8_muriscv_nn_s8(void)
 {
@@ -111,23 +106,23 @@ void svdf_int8_muriscv_nn_s8(void)
         {
             memcpy(input_data, svdf_int8_input_sequence + j * input_round_size, input_round_size);
             muriscv_nn_status result = muriscv_nn_svdf_s8(&ctx,
-                                                     &input_ctx,
-                                                     &output_ctx,
-                                                     &svdf_int8_params,
-                                                     &input_quant_params,
-                                                     &output_quant_params,
-                                                     &input_dims,
-                                                     input_data,
-                                                     &state_dims,
-                                                     state_data,
-                                                     &weights_feature_dims,
-                                                     weights_feature_data,
-                                                     &weights_time_dims,
-                                                     weights_time_data,
-                                                     &bias_dims,
-                                                     svdf_int8_biases,
-                                                     &output_dims,
-                                                     output_data);
+                                                          &input_ctx,
+                                                          &output_ctx,
+                                                          &svdf_int8_params,
+                                                          &input_quant_params,
+                                                          &output_quant_params,
+                                                          &input_dims,
+                                                          input_data,
+                                                          &state_dims,
+                                                          state_data,
+                                                          &weights_feature_dims,
+                                                          weights_feature_data,
+                                                          &weights_time_dims,
+                                                          weights_time_data,
+                                                          &bias_dims,
+                                                          svdf_int8_biases,
+                                                          &output_dims,
+                                                          output_data);
             TEST_ASSERT_EQUAL(expected, result);
         }
 
@@ -222,23 +217,23 @@ void svdf_int8_2_muriscv_nn_s8(void)
         {
             memcpy(input_data, svdf_int8_2_input_sequence + j * input_round_size, input_round_size);
             muriscv_nn_status result = muriscv_nn_svdf_s8(&ctx,
-                                                     &input_ctx,
-                                                     &output_ctx,
-                                                     &svdf_int8_2_params,
-                                                     &input_quant_params,
-                                                     &output_quant_params,
-                                                     &input_dims,
-                                                     input_data,
-                                                     &state_dims,
-                                                     state_data,
-                                                     &weights_feature_dims,
-                                                     weights_feature_data,
-                                                     &weights_time_dims,
-                                                     weights_time_data,
-                                                     &bias_dims,
-                                                     svdf_int8_2_biases,
-                                                     &output_dims,
-                                                     output_data);
+                                                          &input_ctx,
+                                                          &output_ctx,
+                                                          &svdf_int8_2_params,
+                                                          &input_quant_params,
+                                                          &output_quant_params,
+                                                          &input_dims,
+                                                          input_data,
+                                                          &state_dims,
+                                                          state_data,
+                                                          &weights_feature_dims,
+                                                          weights_feature_data,
+                                                          &weights_time_dims,
+                                                          weights_time_data,
+                                                          &bias_dims,
+                                                          svdf_int8_2_biases,
+                                                          &output_dims,
+                                                          output_data);
             TEST_ASSERT_EQUAL(expected, result);
         }
 
@@ -257,9 +252,6 @@ void svdf_int8_2_muriscv_nn_s8(void)
     free(input_ctx.buf);
     free(output_ctx.buf);
 }
-
-
-
 
 int main(void)
 {

@@ -49,16 +49,16 @@
  */
 
 muriscv_nn_status muriscv_nn_convolve_1x1_s4_fast(const muriscv_nn_context *ctx,
-                                             const muriscv_nn_conv_params *conv_params,
-                                             const muriscv_nn_per_channel_quant_params *quant_params,
-                                             const muriscv_nn_dims *input_dims,
-                                             const int8_t *input_data,
-                                             const muriscv_nn_dims *filter_dims,
-                                             const int8_t *filter_data,
-                                             const muriscv_nn_dims *bias_dims,
-                                             const int32_t *bias_data,
-                                             const muriscv_nn_dims *output_dims,
-                                             int8_t *output_data)
+                                                  const muriscv_nn_conv_params *conv_params,
+                                                  const muriscv_nn_per_channel_quant_params *quant_params,
+                                                  const muriscv_nn_dims *input_dims,
+                                                  const int8_t *input_data,
+                                                  const muriscv_nn_dims *filter_dims,
+                                                  const int8_t *filter_data,
+                                                  const muriscv_nn_dims *bias_dims,
+                                                  const int32_t *bias_data,
+                                                  const muriscv_nn_dims *output_dims,
+                                                  int8_t *output_data)
 {
     if (conv_params->padding.w != 0 || conv_params->padding.h != 0 || conv_params->stride.w != 1 ||
         conv_params->stride.h != 1)
@@ -75,19 +75,19 @@ muriscv_nn_status muriscv_nn_convolve_1x1_s4_fast(const muriscv_nn_context *ctx,
     const int32_t rhs_cols = input_dims->c;
 
     muriscv_nn_mat_mult_nt_t_s4(input_data,
-                            filter_data,
-                            bias_data,
-                            output_data,
-                            quant_params->multiplier,
-                            quant_params->shift,
-                            lhs_rows,
-                            rhs_rows,
-                            rhs_cols,
-                            conv_params->input_offset,
-                            conv_params->output_offset,
-                            conv_params->activation.min,
-                            conv_params->activation.max,
-                            rhs_cols);
+                                filter_data,
+                                bias_data,
+                                output_data,
+                                quant_params->multiplier,
+                                quant_params->shift,
+                                lhs_rows,
+                                rhs_rows,
+                                rhs_cols,
+                                conv_params->input_offset,
+                                conv_params->output_offset,
+                                conv_params->activation.min,
+                                conv_params->activation.max,
+                                rhs_cols);
 
     /* Return to application */
     return MURISCV_NN_SUCCESS;

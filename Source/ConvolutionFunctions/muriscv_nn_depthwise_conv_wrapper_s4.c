@@ -48,46 +48,46 @@
  *
  */
 muriscv_nn_status muriscv_nn_depthwise_conv_wrapper_s4(const muriscv_nn_context *ctx,
-                                                  const muriscv_nn_dw_conv_params *dw_conv_params,
-                                                  const muriscv_nn_per_channel_quant_params *quant_params,
-                                                  const muriscv_nn_dims *input_dims,
-                                                  const int8_t *input,
-                                                  const muriscv_nn_dims *filter_dims,
-                                                  const int8_t *filter,
-                                                  const muriscv_nn_dims *bias_dims,
-                                                  const int32_t *bias,
-                                                  const muriscv_nn_dims *output_dims,
-                                                  int8_t *output)
+                                                       const muriscv_nn_dw_conv_params *dw_conv_params,
+                                                       const muriscv_nn_per_channel_quant_params *quant_params,
+                                                       const muriscv_nn_dims *input_dims,
+                                                       const int8_t *input,
+                                                       const muriscv_nn_dims *filter_dims,
+                                                       const int8_t *filter,
+                                                       const muriscv_nn_dims *bias_dims,
+                                                       const int32_t *bias,
+                                                       const muriscv_nn_dims *output_dims,
+                                                       int8_t *output)
 {
     muriscv_nn_status status = MURISCV_NN_SUCCESS;
     if (1 == dw_conv_params->ch_mult && input_dims->n == 1 && dw_conv_params->dilation.w == 1 &&
         dw_conv_params->dilation.h == 1)
     {
         status = muriscv_nn_depthwise_conv_s4_opt(ctx,
-                                           dw_conv_params,
-                                           quant_params,
-                                           input_dims,
-                                           input,
-                                           filter_dims,
-                                           filter,
-                                           bias_dims,
-                                           bias,
-                                           output_dims,
-                                           output);
+                                                  dw_conv_params,
+                                                  quant_params,
+                                                  input_dims,
+                                                  input,
+                                                  filter_dims,
+                                                  filter,
+                                                  bias_dims,
+                                                  bias,
+                                                  output_dims,
+                                                  output);
     }
     else
     {
         status = muriscv_nn_depthwise_conv_s4(ctx,
-                                       dw_conv_params,
-                                       quant_params,
-                                       input_dims,
-                                       input,
-                                       filter_dims,
-                                       filter,
-                                       bias_dims,
-                                       bias,
-                                       output_dims,
-                                       output);
+                                              dw_conv_params,
+                                              quant_params,
+                                              input_dims,
+                                              input,
+                                              filter_dims,
+                                              filter,
+                                              bias_dims,
+                                              bias,
+                                              output_dims,
+                                              output);
     }
 
     /* Return to application */

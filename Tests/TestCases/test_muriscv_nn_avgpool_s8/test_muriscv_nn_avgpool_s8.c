@@ -30,13 +30,9 @@
 #include "../../TestData/avgpooling_5/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void avgpooling_muriscv_nn_avgpool_s8(void)
 {

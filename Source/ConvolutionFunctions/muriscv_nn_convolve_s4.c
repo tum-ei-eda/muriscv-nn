@@ -49,16 +49,16 @@
  *
  */
 muriscv_nn_status muriscv_nn_convolve_s4(const muriscv_nn_context *ctx,
-                                    const muriscv_nn_conv_params *conv_params,
-                                    const muriscv_nn_per_channel_quant_params *quant_params,
-                                    const muriscv_nn_dims *input_dims,
-                                    const int8_t *input_data,
-                                    const muriscv_nn_dims *filter_dims,
-                                    const int8_t *packed_filter_data,
-                                    const muriscv_nn_dims *bias_dims,
-                                    const int32_t *bias_data,
-                                    const muriscv_nn_dims *output_dims,
-                                    int8_t *output_data)
+                                         const muriscv_nn_conv_params *conv_params,
+                                         const muriscv_nn_per_channel_quant_params *quant_params,
+                                         const muriscv_nn_dims *input_dims,
+                                         const int8_t *input_data,
+                                         const muriscv_nn_dims *filter_dims,
+                                         const int8_t *packed_filter_data,
+                                         const muriscv_nn_dims *bias_dims,
+                                         const int32_t *bias_data,
+                                         const muriscv_nn_dims *output_dims,
+                                         int8_t *output_data)
 {
     (void)bias_dims;
 
@@ -135,16 +135,16 @@ muriscv_nn_status muriscv_nn_convolve_s4(const muriscv_nn_context *ctx,
                 if (lhs_rows == 2)
                 {
                     out = muriscv_nn_mat_mult_kernel_s4_s16(packed_filter_data,
-                                                        buffer_a,
-                                                        output_ch,
-                                                        output_shift,
-                                                        output_mult,
-                                                        out_offset,
-                                                        out_activation_min,
-                                                        out_activation_max,
-                                                        rhs_cols,
-                                                        bias_data,
-                                                        out);
+                                                            buffer_a,
+                                                            output_ch,
+                                                            output_shift,
+                                                            output_mult,
+                                                            out_offset,
+                                                            out_activation_min,
+                                                            out_activation_max,
+                                                            rhs_cols,
+                                                            bias_data,
+                                                            out);
 
                     /* counter reset */
                     two_column_buf = buffer_a;
@@ -181,27 +181,27 @@ muriscv_nn_status muriscv_nn_convolve_s4(const muriscv_nn_context *ctx,
                     sum += spilled_ker_a * ip_b0;
                 }
 
-//#if defined(USE_PEXT)
-//                /* 4 multiply and accumulates are done in one loop. */
-//                uint16_t col_count = rhs_cols / 4;
-//                while (col_count)
-//                {
-//                    int32_t ker_a1, ker_a2;
-//                    int32_t ip_b1, ip_b2;
-//
-//                    read_and_pad_s4_ordered(ker_a_ptr, &ker_a1, &ker_a2);
-//                    ker_a_ptr += 2;
-//                    ip_b1 = muriscv_nn_read_q15x2_ia(&ip_as_col);
-//                    sum = SMLAD(ker_a1, ip_b1, sum);
-//                    ip_b2 = muriscv_nn_read_q15x2_ia(&ip_as_col);
-//                    sum = SMLAD(ker_a2, ip_b2, sum);
-//
-//                    col_count--;
-//                }
-//                col_count = (rhs_cols & 0x3) >> 1;
-//#else
+                // #if defined(USE_PEXT)
+                //                 /* 4 multiply and accumulates are done in one loop. */
+                //                 uint16_t col_count = rhs_cols / 4;
+                //                 while (col_count)
+                //                 {
+                //                     int32_t ker_a1, ker_a2;
+                //                     int32_t ip_b1, ip_b2;
+                //
+                //                     read_and_pad_s4_ordered(ker_a_ptr, &ker_a1, &ker_a2);
+                //                     ker_a_ptr += 2;
+                //                     ip_b1 = muriscv_nn_read_q15x2_ia(&ip_as_col);
+                //                     sum = SMLAD(ker_a1, ip_b1, sum);
+                //                     ip_b2 = muriscv_nn_read_q15x2_ia(&ip_as_col);
+                //                     sum = SMLAD(ker_a2, ip_b2, sum);
+                //
+                //                     col_count--;
+                //                 }
+                //                 col_count = (rhs_cols & 0x3) >> 1;
+                // #else
                 uint16_t col_count = rhs_cols >> 1;
-//#endif
+                // #endif
 
                 while (col_count)
                 {

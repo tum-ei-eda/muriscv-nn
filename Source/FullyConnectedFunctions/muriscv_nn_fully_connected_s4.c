@@ -49,16 +49,16 @@
  */
 
 muriscv_nn_status muriscv_nn_fully_connected_s4(const muriscv_nn_context *ctx,
-                                           const muriscv_nn_fc_params *fc_params,
-                                           const muriscv_nn_per_tensor_quant_params *quant_params,
-                                           const muriscv_nn_dims *input_dims,
-                                           const int8_t *input,
-                                           const muriscv_nn_dims *filter_dims,
-                                           const int8_t *kernel,
-                                           const muriscv_nn_dims *bias_dims,
-                                           const int32_t *bias,
-                                           const muriscv_nn_dims *output_dims,
-                                           int8_t *output)
+                                                const muriscv_nn_fc_params *fc_params,
+                                                const muriscv_nn_per_tensor_quant_params *quant_params,
+                                                const muriscv_nn_dims *input_dims,
+                                                const int8_t *input,
+                                                const muriscv_nn_dims *filter_dims,
+                                                const int8_t *kernel,
+                                                const muriscv_nn_dims *bias_dims,
+                                                const int32_t *bias,
+                                                const muriscv_nn_dims *output_dims,
+                                                int8_t *output)
 {
     (void)bias_dims;
     (void)ctx;
@@ -70,17 +70,17 @@ muriscv_nn_status muriscv_nn_fully_connected_s4(const muriscv_nn_context *ctx,
     {
 
         muriscv_nn_vec_mat_mult_t_s4(input,
-                                 kernel,
-                                 bias,
-                                 output,
-                                 fc_params->input_offset,
-                                 fc_params->output_offset,
-                                 quant_params->multiplier,
-                                 quant_params->shift,
-                                 filter_dims->n, /* col_dim or accum_depth */
-                                 output_dims->c, /* row_dim or output_depth */
-                                 fc_params->activation.min,
-                                 fc_params->activation.max);
+                                     kernel,
+                                     bias,
+                                     output,
+                                     fc_params->input_offset,
+                                     fc_params->output_offset,
+                                     quant_params->multiplier,
+                                     quant_params->shift,
+                                     filter_dims->n, /* col_dim or accum_depth */
+                                     output_dims->c, /* row_dim or output_depth */
+                                     fc_params->activation.min,
+                                     fc_params->activation.max);
         input += filter_dims->n;
         output += output_dims->c;
         batch_cnt--;

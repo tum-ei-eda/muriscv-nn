@@ -98,7 +98,6 @@ typedef uint16_t mve_pred16_t;
 #define Q15_ABSMIN ((q15_t)0)
 #define Q7_ABSMIN ((q7_t)0)
 
-
 #define NN_Q31_MAX ((int32_t)(0x7FFFFFFFL))
 #define NN_Q15_MAX ((int16_t)(0x7FFF))
 #define NN_Q7_MAX ((int8_t)(0x7F))

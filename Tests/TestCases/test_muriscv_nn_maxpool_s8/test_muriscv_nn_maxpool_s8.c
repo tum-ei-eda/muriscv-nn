@@ -33,13 +33,9 @@
 
 #define REPEAT_NUM 2
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void maxpooling_muriscv_nn_maxpool_s8(void)
 {

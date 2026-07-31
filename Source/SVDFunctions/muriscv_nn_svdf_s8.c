@@ -50,23 +50,23 @@
  */
 
 muriscv_nn_status muriscv_nn_svdf_s8(const muriscv_nn_context *ctx,
-                                const muriscv_nn_context *input_ctx,
-                                const muriscv_nn_context *output_ctx,
-                                const muriscv_nn_svdf_params *svdf_params,
-                                const muriscv_nn_per_tensor_quant_params *input_quant_params,
-                                const muriscv_nn_per_tensor_quant_params *output_quant_params,
-                                const muriscv_nn_dims *input_dims,
-                                const int8_t *input_data,
-                                const muriscv_nn_dims *state_dims,
-                                int8_t *state_data,
-                                const muriscv_nn_dims *weights_feature_dims,
-                                const int8_t *weights_feature_data,
-                                const muriscv_nn_dims *weights_time_dims,
-                                const int8_t *weights_time_data,
-                                const muriscv_nn_dims *bias_dims,
-                                const int32_t *bias_data,
-                                const muriscv_nn_dims *output_dims,
-                                int8_t *output_data)
+                                     const muriscv_nn_context *input_ctx,
+                                     const muriscv_nn_context *output_ctx,
+                                     const muriscv_nn_svdf_params *svdf_params,
+                                     const muriscv_nn_per_tensor_quant_params *input_quant_params,
+                                     const muriscv_nn_per_tensor_quant_params *output_quant_params,
+                                     const muriscv_nn_dims *input_dims,
+                                     const int8_t *input_data,
+                                     const muriscv_nn_dims *state_dims,
+                                     int8_t *state_data,
+                                     const muriscv_nn_dims *weights_feature_dims,
+                                     const int8_t *weights_feature_data,
+                                     const muriscv_nn_dims *weights_time_dims,
+                                     const int8_t *weights_time_data,
+                                     const muriscv_nn_dims *bias_dims,
+                                     const int32_t *bias_data,
+                                     const muriscv_nn_dims *output_dims,
+                                     int8_t *output_data)
 {
     (void)bias_dims;
     (void)state_dims;
@@ -123,20 +123,20 @@ muriscv_nn_status muriscv_nn_svdf_s8(const muriscv_nn_context *ctx,
         const int8_t *input = input_data + i_batch * input_height;
 
         muriscv_nn_status res = muriscv_nn_vec_mat_mult_t_s8(input,
-                                                           weights_feature_data,
-                                                           kernel_sum_data,
-                                                           NULL,
-                                                           res_ptr,
-                                                           -zp_in,
-                                                           0,
-                                                           multiplier_in,
-                                                           shift_in,
-                                                           input_height,
-                                                           feature_batches,
-                                                           in_activation_min,
-                                                           in_activation_max,
-                                                           time_batches,
-                                                           0); //RHS OFFSET UNUSED
+                                                             weights_feature_data,
+                                                             kernel_sum_data,
+                                                             NULL,
+                                                             res_ptr,
+                                                             -zp_in,
+                                                             0,
+                                                             multiplier_in,
+                                                             shift_in,
+                                                             input_height,
+                                                             feature_batches,
+                                                             in_activation_min,
+                                                             in_activation_max,
+                                                             time_batches,
+                                                             0); // RHS OFFSET UNUSED
 
         if (res != MURISCV_NN_SUCCESS)
         {
@@ -156,37 +156,37 @@ muriscv_nn_status muriscv_nn_svdf_s8(const muriscv_nn_context *ctx,
             {
                 *ptr_a = 0;
                 int32_t sum = 0;
-/*#if defined(USE_PEXT) && !defined(USE_VEXT)
-                //Currently Uses ARM instructions.  TODO: CONVERT TO PEXT, but need benchmarks to test
-                // Perform matrix multiplication in blocks of four
-                int j = 0;
-                int32_t block_count = time_batches >> 2;
-                for (int i = 0; i < block_count; i++)
-                {
-                    j += 4;
+                /*#if defined(USE_PEXT) && !defined(USE_VEXT)
+                                //Currently Uses ARM instructions.  TODO: CONVERT TO PEXT, but need benchmarks to test
+                                // Perform matrix multiplication in blocks of four
+                                int j = 0;
+                                int32_t block_count = time_batches >> 2;
+                                for (int i = 0; i < block_count; i++)
+                                {
+                                    j += 4;
 
-                    int32_t r1_1, r1_2, r2_1, r2_2;
-                    v1 = read_and_pad_reordered(v1, &r1_1, &r1_2);
-                    v2 = read_and_pad_reordered(v2, &r2_1, &r2_2);
-                    sum = SMLAD(r1_1, r2_1, sum);
-                    sum = SMLAD(r1_2, r2_2, sum);
-                }
+                                    int32_t r1_1, r1_2, r2_1, r2_2;
+                                    v1 = read_and_pad_reordered(v1, &r1_1, &r1_2);
+                                    v2 = read_and_pad_reordered(v2, &r2_1, &r2_2);
+                                    sum = SMLAD(r1_1, r2_1, sum);
+                                    sum = SMLAD(r1_2, r2_2, sum);
+                                }
 
-                // Process the remaining data
-                for (; j < time_batches; j++)
-                {
-                    sum += *v1 * *v2;
-                    v1++;
-                    v2++;
-                }
-#else*/
+                                // Process the remaining data
+                                for (; j < time_batches; j++)
+                                {
+                                    sum += *v1 * *v2;
+                                    v1++;
+                                    v2++;
+                                }
+                #else*/
                 for (int j = 0; j < time_batches; j++)
                 {
                     sum += *v1 * *v2;
                     v1++;
                     v2++;
                 }
-//#endif
+                // #endif
 
                 *ptr_a = sum;
                 ptr_a++;
@@ -250,32 +250,33 @@ muriscv_nn_status muriscv_nn_svdf_s8(const muriscv_nn_context *ctx,
         }
     }
 
-/*#if defined(USE_VEXT)
-    //CURRENTLY USES ARM INSTRUCTIONS, convert to VEXT
-    int32_t num_elements = input_batches * unit_count;
-    const int32_t loop_count = (num_elements + 3) / 4;
-    for (int i_op = 0; i_op < loop_count; i_op++)
-    {
-        mve_pred16_t p = vctp32q((uint32_t)num_elements);
-        int32x4_t op = vldrwq_z_s32(buffer_b, p);
-        op = arm_requantize_mve(op, multiplier_out, shift_2);
-        op = vaddq_n_s32(op, zp_out);
-        const int32x4_t min_vec = vdupq_n_s32((int8_t)out_activation_min);
-        const int32x4_t max_vec = vdupq_n_s32((int8_t)out_activation_max);
-        op = vmaxq_s32(op, min_vec);
-        op = vminq_s32(op, max_vec);
-        vstrbq_p_s32(output_data, op, p);
-        output_data += 4;
-        buffer_b += 4;
-        num_elements -= 4;
-    }
-#else*/
+    /*#if defined(USE_VEXT)
+        //CURRENTLY USES ARM INSTRUCTIONS, convert to VEXT
+        int32_t num_elements = input_batches * unit_count;
+        const int32_t loop_count = (num_elements + 3) / 4;
+        for (int i_op = 0; i_op < loop_count; i_op++)
+        {
+            mve_pred16_t p = vctp32q((uint32_t)num_elements);
+            int32x4_t op = vldrwq_z_s32(buffer_b, p);
+            op = arm_requantize_mve(op, multiplier_out, shift_2);
+            op = vaddq_n_s32(op, zp_out);
+            const int32x4_t min_vec = vdupq_n_s32((int8_t)out_activation_min);
+            const int32x4_t max_vec = vdupq_n_s32((int8_t)out_activation_max);
+            op = vmaxq_s32(op, min_vec);
+            op = vminq_s32(op, max_vec);
+            vstrbq_p_s32(output_data, op, p);
+            output_data += 4;
+            buffer_b += 4;
+            num_elements -= 4;
+        }
+    #else*/
     for (int i = 0; i < input_batches * unit_count; i++)
     {
-        output_data[i] = (int8_t)CLAMP(
-            muriscv_nn_requantize(buffer_b[i], multiplier_out, shift_2) + zp_out, out_activation_max, out_activation_min);
+        output_data[i] = (int8_t)CLAMP(muriscv_nn_requantize(buffer_b[i], multiplier_out, shift_2) + zp_out,
+                                       out_activation_max,
+                                       out_activation_min);
     }
-//#endif
+    // #endif
 
     return (MURISCV_NN_SUCCESS);
 }

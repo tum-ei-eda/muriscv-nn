@@ -126,20 +126,18 @@ muriscv_nn_status muriscv_nn_convolve_s16(const muriscv_nn_context *ctx,
                         const int64_t *bias_s64 = (const int64_t *)bias_data->data;
                         const int32_t *bias_s32 = (const int32_t *)bias_data->data;
                         const bool is_int32_bias = bias_data->is_int32_bias;
-                        
+
                         int64_t bias;
                         if (is_int32_bias)
                         {
                             bias = (int64_t)bias_s32[i_out_ch];
-
                         }
                         else
                         {
-                        
-                           bias = (int64_t)bias_s64[i_out_ch];
+
+                            bias = (int64_t)bias_s64[i_out_ch];
                         }
 
-                        
                         conv_out_acc += bias;
                     }
 

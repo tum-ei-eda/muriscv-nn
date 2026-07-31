@@ -26,13 +26,9 @@
 #include "../../TestData/requantize_s64/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 void int16xint8_muriscv_nn_convolve_fast_s16(void)
 {

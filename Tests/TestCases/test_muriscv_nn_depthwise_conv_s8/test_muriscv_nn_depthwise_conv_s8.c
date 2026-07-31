@@ -32,13 +32,9 @@
 #include "../../TestData/stride2pad1/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 const int32_t *get_bias_address(const int32_t *bias, int32_t size)
 {

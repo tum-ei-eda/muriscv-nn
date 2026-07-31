@@ -50,17 +50,17 @@
  */
 
 muriscv_nn_status muriscv_nn_pad_s8(const int8_t *input,
-                               int8_t *output,
-                               const int8_t pad_value,
-                               const muriscv_nn_dims *input_size,
-                               const muriscv_nn_dims *pre_pad,
-                               const muriscv_nn_dims *post_pad)
+                                    int8_t *output,
+                                    const int8_t pad_value,
+                                    const muriscv_nn_dims *input_size,
+                                    const muriscv_nn_dims *pre_pad,
+                                    const muriscv_nn_dims *post_pad)
 {
 
     const muriscv_nn_dims output_size = {pre_pad->n + input_size->n + post_pad->n,
-                                       pre_pad->h + input_size->h + post_pad->h,
-                                       pre_pad->w + input_size->w + post_pad->w,
-                                       pre_pad->c + input_size->c + post_pad->c};
+                                         pre_pad->h + input_size->h + post_pad->h,
+                                         pre_pad->w + input_size->w + post_pad->w,
+                                         pre_pad->c + input_size->c + post_pad->c};
 
     const int32_t batch_block_size = output_size.h * output_size.w * output_size.c;
     const int32_t row_block_size = output_size.w * output_size.c;

@@ -27,16 +27,12 @@
 #include "../../TestData/lstm_one_time_step/test_data.h"
 #include "../../Utils/validate.h"
 
-void setUp(void)
-{ /* set stuff up here */
-}
+void setUp(void) { /* set stuff up here */ }
 
-void tearDown(void)
-{ /* clean stuff up here */
-}
+void tearDown(void) { /* clean stuff up here */ }
 
 #if (LSTM_2_BUFFER_SIZE > LSTM_1_BUFFER_SIZE) || (LSTM_1_BUFFER_SIZE < LSTM_ONE_TIME_STEP_BUFFER_SIZE)
-    #error "Test buffers too small."
+#error "Test buffers too small."
 #endif
 
 // Update the buffer size if adding a unit test with larger buffer.
@@ -68,131 +64,131 @@ void lstm_1_muriscv_nn_lstm_unidirectional_s8(void)
     int32_t size_hidden = LSTM_1_NUMBER_UNITS;
 
     muriscv_nn_vector_sum_s8(&input_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_1_input_to_input_w[0],
-                      LSTM_1_DATA_OFFSET,
-                      0,
-                      &lstm_1_input_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_1_input_to_input_w[0],
+                             LSTM_1_DATA_OFFSET,
+                             0,
+                             &lstm_1_input_gate_bias[0]);
     muriscv_nn_vector_sum_s8(&forget_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_1_input_to_forget_w[0],
-                      LSTM_1_DATA_OFFSET,
-                      0,
-                      &lstm_1_forget_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_1_input_to_forget_w[0],
+                             LSTM_1_DATA_OFFSET,
+                             0,
+                             &lstm_1_forget_gate_bias[0]);
     muriscv_nn_vector_sum_s8(&cell_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_1_input_to_cell_w[0],
-                      LSTM_1_DATA_OFFSET,
-                      0,
-                      &lstm_1_cell_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_1_input_to_cell_w[0],
+                             LSTM_1_DATA_OFFSET,
+                             0,
+                             &lstm_1_cell_gate_bias[0]);
     muriscv_nn_vector_sum_s8(&output_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_1_input_to_output_w[0],
-                      LSTM_1_DATA_OFFSET,
-                      0,
-                      &lstm_1_output_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_1_input_to_output_w[0],
+                             LSTM_1_DATA_OFFSET,
+                             0,
+                             &lstm_1_output_gate_bias[0]);
 
     muriscv_nn_vector_sum_s8(&input_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_1_recurrent_input_to_input_w[0],
-                      -LSTM_1_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_1_recurrent_input_to_input_w[0],
+                             -LSTM_1_HIDDEN_OFFSET,
+                             0,
+                             NULL);
     muriscv_nn_vector_sum_s8(&forget_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_1_recurrent_input_to_forget_w[0],
-                      -LSTM_1_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_1_recurrent_input_to_forget_w[0],
+                             -LSTM_1_HIDDEN_OFFSET,
+                             0,
+                             NULL);
     muriscv_nn_vector_sum_s8(&cell_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_1_recurrent_input_to_cell_w[0],
-                      -LSTM_1_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_1_recurrent_input_to_cell_w[0],
+                             -LSTM_1_HIDDEN_OFFSET,
+                             0,
+                             NULL);
     muriscv_nn_vector_sum_s8(&output_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_1_recurrent_input_to_output_w[0],
-                      -LSTM_1_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_1_recurrent_input_to_output_w[0],
+                             -LSTM_1_HIDDEN_OFFSET,
+                             0,
+                             NULL);
 
     // INPUT GATE
     const muriscv_nn_lstm_gate gate_input = {LSTM_1_IN_TO_INPUT_MULTIPLIER,
-                                           LSTM_1_IN_TO_INPUT_SHIFT,
-                                           &lstm_1_input_to_input_w[0],
-                                           &input_data_kernel_sum[0],
-                                           LSTM_1_RECURRENT_TO_INPUT_MULTIPLIER,
-                                           LSTM_1_RECURRENT_TO_INPUT_SHIFT,
-                                           &lstm_1_recurrent_input_to_input_w[0],
-                                           &input_hidden_kernel_sum[0],
-                                           &lstm_1_input_gate_bias[0],
-                                           MURISCV_SIGMOID};
+                                             LSTM_1_IN_TO_INPUT_SHIFT,
+                                             &lstm_1_input_to_input_w[0],
+                                             &input_data_kernel_sum[0],
+                                             LSTM_1_RECURRENT_TO_INPUT_MULTIPLIER,
+                                             LSTM_1_RECURRENT_TO_INPUT_SHIFT,
+                                             &lstm_1_recurrent_input_to_input_w[0],
+                                             &input_hidden_kernel_sum[0],
+                                             &lstm_1_input_gate_bias[0],
+                                             MURISCV_SIGMOID};
 
     // FORGET GATE
     const muriscv_nn_lstm_gate gate_forget = {LSTM_1_IN_TO_FORGET_MULTIPLIER,
-                                            LSTM_1_IN_TO_FORGET_SHIFT,
-                                            &lstm_1_input_to_forget_w[0],
-                                            &forget_data_kernel_sum[0],
-                                            LSTM_1_RECURRENT_TO_FORGET_MULTIPLIER,
-                                            LSTM_1_RECURRENT_TO_FORGET_SHIFT,
-                                            &lstm_1_recurrent_input_to_forget_w[0],
-                                            &forget_hidden_kernel_sum[0],
-                                            &lstm_1_forget_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_1_IN_TO_FORGET_SHIFT,
+                                              &lstm_1_input_to_forget_w[0],
+                                              &forget_data_kernel_sum[0],
+                                              LSTM_1_RECURRENT_TO_FORGET_MULTIPLIER,
+                                              LSTM_1_RECURRENT_TO_FORGET_SHIFT,
+                                              &lstm_1_recurrent_input_to_forget_w[0],
+                                              &forget_hidden_kernel_sum[0],
+                                              &lstm_1_forget_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // CELL GATE
     const muriscv_nn_lstm_gate gate_cell = {LSTM_1_IN_TO_CELL_MULTIPLIER,
-                                          LSTM_1_IN_TO_CELL_SHIFT,
-                                          &lstm_1_input_to_cell_w[0],
-                                          &cell_data_kernel_sum[0],
-                                          LSTM_1_RECURRENT_TO_CELL_MULTIPLIER,
-                                          LSTM_1_RECURRENT_TO_CELL_SHIFT,
-                                          &lstm_1_recurrent_input_to_cell_w[0],
-                                          &cell_hidden_kernel_sum[0],
-                                          &lstm_1_cell_gate_bias[0],
-                                          MURISCV_TANH};
+                                            LSTM_1_IN_TO_CELL_SHIFT,
+                                            &lstm_1_input_to_cell_w[0],
+                                            &cell_data_kernel_sum[0],
+                                            LSTM_1_RECURRENT_TO_CELL_MULTIPLIER,
+                                            LSTM_1_RECURRENT_TO_CELL_SHIFT,
+                                            &lstm_1_recurrent_input_to_cell_w[0],
+                                            &cell_hidden_kernel_sum[0],
+                                            &lstm_1_cell_gate_bias[0],
+                                            MURISCV_TANH};
 
     // OUTPUT GATE
     const muriscv_nn_lstm_gate gate_output = {LSTM_1_IN_TO_OUTPUT_MULTIPLIER,
-                                            LSTM_1_IN_TO_OUTPUT_SHIFT,
-                                            &lstm_1_input_to_output_w[0],
-                                            &output_data_kernel_sum[0],
-                                            LSTM_1_RECURRENT_TO_OUTPUT_MULTIPLIER,
-                                            LSTM_1_RECURRENT_TO_OUTPUT_SHIFT,
-                                            &lstm_1_recurrent_input_to_output_w[0],
-                                            &output_hidden_kernel_sum[0],
-                                            &lstm_1_output_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_1_IN_TO_OUTPUT_SHIFT,
+                                              &lstm_1_input_to_output_w[0],
+                                              &output_data_kernel_sum[0],
+                                              LSTM_1_RECURRENT_TO_OUTPUT_MULTIPLIER,
+                                              LSTM_1_RECURRENT_TO_OUTPUT_SHIFT,
+                                              &lstm_1_recurrent_input_to_output_w[0],
+                                              &output_hidden_kernel_sum[0],
+                                              &lstm_1_output_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // LSTM DATA
     const muriscv_nn_lstm_params params = {LSTM_1_TIME_MAJOR,
-                                         LSTM_1_INPUT_BATCHES,
-                                         LSTM_1_TIME_STEPS,
-                                         LSTM_1_NUMBER_INPUTS,
-                                         LSTM_1_NUMBER_UNITS,
-                                         LSTM_1_DATA_OFFSET,
-                                         LSTM_1_FORGET_MULTIPLIER,
-                                         LSTM_1_FORGET_SHIFT,
-                                         LSTM_1_INPUT_MULTIPLIER,
-                                         LSTM_1_INPUT_SHIFT,
-                                         LSTM_1_IN_ACTIVATION_MAX,
-                                         LSTM_1_CELL_STATE_SHIFT,
-                                         LSTM_1_HIDDEN_MULTIPLIER,
-                                         LSTM_1_HIDDEN_SHIFT,
-                                         LSTM_1_HIDDEN_OFFSET,
-                                         gate_forget,
-                                         gate_input,
-                                         gate_cell,
-                                         gate_output};
+                                           LSTM_1_INPUT_BATCHES,
+                                           LSTM_1_TIME_STEPS,
+                                           LSTM_1_NUMBER_INPUTS,
+                                           LSTM_1_NUMBER_UNITS,
+                                           LSTM_1_DATA_OFFSET,
+                                           LSTM_1_FORGET_MULTIPLIER,
+                                           LSTM_1_FORGET_SHIFT,
+                                           LSTM_1_INPUT_MULTIPLIER,
+                                           LSTM_1_INPUT_SHIFT,
+                                           LSTM_1_IN_ACTIVATION_MAX,
+                                           LSTM_1_CELL_STATE_SHIFT,
+                                           LSTM_1_HIDDEN_MULTIPLIER,
+                                           LSTM_1_HIDDEN_SHIFT,
+                                           LSTM_1_HIDDEN_OFFSET,
+                                           gate_forget,
+                                           gate_input,
+                                           gate_cell,
+                                           gate_output};
 
     // BUFFERS
     muriscv_nn_lstm_context buffers;
@@ -227,131 +223,131 @@ void lstm_2_muriscv_nn_lstm_unidirectional_s8(void)
     int32_t size_hidden = LSTM_2_NUMBER_UNITS;
 
     muriscv_nn_vector_sum_s8(&input_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_2_input_to_input_w[0],
-                      LSTM_2_DATA_OFFSET,
-                      0,
-                      &lstm_2_input_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_2_input_to_input_w[0],
+                             LSTM_2_DATA_OFFSET,
+                             0,
+                             &lstm_2_input_gate_bias[0]);
     muriscv_nn_vector_sum_s8(&forget_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_2_input_to_forget_w[0],
-                      LSTM_2_DATA_OFFSET,
-                      0,
-                      &lstm_2_forget_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_2_input_to_forget_w[0],
+                             LSTM_2_DATA_OFFSET,
+                             0,
+                             &lstm_2_forget_gate_bias[0]);
     muriscv_nn_vector_sum_s8(&cell_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_2_input_to_cell_w[0],
-                      LSTM_2_DATA_OFFSET,
-                      0,
-                      &lstm_2_cell_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_2_input_to_cell_w[0],
+                             LSTM_2_DATA_OFFSET,
+                             0,
+                             &lstm_2_cell_gate_bias[0]);
     muriscv_nn_vector_sum_s8(&output_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_2_input_to_output_w[0],
-                      LSTM_2_DATA_OFFSET,
-                      0,
-                      &lstm_2_output_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_2_input_to_output_w[0],
+                             LSTM_2_DATA_OFFSET,
+                             0,
+                             &lstm_2_output_gate_bias[0]);
 
     muriscv_nn_vector_sum_s8(&input_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_2_recurrent_input_to_input_w[0],
-                      -LSTM_2_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_2_recurrent_input_to_input_w[0],
+                             -LSTM_2_HIDDEN_OFFSET,
+                             0,
+                             NULL);
     muriscv_nn_vector_sum_s8(&forget_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_2_recurrent_input_to_forget_w[0],
-                      -LSTM_2_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_2_recurrent_input_to_forget_w[0],
+                             -LSTM_2_HIDDEN_OFFSET,
+                             0,
+                             NULL);
     muriscv_nn_vector_sum_s8(&cell_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_2_recurrent_input_to_cell_w[0],
-                      -LSTM_2_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_2_recurrent_input_to_cell_w[0],
+                             -LSTM_2_HIDDEN_OFFSET,
+                             0,
+                             NULL);
     muriscv_nn_vector_sum_s8(&output_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_2_recurrent_input_to_output_w[0],
-                      -LSTM_2_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_2_recurrent_input_to_output_w[0],
+                             -LSTM_2_HIDDEN_OFFSET,
+                             0,
+                             NULL);
 
     // INPUT GATE
     const muriscv_nn_lstm_gate gate_input = {LSTM_2_IN_TO_INPUT_MULTIPLIER,
-                                           LSTM_2_IN_TO_INPUT_SHIFT,
-                                           &lstm_2_input_to_input_w[0],
-                                           &input_data_kernel_sum[0],
-                                           LSTM_2_RECURRENT_TO_INPUT_MULTIPLIER,
-                                           LSTM_2_RECURRENT_TO_INPUT_SHIFT,
-                                           &lstm_2_recurrent_input_to_input_w[0],
-                                           &input_hidden_kernel_sum[0],
-                                           &lstm_2_input_gate_bias[0],
-                                           MURISCV_SIGMOID};
+                                             LSTM_2_IN_TO_INPUT_SHIFT,
+                                             &lstm_2_input_to_input_w[0],
+                                             &input_data_kernel_sum[0],
+                                             LSTM_2_RECURRENT_TO_INPUT_MULTIPLIER,
+                                             LSTM_2_RECURRENT_TO_INPUT_SHIFT,
+                                             &lstm_2_recurrent_input_to_input_w[0],
+                                             &input_hidden_kernel_sum[0],
+                                             &lstm_2_input_gate_bias[0],
+                                             MURISCV_SIGMOID};
 
     // FORGET GATE
     const muriscv_nn_lstm_gate gate_forget = {LSTM_2_IN_TO_FORGET_MULTIPLIER,
-                                            LSTM_2_IN_TO_FORGET_SHIFT,
-                                            &lstm_2_input_to_forget_w[0],
-                                            &forget_data_kernel_sum[0],
-                                            LSTM_2_RECURRENT_TO_FORGET_MULTIPLIER,
-                                            LSTM_2_RECURRENT_TO_FORGET_SHIFT,
-                                            &lstm_2_recurrent_input_to_forget_w[0],
-                                            &forget_hidden_kernel_sum[0],
-                                            &lstm_2_forget_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_2_IN_TO_FORGET_SHIFT,
+                                              &lstm_2_input_to_forget_w[0],
+                                              &forget_data_kernel_sum[0],
+                                              LSTM_2_RECURRENT_TO_FORGET_MULTIPLIER,
+                                              LSTM_2_RECURRENT_TO_FORGET_SHIFT,
+                                              &lstm_2_recurrent_input_to_forget_w[0],
+                                              &forget_hidden_kernel_sum[0],
+                                              &lstm_2_forget_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // CELL GATE
     const muriscv_nn_lstm_gate gate_cell = {LSTM_2_IN_TO_CELL_MULTIPLIER,
-                                          LSTM_2_IN_TO_CELL_SHIFT,
-                                          &lstm_2_input_to_cell_w[0],
-                                          &cell_data_kernel_sum[0],
-                                          LSTM_2_RECURRENT_TO_CELL_MULTIPLIER,
-                                          LSTM_2_RECURRENT_TO_CELL_SHIFT,
-                                          &lstm_2_recurrent_input_to_cell_w[0],
-                                          &cell_hidden_kernel_sum[0],
-                                          &lstm_2_cell_gate_bias[0],
-                                          MURISCV_TANH};
+                                            LSTM_2_IN_TO_CELL_SHIFT,
+                                            &lstm_2_input_to_cell_w[0],
+                                            &cell_data_kernel_sum[0],
+                                            LSTM_2_RECURRENT_TO_CELL_MULTIPLIER,
+                                            LSTM_2_RECURRENT_TO_CELL_SHIFT,
+                                            &lstm_2_recurrent_input_to_cell_w[0],
+                                            &cell_hidden_kernel_sum[0],
+                                            &lstm_2_cell_gate_bias[0],
+                                            MURISCV_TANH};
 
     // OUTPUT GATE
     const muriscv_nn_lstm_gate gate_output = {LSTM_2_IN_TO_OUTPUT_MULTIPLIER,
-                                            LSTM_2_IN_TO_OUTPUT_SHIFT,
-                                            &lstm_2_input_to_output_w[0],
-                                            &output_data_kernel_sum[0],
-                                            LSTM_2_RECURRENT_TO_OUTPUT_MULTIPLIER,
-                                            LSTM_2_RECURRENT_TO_OUTPUT_SHIFT,
-                                            &lstm_2_recurrent_input_to_output_w[0],
-                                            &output_hidden_kernel_sum[0],
-                                            &lstm_2_output_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_2_IN_TO_OUTPUT_SHIFT,
+                                              &lstm_2_input_to_output_w[0],
+                                              &output_data_kernel_sum[0],
+                                              LSTM_2_RECURRENT_TO_OUTPUT_MULTIPLIER,
+                                              LSTM_2_RECURRENT_TO_OUTPUT_SHIFT,
+                                              &lstm_2_recurrent_input_to_output_w[0],
+                                              &output_hidden_kernel_sum[0],
+                                              &lstm_2_output_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // LSTM DATA
     const muriscv_nn_lstm_params params = {LSTM_2_TIME_MAJOR,
-                                         LSTM_2_INPUT_BATCHES,
-                                         LSTM_2_TIME_STEPS,
-                                         LSTM_2_NUMBER_INPUTS,
-                                         LSTM_2_NUMBER_UNITS,
-                                         LSTM_2_DATA_OFFSET,
-                                         LSTM_2_FORGET_MULTIPLIER,
-                                         LSTM_2_FORGET_SHIFT,
-                                         LSTM_2_INPUT_MULTIPLIER,
-                                         LSTM_2_INPUT_SHIFT,
-                                         LSTM_2_IN_ACTIVATION_MAX,
-                                         LSTM_2_CELL_STATE_SHIFT,
-                                         LSTM_2_HIDDEN_MULTIPLIER,
-                                         LSTM_2_HIDDEN_SHIFT,
-                                         LSTM_2_HIDDEN_OFFSET,
-                                         gate_forget,
-                                         gate_input,
-                                         gate_cell,
-                                         gate_output};
+                                           LSTM_2_INPUT_BATCHES,
+                                           LSTM_2_TIME_STEPS,
+                                           LSTM_2_NUMBER_INPUTS,
+                                           LSTM_2_NUMBER_UNITS,
+                                           LSTM_2_DATA_OFFSET,
+                                           LSTM_2_FORGET_MULTIPLIER,
+                                           LSTM_2_FORGET_SHIFT,
+                                           LSTM_2_INPUT_MULTIPLIER,
+                                           LSTM_2_INPUT_SHIFT,
+                                           LSTM_2_IN_ACTIVATION_MAX,
+                                           LSTM_2_CELL_STATE_SHIFT,
+                                           LSTM_2_HIDDEN_MULTIPLIER,
+                                           LSTM_2_HIDDEN_SHIFT,
+                                           LSTM_2_HIDDEN_OFFSET,
+                                           gate_forget,
+                                           gate_input,
+                                           gate_cell,
+                                           gate_output};
 
     // BUFFERS
     muriscv_nn_lstm_context buffers;
@@ -388,131 +384,131 @@ void lstm_one_time_step_muriscv_nn_lstm_unidirectional_s8(void)
     int32_t size_hidden = LSTM_ONE_TIME_STEP_NUMBER_UNITS;
 
     muriscv_nn_vector_sum_s8(&input_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_one_time_step_input_to_input_w[0],
-                      LSTM_ONE_TIME_STEP_DATA_OFFSET,
-                      0,
-                      &lstm_one_time_step_input_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_one_time_step_input_to_input_w[0],
+                             LSTM_ONE_TIME_STEP_DATA_OFFSET,
+                             0,
+                             &lstm_one_time_step_input_gate_bias[0]);
     muriscv_nn_vector_sum_s8(&forget_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_one_time_step_input_to_forget_w[0],
-                      LSTM_ONE_TIME_STEP_DATA_OFFSET,
-                      0,
-                      &lstm_one_time_step_forget_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_one_time_step_input_to_forget_w[0],
+                             LSTM_ONE_TIME_STEP_DATA_OFFSET,
+                             0,
+                             &lstm_one_time_step_forget_gate_bias[0]);
     muriscv_nn_vector_sum_s8(&cell_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_one_time_step_input_to_cell_w[0],
-                      LSTM_ONE_TIME_STEP_DATA_OFFSET,
-                      0,
-                      &lstm_one_time_step_cell_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_one_time_step_input_to_cell_w[0],
+                             LSTM_ONE_TIME_STEP_DATA_OFFSET,
+                             0,
+                             &lstm_one_time_step_cell_gate_bias[0]);
     muriscv_nn_vector_sum_s8(&output_data_kernel_sum[0],
-                      size_data,
-                      size_hidden,
-                      &lstm_one_time_step_input_to_output_w[0],
-                      LSTM_ONE_TIME_STEP_DATA_OFFSET,
-                      0,
-                      &lstm_one_time_step_output_gate_bias[0]);
+                             size_data,
+                             size_hidden,
+                             &lstm_one_time_step_input_to_output_w[0],
+                             LSTM_ONE_TIME_STEP_DATA_OFFSET,
+                             0,
+                             &lstm_one_time_step_output_gate_bias[0]);
 
     muriscv_nn_vector_sum_s8(&input_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_one_time_step_recurrent_input_to_input_w[0],
-                      -LSTM_ONE_TIME_STEP_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_one_time_step_recurrent_input_to_input_w[0],
+                             -LSTM_ONE_TIME_STEP_HIDDEN_OFFSET,
+                             0,
+                             NULL);
     muriscv_nn_vector_sum_s8(&forget_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_one_time_step_recurrent_input_to_forget_w[0],
-                      -LSTM_ONE_TIME_STEP_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_one_time_step_recurrent_input_to_forget_w[0],
+                             -LSTM_ONE_TIME_STEP_HIDDEN_OFFSET,
+                             0,
+                             NULL);
     muriscv_nn_vector_sum_s8(&cell_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_one_time_step_recurrent_input_to_cell_w[0],
-                      -LSTM_ONE_TIME_STEP_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_one_time_step_recurrent_input_to_cell_w[0],
+                             -LSTM_ONE_TIME_STEP_HIDDEN_OFFSET,
+                             0,
+                             NULL);
     muriscv_nn_vector_sum_s8(&output_hidden_kernel_sum[0],
-                      size_hidden,
-                      size_hidden,
-                      &lstm_one_time_step_recurrent_input_to_output_w[0],
-                      -LSTM_ONE_TIME_STEP_HIDDEN_OFFSET,
-                      0,
-                      NULL);
+                             size_hidden,
+                             size_hidden,
+                             &lstm_one_time_step_recurrent_input_to_output_w[0],
+                             -LSTM_ONE_TIME_STEP_HIDDEN_OFFSET,
+                             0,
+                             NULL);
 
     // INPUT GATE
     const muriscv_nn_lstm_gate gate_input = {LSTM_ONE_TIME_STEP_IN_TO_INPUT_MULTIPLIER,
-                                           LSTM_ONE_TIME_STEP_IN_TO_INPUT_SHIFT,
-                                           &lstm_one_time_step_input_to_input_w[0],
-                                           input_data_kernel_sum,
-                                           LSTM_ONE_TIME_STEP_RECURRENT_TO_INPUT_MULTIPLIER,
-                                           LSTM_ONE_TIME_STEP_RECURRENT_TO_INPUT_SHIFT,
-                                           &lstm_one_time_step_recurrent_input_to_input_w[0],
-                                           input_hidden_kernel_sum,
-                                           &lstm_one_time_step_input_gate_bias[0],
-                                           MURISCV_SIGMOID};
+                                             LSTM_ONE_TIME_STEP_IN_TO_INPUT_SHIFT,
+                                             &lstm_one_time_step_input_to_input_w[0],
+                                             input_data_kernel_sum,
+                                             LSTM_ONE_TIME_STEP_RECURRENT_TO_INPUT_MULTIPLIER,
+                                             LSTM_ONE_TIME_STEP_RECURRENT_TO_INPUT_SHIFT,
+                                             &lstm_one_time_step_recurrent_input_to_input_w[0],
+                                             input_hidden_kernel_sum,
+                                             &lstm_one_time_step_input_gate_bias[0],
+                                             MURISCV_SIGMOID};
 
     // FORGET GATE
     const muriscv_nn_lstm_gate gate_forget = {LSTM_ONE_TIME_STEP_IN_TO_FORGET_MULTIPLIER,
-                                            LSTM_ONE_TIME_STEP_IN_TO_FORGET_SHIFT,
-                                            &lstm_one_time_step_input_to_forget_w[0],
-                                            forget_data_kernel_sum,
-                                            LSTM_ONE_TIME_STEP_RECURRENT_TO_FORGET_MULTIPLIER,
-                                            LSTM_ONE_TIME_STEP_RECURRENT_TO_FORGET_SHIFT,
-                                            &lstm_one_time_step_recurrent_input_to_forget_w[0],
-                                            forget_hidden_kernel_sum,
-                                            &lstm_one_time_step_forget_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_ONE_TIME_STEP_IN_TO_FORGET_SHIFT,
+                                              &lstm_one_time_step_input_to_forget_w[0],
+                                              forget_data_kernel_sum,
+                                              LSTM_ONE_TIME_STEP_RECURRENT_TO_FORGET_MULTIPLIER,
+                                              LSTM_ONE_TIME_STEP_RECURRENT_TO_FORGET_SHIFT,
+                                              &lstm_one_time_step_recurrent_input_to_forget_w[0],
+                                              forget_hidden_kernel_sum,
+                                              &lstm_one_time_step_forget_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // CELL GATE
     const muriscv_nn_lstm_gate gate_cell = {LSTM_ONE_TIME_STEP_IN_TO_CELL_MULTIPLIER,
-                                          LSTM_ONE_TIME_STEP_IN_TO_CELL_SHIFT,
-                                          &lstm_one_time_step_input_to_cell_w[0],
-                                          cell_data_kernel_sum,
-                                          LSTM_ONE_TIME_STEP_RECURRENT_TO_CELL_MULTIPLIER,
-                                          LSTM_ONE_TIME_STEP_RECURRENT_TO_CELL_SHIFT,
-                                          &lstm_one_time_step_recurrent_input_to_cell_w[0],
-                                          cell_hidden_kernel_sum,
-                                          &lstm_one_time_step_cell_gate_bias[0],
-                                          MURISCV_TANH};
+                                            LSTM_ONE_TIME_STEP_IN_TO_CELL_SHIFT,
+                                            &lstm_one_time_step_input_to_cell_w[0],
+                                            cell_data_kernel_sum,
+                                            LSTM_ONE_TIME_STEP_RECURRENT_TO_CELL_MULTIPLIER,
+                                            LSTM_ONE_TIME_STEP_RECURRENT_TO_CELL_SHIFT,
+                                            &lstm_one_time_step_recurrent_input_to_cell_w[0],
+                                            cell_hidden_kernel_sum,
+                                            &lstm_one_time_step_cell_gate_bias[0],
+                                            MURISCV_TANH};
 
     // OUTPUT GATE
     const muriscv_nn_lstm_gate gate_output = {LSTM_ONE_TIME_STEP_IN_TO_OUTPUT_MULTIPLIER,
-                                            LSTM_ONE_TIME_STEP_IN_TO_OUTPUT_SHIFT,
-                                            &lstm_one_time_step_input_to_output_w[0],
-                                            output_data_kernel_sum,
-                                            LSTM_ONE_TIME_STEP_RECURRENT_TO_OUTPUT_MULTIPLIER,
-                                            LSTM_ONE_TIME_STEP_RECURRENT_TO_OUTPUT_SHIFT,
-                                            &lstm_one_time_step_recurrent_input_to_output_w[0],
-                                            output_hidden_kernel_sum,
-                                            &lstm_one_time_step_output_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_ONE_TIME_STEP_IN_TO_OUTPUT_SHIFT,
+                                              &lstm_one_time_step_input_to_output_w[0],
+                                              output_data_kernel_sum,
+                                              LSTM_ONE_TIME_STEP_RECURRENT_TO_OUTPUT_MULTIPLIER,
+                                              LSTM_ONE_TIME_STEP_RECURRENT_TO_OUTPUT_SHIFT,
+                                              &lstm_one_time_step_recurrent_input_to_output_w[0],
+                                              output_hidden_kernel_sum,
+                                              &lstm_one_time_step_output_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // LSTM DATA
     const muriscv_nn_lstm_params params = {LSTM_ONE_TIME_STEP_TIME_MAJOR,
-                                         LSTM_ONE_TIME_STEP_INPUT_BATCHES,
-                                         LSTM_ONE_TIME_STEP_TIME_STEPS,
-                                         LSTM_ONE_TIME_STEP_NUMBER_INPUTS,
-                                         LSTM_ONE_TIME_STEP_NUMBER_UNITS,
-                                         LSTM_ONE_TIME_STEP_DATA_OFFSET,
-                                         LSTM_ONE_TIME_STEP_FORGET_MULTIPLIER,
-                                         LSTM_ONE_TIME_STEP_FORGET_SHIFT,
-                                         LSTM_ONE_TIME_STEP_INPUT_MULTIPLIER,
-                                         LSTM_ONE_TIME_STEP_INPUT_SHIFT,
-                                         LSTM_ONE_TIME_STEP_IN_ACTIVATION_MAX,
-                                         LSTM_ONE_TIME_STEP_CELL_STATE_SHIFT,
-                                         LSTM_ONE_TIME_STEP_HIDDEN_MULTIPLIER,
-                                         LSTM_ONE_TIME_STEP_HIDDEN_SHIFT,
-                                         LSTM_ONE_TIME_STEP_HIDDEN_OFFSET,
-                                         gate_forget,
-                                         gate_input,
-                                         gate_cell,
-                                         gate_output};
+                                           LSTM_ONE_TIME_STEP_INPUT_BATCHES,
+                                           LSTM_ONE_TIME_STEP_TIME_STEPS,
+                                           LSTM_ONE_TIME_STEP_NUMBER_INPUTS,
+                                           LSTM_ONE_TIME_STEP_NUMBER_UNITS,
+                                           LSTM_ONE_TIME_STEP_DATA_OFFSET,
+                                           LSTM_ONE_TIME_STEP_FORGET_MULTIPLIER,
+                                           LSTM_ONE_TIME_STEP_FORGET_SHIFT,
+                                           LSTM_ONE_TIME_STEP_INPUT_MULTIPLIER,
+                                           LSTM_ONE_TIME_STEP_INPUT_SHIFT,
+                                           LSTM_ONE_TIME_STEP_IN_ACTIVATION_MAX,
+                                           LSTM_ONE_TIME_STEP_CELL_STATE_SHIFT,
+                                           LSTM_ONE_TIME_STEP_HIDDEN_MULTIPLIER,
+                                           LSTM_ONE_TIME_STEP_HIDDEN_SHIFT,
+                                           LSTM_ONE_TIME_STEP_HIDDEN_OFFSET,
+                                           gate_forget,
+                                           gate_input,
+                                           gate_cell,
+                                           gate_output};
 
     // BUFFERS
     muriscv_nn_lstm_context buffers;

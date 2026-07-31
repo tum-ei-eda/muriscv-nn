@@ -51,39 +51,39 @@
 void muriscv_nn_relu_q15(int16_t *data, uint16_t size)
 {
 
-//#if defined(USE_PEXT) && !defined(USE_VEXT)
-//    /* Run the following code for M cores with DSP extension */
-//
-//    uint16_t i = size >> 1;
-//    int16_t *input = data;
-//    int16_t *output = data;
-//    int32_t in;
-//    int32_t buf;
-//    int32_t mask;
-//
-//    while (i)
-//    {
-//        in = muriscv_nn_read_q15x2_ia((const int16_t **)&input);
-//
-//        /* extract the first bit */
-//        buf = ROR(in & 0x80008000, 15);
-//
-//        /* if MSB=1, mask will be 0xFF, 0x0 otherwise */
-//        mask = QSUB16(0x00000000, buf);
-//
-//        muriscv_nn_write_q15x2_ia(&output, in & (~mask));
-//        i--;
-//    }
-//
-//    if (size & 0x1)
-//    {
-//        if (*input < 0)
-//        {
-//            *input = 0;
-//        }
-//        input++;
-//    }
-//#else
+    // #if defined(USE_PEXT) && !defined(USE_VEXT)
+    //     /* Run the following code for M cores with DSP extension */
+    //
+    //     uint16_t i = size >> 1;
+    //     int16_t *input = data;
+    //     int16_t *output = data;
+    //     int32_t in;
+    //     int32_t buf;
+    //     int32_t mask;
+    //
+    //     while (i)
+    //     {
+    //         in = muriscv_nn_read_q15x2_ia((const int16_t **)&input);
+    //
+    //         /* extract the first bit */
+    //         buf = ROR(in & 0x80008000, 15);
+    //
+    //         /* if MSB=1, mask will be 0xFF, 0x0 otherwise */
+    //         mask = QSUB16(0x00000000, buf);
+    //
+    //         muriscv_nn_write_q15x2_ia(&output, in & (~mask));
+    //         i--;
+    //     }
+    //
+    //     if (size & 0x1)
+    //     {
+    //         if (*input < 0)
+    //         {
+    //             *input = 0;
+    //         }
+    //         input++;
+    //     }
+    // #else
     /* Run the following code as reference implementation for M cores without DSP extension */
     uint16_t i;
 
@@ -93,7 +93,7 @@ void muriscv_nn_relu_q15(int16_t *data, uint16_t size)
             data[i] = 0;
     }
 
-//#endif /* USE_PEXT */
+    // #endif /* USE_PEXT */
 }
 
 /**
