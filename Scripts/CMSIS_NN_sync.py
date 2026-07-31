@@ -275,7 +275,9 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
         newline = newline.replace("ARM_MATH_DSP", "USE_PEXT")
         newline = newline.replace("ARM_MATH_DSP", "USE_PEXT")
         newline = newline.replace("CMSIS_NN_USE_SINGLE_ROUNDING", "MURISCV_NN_USE_SINGLE_ROUNDING")
-        newline = newline.replace("CMSIS_NN_USE_REQUANTIZE_INLINE_ASSEMBLY", "MURISCV_NN_USE_REQUANTIZE_INLINE_ASSEMBLY")
+        newline = newline.replace(
+            "CMSIS_NN_USE_REQUANTIZE_INLINE_ASSEMBLY", "MURISCV_NN_USE_REQUANTIZE_INLINE_ASSEMBLY"
+        )
         for var_name in cmsis_varnames:
             newline = newline.replace(var_name, "muriscv_nn_")
         for error_name in cmsis_errornames:
