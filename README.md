@@ -39,6 +39,10 @@ See [`COMPATIBILITY.md`](COMPATIBILITY.md) for details on supported Toolchains, 
 
 See https://github.com/tum-ei-eda/muriscv-nn/wiki for detailed benchmark results.
 
+## Contributing
+
+See [`STYLE.md`](./STYLE.md) for formatting guidelines.
+
 ## Publications
 
 - **muRISCV-NN: Challenging Zve32x Autovectorization with TinyML Inference Library for RISC-V Vector Extension** (https://dl.acm.org/doi/10.1145/3637543.3652878)
