@@ -35,6 +35,9 @@
 #ifdef USE_COREV
 #include "corev_utils.h"
 #endif  // USE_COREV
+#ifdef USE_MNN
+#include "mnn_utils.h"
+#endif  // USE_MNN
 
 
 /**
@@ -653,7 +656,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         rhs += rhs_cols;
     }
 
-#elif defined(USE_COREV)
+#elif defined(USE_COREV) || defined(USE_MNN)
 
 #ifdef NO_KERNEL_SUM
     const uint32_t lhs_offset_s16x2 = (__builtin_riscv_cv_pack(lhs_offset, lhs_offset));

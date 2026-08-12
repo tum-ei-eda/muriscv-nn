@@ -182,10 +182,10 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
 
             while (remaining > 0)
             {
-                size_t vl = vsetvl_e8m1(remaining);
+                size_t vl = vsetvl_e8m2(remaining);
 
                 /* Load signed int8 weights */
-                vint8m2_t v8 = vle8_v_i8m2(ptr, vl);
+                vint8m2_t v8 = vle8_v_i8m2(p, vl);
 
                 /* Widen int8 -> int32 */
                 vint32m8_t v32 = vsext_vf4_i32m8(v8, vl);
@@ -211,7 +211,7 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
 
             vector_sum_buf[r] += sum * lhs_offset;
         }
-#elif defined(USE_COREV)
+#elif defined(USE_COREV) || defined(USE_XMNN)
         const uint32_t ones = 0x01010101u;
 
         const int32_t row_blocks = vector_rows >> 2;

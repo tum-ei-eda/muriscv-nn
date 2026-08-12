@@ -21,6 +21,8 @@
 
 #include <stdint.h>
 
+#include "corev_utils.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

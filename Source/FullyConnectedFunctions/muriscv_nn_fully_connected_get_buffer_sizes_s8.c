@@ -29,6 +29,8 @@
  *
  * -------------------------------------------------------------------- */
 
+#include <stdio.h>
+
 #include "muriscv_nn_functions.h"
 
 /**
@@ -69,7 +71,7 @@ int32_t muriscv_nn_fully_connected_s8_get_buffer_size(const muriscv_nn_dims *fil
     return muriscv_nn_fully_connected_s8_get_buffer_size_mve(filter_dims);
 #elif defined(USE_PEXT)
     return muriscv_nn_fully_connected_s8_get_buffer_size_dsp(filter_dims);
-#elif defined(USE_COREV)
+#elif defined(USE_COREV) || defined(USE_MNN)
     return muriscv_nn_fully_connected_s8_get_buffer_size_corev(filter_dims);
 #else
     return muriscv_nn_fully_connected_s8_get_buffer_size_default(filter_dims);
