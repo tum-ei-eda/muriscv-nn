@@ -32,47 +32,10 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#define USE_XMNN
-// #define EMUL
+#ifdef USE_COREV
+#include "corev_utils.h"
+#endif  // USE_COREV
 
-#ifdef EMUL
-static inline uint32_t __builtin_riscv_cv_pack(uint32_t rs1, uint32_t rs2)
-{
-    return ((rs1 & 0xffffu) << 16) | (rs2 & 0xffffu);
-}
-#else
-static inline uint32_t __builtin_riscv_cv_pack(uint32_t rs1, uint32_t rs2)
-{
-    uint32_t result;
-    asm ("cv.pack %0, %1, %2" : "=r" (result) : "r" (rs1), "r" (rs2) );
-    return result;
-}
-static inline uint32_t __builtin_riscv_cv_add_h(uint32_t rs1, uint32_t rs2)
-{
-    uint32_t result;
-    asm ("cv.add.h %0, %1, %2" : "=r" (result) : "r" (rs1), "r" (rs2) );
-    return result;
-}
-static inline int32_t __builtin_riscv_cv_sdotsp_h(uint32_t rs1, uint32_t rs2, int32_t acc)
-{
-    asm ("cv.sdotsp.h %0, %1, %2"
-         : "+r" (acc)
-         : "r" (rs1), "r" (rs2));
-    return acc;
-}
-static inline int32_t __builtin_riscv_mnn_exths_b32(uint32_t rs1)
-{
-    uint32_t unpacked;
-    asm ("mnn.exths.b32 %0, %1" : "=r" (unpacked) : "r" (rs1));
-    return unpacked;
-}
-static inline int32_t __builtin_riscv_mnn_exths_b10(uint32_t rs1)
-{
-    uint32_t unpacked;
-    asm ("mnn.exths.b10 %0, %1" : "=r" (unpacked) : "r" (rs1));
-    return unpacked;
-}
-#endif
 
 /**
  * @ingroup groupSupport
@@ -690,13 +653,17 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         rhs += rhs_cols;
     }
 
-#elif defined(USE_XMNN)
+#elif defined(USE_COREV)
 
+#ifdef NO_KERNEL_SUM
     const uint32_t lhs_offset_s16x2 = (__builtin_riscv_cv_pack(lhs_offset, lhs_offset));
+#endif  // NO_KERNEL_SUM
     const int32_t row_loop_cnt = rhs_rows >> 2;
 
     for (int32_t i = 0; i < row_loop_cnt; i++)
     {
+
+#ifdef NO_KERNEL_SUM
         int32_t acc_0 = 0;
         int32_t acc_1 = 0;
         int32_t acc_2 = 0;
@@ -709,6 +676,12 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             acc_2 = *bias++;
             acc_3 = *bias++;
         }
+#else
+        int32_t acc_0 = *kernel_sum++;
+        int32_t acc_1 = *kernel_sum++;
+        int32_t acc_2 = *kernel_sum++;
+        int32_t acc_3 = *kernel_sum++;
+#endif  // NO_KERNEL_SUM
 
         const int32_t col_loop_cnt = rhs_cols >> 2;
 
@@ -726,64 +699,83 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         {
             q31_t rhs_val_0, rhs_val_1, rhs_val_2, rhs_val_3;
 
-            int32_t lhs_packed = *(int32_t *)lhs_ptr;
-            // int32_t lhs_32 = __rv_sunpkd832(lhs_packed);
-            // int32_t lhs_10 = __rv_sunpkd810(lhs_packed);
+#ifdef NO_KERNEL_SUM
+            int32_t lhs_32 = __rv_sunpkd832(lhs_packed);
+            int32_t lhs_10 = __rv_sunpkd810(lhs_packed);
             int32_t lhs_32 = __builtin_riscv_mnn_exths_b32(lhs_packed);
             int32_t lhs_10 = __builtin_riscv_mnn_exths_b10(lhs_packed);
-            // lhs_32 = __rv_add16(lhs_32, lhs_offset_s16x2);
-            // lhs_10 = __rv_add16(lhs_10, lhs_offset_s16x2);
+            lhs_32 = __rv_add16(lhs_32, lhs_offset_s16x2);
+            lhs_10 = __rv_add16(lhs_10, lhs_offset_s16x2);
             lhs_32 = __builtin_riscv_cv_add_h(lhs_32, lhs_offset_s16x2);
             lhs_10 = __builtin_riscv_cv_add_h(lhs_10, lhs_offset_s16x2);
+#else
+            int32_t lhs_packed = *(int32_t *)lhs_ptr;
+#endif  // NO_KERNEL_SUM
 
             /* Accumulate first rhs row */
-            int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
-            // int32_t rhs_32 = __rv_sunpkd832(rhs_packed);
-            // int32_t rhs_10 = __rv_sunpkd810(rhs_packed);
+#ifdef NO_KERNEL_SUM
+            int32_t rhs_32 = __rv_sunpkd832(rhs_packed);
+            int32_t rhs_10 = __rv_sunpkd810(rhs_packed);
             int32_t rhs_32 = __builtin_riscv_mnn_exths_b32(rhs_packed);
             int32_t rhs_10 = __builtin_riscv_mnn_exths_b10(rhs_packed);
 
-            // acc_0 = __rv_kmada(acc_0, rhs_32, lhs_32);
-            // acc_0 = __rv_kmada(acc_0, rhs_10, lhs_10);
+            acc_0 = __rv_kmada(acc_0, rhs_32, lhs_32);
+            acc_0 = __rv_kmada(acc_0, rhs_10, lhs_10);
             acc_0 = __builtin_riscv_cv_sdotsp_h(rhs_32, lhs_32, acc_0);
             acc_0 = __builtin_riscv_cv_sdotsp_h(rhs_10, lhs_10, acc_0);
+#else
+            int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
+            acc_0 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_0);
+#endif  // NO_KERNEL_SUM
 
 
             /* Accumulate second rhs row */
-            rhs_packed = *(int32_t *)rhs_ptr_1;
-            // rhs_32 = __rv_sunpkd832(rhs_packed);
-            // rhs_10 = __rv_sunpkd810(rhs_packed);
+#ifdef NO_KERNEL_SUM
+            rhs_32 = __rv_sunpkd832(rhs_packed);
+            rhs_10 = __rv_sunpkd810(rhs_packed);
             rhs_32 = __builtin_riscv_mnn_exths_b32(rhs_packed);
             rhs_10 = __builtin_riscv_mnn_exths_b10(rhs_packed);
 
-            // acc_1 = __rv_kmada(acc_1, rhs_32, lhs_32);
-            // acc_1 = __rv_kmada(acc_1, rhs_10, lhs_10);
+            acc_1 = __rv_kmada(acc_1, rhs_32, lhs_32);
+            acc_1 = __rv_kmada(acc_1, rhs_10, lhs_10);
             acc_1 = __builtin_riscv_cv_sdotsp_h(rhs_32, lhs_32, acc_1);
             acc_1 = __builtin_riscv_cv_sdotsp_h(rhs_10, lhs_10, acc_1);
+#else
+            rhs_packed = *(int32_t *)rhs_ptr_1;
+            acc_1 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_1);
+#endif  // NO_KERNEL_SUM
 
             /* Accumulate third rhs row */
-            rhs_packed = *(int32_t *)rhs_ptr_2;
-            // rhs_32 = __rv_sunpkd832(rhs_packed);
-            // rhs_10 = __rv_sunpkd810(rhs_packed);
+#ifdef NO_KERNEL_SUM
+            rhs_32 = __rv_sunpkd832(rhs_packed);
+            rhs_10 = __rv_sunpkd810(rhs_packed);
             rhs_32 = __builtin_riscv_mnn_exths_b32(rhs_packed);
             rhs_10 = __builtin_riscv_mnn_exths_b10(rhs_packed);
 
-            // acc_2 = __rv_kmada(acc_2, rhs_32, lhs_32);
-            // acc_2 = __rv_kmada(acc_2, rhs_10, lhs_10);
+            acc_2 = __rv_kmada(acc_2, rhs_32, lhs_32);
+            acc_2 = __rv_kmada(acc_2, rhs_10, lhs_10);
             acc_2 = __builtin_riscv_cv_sdotsp_h(rhs_32, lhs_32, acc_2);
             acc_2 = __builtin_riscv_cv_sdotsp_h(rhs_10, lhs_10, acc_2);
+#else
+            rhs_packed = *(int32_t *)rhs_ptr_2;
+            acc_2 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_2);
+#endif  // NO_KERNEL_SUM
 
             /* Accumulate fourth rhs row */
-            rhs_packed = *(int32_t *)rhs_ptr_3;
-            // rhs_32 = __rv_sunpkd832(rhs_packed);
-            // rhs_10 = __rv_sunpkd810(rhs_packed);
+#ifdef NO_KERNEL_SUM
+            rhs_32 = __rv_sunpkd832(rhs_packed);
+            rhs_10 = __rv_sunpkd810(rhs_packed);
             rhs_32 = __builtin_riscv_mnn_exths_b32(rhs_packed);
             rhs_10 = __builtin_riscv_mnn_exths_b10(rhs_packed);
 
-            // acc_3 = __rv_kmada(acc_3, rhs_32, lhs_32);
-            // acc_3 = __rv_kmada(acc_3, rhs_10, lhs_10);
+            acc_3 = __rv_kmada(acc_3, rhs_32, lhs_32);
+            acc_3 = __rv_kmada(acc_3, rhs_10, lhs_10);
             acc_3 = __builtin_riscv_cv_sdotsp_h(rhs_32, lhs_32, acc_3);
             acc_3 = __builtin_riscv_cv_sdotsp_h(rhs_10, lhs_10, acc_3);
+#else
+            rhs_packed = *(int32_t *)rhs_ptr_3;
+            acc_3 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_3);
+#endif  // NO_KERNEL_SUM
 
 
             rhs_ptr_0 += 4;
@@ -796,7 +788,11 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 
         for (int k = 0; k < rhs_cols % 4; k++)
         {
+#ifdef NO_KERNEL_SUM
             q31_t lhs_value = *lhs_ptr + lhs_offset;
+#else
+            q31_t lhs_value = *lhs_ptr;
+#endif  // NO_KERNEL_SUM
 
             q31_t rhs_value = *rhs_ptr_0;
             acc_0 += lhs_value * rhs_value;
@@ -850,13 +846,18 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
     }
     for (int i = 0; i < rhs_rows % 4; i++)
     {
+#ifdef NO_KERNEL_SUM
         int32_t acc_0 = 0;
         if (bias)
         {
             acc_0 = *bias++;
         }
+#else
+        int32_t acc_0 = *kernel_sum++;
+#endif  // NO_KERNEL_SUM
 
         const int32_t col_loop_cnt = rhs_cols / 4;
+        // const int32_t col_loop_cnt = rhs_cols;
 
         const int8_t *lhs_ptr = lhs;
         const int8_t *rhs_ptr_0 = rhs;
@@ -873,16 +874,17 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             // lhs_packed = __rv_add8(lhs_offset_s8x4, lhs_packed);
 
             q31_t lhs_val_0 = (*lhs_ptr++);
-            lhs_val_0 += lhs_offset;
             q31_t lhs_val_1 = (*lhs_ptr++);
-            lhs_val_1 += lhs_offset;
             q31_t lhs_val_2 = (*lhs_ptr++);
-            lhs_val_2 += lhs_offset;
             q31_t lhs_val_3 = (*lhs_ptr++);
+#ifdef NO_KERNEL_SUM
+            lhs_val_0 += lhs_offset;
+            lhs_val_1 += lhs_offset;
+            lhs_val_2 += lhs_offset;
             lhs_val_3 += lhs_offset;
+#endif  // NO_KERNEL_SUM
 
-            // dont think i can use smaqa here, unsure how this worked before...  Possibly undefined behavior in
-            // simulators
+            // dont think i can use smaqa here, unsure how this worked before...  Possibly undefined behavior in simulators
             /* Accumulate first rhs row */
             // int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
             // acc_0 = __rv_smaqa_su(acc_0, rhs_packed, lhs_packed);
@@ -898,9 +900,14 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             // lhs_ptr += 4;
         }
 
+        // for (int k = 0; k < rhs_cols; k++)
         for (int k = 0; k < rhs_cols % 4; k++)
         {
+#ifdef NO_KERNEL_SUM
             q31_t lhs_value = *lhs_ptr + lhs_offset;
+#else
+            q31_t lhs_value = *lhs_ptr;
+#endif  // NO_KERNEL_SUM
 
             q31_t rhs_value = *rhs_ptr_0;
             acc_0 += lhs_value * rhs_value;

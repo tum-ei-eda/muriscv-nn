@@ -59,12 +59,10 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
 
     int32_t batch_cnt = input_dims->n;
 
-    // #if defined(USE_VEXT)
-    // if (ctx->buf == NULL)
-    //{
-    //     return (MURISCV_NN_ARG_ERROR);    //This condition causes error out with VEXT, why?
-    // }
-    // #endif
+    if (ctx->buf == NULL && muriscv_nn_fully_connected_s8_get_buffer_size() > 0)
+    {
+        return MURISCV_NN_ARG_ERROR;
+    }
 
     const int32_t *kernel_sum = ctx->buf;
 

@@ -38,6 +38,8 @@ option(USE_PORTABLE "Use the Portable Kernels" OFF)
 # RISC-V extensions for HW acceleration
 option(USE_VEXT "Use the RISC-V V Vector Extension" OFF)
 option(USE_PEXT "Use the RISC-V P Packed Extension" OFF)
+option(USE_COREV "Use the Core-V Vendor Extension" OFF)
+option(USE_MNN "Use the MNN Experimental Extension" OFF)
 
 option(MURISCV_NN_ENABLE_F32 "Enable CMSIS-NN float32 extensions." OFF)
 option(MURISCV_NN_ENABLE_F16 "Enable CMSIS-NN float16 extensions." OFF)
@@ -78,6 +80,16 @@ else() # All other (instruction level) simulator support the full RISC-V ISA
     set(RISCV_ARCH
         "rv32gcp"
         CACHE STRING "march argument to the compiler, using the packed extension"
+    )
+  elseif(USE_COREV)
+    set(RISCV_ARCH
+        "rv32gc_xcvmem_xcvmac_xcvalu_xcvbitmanip_xcvsimd"
+        CACHE STRING "march argument to the compiler, using the corev extension"
+    )
+  elseif(USE_MNN)
+    set(RISCV_ARCH
+        "rv32gc_xcvmem_xcvmac_xcvalu_xcvbitmanip_xcvsimd_xmnn"
+        CACHE STRING "march argument to the compiler, using the mnn extension"
     )
   else()
     set(RISCV_ARCH
@@ -159,6 +171,10 @@ elseif(USE_VEXT)
   else()
     add_definitions(-DUSE_VEXT)
   endif()
+elseif(USE_COREV)
+  add_definitions(-DUSE_COREV)
+elseif(USE_MNN)
+  add_definitions(-DUSE_MNN)
 elseif(USE_PEXT)
   if(USE_PORTABLE)
     add_definitions(-DUSE_PORTABLE_PEXT)
