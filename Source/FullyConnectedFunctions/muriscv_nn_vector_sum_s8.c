@@ -31,6 +31,9 @@
  *
  * -------------------------------------------------------------------- */
 
+#include <string.h>
+#include <stdint.h>
+
 #include "muriscv_nn_functions.h"
 #include "muriscv_nn_support_functions.h"
 
@@ -57,6 +60,7 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
                                            const int32_t rhs_offset,
                                            const int32_t *bias_data)
 {
+
     if (bias_data)
     {
         memcpy(vector_sum_buf, bias_data, vector_rows * sizeof(int32_t));
@@ -68,7 +72,7 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
 
     if (lhs_offset)
     {
-        // #if defined(USE_VEXT)
+#if defined(USE_VEXT)
         // ARM CODE.  NEEDS TO BE CONVERTED TO RISCV
         /*
         const int32_t row_loop_cnt = vector_rows / 4;
@@ -169,6 +173,99 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
         // return (MURISCV_NN_NO_IMPL_ERROR);
 
         // #else
+        // TODO: only unroll explicitly if required?
+        for (int r = 0; r < vector_rows; ++r)
+        {
+            const int8_t *p = vector_data + r * vector_cols;
+            int32_t remaining = vector_cols;
+            int32_t sum = 0;
+
+            while (remaining > 0)
+            {
+                size_t vl = vsetvl_e8m1(remaining);
+
+                /* Load signed int8 weights */
+                vint8m2_t v8 = vle8_v_i8m2(ptr, vl);
+
+                /* Widen int8 -> int32 */
+                vint32m8_t v32 = vsext_vf4_i32m8(v8, vl);
+
+                /* Reduction seed */
+                vint32m1_t zero = vmv_v_x_i32m1(0, 1);
+
+                /* Sum all lanes */
+                vint32m1_t reduced =
+                    vredsum_vs_i32m8_i32m1(v32, zero, vl);
+
+                /* Add this vector chunk to scalar accumulator */
+                sum += vmv_x_s_i32m1_i32(reduced);
+
+                p += vl;
+                remaining -= vl;
+            }
+
+            if (rhs_offset)
+            {
+                sum += vector_cols * rhs_offset;
+            }
+
+            vector_sum_buf[r] += sum * lhs_offset;
+        }
+#elif defined(USE_COREV)
+        const uint32_t ones = 0x01010101u;
+
+        const int32_t row_blocks = vector_rows >> 2;
+
+        for (int rb = 0; rb < row_blocks; ++rb)
+        {
+            const int8_t *p0 = vector_data;
+            const int8_t *p1 = vector_data + vector_cols;
+            const int8_t *p2 = vector_data + 2 * vector_cols;
+            const int8_t *p3 = vector_data + 3 * vector_cols;
+
+            int32_t s0 = 0;
+            int32_t s1 = 0;
+            int32_t s2 = 0;
+            int32_t s3 = 0;
+
+            for (int j = vector_cols >> 2; j != 0; --j)
+            {
+                uint32_t w0 = *(const uint32_t *)p0;
+                uint32_t w1 = *(const uint32_t *)p1;
+                uint32_t w2 = *(const uint32_t *)p2;
+                uint32_t w3 = *(const uint32_t *)p3;
+
+                s0 = __builtin_riscv_cv_simd_sdotsp_b(w0, ones, s0);
+                s1 = __builtin_riscv_cv_simd_sdotsp_b(w1, ones, s1);
+                s2 = __builtin_riscv_cv_simd_sdotsp_b(w2, ones, s2);
+                s3 = __builtin_riscv_cv_simd_sdotsp_b(w3, ones, s3);
+
+                p0 += 4;
+                p1 += 4;
+                p2 += 4;
+                p3 += 4;
+            }
+
+            /* tails here */
+
+            if (rhs_offset)
+            {
+                const int32_t corr = vector_cols * rhs_offset;
+                s0 += corr;
+                s1 += corr;
+                s2 += corr;
+                s3 += corr;
+            }
+
+            vector_sum_buf[0] += s0 * lhs_offset;
+            vector_sum_buf[1] += s1 * lhs_offset;
+            vector_sum_buf[2] += s2 * lhs_offset;
+            vector_sum_buf[3] += s3 * lhs_offset;
+
+            vector_sum_buf += 4;
+            vector_data += 4 * vector_cols;
+        }
+#else
         for (int i = 0; i < vector_rows; i++)
         {
             int32_t sum = 0;
@@ -183,8 +280,9 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
             *vector_sum_buf++ += sum * lhs_offset;
         }
 
-        // #endif
+#endif
     }
+
     return (MURISCV_NN_SUCCESS);
 }
 
