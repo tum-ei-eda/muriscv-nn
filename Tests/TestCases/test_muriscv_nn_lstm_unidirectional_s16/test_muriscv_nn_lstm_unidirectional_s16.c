@@ -57,123 +57,123 @@ void lstm_1_s16(void)
     int64_t output_hidden_kernel_sum[LSTM_1_S16_HIDDEN_SIZE];
 
     muriscv_nn_vector_sum_s8_s64(&input_data_kernel_sum[0],
-                          LSTM_1_S16_INPUT_SIZE,
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          &lstm_1_s16_input_gate_input_weights[0],
-                          LSTM_1_S16_INPUT_ZERO_POINT,
-                          &lstm_1_s16_input_gate_bias[0]);
+                                 LSTM_1_S16_INPUT_SIZE,
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 &lstm_1_s16_input_gate_input_weights[0],
+                                 LSTM_1_S16_INPUT_ZERO_POINT,
+                                 &lstm_1_s16_input_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&forget_data_kernel_sum[0],
-                          LSTM_1_S16_INPUT_SIZE,
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          &lstm_1_s16_forget_gate_input_weights[0],
-                          LSTM_1_S16_INPUT_ZERO_POINT,
-                          &lstm_1_s16_forget_gate_bias[0]);
+                                 LSTM_1_S16_INPUT_SIZE,
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 &lstm_1_s16_forget_gate_input_weights[0],
+                                 LSTM_1_S16_INPUT_ZERO_POINT,
+                                 &lstm_1_s16_forget_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&cell_data_kernel_sum[0],
-                          LSTM_1_S16_INPUT_SIZE,
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          &lstm_1_s16_cell_gate_input_weights[0],
-                          LSTM_1_S16_INPUT_ZERO_POINT,
-                          &lstm_1_s16_cell_gate_bias[0]);
+                                 LSTM_1_S16_INPUT_SIZE,
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 &lstm_1_s16_cell_gate_input_weights[0],
+                                 LSTM_1_S16_INPUT_ZERO_POINT,
+                                 &lstm_1_s16_cell_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&output_data_kernel_sum[0],
-                          LSTM_1_S16_INPUT_SIZE,
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          &lstm_1_s16_output_gate_input_weights[0],
-                          LSTM_1_S16_INPUT_ZERO_POINT,
-                          &lstm_1_s16_output_gate_bias[0]);
+                                 LSTM_1_S16_INPUT_SIZE,
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 &lstm_1_s16_output_gate_input_weights[0],
+                                 LSTM_1_S16_INPUT_ZERO_POINT,
+                                 &lstm_1_s16_output_gate_bias[0]);
 
     muriscv_nn_vector_sum_s8_s64(&input_hidden_kernel_sum[0],
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          &lstm_1_s16_input_gate_hidden_weights[0],
-                          -LSTM_1_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 &lstm_1_s16_input_gate_hidden_weights[0],
+                                 -LSTM_1_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&forget_hidden_kernel_sum[0],
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          &lstm_1_s16_forget_gate_hidden_weights[0],
-                          -LSTM_1_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 &lstm_1_s16_forget_gate_hidden_weights[0],
+                                 -LSTM_1_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&cell_hidden_kernel_sum[0],
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          &lstm_1_s16_cell_gate_hidden_weights[0],
-                          -LSTM_1_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 &lstm_1_s16_cell_gate_hidden_weights[0],
+                                 -LSTM_1_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&output_hidden_kernel_sum[0],
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          LSTM_1_S16_HIDDEN_SIZE,
-                          &lstm_1_s16_output_gate_hidden_weights[0],
-                          -LSTM_1_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 LSTM_1_S16_HIDDEN_SIZE,
+                                 &lstm_1_s16_output_gate_hidden_weights[0],
+                                 -LSTM_1_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
 
     // INPUT GATE
     const muriscv_nn_lstm_gate gate_input = {LSTM_1_S16_INPUT_GATE_INPUT_MULTIPLIER,
-                                           LSTM_1_S16_INPUT_GATE_INPUT_SHIFT,
-                                           &lstm_1_s16_input_gate_input_weights[0],
-                                           &input_data_kernel_sum[0],
-                                           LSTM_1_S16_INPUT_GATE_HIDDEN_MULTIPLIER,
-                                           LSTM_1_S16_INPUT_GATE_HIDDEN_SHIFT,
-                                           &lstm_1_s16_input_gate_hidden_weights[0],
-                                           &input_hidden_kernel_sum[0],
-                                           &lstm_1_s16_input_gate_bias[0],
-                                           MURISCV_SIGMOID};
+                                             LSTM_1_S16_INPUT_GATE_INPUT_SHIFT,
+                                             &lstm_1_s16_input_gate_input_weights[0],
+                                             &input_data_kernel_sum[0],
+                                             LSTM_1_S16_INPUT_GATE_HIDDEN_MULTIPLIER,
+                                             LSTM_1_S16_INPUT_GATE_HIDDEN_SHIFT,
+                                             &lstm_1_s16_input_gate_hidden_weights[0],
+                                             &input_hidden_kernel_sum[0],
+                                             &lstm_1_s16_input_gate_bias[0],
+                                             MURISCV_SIGMOID};
 
     // FORGET GATE
     const muriscv_nn_lstm_gate gate_forget = {LSTM_1_S16_FORGET_GATE_INPUT_MULTIPLIER,
-                                            LSTM_1_S16_FORGET_GATE_INPUT_SHIFT,
-                                            &lstm_1_s16_forget_gate_input_weights[0],
-                                            &forget_data_kernel_sum[0],
-                                            LSTM_1_S16_FORGET_GATE_HIDDEN_MULTIPLIER,
-                                            LSTM_1_S16_FORGET_GATE_HIDDEN_SHIFT,
-                                            &lstm_1_s16_forget_gate_hidden_weights[0],
-                                            &forget_hidden_kernel_sum[0],
-                                            &lstm_1_s16_forget_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_1_S16_FORGET_GATE_INPUT_SHIFT,
+                                              &lstm_1_s16_forget_gate_input_weights[0],
+                                              &forget_data_kernel_sum[0],
+                                              LSTM_1_S16_FORGET_GATE_HIDDEN_MULTIPLIER,
+                                              LSTM_1_S16_FORGET_GATE_HIDDEN_SHIFT,
+                                              &lstm_1_s16_forget_gate_hidden_weights[0],
+                                              &forget_hidden_kernel_sum[0],
+                                              &lstm_1_s16_forget_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // CELL GATE
     const muriscv_nn_lstm_gate gate_cell = {LSTM_1_S16_CELL_GATE_INPUT_MULTIPLIER,
-                                          LSTM_1_S16_CELL_GATE_INPUT_SHIFT,
-                                          &lstm_1_s16_cell_gate_input_weights[0],
-                                          &cell_data_kernel_sum[0],
-                                          LSTM_1_S16_CELL_GATE_HIDDEN_MULTIPLIER,
-                                          LSTM_1_S16_CELL_GATE_HIDDEN_SHIFT,
-                                          &lstm_1_s16_cell_gate_hidden_weights[0],
-                                          &cell_hidden_kernel_sum[0],
-                                          &lstm_1_s16_cell_gate_bias[0],
-                                          MURISCV_TANH};
+                                            LSTM_1_S16_CELL_GATE_INPUT_SHIFT,
+                                            &lstm_1_s16_cell_gate_input_weights[0],
+                                            &cell_data_kernel_sum[0],
+                                            LSTM_1_S16_CELL_GATE_HIDDEN_MULTIPLIER,
+                                            LSTM_1_S16_CELL_GATE_HIDDEN_SHIFT,
+                                            &lstm_1_s16_cell_gate_hidden_weights[0],
+                                            &cell_hidden_kernel_sum[0],
+                                            &lstm_1_s16_cell_gate_bias[0],
+                                            MURISCV_TANH};
 
     // OUTPUT GATE
     const muriscv_nn_lstm_gate gate_output = {LSTM_1_S16_OUTPUT_GATE_INPUT_MULTIPLIER,
-                                            LSTM_1_S16_OUTPUT_GATE_INPUT_SHIFT,
-                                            &lstm_1_s16_output_gate_input_weights[0],
-                                            &output_data_kernel_sum[0],
-                                            LSTM_1_S16_OUTPUT_GATE_HIDDEN_MULTIPLIER,
-                                            LSTM_1_S16_OUTPUT_GATE_HIDDEN_SHIFT,
-                                            &lstm_1_s16_output_gate_hidden_weights[0],
-                                            &output_hidden_kernel_sum[0],
-                                            &lstm_1_s16_output_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_1_S16_OUTPUT_GATE_INPUT_SHIFT,
+                                              &lstm_1_s16_output_gate_input_weights[0],
+                                              &output_data_kernel_sum[0],
+                                              LSTM_1_S16_OUTPUT_GATE_HIDDEN_MULTIPLIER,
+                                              LSTM_1_S16_OUTPUT_GATE_HIDDEN_SHIFT,
+                                              &lstm_1_s16_output_gate_hidden_weights[0],
+                                              &output_hidden_kernel_sum[0],
+                                              &lstm_1_s16_output_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // LSTM DATA
     const muriscv_nn_lstm_params params = {LSTM_1_S16_TIME_MAJOR,
-                                         LSTM_1_S16_BATCH_SIZE,
-                                         LSTM_1_S16_TIME_STEPS,
-                                         LSTM_1_S16_INPUT_SIZE,
-                                         LSTM_1_S16_HIDDEN_SIZE,
-                                         LSTM_1_S16_INPUT_ZERO_POINT,
-                                         LSTM_1_S16_FORGET_TO_CELL_MULTIPLIER,
-                                         LSTM_1_S16_FORGET_TO_CELL_SHIFT,
-                                         LSTM_1_S16_INPUT_TO_CELL_MULTIPLIER,
-                                         LSTM_1_S16_INPUT_TO_CELL_SHIFT,
-                                         LSTM_1_S16_CELL_CLIP,
-                                         LSTM_1_S16_CELL_SCALE_POWER,
-                                         LSTM_1_S16_OUTPUT_MULTIPLIER,
-                                         LSTM_1_S16_OUTPUT_SHIFT,
-                                         LSTM_1_S16_OUTPUT_ZERO_POINT,
-                                         gate_forget,
-                                         gate_input,
-                                         gate_cell,
-                                         gate_output};
+                                           LSTM_1_S16_BATCH_SIZE,
+                                           LSTM_1_S16_TIME_STEPS,
+                                           LSTM_1_S16_INPUT_SIZE,
+                                           LSTM_1_S16_HIDDEN_SIZE,
+                                           LSTM_1_S16_INPUT_ZERO_POINT,
+                                           LSTM_1_S16_FORGET_TO_CELL_MULTIPLIER,
+                                           LSTM_1_S16_FORGET_TO_CELL_SHIFT,
+                                           LSTM_1_S16_INPUT_TO_CELL_MULTIPLIER,
+                                           LSTM_1_S16_INPUT_TO_CELL_SHIFT,
+                                           LSTM_1_S16_CELL_CLIP,
+                                           LSTM_1_S16_CELL_SCALE_POWER,
+                                           LSTM_1_S16_OUTPUT_MULTIPLIER,
+                                           LSTM_1_S16_OUTPUT_SHIFT,
+                                           LSTM_1_S16_OUTPUT_ZERO_POINT,
+                                           gate_forget,
+                                           gate_input,
+                                           gate_cell,
+                                           gate_output};
 
     muriscv_nn_lstm_context buffers;
     buffers.temp1 = buffer1;
@@ -204,123 +204,123 @@ void lstm_2_s16(void)
     int64_t output_hidden_kernel_sum[LSTM_2_S16_HIDDEN_SIZE];
 
     muriscv_nn_vector_sum_s8_s64(&input_data_kernel_sum[0],
-                          LSTM_2_S16_INPUT_SIZE,
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          &lstm_2_s16_input_gate_input_weights[0],
-                          LSTM_2_S16_INPUT_ZERO_POINT,
-                          &lstm_2_s16_input_gate_bias[0]);
+                                 LSTM_2_S16_INPUT_SIZE,
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 &lstm_2_s16_input_gate_input_weights[0],
+                                 LSTM_2_S16_INPUT_ZERO_POINT,
+                                 &lstm_2_s16_input_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&forget_data_kernel_sum[0],
-                          LSTM_2_S16_INPUT_SIZE,
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          &lstm_2_s16_forget_gate_input_weights[0],
-                          LSTM_2_S16_INPUT_ZERO_POINT,
-                          &lstm_2_s16_forget_gate_bias[0]);
+                                 LSTM_2_S16_INPUT_SIZE,
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 &lstm_2_s16_forget_gate_input_weights[0],
+                                 LSTM_2_S16_INPUT_ZERO_POINT,
+                                 &lstm_2_s16_forget_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&cell_data_kernel_sum[0],
-                          LSTM_2_S16_INPUT_SIZE,
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          &lstm_2_s16_cell_gate_input_weights[0],
-                          LSTM_2_S16_INPUT_ZERO_POINT,
-                          &lstm_2_s16_cell_gate_bias[0]);
+                                 LSTM_2_S16_INPUT_SIZE,
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 &lstm_2_s16_cell_gate_input_weights[0],
+                                 LSTM_2_S16_INPUT_ZERO_POINT,
+                                 &lstm_2_s16_cell_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&output_data_kernel_sum[0],
-                          LSTM_2_S16_INPUT_SIZE,
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          &lstm_2_s16_output_gate_input_weights[0],
-                          LSTM_2_S16_INPUT_ZERO_POINT,
-                          &lstm_2_s16_output_gate_bias[0]);
+                                 LSTM_2_S16_INPUT_SIZE,
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 &lstm_2_s16_output_gate_input_weights[0],
+                                 LSTM_2_S16_INPUT_ZERO_POINT,
+                                 &lstm_2_s16_output_gate_bias[0]);
 
     muriscv_nn_vector_sum_s8_s64(&input_hidden_kernel_sum[0],
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          &lstm_2_s16_input_gate_hidden_weights[0],
-                          -LSTM_2_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 &lstm_2_s16_input_gate_hidden_weights[0],
+                                 -LSTM_2_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&forget_hidden_kernel_sum[0],
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          &lstm_2_s16_forget_gate_hidden_weights[0],
-                          -LSTM_2_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 &lstm_2_s16_forget_gate_hidden_weights[0],
+                                 -LSTM_2_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&cell_hidden_kernel_sum[0],
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          &lstm_2_s16_cell_gate_hidden_weights[0],
-                          -LSTM_2_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 &lstm_2_s16_cell_gate_hidden_weights[0],
+                                 -LSTM_2_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&output_hidden_kernel_sum[0],
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          LSTM_2_S16_HIDDEN_SIZE,
-                          &lstm_2_s16_output_gate_hidden_weights[0],
-                          -LSTM_2_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 LSTM_2_S16_HIDDEN_SIZE,
+                                 &lstm_2_s16_output_gate_hidden_weights[0],
+                                 -LSTM_2_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
 
     // INPUT GATE
     const muriscv_nn_lstm_gate gate_input = {LSTM_2_S16_INPUT_GATE_INPUT_MULTIPLIER,
-                                           LSTM_2_S16_INPUT_GATE_INPUT_SHIFT,
-                                           &lstm_2_s16_input_gate_input_weights[0],
-                                           &input_data_kernel_sum[0],
-                                           LSTM_2_S16_INPUT_GATE_HIDDEN_MULTIPLIER,
-                                           LSTM_2_S16_INPUT_GATE_HIDDEN_SHIFT,
-                                           &lstm_2_s16_input_gate_hidden_weights[0],
-                                           &input_hidden_kernel_sum[0],
-                                           &lstm_2_s16_input_gate_bias[0],
-                                           MURISCV_SIGMOID};
+                                             LSTM_2_S16_INPUT_GATE_INPUT_SHIFT,
+                                             &lstm_2_s16_input_gate_input_weights[0],
+                                             &input_data_kernel_sum[0],
+                                             LSTM_2_S16_INPUT_GATE_HIDDEN_MULTIPLIER,
+                                             LSTM_2_S16_INPUT_GATE_HIDDEN_SHIFT,
+                                             &lstm_2_s16_input_gate_hidden_weights[0],
+                                             &input_hidden_kernel_sum[0],
+                                             &lstm_2_s16_input_gate_bias[0],
+                                             MURISCV_SIGMOID};
 
     // FORGET GATE
     const muriscv_nn_lstm_gate gate_forget = {LSTM_2_S16_FORGET_GATE_INPUT_MULTIPLIER,
-                                            LSTM_2_S16_FORGET_GATE_INPUT_SHIFT,
-                                            &lstm_2_s16_forget_gate_input_weights[0],
-                                            &forget_data_kernel_sum[0],
-                                            LSTM_2_S16_FORGET_GATE_HIDDEN_MULTIPLIER,
-                                            LSTM_2_S16_FORGET_GATE_HIDDEN_SHIFT,
-                                            &lstm_2_s16_forget_gate_hidden_weights[0],
-                                            &forget_hidden_kernel_sum[0],
-                                            &lstm_2_s16_forget_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_2_S16_FORGET_GATE_INPUT_SHIFT,
+                                              &lstm_2_s16_forget_gate_input_weights[0],
+                                              &forget_data_kernel_sum[0],
+                                              LSTM_2_S16_FORGET_GATE_HIDDEN_MULTIPLIER,
+                                              LSTM_2_S16_FORGET_GATE_HIDDEN_SHIFT,
+                                              &lstm_2_s16_forget_gate_hidden_weights[0],
+                                              &forget_hidden_kernel_sum[0],
+                                              &lstm_2_s16_forget_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // CELL GATE
     const muriscv_nn_lstm_gate gate_cell = {LSTM_2_S16_CELL_GATE_INPUT_MULTIPLIER,
-                                          LSTM_2_S16_CELL_GATE_INPUT_SHIFT,
-                                          &lstm_2_s16_cell_gate_input_weights[0],
-                                          &cell_data_kernel_sum[0],
-                                          LSTM_2_S16_CELL_GATE_HIDDEN_MULTIPLIER,
-                                          LSTM_2_S16_CELL_GATE_HIDDEN_SHIFT,
-                                          &lstm_2_s16_cell_gate_hidden_weights[0],
-                                          &cell_hidden_kernel_sum[0],
-                                          &lstm_2_s16_cell_gate_bias[0],
-                                          MURISCV_TANH};
+                                            LSTM_2_S16_CELL_GATE_INPUT_SHIFT,
+                                            &lstm_2_s16_cell_gate_input_weights[0],
+                                            &cell_data_kernel_sum[0],
+                                            LSTM_2_S16_CELL_GATE_HIDDEN_MULTIPLIER,
+                                            LSTM_2_S16_CELL_GATE_HIDDEN_SHIFT,
+                                            &lstm_2_s16_cell_gate_hidden_weights[0],
+                                            &cell_hidden_kernel_sum[0],
+                                            &lstm_2_s16_cell_gate_bias[0],
+                                            MURISCV_TANH};
 
     // OUTPUT GATE
     const muriscv_nn_lstm_gate gate_output = {LSTM_2_S16_OUTPUT_GATE_INPUT_MULTIPLIER,
-                                            LSTM_2_S16_OUTPUT_GATE_INPUT_SHIFT,
-                                            &lstm_2_s16_output_gate_input_weights[0],
-                                            &output_data_kernel_sum[0],
-                                            LSTM_2_S16_OUTPUT_GATE_HIDDEN_MULTIPLIER,
-                                            LSTM_2_S16_OUTPUT_GATE_HIDDEN_SHIFT,
-                                            &lstm_2_s16_output_gate_hidden_weights[0],
-                                            &output_hidden_kernel_sum[0],
-                                            &lstm_2_s16_output_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_2_S16_OUTPUT_GATE_INPUT_SHIFT,
+                                              &lstm_2_s16_output_gate_input_weights[0],
+                                              &output_data_kernel_sum[0],
+                                              LSTM_2_S16_OUTPUT_GATE_HIDDEN_MULTIPLIER,
+                                              LSTM_2_S16_OUTPUT_GATE_HIDDEN_SHIFT,
+                                              &lstm_2_s16_output_gate_hidden_weights[0],
+                                              &output_hidden_kernel_sum[0],
+                                              &lstm_2_s16_output_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // LSTM DATA
     const muriscv_nn_lstm_params params = {LSTM_2_S16_TIME_MAJOR,
-                                         LSTM_2_S16_BATCH_SIZE,
-                                         LSTM_2_S16_TIME_STEPS,
-                                         LSTM_2_S16_INPUT_SIZE,
-                                         LSTM_2_S16_HIDDEN_SIZE,
-                                         LSTM_2_S16_INPUT_ZERO_POINT,
-                                         LSTM_2_S16_FORGET_TO_CELL_MULTIPLIER,
-                                         LSTM_2_S16_FORGET_TO_CELL_SHIFT,
-                                         LSTM_2_S16_INPUT_TO_CELL_MULTIPLIER,
-                                         LSTM_2_S16_INPUT_TO_CELL_SHIFT,
-                                         LSTM_2_S16_CELL_CLIP,
-                                         LSTM_2_S16_CELL_SCALE_POWER,
-                                         LSTM_2_S16_OUTPUT_MULTIPLIER,
-                                         LSTM_2_S16_OUTPUT_SHIFT,
-                                         LSTM_2_S16_OUTPUT_ZERO_POINT,
-                                         gate_forget,
-                                         gate_input,
-                                         gate_cell,
-                                         gate_output};
+                                           LSTM_2_S16_BATCH_SIZE,
+                                           LSTM_2_S16_TIME_STEPS,
+                                           LSTM_2_S16_INPUT_SIZE,
+                                           LSTM_2_S16_HIDDEN_SIZE,
+                                           LSTM_2_S16_INPUT_ZERO_POINT,
+                                           LSTM_2_S16_FORGET_TO_CELL_MULTIPLIER,
+                                           LSTM_2_S16_FORGET_TO_CELL_SHIFT,
+                                           LSTM_2_S16_INPUT_TO_CELL_MULTIPLIER,
+                                           LSTM_2_S16_INPUT_TO_CELL_SHIFT,
+                                           LSTM_2_S16_CELL_CLIP,
+                                           LSTM_2_S16_CELL_SCALE_POWER,
+                                           LSTM_2_S16_OUTPUT_MULTIPLIER,
+                                           LSTM_2_S16_OUTPUT_SHIFT,
+                                           LSTM_2_S16_OUTPUT_ZERO_POINT,
+                                           gate_forget,
+                                           gate_input,
+                                           gate_cell,
+                                           gate_output};
 
     muriscv_nn_lstm_context buffers;
     buffers.temp1 = buffer1;
@@ -353,123 +353,123 @@ void lstm_one_time_step_s16(void)
     int64_t output_hidden_kernel_sum[LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE];
 
     muriscv_nn_vector_sum_s8_s64(&input_data_kernel_sum[0],
-                          LSTM_ONE_TIME_STEP_S16_INPUT_SIZE,
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          &lstm_one_time_step_s16_input_gate_input_weights[0],
-                          LSTM_ONE_TIME_STEP_S16_INPUT_ZERO_POINT,
-                          &lstm_one_time_step_s16_input_gate_bias[0]);
+                                 LSTM_ONE_TIME_STEP_S16_INPUT_SIZE,
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 &lstm_one_time_step_s16_input_gate_input_weights[0],
+                                 LSTM_ONE_TIME_STEP_S16_INPUT_ZERO_POINT,
+                                 &lstm_one_time_step_s16_input_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&forget_data_kernel_sum[0],
-                          LSTM_ONE_TIME_STEP_S16_INPUT_SIZE,
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          &lstm_one_time_step_s16_forget_gate_input_weights[0],
-                          LSTM_ONE_TIME_STEP_S16_INPUT_ZERO_POINT,
-                          &lstm_one_time_step_s16_forget_gate_bias[0]);
+                                 LSTM_ONE_TIME_STEP_S16_INPUT_SIZE,
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 &lstm_one_time_step_s16_forget_gate_input_weights[0],
+                                 LSTM_ONE_TIME_STEP_S16_INPUT_ZERO_POINT,
+                                 &lstm_one_time_step_s16_forget_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&cell_data_kernel_sum[0],
-                          LSTM_ONE_TIME_STEP_S16_INPUT_SIZE,
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          &lstm_one_time_step_s16_cell_gate_input_weights[0],
-                          LSTM_ONE_TIME_STEP_S16_INPUT_ZERO_POINT,
-                          &lstm_one_time_step_s16_cell_gate_bias[0]);
+                                 LSTM_ONE_TIME_STEP_S16_INPUT_SIZE,
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 &lstm_one_time_step_s16_cell_gate_input_weights[0],
+                                 LSTM_ONE_TIME_STEP_S16_INPUT_ZERO_POINT,
+                                 &lstm_one_time_step_s16_cell_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&output_data_kernel_sum[0],
-                          LSTM_ONE_TIME_STEP_S16_INPUT_SIZE,
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          &lstm_one_time_step_s16_output_gate_input_weights[0],
-                          LSTM_ONE_TIME_STEP_S16_INPUT_ZERO_POINT,
-                          &lstm_one_time_step_s16_output_gate_bias[0]);
+                                 LSTM_ONE_TIME_STEP_S16_INPUT_SIZE,
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 &lstm_one_time_step_s16_output_gate_input_weights[0],
+                                 LSTM_ONE_TIME_STEP_S16_INPUT_ZERO_POINT,
+                                 &lstm_one_time_step_s16_output_gate_bias[0]);
 
     muriscv_nn_vector_sum_s8_s64(&input_hidden_kernel_sum[0],
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          &lstm_one_time_step_s16_input_gate_hidden_weights[0],
-                          -LSTM_ONE_TIME_STEP_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 &lstm_one_time_step_s16_input_gate_hidden_weights[0],
+                                 -LSTM_ONE_TIME_STEP_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&forget_hidden_kernel_sum[0],
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          &lstm_one_time_step_s16_forget_gate_hidden_weights[0],
-                          -LSTM_ONE_TIME_STEP_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 &lstm_one_time_step_s16_forget_gate_hidden_weights[0],
+                                 -LSTM_ONE_TIME_STEP_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&cell_hidden_kernel_sum[0],
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          &lstm_one_time_step_s16_cell_gate_hidden_weights[0],
-                          -LSTM_ONE_TIME_STEP_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 &lstm_one_time_step_s16_cell_gate_hidden_weights[0],
+                                 -LSTM_ONE_TIME_STEP_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&output_hidden_kernel_sum[0],
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                          &lstm_one_time_step_s16_output_gate_hidden_weights[0],
-                          -LSTM_ONE_TIME_STEP_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                 &lstm_one_time_step_s16_output_gate_hidden_weights[0],
+                                 -LSTM_ONE_TIME_STEP_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
 
     // INPUT GATE
     const muriscv_nn_lstm_gate gate_input = {LSTM_ONE_TIME_STEP_S16_INPUT_GATE_INPUT_MULTIPLIER,
-                                           LSTM_ONE_TIME_STEP_S16_INPUT_GATE_INPUT_SHIFT,
-                                           &lstm_one_time_step_s16_input_gate_input_weights[0],
-                                           &input_data_kernel_sum[0],
-                                           LSTM_ONE_TIME_STEP_S16_INPUT_GATE_HIDDEN_MULTIPLIER,
-                                           LSTM_ONE_TIME_STEP_S16_INPUT_GATE_HIDDEN_SHIFT,
-                                           &lstm_one_time_step_s16_input_gate_hidden_weights[0],
-                                           &input_hidden_kernel_sum[0],
-                                           &lstm_one_time_step_s16_input_gate_bias[0],
-                                           MURISCV_SIGMOID};
+                                             LSTM_ONE_TIME_STEP_S16_INPUT_GATE_INPUT_SHIFT,
+                                             &lstm_one_time_step_s16_input_gate_input_weights[0],
+                                             &input_data_kernel_sum[0],
+                                             LSTM_ONE_TIME_STEP_S16_INPUT_GATE_HIDDEN_MULTIPLIER,
+                                             LSTM_ONE_TIME_STEP_S16_INPUT_GATE_HIDDEN_SHIFT,
+                                             &lstm_one_time_step_s16_input_gate_hidden_weights[0],
+                                             &input_hidden_kernel_sum[0],
+                                             &lstm_one_time_step_s16_input_gate_bias[0],
+                                             MURISCV_SIGMOID};
 
     // FORGET GATE
     const muriscv_nn_lstm_gate gate_forget = {LSTM_ONE_TIME_STEP_S16_FORGET_GATE_INPUT_MULTIPLIER,
-                                            LSTM_ONE_TIME_STEP_S16_FORGET_GATE_INPUT_SHIFT,
-                                            &lstm_one_time_step_s16_forget_gate_input_weights[0],
-                                            &forget_data_kernel_sum[0],
-                                            LSTM_ONE_TIME_STEP_S16_FORGET_GATE_HIDDEN_MULTIPLIER,
-                                            LSTM_ONE_TIME_STEP_S16_FORGET_GATE_HIDDEN_SHIFT,
-                                            &lstm_one_time_step_s16_forget_gate_hidden_weights[0],
-                                            &forget_hidden_kernel_sum[0],
-                                            &lstm_one_time_step_s16_forget_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_ONE_TIME_STEP_S16_FORGET_GATE_INPUT_SHIFT,
+                                              &lstm_one_time_step_s16_forget_gate_input_weights[0],
+                                              &forget_data_kernel_sum[0],
+                                              LSTM_ONE_TIME_STEP_S16_FORGET_GATE_HIDDEN_MULTIPLIER,
+                                              LSTM_ONE_TIME_STEP_S16_FORGET_GATE_HIDDEN_SHIFT,
+                                              &lstm_one_time_step_s16_forget_gate_hidden_weights[0],
+                                              &forget_hidden_kernel_sum[0],
+                                              &lstm_one_time_step_s16_forget_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // CELL GATE
     const muriscv_nn_lstm_gate gate_cell = {LSTM_ONE_TIME_STEP_S16_CELL_GATE_INPUT_MULTIPLIER,
-                                          LSTM_ONE_TIME_STEP_S16_CELL_GATE_INPUT_SHIFT,
-                                          &lstm_one_time_step_s16_cell_gate_input_weights[0],
-                                          &cell_data_kernel_sum[0],
-                                          LSTM_ONE_TIME_STEP_S16_CELL_GATE_HIDDEN_MULTIPLIER,
-                                          LSTM_ONE_TIME_STEP_S16_CELL_GATE_HIDDEN_SHIFT,
-                                          &lstm_one_time_step_s16_cell_gate_hidden_weights[0],
-                                          &cell_hidden_kernel_sum[0],
-                                          &lstm_one_time_step_s16_cell_gate_bias[0],
-                                          MURISCV_TANH};
+                                            LSTM_ONE_TIME_STEP_S16_CELL_GATE_INPUT_SHIFT,
+                                            &lstm_one_time_step_s16_cell_gate_input_weights[0],
+                                            &cell_data_kernel_sum[0],
+                                            LSTM_ONE_TIME_STEP_S16_CELL_GATE_HIDDEN_MULTIPLIER,
+                                            LSTM_ONE_TIME_STEP_S16_CELL_GATE_HIDDEN_SHIFT,
+                                            &lstm_one_time_step_s16_cell_gate_hidden_weights[0],
+                                            &cell_hidden_kernel_sum[0],
+                                            &lstm_one_time_step_s16_cell_gate_bias[0],
+                                            MURISCV_TANH};
 
     // OUTPUT GATE
     const muriscv_nn_lstm_gate gate_output = {LSTM_ONE_TIME_STEP_S16_OUTPUT_GATE_INPUT_MULTIPLIER,
-                                            LSTM_ONE_TIME_STEP_S16_OUTPUT_GATE_INPUT_SHIFT,
-                                            &lstm_one_time_step_s16_output_gate_input_weights[0],
-                                            &output_data_kernel_sum[0],
-                                            LSTM_ONE_TIME_STEP_S16_OUTPUT_GATE_HIDDEN_MULTIPLIER,
-                                            LSTM_ONE_TIME_STEP_S16_OUTPUT_GATE_HIDDEN_SHIFT,
-                                            &lstm_one_time_step_s16_output_gate_hidden_weights[0],
-                                            &output_hidden_kernel_sum[0],
-                                            &lstm_one_time_step_s16_output_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_ONE_TIME_STEP_S16_OUTPUT_GATE_INPUT_SHIFT,
+                                              &lstm_one_time_step_s16_output_gate_input_weights[0],
+                                              &output_data_kernel_sum[0],
+                                              LSTM_ONE_TIME_STEP_S16_OUTPUT_GATE_HIDDEN_MULTIPLIER,
+                                              LSTM_ONE_TIME_STEP_S16_OUTPUT_GATE_HIDDEN_SHIFT,
+                                              &lstm_one_time_step_s16_output_gate_hidden_weights[0],
+                                              &output_hidden_kernel_sum[0],
+                                              &lstm_one_time_step_s16_output_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // LSTM DATA
     const muriscv_nn_lstm_params params = {LSTM_ONE_TIME_STEP_S16_TIME_MAJOR,
-                                         LSTM_ONE_TIME_STEP_S16_BATCH_SIZE,
-                                         LSTM_ONE_TIME_STEP_S16_TIME_STEPS,
-                                         LSTM_ONE_TIME_STEP_S16_INPUT_SIZE,
-                                         LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
-                                         LSTM_ONE_TIME_STEP_S16_INPUT_ZERO_POINT,
-                                         LSTM_ONE_TIME_STEP_S16_FORGET_TO_CELL_MULTIPLIER,
-                                         LSTM_ONE_TIME_STEP_S16_FORGET_TO_CELL_SHIFT,
-                                         LSTM_ONE_TIME_STEP_S16_INPUT_TO_CELL_MULTIPLIER,
-                                         LSTM_ONE_TIME_STEP_S16_INPUT_TO_CELL_SHIFT,
-                                         LSTM_ONE_TIME_STEP_S16_CELL_CLIP,
-                                         LSTM_ONE_TIME_STEP_S16_CELL_SCALE_POWER,
-                                         LSTM_ONE_TIME_STEP_S16_OUTPUT_MULTIPLIER,
-                                         LSTM_ONE_TIME_STEP_S16_OUTPUT_SHIFT,
-                                         LSTM_ONE_TIME_STEP_S16_OUTPUT_ZERO_POINT,
-                                         gate_forget,
-                                         gate_input,
-                                         gate_cell,
-                                         gate_output};
+                                           LSTM_ONE_TIME_STEP_S16_BATCH_SIZE,
+                                           LSTM_ONE_TIME_STEP_S16_TIME_STEPS,
+                                           LSTM_ONE_TIME_STEP_S16_INPUT_SIZE,
+                                           LSTM_ONE_TIME_STEP_S16_HIDDEN_SIZE,
+                                           LSTM_ONE_TIME_STEP_S16_INPUT_ZERO_POINT,
+                                           LSTM_ONE_TIME_STEP_S16_FORGET_TO_CELL_MULTIPLIER,
+                                           LSTM_ONE_TIME_STEP_S16_FORGET_TO_CELL_SHIFT,
+                                           LSTM_ONE_TIME_STEP_S16_INPUT_TO_CELL_MULTIPLIER,
+                                           LSTM_ONE_TIME_STEP_S16_INPUT_TO_CELL_SHIFT,
+                                           LSTM_ONE_TIME_STEP_S16_CELL_CLIP,
+                                           LSTM_ONE_TIME_STEP_S16_CELL_SCALE_POWER,
+                                           LSTM_ONE_TIME_STEP_S16_OUTPUT_MULTIPLIER,
+                                           LSTM_ONE_TIME_STEP_S16_OUTPUT_SHIFT,
+                                           LSTM_ONE_TIME_STEP_S16_OUTPUT_ZERO_POINT,
+                                           gate_forget,
+                                           gate_input,
+                                           gate_cell,
+                                           gate_output};
 
     muriscv_nn_lstm_context buffers;
     buffers.temp1 = buffer1;
@@ -484,14 +484,15 @@ void lstm_one_time_step_s16(void)
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 }
 
-
-
 void lstm_stateful_batch_major_multibatch_s16(void)
 {
-    int16_t output[LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_BATCH_SIZE * LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_TIME_STEPS * LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE] = {0};
+    int16_t output[LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_BATCH_SIZE *
+                   LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_TIME_STEPS *
+                   LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE] = {0};
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
     const int16_t *output_ref = &lstm_stateful_batch_major_multibatch_s16_output[0];
-    const int32_t output_ref_size = LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_BATCH_SIZE * LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_TIME_STEPS * LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE;
+    const int32_t output_ref_size = LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_BATCH_SIZE *
+        LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_TIME_STEPS * LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE;
 
     int64_t input_data_kernel_sum[LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE];
     int64_t forget_data_kernel_sum[LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE];
@@ -504,126 +505,127 @@ void lstm_stateful_batch_major_multibatch_s16(void)
     int64_t output_hidden_kernel_sum[LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE];
 
     muriscv_nn_vector_sum_s8_s64(&input_data_kernel_sum[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_SIZE,
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          &lstm_stateful_batch_major_multibatch_s16_input_gate_input_weights[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_ZERO_POINT,
-                          &lstm_stateful_batch_major_multibatch_s16_input_gate_bias[0]);
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_SIZE,
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 &lstm_stateful_batch_major_multibatch_s16_input_gate_input_weights[0],
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_ZERO_POINT,
+                                 &lstm_stateful_batch_major_multibatch_s16_input_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&forget_data_kernel_sum[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_SIZE,
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          &lstm_stateful_batch_major_multibatch_s16_forget_gate_input_weights[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_ZERO_POINT,
-                          &lstm_stateful_batch_major_multibatch_s16_forget_gate_bias[0]);
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_SIZE,
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 &lstm_stateful_batch_major_multibatch_s16_forget_gate_input_weights[0],
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_ZERO_POINT,
+                                 &lstm_stateful_batch_major_multibatch_s16_forget_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&cell_data_kernel_sum[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_SIZE,
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          &lstm_stateful_batch_major_multibatch_s16_cell_gate_input_weights[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_ZERO_POINT,
-                          &lstm_stateful_batch_major_multibatch_s16_cell_gate_bias[0]);
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_SIZE,
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 &lstm_stateful_batch_major_multibatch_s16_cell_gate_input_weights[0],
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_ZERO_POINT,
+                                 &lstm_stateful_batch_major_multibatch_s16_cell_gate_bias[0]);
     muriscv_nn_vector_sum_s8_s64(&output_data_kernel_sum[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_SIZE,
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          &lstm_stateful_batch_major_multibatch_s16_output_gate_input_weights[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_ZERO_POINT,
-                          &lstm_stateful_batch_major_multibatch_s16_output_gate_bias[0]);
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_SIZE,
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 &lstm_stateful_batch_major_multibatch_s16_output_gate_input_weights[0],
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_ZERO_POINT,
+                                 &lstm_stateful_batch_major_multibatch_s16_output_gate_bias[0]);
 
     muriscv_nn_vector_sum_s8_s64(&input_hidden_kernel_sum[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          &lstm_stateful_batch_major_multibatch_s16_input_gate_hidden_weights[0],
-                          -LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 &lstm_stateful_batch_major_multibatch_s16_input_gate_hidden_weights[0],
+                                 -LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&forget_hidden_kernel_sum[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          &lstm_stateful_batch_major_multibatch_s16_forget_gate_hidden_weights[0],
-                          -LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 &lstm_stateful_batch_major_multibatch_s16_forget_gate_hidden_weights[0],
+                                 -LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&cell_hidden_kernel_sum[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          &lstm_stateful_batch_major_multibatch_s16_cell_gate_hidden_weights[0],
-                          -LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 &lstm_stateful_batch_major_multibatch_s16_cell_gate_hidden_weights[0],
+                                 -LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
     muriscv_nn_vector_sum_s8_s64(&output_hidden_kernel_sum[0],
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                          &lstm_stateful_batch_major_multibatch_s16_output_gate_hidden_weights[0],
-                          -LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_ZERO_POINT,
-                          NULL);
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                 &lstm_stateful_batch_major_multibatch_s16_output_gate_hidden_weights[0],
+                                 -LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_ZERO_POINT,
+                                 NULL);
 
     // INPUT GATE
     const muriscv_nn_lstm_gate gate_input = {LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_GATE_INPUT_MULTIPLIER,
-                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_GATE_INPUT_SHIFT,
-                                           &lstm_stateful_batch_major_multibatch_s16_input_gate_input_weights[0],
-                                           &input_data_kernel_sum[0],
-                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_GATE_HIDDEN_MULTIPLIER,
-                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_GATE_HIDDEN_SHIFT,
-                                           &lstm_stateful_batch_major_multibatch_s16_input_gate_hidden_weights[0],
-                                           &input_hidden_kernel_sum[0],
-                                           &lstm_stateful_batch_major_multibatch_s16_input_gate_bias[0],
-                                           MURISCV_SIGMOID};
+                                             LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_GATE_INPUT_SHIFT,
+                                             &lstm_stateful_batch_major_multibatch_s16_input_gate_input_weights[0],
+                                             &input_data_kernel_sum[0],
+                                             LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_GATE_HIDDEN_MULTIPLIER,
+                                             LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_GATE_HIDDEN_SHIFT,
+                                             &lstm_stateful_batch_major_multibatch_s16_input_gate_hidden_weights[0],
+                                             &input_hidden_kernel_sum[0],
+                                             &lstm_stateful_batch_major_multibatch_s16_input_gate_bias[0],
+                                             MURISCV_SIGMOID};
 
     // FORGET GATE
     const muriscv_nn_lstm_gate gate_forget = {LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_GATE_INPUT_MULTIPLIER,
-                                            LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_GATE_INPUT_SHIFT,
-                                            &lstm_stateful_batch_major_multibatch_s16_forget_gate_input_weights[0],
-                                            &forget_data_kernel_sum[0],
-                                            LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_GATE_HIDDEN_MULTIPLIER,
-                                            LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_GATE_HIDDEN_SHIFT,
-                                            &lstm_stateful_batch_major_multibatch_s16_forget_gate_hidden_weights[0],
-                                            &forget_hidden_kernel_sum[0],
-                                            &lstm_stateful_batch_major_multibatch_s16_forget_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_GATE_INPUT_SHIFT,
+                                              &lstm_stateful_batch_major_multibatch_s16_forget_gate_input_weights[0],
+                                              &forget_data_kernel_sum[0],
+                                              LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_GATE_HIDDEN_MULTIPLIER,
+                                              LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_GATE_HIDDEN_SHIFT,
+                                              &lstm_stateful_batch_major_multibatch_s16_forget_gate_hidden_weights[0],
+                                              &forget_hidden_kernel_sum[0],
+                                              &lstm_stateful_batch_major_multibatch_s16_forget_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // CELL GATE
     const muriscv_nn_lstm_gate gate_cell = {LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_GATE_INPUT_MULTIPLIER,
-                                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_GATE_INPUT_SHIFT,
-                                          &lstm_stateful_batch_major_multibatch_s16_cell_gate_input_weights[0],
-                                          &cell_data_kernel_sum[0],
-                                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_GATE_HIDDEN_MULTIPLIER,
-                                          LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_GATE_HIDDEN_SHIFT,
-                                          &lstm_stateful_batch_major_multibatch_s16_cell_gate_hidden_weights[0],
-                                          &cell_hidden_kernel_sum[0],
-                                          &lstm_stateful_batch_major_multibatch_s16_cell_gate_bias[0],
-                                          MURISCV_TANH};
+                                            LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_GATE_INPUT_SHIFT,
+                                            &lstm_stateful_batch_major_multibatch_s16_cell_gate_input_weights[0],
+                                            &cell_data_kernel_sum[0],
+                                            LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_GATE_HIDDEN_MULTIPLIER,
+                                            LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_GATE_HIDDEN_SHIFT,
+                                            &lstm_stateful_batch_major_multibatch_s16_cell_gate_hidden_weights[0],
+                                            &cell_hidden_kernel_sum[0],
+                                            &lstm_stateful_batch_major_multibatch_s16_cell_gate_bias[0],
+                                            MURISCV_TANH};
 
     // OUTPUT GATE
     const muriscv_nn_lstm_gate gate_output = {LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_GATE_INPUT_MULTIPLIER,
-                                            LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_GATE_INPUT_SHIFT,
-                                            &lstm_stateful_batch_major_multibatch_s16_output_gate_input_weights[0],
-                                            &output_data_kernel_sum[0],
-                                            LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_GATE_HIDDEN_MULTIPLIER,
-                                            LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_GATE_HIDDEN_SHIFT,
-                                            &lstm_stateful_batch_major_multibatch_s16_output_gate_hidden_weights[0],
-                                            &output_hidden_kernel_sum[0],
-                                            &lstm_stateful_batch_major_multibatch_s16_output_gate_bias[0],
-                                            MURISCV_SIGMOID};
+                                              LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_GATE_INPUT_SHIFT,
+                                              &lstm_stateful_batch_major_multibatch_s16_output_gate_input_weights[0],
+                                              &output_data_kernel_sum[0],
+                                              LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_GATE_HIDDEN_MULTIPLIER,
+                                              LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_GATE_HIDDEN_SHIFT,
+                                              &lstm_stateful_batch_major_multibatch_s16_output_gate_hidden_weights[0],
+                                              &output_hidden_kernel_sum[0],
+                                              &lstm_stateful_batch_major_multibatch_s16_output_gate_bias[0],
+                                              MURISCV_SIGMOID};
 
     // LSTM DATA
     const muriscv_nn_lstm_params params = {LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_TIME_MAJOR,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_BATCH_SIZE,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_TIME_STEPS,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_SIZE,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_ZERO_POINT,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_TO_CELL_MULTIPLIER,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_TO_CELL_SHIFT,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_TO_CELL_MULTIPLIER,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_TO_CELL_SHIFT,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_CLIP,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_SCALE_POWER,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_MULTIPLIER,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_SHIFT,
-                                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_ZERO_POINT,
-                                         gate_forget,
-                                         gate_input,
-                                         gate_cell,
-                                         gate_output};
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_BATCH_SIZE,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_TIME_STEPS,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_SIZE,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_ZERO_POINT,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_TO_CELL_MULTIPLIER,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_FORGET_TO_CELL_SHIFT,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_TO_CELL_MULTIPLIER,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_INPUT_TO_CELL_SHIFT,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_CLIP,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_CELL_SCALE_POWER,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_MULTIPLIER,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_SHIFT,
+                                           LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_OUTPUT_ZERO_POINT,
+                                           gate_forget,
+                                           gate_input,
+                                           gate_cell,
+                                           gate_output};
 
     // Allocate zero-initialized hidden state buffer to test the non-null path!
-    int16_t hidden_state[LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_BATCH_SIZE * LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE] = {0};
+    int16_t hidden_state[LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_BATCH_SIZE *
+                         LSTM_STATEFUL_BATCH_MAJOR_MULTIBATCH_S16_HIDDEN_SIZE] = {0};
 
     memset(buffer3, 0, sizeof(buffer3));
 
@@ -633,8 +635,8 @@ void lstm_stateful_batch_major_multibatch_s16(void)
     buffers.cell_state = buffer3;
     buffers.hidden_state = hidden_state;
 
-    muriscv_nn_status result =
-        muriscv_nn_lstm_unidirectional_s16(lstm_stateful_batch_major_multibatch_s16_input_tensor, output, &params, &buffers);
+    muriscv_nn_status result = muriscv_nn_lstm_unidirectional_s16(
+        lstm_stateful_batch_major_multibatch_s16_input_tensor, output, &params, &buffers);
 
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));

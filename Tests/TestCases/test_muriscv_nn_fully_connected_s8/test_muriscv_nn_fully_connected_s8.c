@@ -80,25 +80,25 @@ void fully_connected_muriscv_nn_fully_connected_s8(void)
     int32_t *buf = ctx.buf;
     TEST_ASSERT_EQUAL(expected,
                       muriscv_nn_vector_sum_s8(buf,
-                                        filter_dims.n,
-                                        output_dims.c,
-                                        kernel_data,
-                                        fc_params.input_offset,
-                                        fc_params.filter_offset,
-                                        bias_data));
+                                               filter_dims.n,
+                                               output_dims.c,
+                                               kernel_data,
+                                               fc_params.input_offset,
+                                               fc_params.filter_offset,
+                                               bias_data));
 #endif
 
     muriscv_nn_status result = muriscv_nn_fully_connected_s8(&ctx,
-                                                        &fc_params,
-                                                        &quant_params,
-                                                        &input_dims,
-                                                        input_data,
-                                                        &filter_dims,
-                                                        kernel_data,
-                                                        &bias_dims,
-                                                        bias_data,
-                                                        &output_dims,
-                                                        output);
+                                                             &fc_params,
+                                                             &quant_params,
+                                                             &input_dims,
+                                                             input_data,
+                                                             &filter_dims,
+                                                             kernel_data,
+                                                             &bias_dims,
+                                                             bias_data,
+                                                             &output_dims,
+                                                             output);
 
     if (ctx.buf)
     {
@@ -155,25 +155,25 @@ void fully_connected_w_zp_muriscv_nn_fully_connected_s8(void)
     int32_t *buf = ctx.buf;
     TEST_ASSERT_EQUAL(expected,
                       muriscv_nn_vector_sum_s8(buf,
-                                        filter_dims.n,
-                                        output_dims.c,
-                                        kernel_data,
-                                        fc_params.input_offset,
-                                        fc_params.filter_offset,
-                                        bias_data));
+                                               filter_dims.n,
+                                               output_dims.c,
+                                               kernel_data,
+                                               fc_params.input_offset,
+                                               fc_params.filter_offset,
+                                               bias_data));
 #endif
 
     muriscv_nn_status result = muriscv_nn_fully_connected_s8(&ctx,
-                                                        &fc_params,
-                                                        &quant_params,
-                                                        &input_dims,
-                                                        input_data,
-                                                        &filter_dims,
-                                                        kernel_data,
-                                                        &bias_dims,
-                                                        bias_data,
-                                                        &output_dims,
-                                                        output);
+                                                             &fc_params,
+                                                             &quant_params,
+                                                             &input_dims,
+                                                             input_data,
+                                                             &filter_dims,
+                                                             kernel_data,
+                                                             &bias_dims,
+                                                             bias_data,
+                                                             &output_dims,
+                                                             output);
 
     if (ctx.buf)
     {
@@ -225,25 +225,25 @@ void fully_connected_mve_0_muriscv_nn_fully_connected_s8(void)
     int32_t *buf = ctx.buf;
     TEST_ASSERT_EQUAL(expected,
                       muriscv_nn_vector_sum_s8(buf,
-                                        filter_dims.n,
-                                        output_dims.c,
-                                        kernel_data,
-                                        fc_params.input_offset,
-                                        fc_params.filter_offset,
-                                        bias_data));
+                                               filter_dims.n,
+                                               output_dims.c,
+                                               kernel_data,
+                                               fc_params.input_offset,
+                                               fc_params.filter_offset,
+                                               bias_data));
 #endif
 
     muriscv_nn_status result = muriscv_nn_fully_connected_s8(&ctx,
-                                                        &fc_params,
-                                                        &quant_params,
-                                                        &input_dims,
-                                                        input_data,
-                                                        &filter_dims,
-                                                        kernel_data,
-                                                        &bias_dims,
-                                                        bias_data,
-                                                        &output_dims,
-                                                        output);
+                                                             &fc_params,
+                                                             &quant_params,
+                                                             &input_dims,
+                                                             input_data,
+                                                             &filter_dims,
+                                                             kernel_data,
+                                                             &bias_dims,
+                                                             bias_data,
+                                                             &output_dims,
+                                                             output);
 
     if (ctx.buf)
     {
@@ -294,25 +294,25 @@ void fully_connected_mve_1_muriscv_nn_fully_connected_s8(void)
     int32_t *buf = ctx.buf;
     TEST_ASSERT_EQUAL(expected,
                       muriscv_nn_vector_sum_s8(buf,
-                                        filter_dims.n,
-                                        output_dims.c,
-                                        kernel_data,
-                                        fc_params.input_offset,
-                                        fc_params.filter_offset,
-                                        bias_data));
+                                               filter_dims.n,
+                                               output_dims.c,
+                                               kernel_data,
+                                               fc_params.input_offset,
+                                               fc_params.filter_offset,
+                                               bias_data));
 #endif
 
     muriscv_nn_status result = muriscv_nn_fully_connected_s8(&ctx,
-                                                        &fc_params,
-                                                        &quant_params,
-                                                        &input_dims,
-                                                        input_data,
-                                                        &filter_dims,
-                                                        kernel_data,
-                                                        &bias_dims,
-                                                        bias_data,
-                                                        &output_dims,
-                                                        output);
+                                                             &fc_params,
+                                                             &quant_params,
+                                                             &input_dims,
+                                                             input_data,
+                                                             &filter_dims,
+                                                             kernel_data,
+                                                             &bias_dims,
+                                                             bias_data,
+                                                             &output_dims,
+                                                             output);
 
     if (ctx.buf)
     {
@@ -374,25 +374,25 @@ void fully_connected_null_bias_0_muriscv_nn_fully_connected_s8(void)
     int32_t *buf = ctx.buf;
     TEST_ASSERT_EQUAL(expected,
                       muriscv_nn_vector_sum_s8(buf,
-                                        filter_dims.n,
-                                        output_dims.c,
-                                        kernel_data,
-                                        fc_params.input_offset,
-                                        fc_params.filter_offset,
-                                        bias_data));
+                                               filter_dims.n,
+                                               output_dims.c,
+                                               kernel_data,
+                                               fc_params.input_offset,
+                                               fc_params.filter_offset,
+                                               bias_data));
 #endif
 
     muriscv_nn_status result = muriscv_nn_fully_connected_s8(&ctx,
-                                                        &fc_params,
-                                                        &quant_params,
-                                                        &input_dims,
-                                                        input_data,
-                                                        &filter_dims,
-                                                        kernel_data,
-                                                        &bias_dims,
-                                                        NULL,
-                                                        &output_dims,
-                                                        output);
+                                                             &fc_params,
+                                                             &quant_params,
+                                                             &input_dims,
+                                                             input_data,
+                                                             &filter_dims,
+                                                             kernel_data,
+                                                             &bias_dims,
+                                                             NULL,
+                                                             &output_dims,
+                                                             output);
 
     if (ctx.buf)
     {
@@ -443,25 +443,25 @@ void fully_connected_out_activation_muriscv_nn_fully_connected_s8(void)
     int32_t *buf = ctx.buf;
     TEST_ASSERT_EQUAL(expected,
                       muriscv_nn_vector_sum_s8(buf,
-                                        filter_dims.n,
-                                        output_dims.c,
-                                        kernel_data,
-                                        fc_params.input_offset,
-                                        fc_params.filter_offset,
-                                        bias_data));
+                                               filter_dims.n,
+                                               output_dims.c,
+                                               kernel_data,
+                                               fc_params.input_offset,
+                                               fc_params.filter_offset,
+                                               bias_data));
 #endif
 
     muriscv_nn_status result = muriscv_nn_fully_connected_s8(&ctx,
-                                                        &fc_params,
-                                                        &quant_params,
-                                                        &input_dims,
-                                                        input_data,
-                                                        &filter_dims,
-                                                        kernel_data,
-                                                        &bias_dims,
-                                                        bias_data,
-                                                        &output_dims,
-                                                        output);
+                                                             &fc_params,
+                                                             &quant_params,
+                                                             &input_dims,
+                                                             input_data,
+                                                             &filter_dims,
+                                                             kernel_data,
+                                                             &bias_dims,
+                                                             bias_data,
+                                                             &output_dims,
+                                                             output);
 
     if (ctx.buf)
     {
@@ -520,16 +520,16 @@ void fc_per_ch_muriscv_nn_fully_connected_s8(void)
 #endif
 
     muriscv_nn_status result = muriscv_nn_fully_connected_per_channel_s8(&ctx,
-                                                                    &fc_params,
-                                                                    &quant_params,
-                                                                    &input_dims,
-                                                                    input_data,
-                                                                    &filter_dims,
-                                                                    kernel_data,
-                                                                    &bias_dims,
-                                                                    bias_data,
-                                                                    &output_dims,
-                                                                    output);
+                                                                         &fc_params,
+                                                                         &quant_params,
+                                                                         &input_dims,
+                                                                         input_data,
+                                                                         &filter_dims,
+                                                                         kernel_data,
+                                                                         &bias_dims,
+                                                                         bias_data,
+                                                                         &output_dims,
+                                                                         output);
 
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, output_ref, output_ref_size));
@@ -540,16 +540,16 @@ void fc_per_ch_muriscv_nn_fully_connected_s8(void)
     generic_quant_params.is_per_channel = 1;
 
     result = muriscv_nn_fully_connected_wrapper_s8(&ctx,
-                                            &fc_params,
-                                            &generic_quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                                   &fc_params,
+                                                   &generic_quant_params,
+                                                   &input_dims,
+                                                   input_data,
+                                                   &filter_dims,
+                                                   kernel_data,
+                                                   &bias_dims,
+                                                   bias_data,
+                                                   &output_dims,
+                                                   output);
 
     if (ctx.buf)
     {

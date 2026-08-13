@@ -75,16 +75,16 @@ void fully_connected_int16_muriscv_nn_fully_connected_s16(void)
     ctx.size = buf_size;
 
     muriscv_nn_status result = muriscv_nn_fully_connected_s16(&ctx,
-                                                         &fc_params,
-                                                         &quant_params,
-                                                         &input_dims,
-                                                         input_data,
-                                                         &filter_dims,
-                                                         kernel_data,
-                                                         &bias_dims,
-                                                         bias_data,
-                                                         &output_dims,
-                                                         output);
+                                                              &fc_params,
+                                                              &quant_params,
+                                                              &input_dims,
+                                                              input_data,
+                                                              &filter_dims,
+                                                              kernel_data,
+                                                              &bias_dims,
+                                                              bias_data,
+                                                              &output_dims,
+                                                              output);
 
     if (ctx.buf)
     {
@@ -140,16 +140,16 @@ void fully_connected_int16_big_muriscv_nn_fully_connected_s16(void)
     ctx.size = buf_size;
 
     muriscv_nn_status result = muriscv_nn_fully_connected_s16(&ctx,
-                                                         &fc_params,
-                                                         &quant_params,
-                                                         &input_dims,
-                                                         input_data,
-                                                         &filter_dims,
-                                                         kernel_data,
-                                                         &bias_dims,
-                                                         bias_data,
-                                                         &output_dims,
-                                                         output);
+                                                              &fc_params,
+                                                              &quant_params,
+                                                              &input_dims,
+                                                              input_data,
+                                                              &filter_dims,
+                                                              kernel_data,
+                                                              &bias_dims,
+                                                              bias_data,
+                                                              &output_dims,
+                                                              output);
 
     if (ctx.buf)
     {
@@ -204,16 +204,16 @@ void fc_int16_slow_muriscv_nn_fully_connected_s16(void)
     ctx.size = buf_size;
 
     muriscv_nn_status result = muriscv_nn_fully_connected_s16(&ctx,
-                                                         &fc_params,
-                                                         &quant_params,
-                                                         &input_dims,
-                                                         input_data,
-                                                         &filter_dims,
-                                                         kernel_data,
-                                                         &bias_dims,
-                                                         bias_data,
-                                                         &output_dims,
-                                                         output);
+                                                              &fc_params,
+                                                              &quant_params,
+                                                              &input_dims,
+                                                              input_data,
+                                                              &filter_dims,
+                                                              kernel_data,
+                                                              &bias_dims,
+                                                              bias_data,
+                                                              &output_dims,
+                                                              output);
 
     if (ctx.buf)
     {

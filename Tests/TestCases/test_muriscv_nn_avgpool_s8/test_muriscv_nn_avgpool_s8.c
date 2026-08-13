@@ -399,7 +399,6 @@ void avgpooling_param_fail_muriscv_nn_avgpool_s8(void)
     TEST_ASSERT_EQUAL(expected, result);
 }
 
-
 int main(void)
 {
     UNITY_BEGIN();

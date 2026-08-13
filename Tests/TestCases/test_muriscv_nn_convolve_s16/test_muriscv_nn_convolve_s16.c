@@ -88,16 +88,16 @@ void int16xint8_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
     muriscv_nn_status result;
     result = muriscv_nn_convolve_s16(&ctx,
-                              &conv_params,
-                              &quant_params,
-                              &input_dims,
-                              input_data,
-                              &filter_dims,
-                              kernel_data,
-                              &bias_dims,
-                              &bias_data,
-                              &output_dims,
-                              output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     &bias_data,
+                                     &output_dims,
+                                     output);
     if (ctx.buf)
     {
         // The caller is responsible to clear the scratch buffers for security reasons if applicable.
@@ -112,16 +112,16 @@ void int16xint8_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -178,16 +178,16 @@ void requantize_s64_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_convolve_s16(&ctx,
-                                                  &conv_params,
-                                                  &quant_params,
-                                                  &input_dims,
-                                                  input_data,
-                                                  &filter_dims,
-                                                  kernel_data,
-                                                  &bias_dims,
-                                                  &bias_data,
-                                                  &output_dims,
-                                                  output);
+                                                       &conv_params,
+                                                       &quant_params,
+                                                       &input_dims,
+                                                       input_data,
+                                                       &filter_dims,
+                                                       kernel_data,
+                                                       &bias_dims,
+                                                       &bias_data,
+                                                       &output_dims,
+                                                       output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -201,16 +201,16 @@ void requantize_s64_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
 
     if (ctx.buf)
     {
@@ -268,16 +268,16 @@ void int16xint8_dilation_1_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_convolve_s16(&ctx,
-                                                  &conv_params,
-                                                  &quant_params,
-                                                  &input_dims,
-                                                  input_data,
-                                                  &filter_dims,
-                                                  kernel_data,
-                                                  &bias_dims,
-                                                  &bias_data,
-                                                  &output_dims,
-                                                  output);
+                                                       &conv_params,
+                                                       &quant_params,
+                                                       &input_dims,
+                                                       input_data,
+                                                       &filter_dims,
+                                                       kernel_data,
+                                                       &bias_dims,
+                                                       &bias_data,
+                                                       &output_dims,
+                                                       output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -291,16 +291,16 @@ void int16xint8_dilation_1_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
 
     if (ctx.buf)
     {
@@ -358,16 +358,16 @@ void int16xint8_dilation_2_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_convolve_s16(&ctx,
-                                                  &conv_params,
-                                                  &quant_params,
-                                                  &input_dims,
-                                                  input_data,
-                                                  &filter_dims,
-                                                  kernel_data,
-                                                  &bias_dims,
-                                                  &bias_data,
-                                                  &output_dims,
-                                                  output);
+                                                       &conv_params,
+                                                       &quant_params,
+                                                       &input_dims,
+                                                       input_data,
+                                                       &filter_dims,
+                                                       kernel_data,
+                                                       &bias_dims,
+                                                       &bias_data,
+                                                       &output_dims,
+                                                       output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -381,16 +381,16 @@ void int16xint8_dilation_2_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
 
     if (ctx.buf)
     {
@@ -448,16 +448,16 @@ void int16xint8_dilation_3_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_convolve_s16(&ctx,
-                                                  &conv_params,
-                                                  &quant_params,
-                                                  &input_dims,
-                                                  input_data,
-                                                  &filter_dims,
-                                                  kernel_data,
-                                                  &bias_dims,
-                                                  &bias_data,
-                                                  &output_dims,
-                                                  output);
+                                                       &conv_params,
+                                                       &quant_params,
+                                                       &input_dims,
+                                                       input_data,
+                                                       &filter_dims,
+                                                       kernel_data,
+                                                       &bias_dims,
+                                                       &bias_data,
+                                                       &output_dims,
+                                                       output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -471,16 +471,16 @@ void int16xint8_dilation_3_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
 
     if (ctx.buf)
     {
@@ -652,16 +652,16 @@ void int16xint8_spill_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
     muriscv_nn_status result;
     result = muriscv_nn_convolve_s16(&ctx,
-                              &conv_params,
-                              &quant_params,
-                              &input_dims,
-                              input_data,
-                              &filter_dims,
-                              kernel_data,
-                              &bias_dims,
-                              &bias_data,
-                              &output_dims,
-                              output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     &bias_data,
+                                     &output_dims,
+                                     output);
     if (ctx.buf)
     {
         // The caller is responsible to clear the scratch buffers for security reasons if applicable.
@@ -676,16 +676,16 @@ void int16xint8_spill_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -742,16 +742,16 @@ void int16xint8_spill2_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
     muriscv_nn_status result;
     result = muriscv_nn_convolve_s16(&ctx,
-                              &conv_params,
-                              &quant_params,
-                              &input_dims,
-                              input_data,
-                              &filter_dims,
-                              kernel_data,
-                              &bias_dims,
-                              &bias_data,
-                              &output_dims,
-                              output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     &bias_data,
+                                     &output_dims,
+                                     output);
     if (ctx.buf)
     {
         // The caller is responsible to clear the scratch buffers for security reasons if applicable.
@@ -766,16 +766,16 @@ void int16xint8_spill2_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -832,16 +832,16 @@ void int16xint8xint32_1_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
     muriscv_nn_status result;
     result = muriscv_nn_convolve_s16(&ctx,
-                              &conv_params,
-                              &quant_params,
-                              &input_dims,
-                              input_data,
-                              &filter_dims,
-                              kernel_data,
-                              &bias_dims,
-                              &bias_data,
-                              &output_dims,
-                              output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     &bias_data,
+                                     &output_dims,
+                                     output);
     if (ctx.buf)
     {
         // The caller is responsible to clear the scratch buffers for security reasons if applicable.
@@ -856,16 +856,16 @@ void int16xint8xint32_1_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -922,16 +922,16 @@ void int16xint8xint32_2_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
     muriscv_nn_status result;
     result = muriscv_nn_convolve_s16(&ctx,
-                              &conv_params,
-                              &quant_params,
-                              &input_dims,
-                              input_data,
-                              &filter_dims,
-                              kernel_data,
-                              &bias_dims,
-                              &bias_data,
-                              &output_dims,
-                              output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     &bias_data,
+                                     &output_dims,
+                                     output);
     if (ctx.buf)
     {
         // The caller is responsible to clear the scratch buffers for security reasons if applicable.
@@ -946,16 +946,16 @@ void int16xint8xint32_2_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -1012,16 +1012,16 @@ void int16xint8xint32_3_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
     muriscv_nn_status result;
     result = muriscv_nn_convolve_s16(&ctx,
-                              &conv_params,
-                              &quant_params,
-                              &input_dims,
-                              input_data,
-                              &filter_dims,
-                              kernel_data,
-                              &bias_dims,
-                              &bias_data,
-                              &output_dims,
-                              output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     &bias_data,
+                                     &output_dims,
+                                     output);
     if (ctx.buf)
     {
         // The caller is responsible to clear the scratch buffers for security reasons if applicable.
@@ -1036,16 +1036,16 @@ void int16xint8xint32_3_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -1102,16 +1102,16 @@ void int16xint8xint32_4_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
     muriscv_nn_status result;
     result = muriscv_nn_convolve_s16(&ctx,
-                              &conv_params,
-                              &quant_params,
-                              &input_dims,
-                              input_data,
-                              &filter_dims,
-                              kernel_data,
-                              &bias_dims,
-                              &bias_data,
-                              &output_dims,
-                              output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     &bias_data,
+                                     &output_dims,
+                                     output);
     if (ctx.buf)
     {
         // The caller is responsible to clear the scratch buffers for security reasons if applicable.
@@ -1126,16 +1126,16 @@ void int16xint8xint32_4_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -1192,16 +1192,16 @@ void int16xint8xint32_5_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
     muriscv_nn_status result;
     result = muriscv_nn_convolve_s16(&ctx,
-                              &conv_params,
-                              &quant_params,
-                              &input_dims,
-                              input_data,
-                              &filter_dims,
-                              kernel_data,
-                              &bias_dims,
-                              &bias_data,
-                              &output_dims,
-                              output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     &bias_data,
+                                     &output_dims,
+                                     output);
     if (ctx.buf)
     {
         // The caller is responsible to clear the scratch buffers for security reasons if applicable.
@@ -1216,16 +1216,16 @@ void int16xint8xint32_5_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);
@@ -1282,16 +1282,16 @@ void int16xint8xint32_6_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
     muriscv_nn_status result;
     result = muriscv_nn_convolve_s16(&ctx,
-                              &conv_params,
-                              &quant_params,
-                              &input_dims,
-                              input_data,
-                              &filter_dims,
-                              kernel_data,
-                              &bias_dims,
-                              &bias_data,
-                              &output_dims,
-                              output);
+                                     &conv_params,
+                                     &quant_params,
+                                     &input_dims,
+                                     input_data,
+                                     &filter_dims,
+                                     kernel_data,
+                                     &bias_dims,
+                                     &bias_data,
+                                     &output_dims,
+                                     output);
     if (ctx.buf)
     {
         // The caller is responsible to clear the scratch buffers for security reasons if applicable.
@@ -1306,16 +1306,16 @@ void int16xint8xint32_6_muriscv_nn_convolve_s16(void)
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_convolve_wrapper_s16(&ctx,
-                                      &conv_params,
-                                      &quant_params,
-                                      &input_dims,
-                                      input_data,
-                                      &filter_dims,
-                                      kernel_data,
-                                      &bias_dims,
-                                      &bias_data,
-                                      &output_dims,
-                                      output);
+                                             &conv_params,
+                                             &quant_params,
+                                             &input_dims,
+                                             input_data,
+                                             &filter_dims,
+                                             kernel_data,
+                                             &bias_dims,
+                                             &bias_data,
+                                             &output_dims,
+                                             output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);

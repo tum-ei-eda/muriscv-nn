@@ -83,16 +83,16 @@ void depthwise_2_muriscv_nn_depthwise_conv_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_s8(&ctx,
-                                                       &dw_conv_params,
-                                                       &quant_params,
-                                                       &input_dims,
-                                                       input_data,
-                                                       &filter_dims,
-                                                       kernel_data,
-                                                       &bias_dims,
-                                                       bias_data,
-                                                       &output_dims,
-                                                       output);
+                                                            &dw_conv_params,
+                                                            &quant_params,
+                                                            &input_dims,
+                                                            input_data,
+                                                            &filter_dims,
+                                                            kernel_data,
+                                                            &bias_dims,
+                                                            bias_data,
+                                                            &output_dims,
+                                                            output);
 
     if (ctx.buf)
     {
@@ -111,16 +111,16 @@ void depthwise_2_muriscv_nn_depthwise_conv_s8(void)
     ctx.size = buf_size;
 
     result = muriscv_nn_depthwise_conv_wrapper_s8(&ctx,
-                                           &dw_conv_params,
-                                           &quant_params,
-                                           &input_dims,
-                                           input_data,
-                                           &filter_dims,
-                                           kernel_data,
-                                           &bias_dims,
-                                           bias_data,
-                                           &output_dims,
-                                           output);
+                                                  &dw_conv_params,
+                                                  &quant_params,
+                                                  &input_dims,
+                                                  input_data,
+                                                  &filter_dims,
+                                                  kernel_data,
+                                                  &bias_dims,
+                                                  bias_data,
+                                                  &output_dims,
+                                                  output);
 
     if (ctx.buf)
     {
@@ -179,16 +179,16 @@ void depthwise_mult_batches_muriscv_nn_depthwise_conv_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_s8(&ctx,
-                                                       &dw_conv_params,
-                                                       &quant_params,
-                                                       &input_dims,
-                                                       input_data,
-                                                       &filter_dims,
-                                                       kernel_data,
-                                                       &bias_dims,
-                                                       bias_data,
-                                                       &output_dims,
-                                                       output);
+                                                            &dw_conv_params,
+                                                            &quant_params,
+                                                            &input_dims,
+                                                            input_data,
+                                                            &filter_dims,
+                                                            kernel_data,
+                                                            &bias_dims,
+                                                            bias_data,
+                                                            &output_dims,
+                                                            output);
 
     if (ctx.buf)
     {
@@ -207,16 +207,16 @@ void depthwise_mult_batches_muriscv_nn_depthwise_conv_s8(void)
     ctx.size = buf_size;
 
     result = muriscv_nn_depthwise_conv_wrapper_s8(&ctx,
-                                           &dw_conv_params,
-                                           &quant_params,
-                                           &input_dims,
-                                           input_data,
-                                           &filter_dims,
-                                           kernel_data,
-                                           &bias_dims,
-                                           bias_data,
-                                           &output_dims,
-                                           output);
+                                                  &dw_conv_params,
+                                                  &quant_params,
+                                                  &input_dims,
+                                                  input_data,
+                                                  &filter_dims,
+                                                  kernel_data,
+                                                  &bias_dims,
+                                                  bias_data,
+                                                  &output_dims,
+                                                  output);
 
     if (ctx.buf)
     {
@@ -274,16 +274,16 @@ void depthwise_null_bias_1_muriscv_nn_depthwise_conv_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_s8(&ctx,
-                                                       &dw_conv_params,
-                                                       &quant_params,
-                                                       &input_dims,
-                                                       input_data,
-                                                       &filter_dims,
-                                                       kernel_data,
-                                                       &bias_dims,
-                                                       bias_data,
-                                                       &output_dims,
-                                                       output);
+                                                            &dw_conv_params,
+                                                            &quant_params,
+                                                            &input_dims,
+                                                            input_data,
+                                                            &filter_dims,
+                                                            kernel_data,
+                                                            &bias_dims,
+                                                            bias_data,
+                                                            &output_dims,
+                                                            output);
 
     if (ctx.buf)
     {
@@ -302,16 +302,16 @@ void depthwise_null_bias_1_muriscv_nn_depthwise_conv_s8(void)
     ctx.size = buf_size;
 
     result = muriscv_nn_depthwise_conv_wrapper_s8(&ctx,
-                                           &dw_conv_params,
-                                           &quant_params,
-                                           &input_dims,
-                                           input_data,
-                                           &filter_dims,
-                                           kernel_data,
-                                           &bias_dims,
-                                           bias_data,
-                                           &output_dims,
-                                           output);
+                                                  &dw_conv_params,
+                                                  &quant_params,
+                                                  &input_dims,
+                                                  input_data,
+                                                  &filter_dims,
+                                                  kernel_data,
+                                                  &bias_dims,
+                                                  bias_data,
+                                                  &output_dims,
+                                                  output);
 
     if (ctx.buf)
     {
@@ -370,16 +370,16 @@ void depthwise_dilation_muriscv_nn_depthwise_conv_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_s8(&ctx,
-                                                       &dw_conv_params,
-                                                       &quant_params,
-                                                       &input_dims,
-                                                       input_data,
-                                                       &filter_dims,
-                                                       kernel_data,
-                                                       &bias_dims,
-                                                       bias_data,
-                                                       &output_dims,
-                                                       output);
+                                                            &dw_conv_params,
+                                                            &quant_params,
+                                                            &input_dims,
+                                                            input_data,
+                                                            &filter_dims,
+                                                            kernel_data,
+                                                            &bias_dims,
+                                                            bias_data,
+                                                            &output_dims,
+                                                            output);
 
     if (ctx.buf)
     {
@@ -398,16 +398,16 @@ void depthwise_dilation_muriscv_nn_depthwise_conv_s8(void)
     ctx.size = buf_size;
 
     result = muriscv_nn_depthwise_conv_wrapper_s8(&ctx,
-                                           &dw_conv_params,
-                                           &quant_params,
-                                           &input_dims,
-                                           input_data,
-                                           &filter_dims,
-                                           kernel_data,
-                                           &bias_dims,
-                                           bias_data,
-                                           &output_dims,
-                                           output);
+                                                  &dw_conv_params,
+                                                  &quant_params,
+                                                  &input_dims,
+                                                  input_data,
+                                                  &filter_dims,
+                                                  kernel_data,
+                                                  &bias_dims,
+                                                  bias_data,
+                                                  &output_dims,
+                                                  output);
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate(output, depthwise_dilation_output_ref, output_ref_size));
 }
@@ -534,16 +534,16 @@ void in_ch_one_out_ch_larger_one_muriscv_nn_depthwise_conv_s8(void)
     ctx.buf = NULL;
     ctx.size = 0;
     muriscv_nn_status result = muriscv_nn_depthwise_conv_s8(&ctx,
-                                                       &dw_conv_params,
-                                                       &quant_params,
-                                                       &input_dims,
-                                                       input_data,
-                                                       &filter_dims,
-                                                       kernel_data,
-                                                       &bias_dims,
-                                                       bias_data,
-                                                       &output_dims,
-                                                       output);
+                                                            &dw_conv_params,
+                                                            &quant_params,
+                                                            &input_dims,
+                                                            input_data,
+                                                            &filter_dims,
+                                                            kernel_data,
+                                                            &bias_dims,
+                                                            bias_data,
+                                                            &output_dims,
+                                                            output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, ctx.size);
@@ -557,16 +557,16 @@ void in_ch_one_out_ch_larger_one_muriscv_nn_depthwise_conv_s8(void)
     ctx.buf = malloc(buf_size);
     ctx.size = buf_size;
     result = muriscv_nn_depthwise_conv_wrapper_s8(&ctx,
-                                           &dw_conv_params,
-                                           &quant_params,
-                                           &input_dims,
-                                           input_data,
-                                           &filter_dims,
-                                           kernel_data,
-                                           &bias_dims,
-                                           bias_data,
-                                           &output_dims,
-                                           output);
+                                                  &dw_conv_params,
+                                                  &quant_params,
+                                                  &input_dims,
+                                                  input_data,
+                                                  &filter_dims,
+                                                  kernel_data,
+                                                  &bias_dims,
+                                                  bias_data,
+                                                  &output_dims,
+                                                  output);
     if (ctx.buf)
     {
         memset(ctx.buf, 0, buf_size);

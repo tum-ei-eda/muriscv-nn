@@ -87,16 +87,16 @@ void dw_int16xint8_fast_muriscv_nn_depthwise_conv_fast_s16(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_fast_s16(&ctx,
-                                                             &dw_conv_params,
-                                                             &quant_params,
-                                                             &input_dims,
-                                                             input_data,
-                                                             &filter_dims,
-                                                             kernel_data,
-                                                             &bias_dims,
-                                                             bias_data,
-                                                             &output_dims,
-                                                             output);
+                                                                  &dw_conv_params,
+                                                                  &quant_params,
+                                                                  &input_dims,
+                                                                  input_data,
+                                                                  &filter_dims,
+                                                                  kernel_data,
+                                                                  &bias_dims,
+                                                                  bias_data,
+                                                                  &output_dims,
+                                                                  output);
 
     if (ctx.buf)
     {
@@ -108,23 +108,23 @@ void dw_int16xint8_fast_muriscv_nn_depthwise_conv_fast_s16(void)
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
     memset(output, 0, sizeof(output));
 
-    TEST_ASSERT_EQUAL(
-        buf_size,
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims));
+    TEST_ASSERT_EQUAL(buf_size,
+                      muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(
+                          &dw_conv_params, &input_dims, &filter_dims, &output_dims));
 
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_depthwise_conv_wrapper_s16(&ctx,
-                                            &dw_conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                                   &dw_conv_params,
+                                                   &quant_params,
+                                                   &input_dims,
+                                                   input_data,
+                                                   &filter_dims,
+                                                   kernel_data,
+                                                   &bias_dims,
+                                                   bias_data,
+                                                   &output_dims,
+                                                   output);
 
     if (ctx.buf)
     {
@@ -184,16 +184,16 @@ void dw_int16xint8_fast_spill_muriscv_nn_depthwise_conv_fast_s16(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_fast_s16(&ctx,
-                                                             &dw_conv_params,
-                                                             &quant_params,
-                                                             &input_dims,
-                                                             input_data,
-                                                             &filter_dims,
-                                                             kernel_data,
-                                                             &bias_dims,
-                                                             bias_data,
-                                                             &output_dims,
-                                                             output);
+                                                                  &dw_conv_params,
+                                                                  &quant_params,
+                                                                  &input_dims,
+                                                                  input_data,
+                                                                  &filter_dims,
+                                                                  kernel_data,
+                                                                  &bias_dims,
+                                                                  bias_data,
+                                                                  &output_dims,
+                                                                  output);
 
     if (ctx.buf)
     {
@@ -204,23 +204,23 @@ void dw_int16xint8_fast_spill_muriscv_nn_depthwise_conv_fast_s16(void)
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
     memset(output, 0, sizeof(output));
 
-    TEST_ASSERT_EQUAL(
-        buf_size,
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims));
+    TEST_ASSERT_EQUAL(buf_size,
+                      muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(
+                          &dw_conv_params, &input_dims, &filter_dims, &output_dims));
 
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_depthwise_conv_wrapper_s16(&ctx,
-                                            &dw_conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                                   &dw_conv_params,
+                                                   &quant_params,
+                                                   &input_dims,
+                                                   input_data,
+                                                   &filter_dims,
+                                                   kernel_data,
+                                                   &bias_dims,
+                                                   bias_data,
+                                                   &output_dims,
+                                                   output);
 
     if (ctx.buf)
     {
@@ -280,16 +280,16 @@ void dw_int16xint8_fast_stride_muriscv_nn_depthwise_conv_fast_s16(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_fast_s16(&ctx,
-                                                             &dw_conv_params,
-                                                             &quant_params,
-                                                             &input_dims,
-                                                             input_data,
-                                                             &filter_dims,
-                                                             kernel_data,
-                                                             &bias_dims,
-                                                             bias_data,
-                                                             &output_dims,
-                                                             output);
+                                                                  &dw_conv_params,
+                                                                  &quant_params,
+                                                                  &input_dims,
+                                                                  input_data,
+                                                                  &filter_dims,
+                                                                  kernel_data,
+                                                                  &bias_dims,
+                                                                  bias_data,
+                                                                  &output_dims,
+                                                                  output);
 
     if (ctx.buf)
     {
@@ -300,23 +300,23 @@ void dw_int16xint8_fast_stride_muriscv_nn_depthwise_conv_fast_s16(void)
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
     memset(output, 0, sizeof(output));
 
-    TEST_ASSERT_EQUAL(
-        buf_size,
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims));
+    TEST_ASSERT_EQUAL(buf_size,
+                      muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(
+                          &dw_conv_params, &input_dims, &filter_dims, &output_dims));
 
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_depthwise_conv_wrapper_s16(&ctx,
-                                            &dw_conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                                   &dw_conv_params,
+                                                   &quant_params,
+                                                   &input_dims,
+                                                   input_data,
+                                                   &filter_dims,
+                                                   kernel_data,
+                                                   &bias_dims,
+                                                   bias_data,
+                                                   &output_dims,
+                                                   output);
 
     if (ctx.buf)
     {
@@ -377,16 +377,16 @@ void dw_int16xint8_fast_null_bias_muriscv_nn_depthwise_conv_fast_s16(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_fast_s16(&ctx,
-                                                             &dw_conv_params,
-                                                             &quant_params,
-                                                             &input_dims,
-                                                             input_data,
-                                                             &filter_dims,
-                                                             kernel_data,
-                                                             &bias_dims,
-                                                             bias_data,
-                                                             &output_dims,
-                                                             output);
+                                                                  &dw_conv_params,
+                                                                  &quant_params,
+                                                                  &input_dims,
+                                                                  input_data,
+                                                                  &filter_dims,
+                                                                  kernel_data,
+                                                                  &bias_dims,
+                                                                  bias_data,
+                                                                  &output_dims,
+                                                                  output);
 
     if (ctx.buf)
     {
@@ -397,23 +397,23 @@ void dw_int16xint8_fast_null_bias_muriscv_nn_depthwise_conv_fast_s16(void)
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
     memset(output, 0, sizeof(output));
 
-    TEST_ASSERT_EQUAL(
-        buf_size,
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims));
+    TEST_ASSERT_EQUAL(buf_size,
+                      muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(
+                          &dw_conv_params, &input_dims, &filter_dims, &output_dims));
 
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_depthwise_conv_wrapper_s16(&ctx,
-                                            &dw_conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                                   &dw_conv_params,
+                                                   &quant_params,
+                                                   &input_dims,
+                                                   input_data,
+                                                   &filter_dims,
+                                                   kernel_data,
+                                                   &bias_dims,
+                                                   bias_data,
+                                                   &output_dims,
+                                                   output);
 
     if (ctx.buf)
     {
@@ -474,16 +474,16 @@ void dw_int16xint8_fast_stride_null_bias_muriscv_nn_depthwise_conv_fast_s16(void
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_fast_s16(&ctx,
-                                                             &dw_conv_params,
-                                                             &quant_params,
-                                                             &input_dims,
-                                                             input_data,
-                                                             &filter_dims,
-                                                             kernel_data,
-                                                             &bias_dims,
-                                                             bias_data,
-                                                             &output_dims,
-                                                             output);
+                                                                  &dw_conv_params,
+                                                                  &quant_params,
+                                                                  &input_dims,
+                                                                  input_data,
+                                                                  &filter_dims,
+                                                                  kernel_data,
+                                                                  &bias_dims,
+                                                                  bias_data,
+                                                                  &output_dims,
+                                                                  output);
 
     if (ctx.buf)
     {
@@ -494,23 +494,23 @@ void dw_int16xint8_fast_stride_null_bias_muriscv_nn_depthwise_conv_fast_s16(void
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
     memset(output, 0, sizeof(output));
 
-    TEST_ASSERT_EQUAL(
-        buf_size,
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims));
+    TEST_ASSERT_EQUAL(buf_size,
+                      muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(
+                          &dw_conv_params, &input_dims, &filter_dims, &output_dims));
 
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_depthwise_conv_wrapper_s16(&ctx,
-                                            &dw_conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                                   &dw_conv_params,
+                                                   &quant_params,
+                                                   &input_dims,
+                                                   input_data,
+                                                   &filter_dims,
+                                                   kernel_data,
+                                                   &bias_dims,
+                                                   bias_data,
+                                                   &output_dims,
+                                                   output);
 
     if (ctx.buf)
     {
@@ -571,16 +571,16 @@ void dw_int16xint8_fast_spill_null_bias_muriscv_nn_depthwise_conv_fast_s16(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_fast_s16(&ctx,
-                                                             &dw_conv_params,
-                                                             &quant_params,
-                                                             &input_dims,
-                                                             input_data,
-                                                             &filter_dims,
-                                                             kernel_data,
-                                                             &bias_dims,
-                                                             bias_data,
-                                                             &output_dims,
-                                                             output);
+                                                                  &dw_conv_params,
+                                                                  &quant_params,
+                                                                  &input_dims,
+                                                                  input_data,
+                                                                  &filter_dims,
+                                                                  kernel_data,
+                                                                  &bias_dims,
+                                                                  bias_data,
+                                                                  &output_dims,
+                                                                  output);
 
     if (ctx.buf)
     {
@@ -591,23 +591,23 @@ void dw_int16xint8_fast_spill_null_bias_muriscv_nn_depthwise_conv_fast_s16(void)
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
     memset(output, 0, sizeof(output));
 
-    TEST_ASSERT_EQUAL(
-        buf_size,
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims));
+    TEST_ASSERT_EQUAL(buf_size,
+                      muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(
+                          &dw_conv_params, &input_dims, &filter_dims, &output_dims));
 
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_depthwise_conv_wrapper_s16(&ctx,
-                                            &dw_conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                                   &dw_conv_params,
+                                                   &quant_params,
+                                                   &input_dims,
+                                                   input_data,
+                                                   &filter_dims,
+                                                   kernel_data,
+                                                   &bias_dims,
+                                                   bias_data,
+                                                   &output_dims,
+                                                   output);
 
     if (ctx.buf)
     {
@@ -668,16 +668,16 @@ void dw_int16xint8_fast_test_bias_muriscv_nn_depthwise_conv_fast_s16(void)
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_fast_s16(&ctx,
-                                                             &dw_conv_params,
-                                                             &quant_params,
-                                                             &input_dims,
-                                                             input_data,
-                                                             &filter_dims,
-                                                             kernel_data,
-                                                             &bias_dims,
-                                                             bias_data,
-                                                             &output_dims,
-                                                             output);
+                                                                  &dw_conv_params,
+                                                                  &quant_params,
+                                                                  &input_dims,
+                                                                  input_data,
+                                                                  &filter_dims,
+                                                                  kernel_data,
+                                                                  &bias_dims,
+                                                                  bias_data,
+                                                                  &output_dims,
+                                                                  output);
 
     if (ctx.buf)
     {
@@ -688,23 +688,23 @@ void dw_int16xint8_fast_test_bias_muriscv_nn_depthwise_conv_fast_s16(void)
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
     memset(output, 0, sizeof(output));
 
-    TEST_ASSERT_EQUAL(
-        buf_size,
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims));
+    TEST_ASSERT_EQUAL(buf_size,
+                      muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(
+                          &dw_conv_params, &input_dims, &filter_dims, &output_dims));
 
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_depthwise_conv_wrapper_s16(&ctx,
-                                            &dw_conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                                   &dw_conv_params,
+                                                   &quant_params,
+                                                   &input_dims,
+                                                   input_data,
+                                                   &filter_dims,
+                                                   kernel_data,
+                                                   &bias_dims,
+                                                   bias_data,
+                                                   &output_dims,
+                                                   output);
 
     if (ctx.buf)
     {
@@ -765,16 +765,16 @@ void dw_int16xint8_fast_multiple_batches_uneven_buffers_muriscv_nn_depthwise_con
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_fast_s16(&ctx,
-                                                             &dw_conv_params,
-                                                             &quant_params,
-                                                             &input_dims,
-                                                             input_data,
-                                                             &filter_dims,
-                                                             kernel_data,
-                                                             &bias_dims,
-                                                             bias_data,
-                                                             &output_dims,
-                                                             output);
+                                                                  &dw_conv_params,
+                                                                  &quant_params,
+                                                                  &input_dims,
+                                                                  input_data,
+                                                                  &filter_dims,
+                                                                  kernel_data,
+                                                                  &bias_dims,
+                                                                  bias_data,
+                                                                  &output_dims,
+                                                                  output);
 
     if (ctx.buf)
     {
@@ -785,23 +785,23 @@ void dw_int16xint8_fast_multiple_batches_uneven_buffers_muriscv_nn_depthwise_con
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
     memset(output, 0, sizeof(output));
 
-    TEST_ASSERT_EQUAL(
-        buf_size,
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims));
+    TEST_ASSERT_EQUAL(buf_size,
+                      muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(
+                          &dw_conv_params, &input_dims, &filter_dims, &output_dims));
 
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_depthwise_conv_wrapper_s16(&ctx,
-                                            &dw_conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                                   &dw_conv_params,
+                                                   &quant_params,
+                                                   &input_dims,
+                                                   input_data,
+                                                   &filter_dims,
+                                                   kernel_data,
+                                                   &bias_dims,
+                                                   bias_data,
+                                                   &output_dims,
+                                                   output);
 
     if (ctx.buf)
     {
@@ -863,16 +863,16 @@ void dw_int16xint8_fast_multiple_batches_uneven_buffers_null_bias_muriscv_nn_dep
     ctx.buf = malloc(buf_size);
 
     muriscv_nn_status result = muriscv_nn_depthwise_conv_fast_s16(&ctx,
-                                                             &dw_conv_params,
-                                                             &quant_params,
-                                                             &input_dims,
-                                                             input_data,
-                                                             &filter_dims,
-                                                             kernel_data,
-                                                             &bias_dims,
-                                                             bias_data,
-                                                             &output_dims,
-                                                             output);
+                                                                  &dw_conv_params,
+                                                                  &quant_params,
+                                                                  &input_dims,
+                                                                  input_data,
+                                                                  &filter_dims,
+                                                                  kernel_data,
+                                                                  &bias_dims,
+                                                                  bias_data,
+                                                                  &output_dims,
+                                                                  output);
 
     if (ctx.buf)
     {
@@ -883,23 +883,23 @@ void dw_int16xint8_fast_multiple_batches_uneven_buffers_null_bias_muriscv_nn_dep
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
     memset(output, 0, sizeof(output));
 
-    TEST_ASSERT_EQUAL(
-        buf_size,
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims));
+    TEST_ASSERT_EQUAL(buf_size,
+                      muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(
+                          &dw_conv_params, &input_dims, &filter_dims, &output_dims));
 
     ctx.buf = malloc(buf_size);
 
     result = muriscv_nn_depthwise_conv_wrapper_s16(&ctx,
-                                            &dw_conv_params,
-                                            &quant_params,
-                                            &input_dims,
-                                            input_data,
-                                            &filter_dims,
-                                            kernel_data,
-                                            &bias_dims,
-                                            bias_data,
-                                            &output_dims,
-                                            output);
+                                                   &dw_conv_params,
+                                                   &quant_params,
+                                                   &input_dims,
+                                                   input_data,
+                                                   &filter_dims,
+                                                   kernel_data,
+                                                   &bias_dims,
+                                                   bias_data,
+                                                   &output_dims,
+                                                   output);
 
     if (ctx.buf)
     {
@@ -978,8 +978,8 @@ void buffer_size_mve_muriscv_nn_depthwise_conv_fast_s16(void)
 
     const int32_t wrapper_buf_size =
         muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
-    const int32_t mve_wrapper_buf_size =
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size_mve(&conv_params, &input_dims, &filter_dims, &output_dims);
+    const int32_t mve_wrapper_buf_size = muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size_mve(
+        &conv_params, &input_dims, &filter_dims, &output_dims);
 
     TEST_ASSERT_EQUAL(wrapper_buf_size, mve_wrapper_buf_size);
 #endif
@@ -1019,8 +1019,8 @@ void buffer_size_dsp_muriscv_nn_depthwise_conv_fast_s16(void)
 
     const int32_t wrapper_buf_size =
         muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(&conv_params, &input_dims, &filter_dims, &output_dims);
-    const int32_t dsp_wrapper_buf_size =
-        muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size_dsp(&conv_params, &input_dims, &filter_dims, &output_dims);
+    const int32_t dsp_wrapper_buf_size = muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size_dsp(
+        &conv_params, &input_dims, &filter_dims, &output_dims);
 
     TEST_ASSERT_EQUAL(wrapper_buf_size, dsp_wrapper_buf_size);
 #endif

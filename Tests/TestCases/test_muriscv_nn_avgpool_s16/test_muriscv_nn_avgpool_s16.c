@@ -236,7 +236,8 @@ void avgpooling_int16_3_muriscv_nn_avgpool_s16(void)
 void buffer_size_mve_muriscv_nn_avgpool_s16(void)
 {
 #if defined(USE_VEXT)
-    const int32_t buf_size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
+    const int32_t buf_size =
+        muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
     const int32_t mve_buf_size =
         muriscv_nn_avgpool_s16_get_buffer_size_mve(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
 
@@ -247,7 +248,8 @@ void buffer_size_mve_muriscv_nn_avgpool_s16(void)
 void buffer_size_dsp_muriscv_nn_avgpool_s16(void)
 {
 #if defined(USE_PEXT) && !defined(USE_VEXT)
-    const int32_t buf_size = muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
+    const int32_t buf_size =
+        muriscv_nn_avgpool_s16_get_buffer_size(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
     const int32_t dsp_buf_size =
         muriscv_nn_avgpool_s16_get_buffer_size_dsp(AVGPOOLING_INT16_3_OUTPUT_W, AVGPOOLING_INT16_3_INPUT_C);
 
@@ -300,7 +302,6 @@ void avgpooling_int16_param_fail_muriscv_nn_avgpool_s16(void)
     }
     TEST_ASSERT_EQUAL(expected, result);
 }
-
 
 int main(void)
 {

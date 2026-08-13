@@ -84,16 +84,16 @@ void kernel1x1_muriscv_nn_convolve_1x1_s8_fast(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_convolve_1x1_s8_fast(&ctx,
-                                                          &conv_params,
-                                                          &quant_params,
-                                                          &input_dims,
-                                                          input_data,
-                                                          &filter_dims,
-                                                          kernel1x1_weights,
-                                                          &bias_dims,
-                                                          bias_data,
-                                                          &output_dims,
-                                                          output);
+                                                               &conv_params,
+                                                               &quant_params,
+                                                               &input_dims,
+                                                               input_data,
+                                                               &filter_dims,
+                                                               kernel1x1_weights,
+                                                               &bias_dims,
+                                                               bias_data,
+                                                               &output_dims,
+                                                               output);
 
     if (ctx.buf)
     {
@@ -158,16 +158,16 @@ void kernel1x1_stride_x_muriscv_nn_convolve_1x1_s8(void)
     ctx.size = 0;
 
     muriscv_nn_status result = muriscv_nn_convolve_1x1_s8_fast(&ctx,
-                                                          &conv_params,
-                                                          &quant_params,
-                                                          &input_dims,
-                                                          input_data,
-                                                          &filter_dims,
-                                                          kernel1x1_stride_x_weights,
-                                                          &bias_dims,
-                                                          bias_data,
-                                                          &output_dims,
-                                                          output);
+                                                               &conv_params,
+                                                               &quant_params,
+                                                               &input_dims,
+                                                               input_data,
+                                                               &filter_dims,
+                                                               kernel1x1_stride_x_weights,
+                                                               &bias_dims,
+                                                               bias_data,
+                                                               &output_dims,
+                                                               output);
 
     if (ctx.buf)
     {
@@ -178,16 +178,16 @@ void kernel1x1_stride_x_muriscv_nn_convolve_1x1_s8(void)
     TEST_ASSERT_EQUAL(MURISCV_NN_ARG_ERROR, result);
 
     result = muriscv_nn_convolve_1x1_s8(&ctx,
-                                 &conv_params,
-                                 &quant_params,
-                                 &input_dims,
-                                 input_data,
-                                 &filter_dims,
-                                 kernel1x1_stride_x_weights,
-                                 &bias_dims,
-                                 bias_data,
-                                 &output_dims,
-                                 output);
+                                        &conv_params,
+                                        &quant_params,
+                                        &input_dims,
+                                        input_data,
+                                        &filter_dims,
+                                        kernel1x1_stride_x_weights,
+                                        &bias_dims,
+                                        bias_data,
+                                        &output_dims,
+                                        output);
     TEST_ASSERT_EQUAL(expected, result);
 
     TEST_ASSERT_TRUE(validate(output, kernel1x1_stride_x_output_ref, KERNEL1X1_STRIDE_X_DST_SIZE));
@@ -247,16 +247,16 @@ void kernel1x1_stride_x_y_muriscv_nn_convolve_1x1_s8(void)
     ctx.size = buf_size;
 
     muriscv_nn_status result = muriscv_nn_convolve_wrapper_s8(&ctx,
-                                                         &conv_params,
-                                                         &quant_params,
-                                                         &input_dims,
-                                                         input_data,
-                                                         &filter_dims,
-                                                         kernel1x1_stride_x_y_weights,
-                                                         &bias_dims,
-                                                         bias_data,
-                                                         &output_dims,
-                                                         output);
+                                                              &conv_params,
+                                                              &quant_params,
+                                                              &input_dims,
+                                                              input_data,
+                                                              &filter_dims,
+                                                              kernel1x1_stride_x_y_weights,
+                                                              &bias_dims,
+                                                              bias_data,
+                                                              &output_dims,
+                                                              output);
     TEST_ASSERT_TRUE(validate(output, kernel1x1_stride_x_y_output_ref, KERNEL1X1_STRIDE_X_Y_DST_SIZE));
 
     if (ctx.buf)
@@ -269,16 +269,16 @@ void kernel1x1_stride_x_y_muriscv_nn_convolve_1x1_s8(void)
     memset(output, 0, sizeof(output));
 
     result = muriscv_nn_convolve_1x1_s8(&ctx,
-                                 &conv_params,
-                                 &quant_params,
-                                 &input_dims,
-                                 input_data,
-                                 &filter_dims,
-                                 kernel1x1_stride_x_y_weights,
-                                 &bias_dims,
-                                 bias_data,
-                                 &output_dims,
-                                 output);
+                                        &conv_params,
+                                        &quant_params,
+                                        &input_dims,
+                                        input_data,
+                                        &filter_dims,
+                                        kernel1x1_stride_x_y_weights,
+                                        &bias_dims,
+                                        bias_data,
+                                        &output_dims,
+                                        output);
     TEST_ASSERT_EQUAL(expected, result);
 
     TEST_ASSERT_TRUE(validate(output, kernel1x1_stride_x_y_output_ref, KERNEL1X1_STRIDE_X_Y_DST_SIZE));
@@ -336,16 +336,16 @@ void kernel1x1_stride_x_y_1_muriscv_nn_convolve_1x1_s8(void)
     ctx.buf = NULL;
 
     muriscv_nn_status result = muriscv_nn_convolve_1x1_s8(&ctx,
-                                                     &conv_params,
-                                                     &quant_params,
-                                                     &input_dims,
-                                                     input_data,
-                                                     &filter_dims,
-                                                     kernel1x1_stride_x_y_1_weights,
-                                                     &bias_dims,
-                                                     bias_data,
-                                                     &output_dims,
-                                                     output);
+                                                          &conv_params,
+                                                          &quant_params,
+                                                          &input_dims,
+                                                          input_data,
+                                                          &filter_dims,
+                                                          kernel1x1_stride_x_y_1_weights,
+                                                          &bias_dims,
+                                                          bias_data,
+                                                          &output_dims,
+                                                          output);
     TEST_ASSERT_EQUAL(expected, result);
 
     TEST_ASSERT_TRUE(validate(output, kernel1x1_stride_x_y_1_output_ref, KERNEL1X1_STRIDE_X_Y_1_DST_SIZE));
@@ -403,16 +403,16 @@ void kernel1x1_stride_x_y_2_muriscv_nn_convolve_1x1_s8(void)
     ctx.buf = NULL;
 
     muriscv_nn_status result = muriscv_nn_convolve_1x1_s8(&ctx,
-                                                     &conv_params,
-                                                     &quant_params,
-                                                     &input_dims,
-                                                     input_data,
-                                                     &filter_dims,
-                                                     kernel1x1_stride_x_y_2_weights,
-                                                     &bias_dims,
-                                                     bias_data,
-                                                     &output_dims,
-                                                     output);
+                                                          &conv_params,
+                                                          &quant_params,
+                                                          &input_dims,
+                                                          input_data,
+                                                          &filter_dims,
+                                                          kernel1x1_stride_x_y_2_weights,
+                                                          &bias_dims,
+                                                          bias_data,
+                                                          &output_dims,
+                                                          output);
     TEST_ASSERT_EQUAL(expected, result);
 
     TEST_ASSERT_TRUE(validate(output, kernel1x1_stride_x_y_2_output_ref, KERNEL1X1_STRIDE_X_Y_2_DST_SIZE));

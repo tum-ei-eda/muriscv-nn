@@ -32,7 +32,6 @@ void setUp(void) { /* set stuff up here */ }
 
 void tearDown(void) { /* clean stuff up here */ }
 
-
 void maxpool_int16_muriscv_nn_max_pool_s16(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
@@ -205,7 +204,6 @@ void maxpool_int16_param_fail_muriscv_nn_max_pool_s16(void)
 
     TEST_ASSERT_EQUAL(expected, result);
 }
-
 
 int main(void)
 {
