@@ -29,6 +29,15 @@
 #include "muriscv_nn_functions.h"
 #include "muriscv_nn_support_functions.h"
 
+#include <stdio.h>
+#include <stdint.h>
+#ifdef USE_COREV
+#include "corev_utils.h"
+#endif // USE_COREV
+#ifdef USE_MNN
+#include "mnn_utils.h"
+#endif // USE_MNN
+
 /**
  * @ingroup groupSupport
  */
@@ -621,6 +630,284 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         for (int k = 0; k < rhs_cols % 4; k++)
         {
             q31_t lhs_value = *lhs_ptr + lhs_offset;
+
+            q31_t rhs_value = *rhs_ptr_0;
+            acc_0 += lhs_value * rhs_value;
+
+            ++rhs_ptr_0;
+            ++lhs_ptr;
+        }
+        // Quantize down
+        acc_0 = muriscv_nn_requantize(acc_0, dst_multiplier, dst_shift);
+
+        // Add offset
+        acc_0 += dst_offset;
+
+        // Clamp result
+        acc_0 = MAX(acc_0, activation_min);
+        acc_0 = MIN(acc_0, activation_max);
+
+        // Store back
+        *dst = (int8_t)acc_0;
+
+        // Bump pointer
+        dst += address_offset;
+        rhs += rhs_cols;
+    }
+
+#elif defined(USE_COREV) || defined(USE_MNN)
+
+#ifdef NO_KERNEL_SUM
+    const uint32_t lhs_offset_s16x2 = (__builtin_riscv_cv_pack(lhs_offset, lhs_offset));
+#endif // NO_KERNEL_SUM
+    const int32_t row_loop_cnt = rhs_rows >> 2;
+
+    for (int32_t i = 0; i < row_loop_cnt; i++)
+    {
+
+#ifdef NO_KERNEL_SUM
+        int32_t acc_0 = 0;
+        int32_t acc_1 = 0;
+        int32_t acc_2 = 0;
+        int32_t acc_3 = 0;
+
+        if (bias)
+        {
+            acc_0 = *bias++;
+            acc_1 = *bias++;
+            acc_2 = *bias++;
+            acc_3 = *bias++;
+        }
+#else
+        int32_t acc_0 = *kernel_sum++;
+        int32_t acc_1 = *kernel_sum++;
+        int32_t acc_2 = *kernel_sum++;
+        int32_t acc_3 = *kernel_sum++;
+#endif // NO_KERNEL_SUM
+
+        const int32_t col_loop_cnt = rhs_cols >> 2;
+
+        const int8_t *lhs_ptr = lhs;
+
+        const int8_t *rhs_ptr_0 = rhs;
+        const int8_t *rhs_ptr_1 = rhs + rhs_cols;
+        const int8_t *rhs_ptr_2 = rhs_ptr_1 + rhs_cols;
+        const int8_t *rhs_ptr_3 = rhs_ptr_2 + rhs_cols;
+
+        rhs += 4 * rhs_cols;
+
+        for (int j = col_loop_cnt; j != 0; j--)
+        {
+            q31_t rhs_val_0, rhs_val_1, rhs_val_2, rhs_val_3;
+
+#ifdef NO_KERNEL_SUM
+            int32_t lhs_32 = __rv_sunpkd832(lhs_packed);
+            int32_t lhs_10 = __rv_sunpkd810(lhs_packed);
+            int32_t lhs_32 = __builtin_riscv_mnn_exths_b32(lhs_packed);
+            int32_t lhs_10 = __builtin_riscv_mnn_exths_b10(lhs_packed);
+            lhs_32 = __rv_add16(lhs_32, lhs_offset_s16x2);
+            lhs_10 = __rv_add16(lhs_10, lhs_offset_s16x2);
+            lhs_32 = __builtin_riscv_cv_add_h(lhs_32, lhs_offset_s16x2);
+            lhs_10 = __builtin_riscv_cv_add_h(lhs_10, lhs_offset_s16x2);
+#else
+            int32_t lhs_packed = *(int32_t *)lhs_ptr;
+#endif // NO_KERNEL_SUM
+
+            /* Accumulate first rhs row */
+#ifdef NO_KERNEL_SUM
+            int32_t rhs_32 = __rv_sunpkd832(rhs_packed);
+            int32_t rhs_10 = __rv_sunpkd810(rhs_packed);
+            int32_t rhs_32 = __builtin_riscv_mnn_exths_b32(rhs_packed);
+            int32_t rhs_10 = __builtin_riscv_mnn_exths_b10(rhs_packed);
+
+            acc_0 = __rv_kmada(acc_0, rhs_32, lhs_32);
+            acc_0 = __rv_kmada(acc_0, rhs_10, lhs_10);
+            acc_0 = __builtin_riscv_cv_sdotsp_h(rhs_32, lhs_32, acc_0);
+            acc_0 = __builtin_riscv_cv_sdotsp_h(rhs_10, lhs_10, acc_0);
+#else
+            int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
+            acc_0 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_0);
+#endif // NO_KERNEL_SUM
+
+            /* Accumulate second rhs row */
+#ifdef NO_KERNEL_SUM
+            rhs_32 = __rv_sunpkd832(rhs_packed);
+            rhs_10 = __rv_sunpkd810(rhs_packed);
+            rhs_32 = __builtin_riscv_mnn_exths_b32(rhs_packed);
+            rhs_10 = __builtin_riscv_mnn_exths_b10(rhs_packed);
+
+            acc_1 = __rv_kmada(acc_1, rhs_32, lhs_32);
+            acc_1 = __rv_kmada(acc_1, rhs_10, lhs_10);
+            acc_1 = __builtin_riscv_cv_sdotsp_h(rhs_32, lhs_32, acc_1);
+            acc_1 = __builtin_riscv_cv_sdotsp_h(rhs_10, lhs_10, acc_1);
+#else
+            rhs_packed = *(int32_t *)rhs_ptr_1;
+            acc_1 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_1);
+#endif // NO_KERNEL_SUM
+
+            /* Accumulate third rhs row */
+#ifdef NO_KERNEL_SUM
+            rhs_32 = __rv_sunpkd832(rhs_packed);
+            rhs_10 = __rv_sunpkd810(rhs_packed);
+            rhs_32 = __builtin_riscv_mnn_exths_b32(rhs_packed);
+            rhs_10 = __builtin_riscv_mnn_exths_b10(rhs_packed);
+
+            acc_2 = __rv_kmada(acc_2, rhs_32, lhs_32);
+            acc_2 = __rv_kmada(acc_2, rhs_10, lhs_10);
+            acc_2 = __builtin_riscv_cv_sdotsp_h(rhs_32, lhs_32, acc_2);
+            acc_2 = __builtin_riscv_cv_sdotsp_h(rhs_10, lhs_10, acc_2);
+#else
+            rhs_packed = *(int32_t *)rhs_ptr_2;
+            acc_2 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_2);
+#endif // NO_KERNEL_SUM
+
+            /* Accumulate fourth rhs row */
+#ifdef NO_KERNEL_SUM
+            rhs_32 = __rv_sunpkd832(rhs_packed);
+            rhs_10 = __rv_sunpkd810(rhs_packed);
+            rhs_32 = __builtin_riscv_mnn_exths_b32(rhs_packed);
+            rhs_10 = __builtin_riscv_mnn_exths_b10(rhs_packed);
+
+            acc_3 = __rv_kmada(acc_3, rhs_32, lhs_32);
+            acc_3 = __rv_kmada(acc_3, rhs_10, lhs_10);
+            acc_3 = __builtin_riscv_cv_sdotsp_h(rhs_32, lhs_32, acc_3);
+            acc_3 = __builtin_riscv_cv_sdotsp_h(rhs_10, lhs_10, acc_3);
+#else
+            rhs_packed = *(int32_t *)rhs_ptr_3;
+            acc_3 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_3);
+#endif // NO_KERNEL_SUM
+
+            rhs_ptr_0 += 4;
+            rhs_ptr_1 += 4;
+            rhs_ptr_2 += 4;
+            rhs_ptr_3 += 4;
+
+            lhs_ptr += 4;
+        }
+
+        for (int k = 0; k < rhs_cols % 4; k++)
+        {
+#ifdef NO_KERNEL_SUM
+            q31_t lhs_value = *lhs_ptr + lhs_offset;
+#else
+            q31_t lhs_value = *lhs_ptr;
+#endif // NO_KERNEL_SUM
+
+            q31_t rhs_value = *rhs_ptr_0;
+            acc_0 += lhs_value * rhs_value;
+
+            rhs_value = *rhs_ptr_1;
+            acc_1 += lhs_value * rhs_value;
+
+            rhs_value = *rhs_ptr_2;
+            acc_2 += lhs_value * rhs_value;
+
+            rhs_value = *rhs_ptr_3;
+            acc_3 += lhs_value * rhs_value;
+
+            ++rhs_ptr_0;
+            ++rhs_ptr_1;
+            ++rhs_ptr_2;
+            ++rhs_ptr_3;
+
+            ++lhs_ptr;
+        }
+
+        // Quantize down
+        acc_0 = muriscv_nn_requantize(acc_0, dst_multiplier, dst_shift);
+        acc_1 = muriscv_nn_requantize(acc_1, dst_multiplier, dst_shift);
+        acc_2 = muriscv_nn_requantize(acc_2, dst_multiplier, dst_shift);
+        acc_3 = muriscv_nn_requantize(acc_3, dst_multiplier, dst_shift);
+
+        // Add offset
+        acc_0 += dst_offset;
+        acc_1 += dst_offset;
+        acc_2 += dst_offset;
+        acc_3 += dst_offset;
+
+        // Clamp result
+        acc_0 = MAX(acc_0, activation_min);
+        acc_0 = MIN(acc_0, activation_max);
+        acc_1 = MAX(acc_1, activation_min);
+        acc_1 = MIN(acc_1, activation_max);
+        acc_2 = MAX(acc_2, activation_min);
+        acc_2 = MIN(acc_2, activation_max);
+        acc_3 = MAX(acc_3, activation_min);
+        acc_3 = MIN(acc_3, activation_max);
+
+        // Store back
+        *dst = (int8_t)acc_0;
+        *(dst + address_offset) = (int8_t)acc_1;
+        *(dst + 2 * address_offset) = (int8_t)acc_2;
+        *(dst + 3 * address_offset) = (int8_t)acc_3;
+
+        dst += 4 * address_offset;
+    }
+    for (int i = 0; i < rhs_rows % 4; i++)
+    {
+#ifdef NO_KERNEL_SUM
+        int32_t acc_0 = 0;
+        if (bias)
+        {
+            acc_0 = *bias++;
+        }
+#else
+        int32_t acc_0 = *kernel_sum++;
+#endif // NO_KERNEL_SUM
+
+        const int32_t col_loop_cnt = rhs_cols / 4;
+        // const int32_t col_loop_cnt = rhs_cols;
+
+        const int8_t *lhs_ptr = lhs;
+        const int8_t *rhs_ptr_0 = rhs;
+
+        // TODO(fabianpedd): Why is the compiler soo dumb?!
+        // This 'for (int j = 0; j < col_loop_cnt; j++)'
+        // adds a couple of instructions compared to the zero
+        // comparison currently used.
+        for (int j = col_loop_cnt; j != 0; j--)
+        {
+            q31_t rhs_val_0, rhs_val_1, rhs_val_2, rhs_val_3;
+
+            // int32_t lhs_packed = *(int32_t *)lhs_ptr;
+            // lhs_packed = __rv_add8(lhs_offset_s8x4, lhs_packed);
+
+            q31_t lhs_val_0 = (*lhs_ptr++);
+            q31_t lhs_val_1 = (*lhs_ptr++);
+            q31_t lhs_val_2 = (*lhs_ptr++);
+            q31_t lhs_val_3 = (*lhs_ptr++);
+#ifdef NO_KERNEL_SUM
+            lhs_val_0 += lhs_offset;
+            lhs_val_1 += lhs_offset;
+            lhs_val_2 += lhs_offset;
+            lhs_val_3 += lhs_offset;
+#endif // NO_KERNEL_SUM
+
+            // dont think i can use smaqa here, unsure how this worked before...  Possibly undefined behavior in
+            // simulators
+            /* Accumulate first rhs row */
+            // int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
+            // acc_0 = __rv_smaqa_su(acc_0, rhs_packed, lhs_packed);
+
+            rhs_val_0 = *rhs_ptr_0++;
+            rhs_val_1 = *rhs_ptr_0++;
+            rhs_val_2 = *rhs_ptr_0++;
+            rhs_val_3 = *rhs_ptr_0++;
+            acc_0 =
+                acc_0 + lhs_val_0 * rhs_val_0 + lhs_val_1 * rhs_val_1 + lhs_val_2 * rhs_val_2 + lhs_val_3 * rhs_val_3;
+
+            // rhs_ptr_0 += 4;
+            // lhs_ptr += 4;
+        }
+
+        // for (int k = 0; k < rhs_cols; k++)
+        for (int k = 0; k < rhs_cols % 4; k++)
+        {
+#ifdef NO_KERNEL_SUM
+            q31_t lhs_value = *lhs_ptr + lhs_offset;
+#else
+            q31_t lhs_value = *lhs_ptr;
+#endif // NO_KERNEL_SUM
 
             q31_t rhs_value = *rhs_ptr_0;
             acc_0 += lhs_value * rhs_value;

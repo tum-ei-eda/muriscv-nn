@@ -49,7 +49,7 @@ jobs:
       - name: Run Minimal Smoke Tests
         working-directory: ./Scripts
         run: |
-          ./Scripts/smoke_tests.sh
+          ./smoke_tests.sh
   Test_RISCV:
     runs-on: ubuntu-22.04
     strategy:

@@ -29,6 +29,8 @@
  *
  * -------------------------------------------------------------------- */
 
+#include <stdio.h>
+
 #include "muriscv_nn_functions.h"
 
 /**
@@ -40,10 +42,21 @@
  * @{
  */
 
+int32_t muriscv_nn_fully_connected_s8_get_buffer_size_default(const muriscv_nn_dims *filter_dims)
+{
+    (void)filter_dims;
+    return 0;
+}
+
 int32_t muriscv_nn_fully_connected_s8_get_buffer_size_dsp(const muriscv_nn_dims *filter_dims)
 {
     (void)filter_dims;
     return 0;
+}
+
+int32_t muriscv_nn_fully_connected_s8_get_buffer_size_corev(const muriscv_nn_dims *filter_dims)
+{
+    return filter_dims->c * sizeof(int32_t);
 }
 
 int32_t muriscv_nn_fully_connected_s8_get_buffer_size_mve(const muriscv_nn_dims *filter_dims)
@@ -55,8 +68,12 @@ int32_t muriscv_nn_fully_connected_s8_get_buffer_size(const muriscv_nn_dims *fil
 {
 #if defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     return muriscv_nn_fully_connected_s8_get_buffer_size_mve(filter_dims);
-#else
+#elif defined(USE_PEXT)
     return muriscv_nn_fully_connected_s8_get_buffer_size_dsp(filter_dims);
+#elif defined(USE_COREV) || defined(USE_MNN)
+    return muriscv_nn_fully_connected_s8_get_buffer_size_corev(filter_dims);
+#else
+    return muriscv_nn_fully_connected_s8_get_buffer_size_default(filter_dims);
 #endif
 }
 

@@ -173,6 +173,9 @@ extern "C" {
 #if defined(USE_PEXT)
 #define MAX_RV(A, B) __rv_max(A, B)
 #define MIN_RV(A, B) __rv_min(A, B)
+#elif defined(USE_COREV)
+#define MAX_RV(A, B) __builtin_riscv_cv_alu_max(A, B)
+#define MIN_RV(A, B) __builtin_riscv_cv_alu_min(A, B)
 #else
 #define MAX_RV(A, B) ((A) > (B) ? (A) : (B))
 #define MIN_RV(A, B) ((A) < (B) ? (A) : (B))
@@ -235,6 +238,12 @@ extern "C" {
 #if defined(USE_PEXT)
 #define PACK_Q7x4_32x1(v0, v1, v2, v3)                                                                                 \
     ((__rv_packu((uint8_t)(v0), (uint8_t)(v2))) | ((__rv_packu((uint8_t)(v1), (uint8_t)(v3))) << 8))
+#elif defined(USE_COREV)
+#define PACK_Q7x4_32x1(v0, v1, v2, v3)                                                                                 \
+    __builtin_riscv_cv_simd_packhi_b(                                                                                  \
+        (uint32_t)(uint8_t)(v3),                                                                                       \
+        (uint32_t)(uint8_t)(v2),                                                                                       \
+        __builtin_riscv_cv_simd_packlo_b((uint32_t)(uint8_t)(v1), (uint32_t)(uint8_t)(v0), 0u))
 #else
 #define PACK_Q7x4_32x1(v0, v1, v2, v3)                                                                                 \
     ((((int32_t)(v0) << 0) & (int32_t)0x000000FF) | (((int32_t)(v1) << 8) & (int32_t)0x0000FF00) |                     \
