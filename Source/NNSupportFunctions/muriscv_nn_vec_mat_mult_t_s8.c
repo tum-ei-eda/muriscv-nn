@@ -29,16 +29,14 @@
 #include "muriscv_nn_functions.h"
 #include "muriscv_nn_support_functions.h"
 
-
 #include <stdio.h>
 #include <stdint.h>
 #ifdef USE_COREV
 #include "corev_utils.h"
-#endif  // USE_COREV
+#endif // USE_COREV
 #ifdef USE_MNN
 #include "mnn_utils.h"
-#endif  // USE_MNN
-
+#endif // USE_MNN
 
 /**
  * @ingroup groupSupport
@@ -541,7 +539,6 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             rhs_value = *rhs_ptr_3;
             acc_3 += lhs_value * rhs_value;
 
-
             ++rhs_ptr_0;
             ++rhs_ptr_1;
             ++rhs_ptr_2;
@@ -580,7 +577,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 
         dst += 4 * address_offset;
     }
-    for(int i = 0; i < rhs_rows % 4; i++)
+    for (int i = 0; i < rhs_rows % 4; i++)
     {
         int32_t acc_0 = 0;
         if (bias)
@@ -613,7 +610,8 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             q31_t lhs_val_3 = (*lhs_ptr++);
             lhs_val_3 += lhs_offset;
 
-            // dont think i can use smaqa here, unsure how this worked before...  Possibly undefined behavior in simulators
+            // dont think i can use smaqa here, unsure how this worked before...  Possibly undefined behavior in
+            // simulators
             /* Accumulate first rhs row */
             // int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
             // acc_0 = __rv_smaqa_su(acc_0, rhs_packed, lhs_packed);
@@ -622,7 +620,8 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             rhs_val_1 = *rhs_ptr_0++;
             rhs_val_2 = *rhs_ptr_0++;
             rhs_val_3 = *rhs_ptr_0++;
-            acc_0 = acc_0 + lhs_val_0*rhs_val_0 + lhs_val_1*rhs_val_1 + lhs_val_2*rhs_val_2 + lhs_val_3*rhs_val_3;
+            acc_0 =
+                acc_0 + lhs_val_0 * rhs_val_0 + lhs_val_1 * rhs_val_1 + lhs_val_2 * rhs_val_2 + lhs_val_3 * rhs_val_3;
 
             // rhs_ptr_0 += 4;
             // lhs_ptr += 4;
@@ -660,7 +659,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 
 #ifdef NO_KERNEL_SUM
     const uint32_t lhs_offset_s16x2 = (__builtin_riscv_cv_pack(lhs_offset, lhs_offset));
-#endif  // NO_KERNEL_SUM
+#endif // NO_KERNEL_SUM
     const int32_t row_loop_cnt = rhs_rows >> 2;
 
     for (int32_t i = 0; i < row_loop_cnt; i++)
@@ -684,7 +683,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         int32_t acc_1 = *kernel_sum++;
         int32_t acc_2 = *kernel_sum++;
         int32_t acc_3 = *kernel_sum++;
-#endif  // NO_KERNEL_SUM
+#endif // NO_KERNEL_SUM
 
         const int32_t col_loop_cnt = rhs_cols >> 2;
 
@@ -696,7 +695,6 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         const int8_t *rhs_ptr_3 = rhs_ptr_2 + rhs_cols;
 
         rhs += 4 * rhs_cols;
-
 
         for (int j = col_loop_cnt; j != 0; j--)
         {
@@ -713,7 +711,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             lhs_10 = __builtin_riscv_cv_add_h(lhs_10, lhs_offset_s16x2);
 #else
             int32_t lhs_packed = *(int32_t *)lhs_ptr;
-#endif  // NO_KERNEL_SUM
+#endif // NO_KERNEL_SUM
 
             /* Accumulate first rhs row */
 #ifdef NO_KERNEL_SUM
@@ -729,8 +727,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 #else
             int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
             acc_0 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_0);
-#endif  // NO_KERNEL_SUM
-
+#endif // NO_KERNEL_SUM
 
             /* Accumulate second rhs row */
 #ifdef NO_KERNEL_SUM
@@ -746,7 +743,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 #else
             rhs_packed = *(int32_t *)rhs_ptr_1;
             acc_1 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_1);
-#endif  // NO_KERNEL_SUM
+#endif // NO_KERNEL_SUM
 
             /* Accumulate third rhs row */
 #ifdef NO_KERNEL_SUM
@@ -762,7 +759,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 #else
             rhs_packed = *(int32_t *)rhs_ptr_2;
             acc_2 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_2);
-#endif  // NO_KERNEL_SUM
+#endif // NO_KERNEL_SUM
 
             /* Accumulate fourth rhs row */
 #ifdef NO_KERNEL_SUM
@@ -778,8 +775,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 #else
             rhs_packed = *(int32_t *)rhs_ptr_3;
             acc_3 = __builtin_riscv_cv_sdotsp_b(rhs_packed, lhs_packed, acc_3);
-#endif  // NO_KERNEL_SUM
-
+#endif // NO_KERNEL_SUM
 
             rhs_ptr_0 += 4;
             rhs_ptr_1 += 4;
@@ -795,7 +791,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             q31_t lhs_value = *lhs_ptr + lhs_offset;
 #else
             q31_t lhs_value = *lhs_ptr;
-#endif  // NO_KERNEL_SUM
+#endif // NO_KERNEL_SUM
 
             q31_t rhs_value = *rhs_ptr_0;
             acc_0 += lhs_value * rhs_value;
@@ -857,7 +853,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
         }
 #else
         int32_t acc_0 = *kernel_sum++;
-#endif  // NO_KERNEL_SUM
+#endif // NO_KERNEL_SUM
 
         const int32_t col_loop_cnt = rhs_cols / 4;
         // const int32_t col_loop_cnt = rhs_cols;
@@ -885,9 +881,10 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             lhs_val_1 += lhs_offset;
             lhs_val_2 += lhs_offset;
             lhs_val_3 += lhs_offset;
-#endif  // NO_KERNEL_SUM
+#endif // NO_KERNEL_SUM
 
-            // dont think i can use smaqa here, unsure how this worked before...  Possibly undefined behavior in simulators
+            // dont think i can use smaqa here, unsure how this worked before...  Possibly undefined behavior in
+            // simulators
             /* Accumulate first rhs row */
             // int32_t rhs_packed = *(int32_t *)rhs_ptr_0;
             // acc_0 = __rv_smaqa_su(acc_0, rhs_packed, lhs_packed);
@@ -910,7 +907,7 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             q31_t lhs_value = *lhs_ptr + lhs_offset;
 #else
             q31_t lhs_value = *lhs_ptr;
-#endif  // NO_KERNEL_SUM
+#endif // NO_KERNEL_SUM
 
             q31_t rhs_value = *rhs_ptr_0;
             acc_0 += lhs_value * rhs_value;

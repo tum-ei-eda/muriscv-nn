@@ -194,8 +194,7 @@ muriscv_nn_status muriscv_nn_vector_sum_s8(int32_t *vector_sum_buf,
                 vint32m1_t zero = vmv_v_x_i32m1(0, 1);
 
                 /* Sum all lanes */
-                vint32m1_t reduced =
-                    __riscv_vredsum_vs_i32m8_i32m1(v32, zero, vl);
+                vint32m1_t reduced = __riscv_vredsum_vs_i32m8_i32m1(v32, zero, vl);
 
                 /* Add this vector chunk to scalar accumulator */
                 sum += vmv_x_s_i32m1_i32(reduced);

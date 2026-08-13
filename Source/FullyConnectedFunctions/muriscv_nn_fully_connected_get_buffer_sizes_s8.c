@@ -64,7 +64,6 @@ int32_t muriscv_nn_fully_connected_s8_get_buffer_size_mve(const muriscv_nn_dims 
     return filter_dims->c * sizeof(int32_t);
 }
 
-
 int32_t muriscv_nn_fully_connected_s8_get_buffer_size(const muriscv_nn_dims *filter_dims)
 {
 #if defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)

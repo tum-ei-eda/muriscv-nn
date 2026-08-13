@@ -35,14 +35,12 @@ static inline uint32_t __builtin_riscv_cv_pack(uint32_t rs1, uint32_t rs2)
 static inline uint32_t __builtin_riscv_cv_add_h(uint32_t rs1, uint32_t rs2)
 {
     uint32_t lo = ((rs1 & 0xffffu) + (rs2 & 0xffffu)) & 0xffffu;
-    uint32_t hi = (((rs1 >> 16) & 0xffffu) +
-                   ((rs2 >> 16) & 0xffffu)) & 0xffffu;
+    uint32_t hi = (((rs1 >> 16) & 0xffffu) + ((rs2 >> 16) & 0xffffu)) & 0xffffu;
 
     return (hi << 16) | lo;
 }
 
-static inline int32_t __builtin_riscv_cv_sdotsp_h(
-    uint32_t rs1, uint32_t rs2, int32_t acc)
+static inline int32_t __builtin_riscv_cv_sdotsp_h(uint32_t rs1, uint32_t rs2, int32_t acc)
 {
     int32_t a0 = (int16_t)(rs1 & 0xffffu);
     int32_t a1 = (int16_t)(rs1 >> 16);
@@ -56,8 +54,7 @@ static inline int32_t __builtin_riscv_cv_sdotsp_h(
     return (int32_t)result;
 }
 
-static inline int32_t __builtin_riscv_cv_sdotsp_b(
-    uint32_t rs1, uint32_t rs2, int32_t acc)
+static inline int32_t __builtin_riscv_cv_sdotsp_b(uint32_t rs1, uint32_t rs2, int32_t acc)
 {
     int32_t a0 = (int8_t)(rs1);
     int32_t a1 = (int8_t)(rs1 >> 8);
@@ -82,27 +79,23 @@ static inline int32_t __builtin_riscv_cv_sdotsp_b(
 static inline uint32_t __builtin_riscv_cv_pack(uint32_t rs1, uint32_t rs2)
 {
     uint32_t result;
-    asm ("cv.pack %0, %1, %2" : "=r" (result) : "r" (rs1), "r" (rs2) );
+    asm("cv.pack %0, %1, %2" : "=r"(result) : "r"(rs1), "r"(rs2));
     return result;
 }
 static inline uint32_t __builtin_riscv_cv_add_h(uint32_t rs1, uint32_t rs2)
 {
     uint32_t result;
-    asm ("cv.add.h %0, %1, %2" : "=r" (result) : "r" (rs1), "r" (rs2) );
+    asm("cv.add.h %0, %1, %2" : "=r"(result) : "r"(rs1), "r"(rs2));
     return result;
 }
 static inline int32_t __builtin_riscv_cv_sdotsp_h(uint32_t rs1, uint32_t rs2, int32_t acc)
 {
-    asm ("cv.sdotsp.h %0, %1, %2"
-         : "+r" (acc)
-         : "r" (rs1), "r" (rs2));
+    asm("cv.sdotsp.h %0, %1, %2" : "+r"(acc) : "r"(rs1), "r"(rs2));
     return acc;
 }
 static inline int32_t __builtin_riscv_cv_sdotsp_b(uint32_t rs1, uint32_t rs2, int32_t acc)
 {
-    asm ("cv.sdotsp.b %0, %1, %2"
-         : "+r" (acc)
-         : "r" (rs1), "r" (rs2));
+    asm("cv.sdotsp.b %0, %1, %2" : "+r"(acc) : "r"(rs1), "r"(rs2));
     return acc;
 }
 #endif

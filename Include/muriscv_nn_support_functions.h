@@ -239,14 +239,11 @@ extern "C" {
 #define PACK_Q7x4_32x1(v0, v1, v2, v3)                                                                                 \
     ((__rv_packu((uint8_t)(v0), (uint8_t)(v2))) | ((__rv_packu((uint8_t)(v1), (uint8_t)(v3))) << 8))
 #elif defined(USE_COREV)
-#define PACK_Q7x4_32x1(v0, v1, v2, v3)                                      \
-    __builtin_riscv_cv_simd_packhi_b(                                        \
-        (uint32_t)(uint8_t)(v3),                                             \
-        (uint32_t)(uint8_t)(v2),                                             \
-        __builtin_riscv_cv_simd_packlo_b(                                    \
-            (uint32_t)(uint8_t)(v1),                                         \
-            (uint32_t)(uint8_t)(v0),                                         \
-            0u))
+#define PACK_Q7x4_32x1(v0, v1, v2, v3)                                                                                 \
+    __builtin_riscv_cv_simd_packhi_b(                                                                                  \
+        (uint32_t)(uint8_t)(v3),                                                                                       \
+        (uint32_t)(uint8_t)(v2),                                                                                       \
+        __builtin_riscv_cv_simd_packlo_b((uint32_t)(uint8_t)(v1), (uint32_t)(uint8_t)(v0), 0u))
 #else
 #define PACK_Q7x4_32x1(v0, v1, v2, v3)                                                                                 \
     ((((int32_t)(v0) << 0) & (int32_t)0x000000FF) | (((int32_t)(v1) << 8) & (int32_t)0x0000FF00) |                     \

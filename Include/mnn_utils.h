@@ -34,8 +34,7 @@ static inline int32_t __builtin_riscv_mnn_exths_b32(uint32_t rs1)
     int16_t hi = (int8_t)((rs1 >> 24) & 0xffu);
     int16_t lo = (int8_t)((rs1 >> 16) & 0xffu);
 
-    return (int32_t)(((uint32_t)(uint16_t)hi << 16) |
-                     (uint32_t)(uint16_t)lo);
+    return (int32_t)(((uint32_t)(uint16_t)hi << 16) | (uint32_t)(uint16_t)lo);
 }
 
 static inline int32_t __builtin_riscv_mnn_exths_b10(uint32_t rs1)
@@ -43,21 +42,20 @@ static inline int32_t __builtin_riscv_mnn_exths_b10(uint32_t rs1)
     int16_t hi = (int8_t)((rs1 >> 8) & 0xffu);
     int16_t lo = (int8_t)(rs1 & 0xffu);
 
-    return (int32_t)(((uint32_t)(uint16_t)hi << 16) |
-                     (uint32_t)(uint16_t)lo);
+    return (int32_t)(((uint32_t)(uint16_t)hi << 16) | (uint32_t)(uint16_t)lo);
 }
 
 #else
 static inline int32_t __builtin_riscv_mnn_exths_b32(uint32_t rs1)
 {
     uint32_t unpacked;
-    asm ("mnn.exths.b32 %0, %1" : "=r" (unpacked) : "r" (rs1));
+    asm("mnn.exths.b32 %0, %1" : "=r"(unpacked) : "r"(rs1));
     return unpacked;
 }
 static inline int32_t __builtin_riscv_mnn_exths_b10(uint32_t rs1)
 {
     uint32_t unpacked;
-    asm ("mnn.exths.b10 %0, %1" : "=r" (unpacked) : "r" (rs1));
+    asm("mnn.exths.b10 %0, %1" : "=r"(unpacked) : "r"(rs1));
     return unpacked;
 }
 #endif
