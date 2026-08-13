@@ -79,23 +79,23 @@ static inline int32_t __builtin_riscv_cv_sdotsp_b(uint32_t rs1, uint32_t rs2, in
 static inline uint32_t __builtin_riscv_cv_pack(uint32_t rs1, uint32_t rs2)
 {
     uint32_t result;
-    asm("cv.pack %0, %1, %2" : "=r"(result) : "r"(rs1), "r"(rs2));
+    __asm__("cv.pack %0, %1, %2" : "=r"(result) : "r"(rs1), "r"(rs2));
     return result;
 }
 static inline uint32_t __builtin_riscv_cv_add_h(uint32_t rs1, uint32_t rs2)
 {
     uint32_t result;
-    asm("cv.add.h %0, %1, %2" : "=r"(result) : "r"(rs1), "r"(rs2));
+    __asm__("cv.add.h %0, %1, %2" : "=r"(result) : "r"(rs1), "r"(rs2));
     return result;
 }
 static inline int32_t __builtin_riscv_cv_sdotsp_h(uint32_t rs1, uint32_t rs2, int32_t acc)
 {
-    asm("cv.sdotsp.h %0, %1, %2" : "+r"(acc) : "r"(rs1), "r"(rs2));
+    __asm__("cv.sdotsp.h %0, %1, %2" : "+r"(acc) : "r"(rs1), "r"(rs2));
     return acc;
 }
 static inline int32_t __builtin_riscv_cv_sdotsp_b(uint32_t rs1, uint32_t rs2, int32_t acc)
 {
-    asm("cv.sdotsp.b %0, %1, %2" : "+r"(acc) : "r"(rs1), "r"(rs2));
+    __asm__("cv.sdotsp.b %0, %1, %2" : "+r"(acc) : "r"(rs1), "r"(rs2));
     return acc;
 }
 #endif

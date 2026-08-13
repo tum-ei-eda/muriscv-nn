@@ -49,13 +49,13 @@ static inline int32_t __builtin_riscv_mnn_exths_b10(uint32_t rs1)
 static inline int32_t __builtin_riscv_mnn_exths_b32(uint32_t rs1)
 {
     uint32_t unpacked;
-    asm("mnn.exths.b32 %0, %1" : "=r"(unpacked) : "r"(rs1));
+    __asm__("mnn.exths.b32 %0, %1" : "=r"(unpacked) : "r"(rs1));
     return unpacked;
 }
 static inline int32_t __builtin_riscv_mnn_exths_b10(uint32_t rs1)
 {
     uint32_t unpacked;
-    asm("mnn.exths.b10 %0, %1" : "=r"(unpacked) : "r"(rs1));
+    __asm__("mnn.exths.b10 %0, %1" : "=r"(unpacked) : "r"(rs1));
     return unpacked;
 }
 #endif
