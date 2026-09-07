@@ -24,18 +24,24 @@ set -euo pipefail
 # SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # List of integration tests to run
-TESTS=(aww ic toy vww)
+read -r -a TESTS <<< "${TVM_TESTS:-aww ic toy vww}"
 
 # List of build types
-BUILDS=(mlf mlf_vext mlf_pext)
+read -r -a BUILDS <<< "${TVM_BUILDS:-mlf mlf_vext mlf_pext}"
 
 echo "Download and install TVM sources."
 python3 -m venv .venv
 source .venv/bin/activate
-# pip install numpy==1.26.4
-pip install numpy==1.24.4
 TVM_VERSION=${TVM_VERSION:-"0.16.0"}
-if [[ "$TVM_VERSION" == "stable" ]]
+# Prefer the local development fork when it is available. Set TVM_SOURCE_DIR
+# explicitly to select a different source checkout.
+TVM_SOURCE_DIR=${TVM_SOURCE_DIR:-"$PWD/tvm_fork"}
+if [[ -d "$TVM_SOURCE_DIR/python/tvm" ]]; then
+  export PYTHONPATH="$TVM_SOURCE_DIR/python"
+  export TVM_LIBRARY_PATH="$TVM_SOURCE_DIR/build"
+  python -m pip install -r requirements.txt
+  python -c 'import tvm; print("Using TVM:", tvm.__file__)'
+elif [[ "$TVM_VERSION" == "stable" ]]
 then
   echo "no stable release available for TVM"
   exit 1
@@ -45,14 +51,13 @@ then
   exit 1
 elif [[ "$TVM_VERSION" != "" ]]
 then
-  pip install "tvm==$TVM_VERSION" --pre -f https://philippvk.github.io/tlc-pack.github.io/wheels
+  python -m pip install "tvm==$TVM_VERSION" -r requirements.txt \
+    --pre -f https://philippvk.github.io/tlc-pack.github.io/wheels
 else  # same as stable
   echo "no version specified for TVM"
   exit 1
 fi
-pip install -r requirements.txt
-pip install typing-extensions
-# pip list | grep "apache-tvm"
+python -m pip check
 
 # Extract the numeric version in case the output contains additional text.
 INSTALLED_TVMC_VERSION="$(
@@ -90,6 +95,9 @@ for test in "${TESTS[@]}"; do
   for build in "${BUILDS[@]}"; do
 
     TVMC_TARGET_ARGS="--target cmsis-nn,c"
+    if [[ "${TVM_DEBUG_LAST_ERROR:-1}" == "1" ]]; then
+      TVMC_TARGET_ARGS="${TVMC_TARGET_ARGS} --target-cmsis-nn-debug_last_error 1"
+    fi
 
     if [[ ${build} == "mlf_vext" ]]; then
       TVMC_TARGET_ARGS="${TVMC_TARGET_ARGS} --target-cmsis-nn-mcpu cortex-m55"
