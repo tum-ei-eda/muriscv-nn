@@ -24,6 +24,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          # Discover files locally: GitHub rejects raw diffs above 300 files,
+          # and cpp-linter's paginated fallback can fail on missing patch fields.
+          files-changed-only: false
+          lines-changed-only: false
+          ignore: '.github|build'
           style: file  # Use .clang-format config file
           tidy-checks: ''  # Use .clang-tidy config file
           # only 'update' a single comment in a pull request's thread.
