@@ -144,7 +144,8 @@ muriscv_nn_status muriscv_nn_convolve_s16(const muriscv_nn_context *ctx,
                     int32_t conv_out;
                     if (bias_data && bias_data->is_int32_bias)
                     {
-                        conv_out = muriscv_nn_requantize((int32_t)conv_out_acc, output_mult[i_out_ch], output_shift[i_out_ch]);
+                        conv_out =
+                            muriscv_nn_requantize((int32_t)conv_out_acc, output_mult[i_out_ch], output_shift[i_out_ch]);
                     }
                     else
                     {

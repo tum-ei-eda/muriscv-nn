@@ -121,7 +121,7 @@ muriscv_nn_status muriscv_nn_avgpool_s8(const muriscv_nn_context *ctx,
             for (int32_t i_x = 0; i_x < output_x; i_x++)
             {
 
-    // Vicuna does not currently support the vector divide operation.  Need to use scalar avgpool for now
+                // Vicuna does not currently support the vector divide operation.  Need to use scalar avgpool for now
 #if defined(USE_VEXT) && !defined(SIM_VICUNA)
 
                 /* TODO(fabianpedd): These boundary checks for zero padding ensure
@@ -138,8 +138,8 @@ muriscv_nn_status muriscv_nn_avgpool_s8(const muriscv_nn_context *ctx,
                 const int8_t *pSrc = src;
                 int8_t *pDst = &dst[ch_src * (i_x + i_y * output_x)];
 
-                /* TODO(fabianpedd): Maybe reorder the loop and move the channel to the innermost loop. This should help get
-                rid of the nasty pTmp calculation in the innermost loop. Do the same for the scalar version. */
+                /* TODO(fabianpedd): Maybe reorder the loop and move the channel to the innermost loop. This should help
+                get rid of the nasty pTmp calculation in the innermost loop. Do the same for the scalar version. */
                 int32_t chCnt = ch_src;
                 while (chCnt > 0)
                 {

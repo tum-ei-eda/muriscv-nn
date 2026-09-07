@@ -19,10 +19,7 @@
 #endif
 #endif
 
-void TVMAPISetLastError(const char *msg)
-{
-    fprintf(stderr, "TVM error: %s\n", msg);
-}
+void TVMAPISetLastError(const char *msg) { fprintf(stderr, "TVM error: %s\n", msg); }
 
 void TVMLogf(const char *msg, ...)
 {
