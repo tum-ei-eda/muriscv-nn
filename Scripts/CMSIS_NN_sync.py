@@ -95,7 +95,18 @@ def create_muriscv_nn_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis
         muriscv_file.writelines(newline)
     cmsis_file.close()
     muriscv_file.close()
-    if os.path.splitext(muriscv_filename)[1] in {".c", ".h", ".cpp", ".hpp", ".cc", ".cxx", ".C", ".hh", ".hxx", ".inc"}:
+    if os.path.splitext(muriscv_filename)[1] in {
+        ".c",
+        ".h",
+        ".cpp",
+        ".hpp",
+        ".cc",
+        ".cxx",
+        ".C",
+        ".hh",
+        ".hxx",
+        ".inc",
+    }:
         changed_cpp_files.add(os.path.abspath(os.path.join(muriscv_path, muriscv_filename)))
 
 
