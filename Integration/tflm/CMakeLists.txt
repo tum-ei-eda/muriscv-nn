@@ -453,6 +453,12 @@ else()
   target_link_libraries(tflm PRIVATE muriscvnn)
 endif()
 
+set_target_properties(tflm PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
+
 option(DISABLE_TFLM_AWW_INTG_TESTS "Enable tflm integration tests for aww model" OFF)
 option(DISABLE_TFLM_IC_INTG_TESTS "Enable tflm integration tests for ic model" OFF)
 option(DISABLE_TFLM_TOY_INTG_TESTS "Enable tflm integration tests for toy model" OFF)
