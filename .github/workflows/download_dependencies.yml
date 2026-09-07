@@ -41,7 +41,7 @@ jobs:
         run: |
           git status
           git diff
-          git restore *.sh
+          git restore -- *.sh
       - name: Cleanup old files
         working-directory: ./Toolchain
         run: |

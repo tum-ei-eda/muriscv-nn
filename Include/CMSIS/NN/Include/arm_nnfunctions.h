@@ -27,12 +27,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#define ARM_NNFUNCTIONS_H
-MURISCV_NNFUNCTIONS_H
-
-#define USE_INTRINSIC
-USE_INTRINSIC
-
+#define ARM_NNFUNCTIONS_H MURISCV_NNFUNCTIONS_H
+#define USE_INTRINSIC USE_INTRINSIC
 #define arm_convolve_wrapper_s4 muriscv_nn_convolve_wrapper_s4
 #define arm_convolve_wrapper_s4_get_buffer_size muriscv_nn_convolve_wrapper_s4_get_buffer_size
 #define arm_convolve_wrapper_s4_get_buffer_size_mve muriscv_nn_convolve_wrapper_s4_get_buffer_size_mve

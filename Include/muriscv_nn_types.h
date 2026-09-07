@@ -251,6 +251,7 @@ typedef struct
     void *temp1;
     void *temp2;
     void *cell_state;
+    void *hidden_state;
 } muriscv_nn_lstm_context;
 
 #ifdef __cplusplus

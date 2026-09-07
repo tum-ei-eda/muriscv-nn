@@ -135,21 +135,15 @@ int32_t muriscv_nn_convolve_wrapper_s8_get_buffer_size_mve(const muriscv_nn_conv
                                                            const muriscv_nn_dims *filter_dims,
                                                            const muriscv_nn_dims *output_dims)
 {
-    (void)output_dims;
-    if ((conv_params->padding.w == 0) && (conv_params->padding.h == 0) && (filter_dims->w == 1) &&
+    /* Match the kernel selection in muriscv_nn_convolve_wrapper_s8. */
+    if ((conv_params->padding.w == 0) && (conv_params->padding.h == 0) && (input_dims->c % 4 == 0) &&
+        (conv_params->stride.w == 1) && (conv_params->stride.h == 1) && (filter_dims->w == 1) &&
         (filter_dims->h == 1) && (conv_params->dilation.w == 1 && conv_params->dilation.h == 1))
     {
-        if ((conv_params->stride.w == 1) && (conv_params->stride.h == 1))
-        {
-            return muriscv_nn_convolve_1x1_s8_fast_get_buffer_size(input_dims);
-        }
-        else
-        {
-            return 0;
-        }
+        return muriscv_nn_convolve_1x1_s8_fast_get_buffer_size(input_dims);
     }
-    else if ((input_dims->h == 1) && (conv_params->dilation.w == 1) && (filter_dims->h == 1) &&
-             (conv_params->stride.w * input_dims->c % 4 == 0))
+    else if ((input_dims->h == 1) && (output_dims->w % 4 == 0) && (conv_params->dilation.w == 1) &&
+             (filter_dims->h == 1) && (output_dims->h == 1) && (conv_params->padding.h == 0))
     {
         return muriscv_nn_convolve_1_x_n_s8_get_buffer_size_mve(input_dims, filter_dims);
     }

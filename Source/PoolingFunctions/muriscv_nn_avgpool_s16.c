@@ -48,109 +48,120 @@ muriscv_nn_status muriscv_nn_avgpool_s16(const muriscv_nn_context *ctx,
     const int32_t act_max = pool_params->activation.max;
     const int32_t ch_src = input_dims->c;
 
-    for (int32_t i_y = 0; i_y < output_y; i_y++)
+    if (input_dims->n < 1)
     {
-        for (int32_t i_x = 0; i_x < output_x; i_x++)
+        return MURISCV_NN_ARG_ERROR;
+    }
+
+    for (int32_t batch = 0; batch < input_dims->n; batch++)
+    {
+        for (int32_t i_y = 0; i_y < output_y; i_y++)
         {
+            for (int32_t i_x = 0; i_x < output_x; i_x++)
+            {
 
 #if defined(USE_VEXT)
 
-            /* TODO(fabianpedd): These boundary checks for zero padding ensure
-             * that we do not access elements outside the array. Here, in the
-             * vectorized version, they are implemented more efficently when
-             * compared to the scalar implementation below.
-             */
-            int32_t k_y_start = MAX(0, i_y * stride_y - pad_y);
-            int32_t k_y_end = MIN(i_y * stride_y - pad_y + kernel_y, input_y);
+                /* TODO(fabianpedd): These boundary checks for zero padding ensure
+                 * that we do not access elements outside the array. Here, in the
+                 * vectorized version, they are implemented more efficently when
+                 * compared to the scalar implementation below.
+                 */
+                int32_t k_y_start = MAX(0, i_y * stride_y - pad_y);
+                int32_t k_y_end = MIN(i_y * stride_y - pad_y + kernel_y, input_y);
 
-            int32_t k_x_start = MAX(0, i_x * stride_x - pad_x);
-            int32_t k_x_end = MIN(i_x * stride_x - pad_x + kernel_x, input_x);
+                int32_t k_x_start = MAX(0, i_x * stride_x - pad_x);
+                int32_t k_x_end = MIN(i_x * stride_x - pad_x + kernel_x, input_x);
 
-            const int16_t *pSrc = src;
-            int16_t *pDst = &dst[ch_src * (i_x + i_y * output_x)];
+                const int16_t *pSrc = src;
+                int16_t *pDst = &dst[ch_src * (i_x + i_y * output_x)];
 
-            int32_t chCnt = ch_src;
-            while (chCnt > 0)
-            {
-                int32_t count = 0;
-
-                size_t vl = vsetvl_e32m8(chCnt);
-
-                vint32m8_t sum_v = vmv_v_x_i32m8(0, vl);
-
-                for (int32_t k_y = k_y_start; k_y < k_y_end; k_y++)
+                int32_t chCnt = ch_src;
+                while (chCnt > 0)
                 {
-                    for (int32_t k_x = k_x_start; k_x < k_x_end; k_x++)
+                    int32_t count = 0;
+
+                    size_t vl = vsetvl_e32m8(chCnt);
+
+                    vint32m8_t sum_v = vmv_v_x_i32m8(0, vl);
+
+                    for (int32_t k_y = k_y_start; k_y < k_y_end; k_y++)
                     {
-                        const int16_t *pTmp = pSrc + (ch_src * (k_x + k_y * input_x));
-
-                        vint32m8_t r0 = vsext_vf2_i32m8(vle16_v_i16m4(pTmp, vl), vl);
-                        sum_v = vadd_vv_i32m8(sum_v, r0, vl);
-
-                        count++;
-                    }
-                }
-
-                // Prevent static code issue DIVIDE_BY_ZERO.
-                if (count == 0)
-                {
-                    return MURISCV_NN_ARG_ERROR;
-                }
-
-                /* TODO(fabianpedd): Maybe use fixedpoint instructions instead
-                 * in order to reduce instruction count (using rounding mode RNU). */
-                vbool4_t mask = vmsgt_vx_i32m8_b4(sum_v, 0, vl);
-                sum_v = vadd_vx_i32m8_m(mask, sum_v, sum_v, count / 2, vl);
-                mask = vmnot_m_b4(mask, vl);
-                sum_v = vsub_vx_i32m8_m(mask, sum_v, sum_v, count / 2, vl);
-                sum_v = vdiv_vx_i32m8(sum_v, count, vl);
-
-                sum_v = vmax_vx_i32m8(sum_v, act_min, vl);
-                sum_v = vmin_vx_i32m8(sum_v, act_max, vl);
-
-                /* Pack results back into 16 bit and store */
-                vint16m4_t out_packed = vnclip_wx_i16m4(sum_v, 0, vl);
-                vse16_v_i16m4(pDst++, out_packed, vl);
-
-                chCnt--;
-                pSrc++;
-            }
-
-#else /* defined(USE_VEXT) */
-
-            for (int16_t i_ch_in = 0; i_ch_in < ch_src; i_ch_in++)
-            {
-                int32_t sum = 0;
-                int32_t count = 0;
-                for (int16_t k_y = i_y * stride_y - pad_y; k_y < i_y * stride_y - pad_y + kernel_y; k_y++)
-                {
-                    for (int16_t k_x = i_x * stride_x - pad_x; k_x < i_x * stride_x - pad_x + kernel_x; k_x++)
-                    {
-                        /* TODO(fabianpedd): Adopt the more efficent boundary check from
-                         * the vector implementation above. */
-                        if (k_y >= 0 && k_x >= 0 && k_y < input_y && k_x < input_x)
+                        for (int32_t k_x = k_x_start; k_x < k_x_end; k_x++)
                         {
-                            sum += src[i_ch_in + ch_src * (k_x + k_y * input_x)];
+                            const int16_t *pTmp = pSrc + (ch_src * (k_x + k_y * input_x));
+
+                            vint32m8_t r0 = vsext_vf2_i32m8(vle16_v_i16m4(pTmp, vl), vl);
+                            sum_v = vadd_vv_i32m8(sum_v, r0, vl);
+
                             count++;
                         }
                     }
+
+                    // Prevent static code issue DIVIDE_BY_ZERO.
+                    if (count == 0)
+                    {
+                        return MURISCV_NN_ARG_ERROR;
+                    }
+
+                    /* TODO(fabianpedd): Maybe use fixedpoint instructions instead
+                     * in order to reduce instruction count (using rounding mode RNU). */
+                    vbool4_t mask = vmsgt_vx_i32m8_b4(sum_v, 0, vl);
+                    sum_v = vadd_vx_i32m8_m(mask, sum_v, sum_v, count / 2, vl);
+                    mask = vmnot_m_b4(mask, vl);
+                    sum_v = vsub_vx_i32m8_m(mask, sum_v, sum_v, count / 2, vl);
+                    sum_v = vdiv_vx_i32m8(sum_v, count, vl);
+
+                    sum_v = vmax_vx_i32m8(sum_v, act_min, vl);
+                    sum_v = vmin_vx_i32m8(sum_v, act_max, vl);
+
+                    /* Pack results back into 16 bit and store */
+                    vint16m4_t out_packed = vnclip_wx_i16m4(sum_v, 0, vl);
+                    vse16_v_i16m4(pDst++, out_packed, vl);
+
+                    chCnt--;
+                    pSrc++;
                 }
 
-                // Prevent static code issue DIVIDE_BY_ZERO.
-                if (count == 0)
+#else /* defined(USE_VEXT) */
+
+                for (int16_t i_ch_in = 0; i_ch_in < ch_src; i_ch_in++)
                 {
-                    return MURISCV_NN_ARG_ERROR;
+                    int32_t sum = 0;
+                    int32_t count = 0;
+                    for (int16_t k_y = i_y * stride_y - pad_y; k_y < i_y * stride_y - pad_y + kernel_y; k_y++)
+                    {
+                        for (int16_t k_x = i_x * stride_x - pad_x; k_x < i_x * stride_x - pad_x + kernel_x; k_x++)
+                        {
+                            /* TODO(fabianpedd): Adopt the more efficent boundary check from
+                             * the vector implementation above. */
+                            if (k_y >= 0 && k_x >= 0 && k_y < input_y && k_x < input_x)
+                            {
+                                sum += src[i_ch_in + ch_src * (k_x + k_y * input_x)];
+                                count++;
+                            }
+                        }
+                    }
+
+                    // Prevent static code issue DIVIDE_BY_ZERO.
+                    if (count == 0)
+                    {
+                        return MURISCV_NN_ARG_ERROR;
+                    }
+
+                    sum = sum > 0 ? (sum + count / 2) / count : (sum - count / 2) / count;
+                    sum = MAX(sum, act_min);
+                    sum = MIN(sum, act_max);
+
+                    dst[i_ch_in + ch_src * (i_x + i_y * output_x)] = sum;
                 }
-
-                sum = sum > 0 ? (sum + count / 2) / count : (sum - count / 2) / count;
-                sum = MAX(sum, act_min);
-                sum = MIN(sum, act_max);
-
-                dst[i_ch_in + ch_src * (i_x + i_y * output_x)] = sum;
-            }
 
 #endif /* defined(USE_VEXT) */
+            }
         }
+
+        src += input_x * input_y * ch_src;
+        dst += output_x * output_y * ch_src;
     }
 
     return MURISCV_NN_SUCCESS;

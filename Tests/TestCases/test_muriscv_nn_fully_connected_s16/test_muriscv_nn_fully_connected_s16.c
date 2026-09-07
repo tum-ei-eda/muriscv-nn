@@ -34,7 +34,7 @@ void tearDown(void) { /* clean stuff up here */ }
 void fully_connected_int16_muriscv_nn_fully_connected_s16(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q15_t output[FULLY_CONNECTED_INT16_DST_SIZE] = {0};
+    int16_t output[FULLY_CONNECTED_INT16_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_fc_params fc_params;
@@ -44,10 +44,10 @@ void fully_connected_int16_muriscv_nn_fully_connected_s16(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = fully_connected_int16_biases;
-    const q7_t *kernel_data = fully_connected_int16_weights;
-    const q15_t *input_data = fully_connected_int16_input;
-    const q15_t *output_ref = fully_connected_int16_output_ref;
+    const int64_t *bias_data = fully_connected_int16_biases;
+    const int8_t *kernel_data = fully_connected_int16_weights;
+    const int16_t *input_data = fully_connected_int16_input;
+    const int16_t *output_ref = fully_connected_int16_output_ref;
     const int32_t output_ref_size = FULLY_CONNECTED_INT16_DST_SIZE;
 
     input_dims.n = FULLY_CONNECTED_INT16_INPUT_BATCHES;
@@ -86,7 +86,12 @@ void fully_connected_int16_muriscv_nn_fully_connected_s16(void)
                                                               &output_dims,
                                                               output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        // The caller is responsible to clear the scratch buffers for security reasons if applicable.
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 }
@@ -94,7 +99,7 @@ void fully_connected_int16_muriscv_nn_fully_connected_s16(void)
 void fully_connected_int16_big_muriscv_nn_fully_connected_s16(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q15_t output[FULLY_CONNECTED_INT16_BIG_DST_SIZE] = {0};
+    int16_t output[FULLY_CONNECTED_INT16_BIG_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_fc_params fc_params;
@@ -104,10 +109,10 @@ void fully_connected_int16_big_muriscv_nn_fully_connected_s16(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = fully_connected_int16_big_biases;
-    const q7_t *kernel_data = fully_connected_int16_big_weights;
-    const q15_t *input_data = fully_connected_int16_big_input;
-    const q15_t *output_ref = fully_connected_int16_big_output_ref;
+    const int64_t *bias_data = fully_connected_int16_big_biases;
+    const int8_t *kernel_data = fully_connected_int16_big_weights;
+    const int16_t *input_data = fully_connected_int16_big_input;
+    const int16_t *output_ref = fully_connected_int16_big_output_ref;
     const int32_t output_ref_size = FULLY_CONNECTED_INT16_BIG_DST_SIZE;
 
     input_dims.n = FULLY_CONNECTED_INT16_BIG_INPUT_BATCHES;
@@ -146,7 +151,11 @@ void fully_connected_int16_big_muriscv_nn_fully_connected_s16(void)
                                                               &output_dims,
                                                               output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 }
@@ -154,7 +163,7 @@ void fully_connected_int16_big_muriscv_nn_fully_connected_s16(void)
 void fc_int16_slow_muriscv_nn_fully_connected_s16(void)
 {
     const muriscv_nn_status expected = MURISCV_NN_SUCCESS;
-    q15_t output[FC_INT16_SLOW_DST_SIZE] = {0};
+    int16_t output[FC_INT16_SLOW_DST_SIZE] = {0};
 
     muriscv_nn_context ctx;
     muriscv_nn_fc_params fc_params;
@@ -164,10 +173,10 @@ void fc_int16_slow_muriscv_nn_fully_connected_s16(void)
     muriscv_nn_dims bias_dims;
     muriscv_nn_dims output_dims;
 
-    const q63_t *bias_data = fc_int16_slow_biases;
-    const q7_t *kernel_data = fc_int16_slow_weights;
-    const q15_t *input_data = fc_int16_slow_input;
-    const q15_t *output_ref = fc_int16_slow_output_ref;
+    const int64_t *bias_data = fc_int16_slow_biases;
+    const int8_t *kernel_data = fc_int16_slow_weights;
+    const int16_t *input_data = fc_int16_slow_input;
+    const int16_t *output_ref = fc_int16_slow_output_ref;
     const int32_t output_ref_size = FC_INT16_SLOW_DST_SIZE;
 
     input_dims.n = FC_INT16_SLOW_INPUT_BATCHES;
@@ -206,7 +215,11 @@ void fc_int16_slow_muriscv_nn_fully_connected_s16(void)
                                                               &output_dims,
                                                               output);
 
-    free(ctx.buf);
+    if (ctx.buf)
+    {
+        memset(ctx.buf, 0, buf_size);
+        free(ctx.buf);
+    }
     TEST_ASSERT_EQUAL(expected, result);
     TEST_ASSERT_TRUE(validate_s16(output, output_ref, output_ref_size));
 }

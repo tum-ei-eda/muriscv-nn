@@ -1,6 +1,9 @@
 #! /usr/bin/env python3
 
+import argparse
 import os
+import subprocess
+import re
 from git import Repo
 import datetime
 
@@ -24,7 +27,7 @@ muriscv_include_files = [
 cur_year = datetime.date.today().year
 TUM_Copyright = " Modifications copyright (C) " + str(cur_year) + " Chair of Electronic Design Automation, TUM\n"
 
-scripts_dir = os.getcwd()
+scripts_dir = os.path.dirname(os.path.abspath(__file__))
 muriscv_dir = scripts_dir + "/.."
 cmsis_dir = scripts_dir + "/CMSIS_NN"
 
@@ -55,6 +58,7 @@ new_test_CMakeList = [
 
 
 mismatch_list = []
+changed_cpp_files = set()
 
 
 # Function to create a new file from the CMSIS template
@@ -91,6 +95,19 @@ def create_muriscv_nn_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis
         muriscv_file.writelines(newline)
     cmsis_file.close()
     muriscv_file.close()
+    if os.path.splitext(muriscv_filename)[1] in {
+        ".c",
+        ".h",
+        ".cpp",
+        ".hpp",
+        ".cc",
+        ".cxx",
+        ".C",
+        ".hh",
+        ".hxx",
+        ".inc",
+    }:
+        changed_cpp_files.add(os.path.abspath(os.path.join(muriscv_path, muriscv_filename)))
 
 
 # Function to add a list of new files to the CMakeLists.txt file for a given directory
@@ -125,6 +142,22 @@ def add_to_cmakelist(muriscv_filenames, muriscv_path):
         cmakelist.writelines(line)
 
     cmakelist.close()
+
+
+def function_body_end(lines, start):
+    """Find the matching closing brace without depending on indentation."""
+    # Ignore braces in comments and quoted literals, but keep newline offsets.
+    source = "".join(lines[start:])
+    tokens = re.finditer(r'/\*.*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|[{}]', source, re.DOTALL)
+    depth = 0
+    for token in tokens:
+        if token.group() == "{":
+            depth += 1
+        elif token.group() == "}":
+            depth -= 1
+            if depth == 0:
+                return start + source.count("\n", 0, token.start())
+    raise ValueError(f"Unterminated function body starting at line {start + 1}")
 
 
 # Function to get all function blocks in a given file/code snippet.  File should be provided as a dictionary
@@ -166,24 +199,13 @@ def get_function_blocks(file):
                 ptr_file += 1
             func_block.append(file[ptr_file])
             ptr_file += 1
-            name = file[ptr_file].replace("(", " ")
-            name = name.replace("*", "")
-            name = name.split(" ")
-            # handle blank space between comment and function header
-            while len(name) < 2:
-                func_block.append(file[ptr_file])
-                ptr_file += 1
-                name = file[ptr_file].replace("(", " ")
-                name = name.replace("*", " ")
-                name = name.split(" ")
-            func_name = []
-            if name[0] == "__STATIC_FORCEINLINE":
-                if name[1] == "const":
-                    func_name = name[3]
-                else:
-                    func_name = name[2]
-            else:
-                func_name = name[1]
+            # Formatting may put the return type and function name on separate lines.
+            declaration = ""
+            name_ptr = ptr_file
+            while "(" not in declaration:
+                declaration += " " + file[name_ptr].strip()
+                name_ptr += 1
+            func_name = declaration.split("(", 1)[0].replace("*", " ").split()[-1]
 
             # Find the end of the function declaration ( a ')' in the line).
             # This handles functions with arguments across multiple lines
@@ -192,12 +214,13 @@ def get_function_blocks(file):
                 ptr_file += 1
 
             # Find end of this function block
-            if file[(ptr_file + 1) % len(file)] == "{\n":  # This handles functions with contents in {}
-                while not ("}\n" == file[ptr_file] or "};\n" == file[ptr_file]):
+            if file[(ptr_file + 1) % len(file)].strip() == "{":  # This handles functions with contents in {}
+                end = function_body_end(file, ptr_file + 1)
+                while ptr_file < end:
                     func_block.append(file[ptr_file])
                     ptr_file += 1
             else:  # This handles functions defined in a single line
-                while not (");" in file[ptr_file] or file[ptr_file] == "\n"):
+                while not (");" in file[ptr_file] or not file[ptr_file].strip()):
                     func_block.append(file[ptr_file])
                     ptr_file += 1
 
@@ -212,7 +235,7 @@ def get_function_blocks(file):
             func_block_ptr = ptr_file
             while not (
                 ("#define" in file[ptr_file] and ptr_file != func_block_ptr)
-                or file[ptr_file] == "\n"
+                or not file[ptr_file].strip()
                 or "MURISCV_NN CUSTOM CODE" in file[ptr_file]
             ):
                 func_block.append(file[ptr_file])
@@ -227,20 +250,20 @@ def get_function_blocks(file):
             for line in func_block:
                 if "#define" in line:
                     name = line.replace("(", " ")
-                    name = name.split(" ")
+                    name = name.split()
             functions.append([name[1], func_block_ptr, func_block, custom])
             custom = False
 
-        # Function with no comment header.  Terminates with } at index 0  in line
+        # Function with no comment header. Find its matching closing brace.
         elif "__STATIC_FORCEINLINE" in file[ptr_file]:
             func_block = []
             func_block_ptr = ptr_file
-            while not ((file[ptr_file][0] == "}")):
+            end = function_body_end(file, ptr_file)
+            while ptr_file <= end:
                 func_block.append(file[ptr_file])
                 ptr_file += 1
 
-            name = func_block[0].replace("(", " ")
-            name = name.split(" ")[2]
+            name = " ".join(func_block).split("(", 1)[0].replace("*", " ").split()[-1]
             # Add the custom code comment line if needed
             if custom:
                 func_block.insert(0, custom_code_line)
@@ -485,7 +508,7 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
                 # current location is a line outside the code block
                 if lines_added == 0:
                     # no lines have been added.  Do a line by line comparison to see if anything has changed
-                    if muriscv_file_old[ptr_muriscv] != cmsis_file_updated[ptr_cmsis]:
+                    if muriscv_file_old[ptr_muriscv].lstrip() != cmsis_file_updated[ptr_cmsis].lstrip():
                         print(
                             "######DIFFERENCE DETECTED: MURISCV LINE "
                             + str(ptr_muriscv + 1)
@@ -499,7 +522,10 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
 
                 # If sync pointer was reached by adding a block, dont append
                 if ptr_cmsis != sync_ptr_cmsis:
-                    muriscv_file_new.append(cmsis_file_updated[ptr_cmsis])
+                    line = cmsis_file_updated[ptr_cmsis]
+                    if lines_added == 0 and muriscv_file_old[ptr_muriscv].lstrip() == line.lstrip():
+                        line = muriscv_file_old[ptr_muriscv]
+                    muriscv_file_new.append(line)
 
                 if ptr_cmsis >= sync_ptr_cmsis:
                     # sync point has been passed, skip muriscv pointer and reset
@@ -542,7 +568,7 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
                     file_changed = True
                 else:
                     for i in range(0, len(next_ops[0][3][2])):
-                        if next_ops[0][3][2][i] != next_ops[0][2][2][i]:
+                        if next_ops[0][3][2][i].lstrip() != next_ops[0][2][2][i].lstrip():
                             print(
                                 "######DIFFERENCE DETECTED: MURISCV LINE "
                                 + str(ptr_muriscv + 1 + i)
@@ -552,14 +578,19 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
                             )
                             file_changed = True
                 # write the cmsis version to the new file
-                for line in next_ops[0][2][2]:
-
+                for i, line in enumerate(next_ops[0][2][2]):
+                    old_lines = next_ops[0][3][2]
+                    if len(old_lines) == len(next_ops[0][2][2]) and old_lines[i].lstrip() == line.lstrip():
+                        line = old_lines[i]
                     muriscv_file_new.append(line)
                 ptr_muriscv += len(next_ops[0][3][2])
                 ptr_cmsis += len(next_ops[0][2][2])
 
     if file_changed:
         muriscv_file_new[0] = "//" + TUM_Copyright
+
+    if muriscv_file_new != muriscv_file_old:
+        changed_cpp_files.add(os.path.abspath(muriscv_file.name))
 
     muriscv_file.seek(0)
     muriscv_file.truncate()
@@ -599,12 +630,19 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
                 defines_file.writelines("#endif /* _ARM_NNFUNCTIONS_H */\n")
                 break
 
+        defines_file.seek(0)
+        if defines_file.read() != "".join(defines_contents):
+            changed_cpp_files.add(os.path.abspath(defines_file.name))
         defines_file.close()
 
 
 #########################
 # Main Entry Point: #####
 #########################
+
+parser = argparse.ArgumentParser(description="Sync CMSIS-NN sources and headers into muRISCV-NN.")
+parser.add_argument("--lint", action="store_true", help="Run lint_cpp.sh on C/C++ files changed by this sync.")
+args = parser.parse_args()
 
 if not os.path.isdir(cmsis_dir):
     Repo.clone_from("https://github.com/ARM-software/CMSIS-NN.git", cmsis_dir)
@@ -724,3 +762,12 @@ update_include_file("muriscv_nn_functions.h", muriscv_include_dir, "arm_nnfuncti
 update_include_file(
     "muriscv_nn_support_functions.h", muriscv_include_dir, "arm_nnsupportfunctions.h", cmsis_include_dir
 )
+
+if args.lint:
+    if changed_cpp_files:
+        result = subprocess.run(
+            [os.path.join(scripts_dir, "lint_cpp.sh"), *sorted(changed_cpp_files)],
+            cwd=muriscv_dir,
+        )
+        raise SystemExit(result.returncode)
+    print("No changed C/C++ files to lint.")

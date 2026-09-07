@@ -40,9 +40,11 @@ jobs:
       - name: Get dates
         id: dates
         run: |
-          echo "today=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
-          echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)" >> "$GITHUB_OUTPUT"
-          echo "date=$(date +'%Y-%m-%d' -d 'last saturday')" >> "$GITHUB_OUTPUT"
+          {
+            echo "today=$(date +'%Y-%m-%d')"
+            echo "yesterday=$(date +'%Y-%m-%d' -d yesterday)"
+            echo "date=$(date +'%Y-%m-%d' -d 'last saturday')"
+          } >> "$GITHUB_OUTPUT"
       - name: Download Cached GCC Binaries
         id: cache-gcc
         uses: actions/cache/restore@v6
@@ -61,7 +63,7 @@ jobs:
       - name: Install BOOST
         run: |
           sudo apt-get install libboost-all-dev
-          ls /usr/lib/x86_64-linux-gnu | grep regex
+          printf '%s\n' /usr/lib/x86_64-linux-gnu/*regex*
       - name: Clone Spike Repo
         working-directory: ./Sim/Spike
         run: |
@@ -72,12 +74,12 @@ jobs:
         run: |
           export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32gcv
           export PATH=$PATH:$RISCV/bin
-          echo $PATH
+          echo "$PATH"
           sudo apt-get install device-tree-compiler
           mkdir build
           cd build
-          ../configure --prefix=$RISCV
-          make -j$(nproc)
+          ../configure "--prefix=$RISCV"
+          make -j"$(nproc)"
           sudo make install
       - name: Clone PK Repo
         working-directory: ./Sim/Spike
@@ -89,11 +91,11 @@ jobs:
         run: |
           export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32gc
           export PATH=$PATH:$RISCV/bin
-          echo $PATH
+          echo "$PATH"
           mkdir build
           cd build
-          ../configure --prefix=$RISCV --host=riscv32-unknown-elf --with-arch=rv32gc_zicsr_zifencei --with-abi=ilp32d
-          make -j$(nproc)
+          ../configure "--prefix=$RISCV" --host=riscv32-unknown-elf --with-arch=rv32gc_zicsr_zifencei --with-abi=ilp32d
+          make -j"$(nproc)"
           sudo make install
       - name: Copy Spike and PK binaries to correct location
         working-directory: ./Sim/Spike/bin
@@ -107,11 +109,11 @@ jobs:
           rm -r build
           export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv64gc
           export PATH=$PATH:$RISCV/bin
-          echo $PATH
+          echo "$PATH"
           mkdir build
           cd build
           ../configure "--prefix=$RISCV" --host=riscv64-unknown-elf --with-arch=rv64gc_zicsr_zifencei --with-abi=lp64d
-          make -j$(nproc)
+          make -j"$(nproc)"
           sudo make install
       - name: Copy Spike and PK binaries to correct location
         working-directory: ./Sim/Spike/bin
@@ -124,11 +126,11 @@ jobs:
           rm -r build
           export RISCV=/home/runner/work/muriscv-nn/muriscv-nn/Toolchain/rv32im_zve32x
           export PATH=$PATH:$RISCV/bin
-          echo $PATH
+          echo "$PATH"
           mkdir build
           cd build
           ../configure "--prefix=$RISCV" --host=riscv32-unknown-elf --with-arch=rv32im_zicsr_zifencei --with-abi=ilp32
-          make -j$(nproc)
+          make -j"$(nproc)"
           sudo make install
       - name: PK Binary to correct location
         working-directory: ./Sim/Spike/bin

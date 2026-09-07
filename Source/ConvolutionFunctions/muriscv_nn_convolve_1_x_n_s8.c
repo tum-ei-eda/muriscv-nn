@@ -61,7 +61,8 @@ muriscv_nn_status muriscv_nn_convolve_1_x_n_s8(const muriscv_nn_context *ctx,
     muriscv_nn_status status = MURISCV_NN_SUCCESS;
 
     /* The wrapper API is the ultimate reference for argument check */
-    if ((input_dims->h != 1) || (output_dims->w % 4 != 0) || conv_params->dilation.w != 1)
+    if ((input_dims->h != 1) || (output_dims->w % 4 != 0) || conv_params->dilation.w != 1 ||
+        filter_dims->h != 1 || output_dims->h != 1 || conv_params->padding.h != 0)
     {
         status = MURISCV_NN_ARG_ERROR;
         /* Return to application */

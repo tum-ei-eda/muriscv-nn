@@ -9,6 +9,11 @@
 #include "vww_data/vww_model_settings.h"
 #include "vww_data/vww_output_data_ref.h"
 
+void TVMAPISetLastError(const char *msg)
+{
+    fprintf(stderr, "TVM error: %s\n", msg);
+}
+
 void TVMLogf(const char *msg, ...)
 {
     va_list args;

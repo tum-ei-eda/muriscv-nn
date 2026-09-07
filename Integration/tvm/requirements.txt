@@ -1,1 +1,10 @@
+# TVM 0.15/0.16 use NumPy APIs removed in NumPy 2.
+numpy==1.24.4
+# ml-dtypes 0.6 requires NumPy 2; keep the legacy TVM environment compatible.
+ml-dtypes<0.6
 tflite
+typing-extensions
+
+# Required when importing the TVM source checkout.
+packaging
+anytree
