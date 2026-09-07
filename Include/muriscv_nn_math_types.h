@@ -113,6 +113,7 @@ typedef enum
     MURISCV_NN_SUCCESS = 0,        /**< No error */
     MURISCV_NN_ARG_ERROR = -1,     /**< One or more arguments are incorrect */
     MURISCV_NN_NO_IMPL_ERROR = -2, /**< No implementation available */
+    MURISCV_NN_FAILURE = -3,       /**<  Logical error */
 } muriscv_nn_status;
 
 #ifdef __cplusplus

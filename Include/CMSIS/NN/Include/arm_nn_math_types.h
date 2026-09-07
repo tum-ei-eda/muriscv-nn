@@ -30,6 +30,7 @@ extern "C" {
 #define ARM_CMSIS_NN_SUCCESS MURISCV_NN_SUCCESS
 #define ARM_CMSIS_NN_ARG_ERROR MURISCV_NN_ARG_ERROR
 #define ARM_CMSIS_NN_NO_IMPL_ERROR MURISCV_NN_NO_IMPL_ERROR
+#define ARM_CMSIS_NN_FAILURE MURISCV_NN_FAILURE
 
 // TODO: Kept only for backwards compatibility
 #define arm_status muriscv_nn_status
