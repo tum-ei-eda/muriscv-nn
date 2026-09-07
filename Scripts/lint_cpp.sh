@@ -8,6 +8,16 @@ AUTO_CONFIGURE=${AUTO_CONFIGURE:-1}
 CMAKE=${CMAKE:-cmake}
 CLANG_TIDY=${CLANG_TIDY:-clang-tidy}
 
+# Optional file arguments are resolved relative to the caller's directory.
+# Without arguments, lint all tracked C/C++ files as before.
+requested_files=()
+for file in "$@"; do
+  case "$file" in
+    /*) requested_files+=("$file") ;;
+    *) requested_files+=("$PWD/$file") ;;
+  esac
+done
+
 status=0
 
 repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || {
@@ -80,6 +90,14 @@ format_files=()
 source_files=()
 
 while IFS= read -r -d '' file; do
+  if [[ ! -f "$file" ]]; then
+    echo "error: file not found: $file" >&2
+    exit 2
+  fi
+  case "$file" in
+    *.c | *.cc | *.cpp | *.cxx | *.C | *.h | *.hh | *.hpp | *.hxx | *.inc) ;;
+    *) echo "error: not a C/C++ file: $file" >&2; exit 2 ;;
+  esac
   format_files+=("$file")
 
   case "$file" in
@@ -88,7 +106,10 @@ while IFS= read -r -d '' file; do
       ;;
   esac
 done < <(
-  git ls-files -z -- \
+  if (( ${#requested_files[@]} > 0 )); then
+    printf '%s\0' "${requested_files[@]}"
+  else
+    git ls-files -z -- \
     '*.c' \
     '*.cc' \
     '*.cpp' \
@@ -99,6 +120,7 @@ done < <(
     '*.hpp' \
     '*.hxx' \
     '*.inc'
+  fi
 )
 
 if (( ${#format_files[@]} == 0 )); then
@@ -155,6 +177,11 @@ else
   done
 fi
 
+if (( ${#source_files[@]} == 0 )); then
+  echo "No C/C++ source files selected for clang-tidy."
+  exit "$status"
+fi
+
 compile_commands="$BUILD_DIR/compile_commands.json"
 
 if [[ ! -f "$compile_commands" ]]; then
@@ -190,10 +217,7 @@ if ! command -v "$CLANG_TIDY" >/dev/null 2>&1; then
   exit 2
 fi
 
-if (( ${#source_files[@]} == 0 )); then
-  echo "No tracked C/C++ source files found for clang-tidy."
-  exit "$status"
-fi
+
 
 echo "Running $("$CLANG_TIDY" --version | head -n1)..."
 

@@ -2031,6 +2031,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_doubling_high_mult(const int32_t m1, con
     return result;
 }
 
+// MURISCV_NN CUSTOM CODE
 /**
  * @brief           Doubling high multiply without saturation. This is intended
  *                  for requantization where the scale is a positive integer
@@ -2118,6 +2119,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_doubling_high_mult_no_sat(int32_t m1, in
 #endif
 }
 
+// MURISCV_NN CUSTOM CODE
 /**
  * @brief           Rounding divide by power of two.
  * @param[in]       dividend - Dividend
@@ -2204,6 +2206,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_divide_by_power_of_two(const int32_t div
 #endif
 }
 
+// MURISCV_NN CUSTOM CODE
 /**
  * @brief           Requantize a given value.
  * @details         Essentially returns (val * multiplier)/(2 ^ shift) with different rounding depending if
@@ -2234,7 +2237,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_requantize(const int32_t val, const int3
     result = (result + 1) >> 1;
 
     return result;
-#elif defined(CMSIS_NN_USE_REQUANTIZE_INLINE_ASSEMBLY)
+#elif defined(MURISCV_NN_USE_REQUANTIZE_INLINE_ASSEMBLY)
     if (shift >= 0)
     {
         // left shift
