@@ -80,7 +80,7 @@ void basic_muriscv_nn_depthwise_conv_s8_opt(void)
 
     ctx.size = muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(&input_dims, &filter_dims);
 
-#if defined(USE_PEXT)
+#if defined(USE_PEXT) || defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     TEST_ASSERT_TRUE(ctx.size > 0);
 #else
     TEST_ASSERT_EQUAL(ctx.size, 0);
@@ -182,7 +182,7 @@ void depthwise_eq_in_out_ch_muriscv_nn_depthwise_conv_s8_opt(void)
 
     ctx.size = muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(&input_dims, &filter_dims);
 
-#if defined(USE_PEXT)
+#if defined(USE_PEXT) || defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     TEST_ASSERT_TRUE(ctx.size > 0);
 #else
     TEST_ASSERT_EQUAL(ctx.size, 0);
@@ -283,7 +283,7 @@ void depthwise_sub_block_muriscv_nn_depthwise_conv_s8_opt(void)
 
     ctx.size = muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(&input_dims, &filter_dims);
 
-#if defined(USE_PEXT)
+#if defined(USE_PEXT) || defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     TEST_ASSERT_TRUE(ctx.size > 0);
 #else
     TEST_ASSERT_EQUAL(ctx.size, 0);
@@ -383,7 +383,7 @@ void depthwise_out_activation_muriscv_nn_depthwise_conv_s8_opt(void)
 
     ctx.size = muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(&input_dims, &filter_dims);
 
-#if defined(USE_PEXT)
+#if defined(USE_PEXT) || defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     TEST_ASSERT_TRUE(ctx.size > 0);
 #else
     TEST_ASSERT_EQUAL(ctx.size, 0);
@@ -486,7 +486,7 @@ void depthwise_null_bias_0_muriscv_nn_depthwise_conv_s8_opt(void)
 
     ctx.size = muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(&input_dims, &filter_dims);
 
-#if defined(USE_PEXT)
+#if defined(USE_PEXT) || defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     TEST_ASSERT_TRUE(ctx.size > 0);
 #else
     TEST_ASSERT_EQUAL(ctx.size, 0);
@@ -588,7 +588,7 @@ void depthwise_x_stride_muriscv_nn_depthwise_conv_s8_opt(void)
 
     ctx.size = muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(&input_dims, &filter_dims);
 
-#if defined(USE_PEXT)
+#if defined(USE_PEXT) || defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     TEST_ASSERT_TRUE(ctx.size > 0);
 #else
     TEST_ASSERT_EQUAL(ctx.size, 0);

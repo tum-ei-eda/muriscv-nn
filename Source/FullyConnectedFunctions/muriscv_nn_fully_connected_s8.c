@@ -55,7 +55,6 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
 {
     (void)bias_dims;
     (void)ctx; // TODO(fabianpedd): Why is this not used? But allocated in the tests?!?
-    (void)fc_params->filter_offset;
 
     int32_t batch_cnt = input_dims->n;
 
@@ -82,7 +81,7 @@ muriscv_nn_status muriscv_nn_fully_connected_s8(const muriscv_nn_context *ctx,
                                      fc_params->activation.min,
                                      fc_params->activation.max,
                                      1L,
-                                     0); // RHS OFFSET CURRENTLY UNUSED
+                                     fc_params->filter_offset);
         input += filter_dims->n;
         output += output_dims->c;
         batch_cnt--;

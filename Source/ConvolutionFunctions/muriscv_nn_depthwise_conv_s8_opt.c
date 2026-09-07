@@ -152,7 +152,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                                                       output_activation_min,
                                                       output_activation_max,
                                                       kernel_size,
-                                                      bias + block_offset,
+                                                      bias ? bias + block_offset : NULL,
                                                       out);
 
                     out += (4 * input_ch);
@@ -165,18 +165,20 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
 
         for (int i_buf = 0; i_buf < buffer_count; i_buf++)
         {
+            int8_t *const next_out = out + output_ch;
+            const int32_t block_offset = i_ch * CH_IN_BLOCK_MVE;
             int32_t num_ch_to_process = active_ch, offset = 0;
             while (num_ch_to_process > 0)
             {
                 const int8_t *col_0 = lhs_buffer + (kernel_size * CH_IN_BLOCK_MVE * i_buf) + offset;
-                const int8_t *row_0 = kernel + offset;
+                const int8_t *row_0 = kernel + block_offset + offset;
 
 #if defined(USE_VEXT)
                 size_t vl = vsetvl_e32m2(num_ch_to_process);
                 vint32m2_t out_0 = vmv_v_x_i32m2(0, vl);
                 if (bias)
                 {
-                    out_0 = vle32_v_i32m2(&bias[offset], vl);
+                    out_0 = vle32_v_i32m2(&bias[block_offset + offset], vl);
                 }
 
                 for (int i_ker = 0; i_ker < kernel_size; i_ker++)
@@ -190,8 +192,8 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                     row_0 += input_ch;
                 }
 
-                const vint32m2_t mult = vle32_v_i32m2(output_mult + offset, vl);
-                const vint32m2_t shift = vle32_v_i32m2(output_shift + offset, vl);
+                const vint32m2_t mult = vle32_v_i32m2(output_mult + block_offset + offset, vl);
+                const vint32m2_t shift = vle32_v_i32m2(output_shift + block_offset + offset, vl);
 
                 out_0 = muriscv_nn_requantize_vint32m2(out_0, mult, shift, vl);
                 out_0 = vadd_vx_i32m2(out_0, output_offset, vl);
@@ -207,7 +209,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                 int32_t out_0 = 0;
                 if (bias)
                 {
-                    out_0 += bias[offset];
+                    out_0 += bias[block_offset + offset];
                 }
 
                 for (int i_ker = 0; i_ker < kernel_size; i_ker++)
@@ -221,8 +223,8 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                     row_0 += input_ch;
                 }
 
-                const int32_t mult = *(output_mult + offset);
-                const int32_t shift = *(output_shift + offset);
+                const int32_t mult = *(output_mult + block_offset + offset);
+                const int32_t shift = *(output_shift + block_offset + offset);
 
                 out_0 = muriscv_nn_requantize(out_0, mult, shift);
                 out_0 += output_offset;
@@ -235,6 +237,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s8_opt(const muriscv_nn_context *ctx
                 num_ch_to_process--;
 #endif
             }
+            out = next_out;
         }
 
         buffer_count = 0;

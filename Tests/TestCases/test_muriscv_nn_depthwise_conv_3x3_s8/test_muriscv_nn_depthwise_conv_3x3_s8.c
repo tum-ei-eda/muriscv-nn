@@ -205,7 +205,7 @@ void depthwise_kernel_3x3_muriscv_nn_depthwise_conv_3x3_1_s8(void)
         muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size(&dw_conv_params, &input_dims, &filter_dims, &output_dims);
 
     // Not 3x3 variant since negative test.
-#if defined(USE_PEXT)
+#if defined(USE_PEXT) || defined(USE_VEXT) || defined(USE_PORTABLE_VEXT)
     TEST_ASSERT_TRUE(buf_size > 0);
 #else
     TEST_ASSERT_EQUAL(buf_size, 0);

@@ -43,8 +43,10 @@
 __STATIC_INLINE int32_t muriscv_nn_depthwise_conv_fast_s16_get_buffer_size_mve(const muriscv_nn_dims *input_dims,
                                                                                const muriscv_nn_dims *filter_dims)
 {
-    /* The + 8 accounts for a worst case out of bounds read of the lhs buffers in the *_nt_t_* function.  */
-    return 4 * input_dims->c * filter_dims->w * filter_dims->h * sizeof(int16_t) + 8;
+    /* The RISC-V implementation currently delegates to the scratch-free reference kernel. */
+    (void)input_dims;
+    (void)filter_dims;
+    return 0;
 }
 
 __STATIC_INLINE int32_t muriscv_nn_depthwise_conv_fast_s16_get_buffer_size_dsp(const muriscv_nn_dims *input_dims,
@@ -56,17 +58,13 @@ __STATIC_INLINE int32_t muriscv_nn_depthwise_conv_fast_s16_get_buffer_size_dsp(c
 int32_t muriscv_nn_depthwise_conv_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims,
                                                            const muriscv_nn_dims *filter_dims)
 {
-    // #if defined(USE_PEXT)
-    //     #if defined(USE_VEXT)
-    //     return muriscv_nn_depthwise_conv_fast_s16_get_buffer_size_mve(input_dims, filter_dims);
-    //     #else // USE_PEXT
+#if defined(USE_PEXT)
     return muriscv_nn_depthwise_conv_fast_s16_get_buffer_size_dsp(input_dims, filter_dims);
-    //    #endif
-    // #else
-    //    (void)input_dims;
-    //    (void)filter_dims;
-    //    return 0;
-    // #endif
+#else
+    (void)input_dims;
+    (void)filter_dims;
+    return 0;
+#endif
 }
 
 int32_t muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(const muriscv_nn_dw_conv_params *dw_conv_params,

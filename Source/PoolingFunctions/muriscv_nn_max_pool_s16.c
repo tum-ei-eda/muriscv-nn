@@ -236,43 +236,54 @@ muriscv_nn_status muriscv_nn_max_pool_s16(const muriscv_nn_context *ctx,
     (void)ctx;
     int16_t *dst_base = dst;
 
-    for (int32_t i_y = 0, base_idx_y = -pad_y; i_y < output_y; base_idx_y += stride_y, i_y++)
+    if (input_dims->n < 1)
     {
-        for (int32_t i_x = 0, base_idx_x = -pad_x; i_x < output_x; base_idx_x += stride_x, i_x++)
-        {
-            /* Condition for kernel start dimension: (base_idx_<x,y> + kernel_<x,y>_start) >= 0 */
-            const int32_t ker_y_start = MAX(0, -base_idx_y);
-            const int32_t ker_x_start = MAX(0, -base_idx_x);
-
-            /* Condition for kernel end dimension: (base_idx_<x,y> + kernel_<x,y>_end) < dim_src_<width,height> */
-            const int32_t kernel_y_end = MIN(kernel_y, input_y - base_idx_y);
-            const int32_t kernel_x_end = MIN(kernel_x, input_x - base_idx_x);
-
-            int32_t count = 0;
-
-            for (int32_t k_y = ker_y_start; k_y < kernel_y_end; k_y++)
-            {
-                for (int32_t k_x = ker_x_start; k_x < kernel_x_end; k_x++)
-                {
-                    const int16_t *start = src + channel_in * (k_x + base_idx_x + (k_y + base_idx_y) * input_x);
-
-                    if (count == 0)
-                    {
-                        memcpy(dst, start, channel_in * sizeof(int16_t));
-                        count++;
-                    }
-                    else
-                    {
-                        compare_and_replace_if_larger(dst, start, channel_in);
-                    }
-                }
-            }
-            /* 'count' is expected to be non-zero here. */
-            dst += channel_in;
-        }
+        return MURISCV_NN_ARG_ERROR;
     }
 
-    clamp_output(dst_base, output_x * output_y * channel_in, act_min, act_max);
+    for (int32_t batch = 0; batch < input_dims->n; batch++)
+    {
+        for (int32_t i_y = 0, base_idx_y = -pad_y; i_y < output_y; base_idx_y += stride_y, i_y++)
+        {
+            for (int32_t i_x = 0, base_idx_x = -pad_x; i_x < output_x; base_idx_x += stride_x, i_x++)
+            {
+                /* Condition for kernel start dimension: (base_idx_<x,y> + kernel_<x,y>_start) >= 0 */
+                const int32_t ker_y_start = MAX(0, -base_idx_y);
+                const int32_t ker_x_start = MAX(0, -base_idx_x);
+
+                /* Condition for kernel end dimension: (base_idx_<x,y> + kernel_<x,y>_end) < dim_src_<width,height> */
+                const int32_t kernel_y_end = MIN(kernel_y, input_y - base_idx_y);
+                const int32_t kernel_x_end = MIN(kernel_x, input_x - base_idx_x);
+
+                int32_t count = 0;
+
+                for (int32_t k_y = ker_y_start; k_y < kernel_y_end; k_y++)
+                {
+                    for (int32_t k_x = ker_x_start; k_x < kernel_x_end; k_x++)
+                    {
+                        const int16_t *start = src + channel_in * (k_x + base_idx_x + (k_y + base_idx_y) * input_x);
+
+                        if (count == 0)
+                        {
+                            memcpy(dst, start, channel_in * sizeof(int16_t));
+                            count++;
+                        }
+                        else
+                        {
+                            compare_and_replace_if_larger(dst, start, channel_in);
+                        }
+                    }
+                }
+                /* 'count' is expected to be non-zero here. */
+                dst += channel_in;
+            }
+        }
+
+        clamp_output(dst_base, output_x * output_y * channel_in, act_min, act_max);
+        dst_base = dst;
+
+        src += input_x * input_y * channel_in;
+    }
 
     return MURISCV_NN_SUCCESS;
 }

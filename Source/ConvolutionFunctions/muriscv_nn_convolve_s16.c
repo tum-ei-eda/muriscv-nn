@@ -121,7 +121,7 @@ muriscv_nn_status muriscv_nn_convolve_s16(const muriscv_nn_context *ctx,
                         }
                     }
 
-                    if (bias_data)
+                    if (bias_data && bias_data->data)
                     {
                         const int64_t *bias_s64 = (const int64_t *)bias_data->data;
                         const int32_t *bias_s32 = (const int32_t *)bias_data->data;
@@ -141,8 +141,15 @@ muriscv_nn_status muriscv_nn_convolve_s16(const muriscv_nn_context *ctx,
                         conv_out_acc += bias;
                     }
 
-                    int32_t conv_out =
-                        muriscv_nn_requantize_s64(conv_out_acc, reduced_multiplier, output_shift[i_out_ch]);
+                    int32_t conv_out;
+                    if (bias_data && bias_data->is_int32_bias)
+                    {
+                        conv_out = muriscv_nn_requantize((int32_t)conv_out_acc, output_mult[i_out_ch], output_shift[i_out_ch]);
+                    }
+                    else
+                    {
+                        conv_out = muriscv_nn_requantize_s64(conv_out_acc, reduced_multiplier, output_shift[i_out_ch]);
+                    }
                     conv_out = MAX(conv_out, out_activation_min);
                     conv_out = MIN(conv_out, out_activation_max);
                     output_data[i_out_ch + (i_out_y * output_x + i_out_x) * output_ch] = (int16_t)conv_out;

@@ -70,8 +70,26 @@ muriscv_nn_status muriscv_nn_vec_mat_mult_t_s8(const q7_t *lhs,
                                                const int32_t activation_min,
                                                const int32_t activation_max,
                                                const int32_t address_offset,
-                                               const int32_t rhs_offset) // Currently Unused
+                                               const int32_t rhs_offset)
 {
+    /* The optimized paths assume symmetric weights. Handle a nonzero weight
+     * offset before requantization, including the input/weight cross term. */
+    if (rhs_offset != 0)
+    {
+        for (int32_t row = 0; row < rhs_rows; row++)
+        {
+            int32_t acc = bias ? bias[row] : 0;
+            for (int32_t col = 0; col < rhs_cols; col++)
+            {
+                acc += (lhs[col] + lhs_offset) * (rhs[row * rhs_cols + col] + rhs_offset);
+            }
+            acc = muriscv_nn_requantize(acc, dst_multiplier, dst_shift);
+            acc += dst_offset;
+            dst[row * address_offset] = (int8_t)MIN(MAX(acc, activation_min), activation_max);
+        }
+        return MURISCV_NN_SUCCESS;
+    }
+
 #if defined(USE_VEXT)
     if (address_offset == 1)
     { // TODO: remove this after #81 is fixed
