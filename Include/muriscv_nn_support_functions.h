@@ -181,9 +181,9 @@ extern "C" {
 #define MIN_RV(A, B) ((A) < (B) ? (A) : (B))
 #endif
 // MURISCV_NN END OF NEW CODE
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 #define MAX(A, B) MAX_RV(A, B)
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 #define MIN(A, B) MIN_RV(A, B)
 #define CLAMP(x, h, l) MAX(MIN((x), (h)), (l))
 #define MURISCV_NN_ROUND_UP(x, multiple) ((((x) + (multiple) - 1) / (multiple)) * (multiple))
@@ -214,7 +214,7 @@ extern "C" {
 // regular conv operation when number of input channels is one.
 // Only applicable for processors with MVE extension.
 #if defined(__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-#define CONVERT_DW_CONV_WITH_ONE_INPUT_CH_AND_OUTPUT_CH_ABOVE_THRESHOLD (8)
+    #define CONVERT_DW_CONV_WITH_ONE_INPUT_CH_AND_OUTPUT_CH_ABOVE_THRESHOLD (8)
 #else
 #define CONVERT_DW_CONV_WITH_ONE_INPUT_CH_AND_OUTPUT_CH_ABOVE_THRESHOLD (1)
 #endif
@@ -229,7 +229,7 @@ extern "C" {
 #include "muriscv_nn_support_functions_flt.h"
 #endif
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief definition to pack four 8 bit values.
  */
@@ -429,8 +429,7 @@ void muriscv_nn_s8_to_s16_unordered_with_offset(const int8_t *src, int16_t *dst,
  *        so not recommended to call directly even on Host.
  *
  */
-int32_t muriscv_nn_convolve_s8_get_buffer_size_mve(const muriscv_nn_dims *input_dims,
-                                                   const muriscv_nn_dims *filter_dims);
+int32_t muriscv_nn_convolve_s8_get_buffer_size_mve(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims);
 
 /**
  * @brief Get the required buffer size for optimized s8 depthwise convolution
@@ -561,7 +560,7 @@ int16_t *muriscv_nn_mat_mult_kernel_s16(const int8_t *input_a,
                                         const muriscv_nn_bias_data *const bias_data,
                                         int16_t *out_0);
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief General Matrix-multiplication without requantization for one row & one column
  * @param[in]       row_elements  number of row elements
@@ -1660,7 +1659,7 @@ static inline void muriscv_nn_memset(int8_t *dst, const int8_t val, size_t block
 #endif
 }
 // MURISCV_NN END OF NEW CODE
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           memset optimized for MVE TODO: update for RISCV-VEXT
  * @param[in, out]  dst         Destination pointer
@@ -1688,7 +1687,7 @@ muriscv_nn_memset_s8(int8_t *dst, const int8_t val, uint32_t block_size) // supp
 
 #if defined(USE_PEXT)
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s4 word into two s8 words.
  */
@@ -1704,7 +1703,7 @@ __STATIC_FORCEINLINE void read_and_pad_s4(const int8_t *source, int32_t *out1, i
     out2 = NULL;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s4 word into two s8 words.
  * @details   The s4 elements are not evenly aligned on the byte boundary, so 3 bytes need to be read instead of 2.
@@ -1729,7 +1728,7 @@ __STATIC_FORCEINLINE void read_and_pad_s4_uneven(const int8_t *source, int32_t *
     out2 = NULL;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s4 word into two s16 words with ordering.
  */
@@ -1751,7 +1750,7 @@ __STATIC_FORCEINLINE void read_and_pad_s4_ordered(const int8_t *source, int32_t 
     out2 = NULL;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s8 word into two s16 words with ordering.
  */
@@ -1775,7 +1774,7 @@ __STATIC_FORCEINLINE const int8_t *read_and_pad(const int8_t *source, int32_t *o
     return source;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s8 word into two s16 words with ordering and addition.
  */
@@ -1797,7 +1796,7 @@ __STATIC_FORCEINLINE void read_pad_and_add_s8(const int8_t *source, int32_t *out
     out2 = NULL;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand two bytes into one word with ordering.
  */
@@ -1810,7 +1809,7 @@ __STATIC_FORCEINLINE void read_and_pad_s8x2(const int8_t *source, int32_t *out)
     out = NULL;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand two bytes into one word with ordering and addition.
  */
@@ -1823,7 +1822,7 @@ __STATIC_FORCEINLINE void read_pad_and_add_s8x2(const int8_t *source, int32_t *o
     out = NULL;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief read and expand one s8 word into two s16 words with no additional ordering.
  */
@@ -1879,7 +1878,7 @@ int8_t *muriscv_nn_mat_mult_kernel_s4_s16(const int8_t *input_a,
                                           const int32_t num_col_a,
                                           const int32_t *const output_bias,
                                           int8_t *out_0);
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief Matrix-multiplication function for convolution with per-channel requantization.
  * @param[in]       input_a     pointer to operand A
@@ -2031,7 +2030,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_doubling_high_mult(const int32_t m1, con
     return result;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Doubling high multiply without saturation. This is intended
  *                  for requantization where the scale is a positive integer
@@ -2119,7 +2118,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_doubling_high_mult_no_sat(int32_t m1, in
 #endif
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Rounding divide by power of two.
  * @param[in]       dividend - Dividend
@@ -2206,7 +2205,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_divide_by_power_of_two(const int32_t div
 #endif
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Requantize a given value.
  * @details         Essentially returns (val * multiplier)/(2 ^ shift) with different rounding depending if
@@ -2276,7 +2275,7 @@ __STATIC_FORCEINLINE int32_t muriscv_nn_requantize_s64(const int64_t val,
     return result;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           memcpy optimized for RVV
  * @param[in, out]  dst         Destination pointer
@@ -2298,7 +2297,7 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_s8(int8_t *dst, const int8_t *src, s
 #endif
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           memcpy wrapper for int16
  * @param[in, out]  dst         Destination pointer
@@ -2312,7 +2311,7 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
 }
 
 #if defined(USE_VEXT)
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Vector saturating doubling high multiply returning high half.
  * @param[in]       m1        Multiplicand
@@ -2326,7 +2325,7 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve(const int32x4_t
     return 0;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Vector rounding divide by power of two.
  * @param[in]       dividend - Dividend vector
@@ -2344,7 +2343,7 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve(const int32
     return 0;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Requantize a given vector.
  * @param[in]       val         Vector to be requantized
@@ -2377,7 +2376,7 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve(const int32x4_t val,
     return 0;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Vector saturating doubling high multiply with predication returning high half.
  * @param[in]       m1        Multiplicand
@@ -2396,7 +2395,7 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_pred(const int3
     return 0;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Vector rounding divide by power of two with predication.
  * @param[in]       dividend - Dividend vector
@@ -2419,7 +2418,7 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_pred(const 
     return 0;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 /**
  * @brief           Requantize a given vector with predication.
  * @param[in]       val         Vector to be requantized
@@ -2459,14 +2458,14 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_pred(const int32x4_t va
     return 0;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 __STATIC_FORCEINLINE int32x4_t muriscv_nn_doubling_high_mult_mve_32x4(const int32x4_t m1, const int32x4_t m2)
 {
     // return vqrdmulhq_s32(m1, m2);
     return 0;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_32x4(const int32x4_t dividend,
                                                                           const int32x4_t exponent)
 {
@@ -2477,7 +2476,7 @@ __STATIC_FORCEINLINE int32x4_t muriscv_nn_divide_by_power_of_two_mve_32x4(const 
     return 0;
 }
 
-// MURISCV_NN CUSTOM CODE
+//MURISCV_NN CUSTOM CODE
 __STATIC_FORCEINLINE int32x4_t muriscv_nn_requantize_mve_32x4(const int32x4_t val,
                                                               const int32x4_t multiplier,
                                                               const int32x4_t shift)
@@ -2692,8 +2691,8 @@ muriscv_nn_status muriscv_nn_lstm_calculate_gate_s16(const int16_t *data_in,
  * @param[in]   rhs_cols         Vector/matarix column length
  * @param[in]   rhs_rows         Row count of matrix
  * @param[in]   batches          Batch size
- * @param[in]   batch_offset     Number of timesteps between consecutive batches in input, see muriscv_nn_lstm_step_s8.
- Note that the output is always stored with sequential batches.
+ * @param[in]   batch_offset     Number of timesteps between consecutive batches in input, see muriscv_nn_lstm_step_s8. Note
+ that the output is always stored with sequential batches.
  * @return                       The function returns <code>MURISCV_NN_SUCCESS</code>
 
  */
@@ -2828,8 +2827,7 @@ muriscv_nn_status muriscv_nn_elementwise_mul_acc_s16(const int16_t *input_1_vect
  * @details   Compares each dimension and returns 1 if any dimension does not match.
  *            This function does not check that broadcast rules are met.
  */
-__STATIC_FORCEINLINE int32_t muriscv_nn_check_broadcast_required(const muriscv_nn_dims *shape_1,
-                                                                 const muriscv_nn_dims *shape_2)
+__STATIC_FORCEINLINE int32_t muriscv_nn_check_broadcast_required(const muriscv_nn_dims *shape_1, const muriscv_nn_dims *shape_2)
 {
     if ((shape_1->n != shape_2->n) || (shape_1->h != shape_2->h) || (shape_1->w != shape_2->w) ||
         (shape_1->c != shape_2->c))
