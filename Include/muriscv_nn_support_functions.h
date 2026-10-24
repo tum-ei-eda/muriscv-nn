@@ -22,8 +22,8 @@
  * Title:        muriscv_nn_support_functions.h
  * Description:  Public header file of support functions for MURISCV NN Library
  *
- * $Date:        15 June 2026
- * $Revision:    V.22.11.0
+ * $Date:        17 October 2026
+ * $Revision:    V.22.11.1
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
