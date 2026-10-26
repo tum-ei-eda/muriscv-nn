@@ -425,6 +425,17 @@ set(TFLM_SRCS
     ${TFL_SRC}/builtin_op_data.h
 )
 
+# Recent TFLM versions moved shared Lite code into the micro source tree.
+# Keep both locations; the existence check below selects the available files.
+list(APPEND TFLM_SRCS
+     ${TFLM_SRC}/micro_common.cc
+     ${TFLM_SRC}/flatbuffer_conversions.cc
+     ${TFLM_SRC}/kernels/internal/common.cc
+     ${TFLM_SRC}/kernels/internal/quantization_util.cc
+     ${TFLM_SRC}/kernels/internal/tensor_ctypes.cc
+     ${TFLM_SRC}/kernels/internal/portable_tensor_utils.cc
+)
+
 # For backwards compatibility, we drop non-existance files here.
 foreach(src ${TFLM_SRCS})
   if(NOT EXISTS ${src})
