@@ -92,6 +92,7 @@ echo "Building spike"
 test -d riscv-isa-sim || git clone https://github.com/riscv-software-src/riscv-isa-sim.git
 cd riscv-isa-sim
 git checkout $SPIKE_REF
+git submodule update --init --recursive
 export RISCV=$PWD/../../../Toolchain/rv32gcv
 export PATH=$PATH:$RISCV/bin
 echo $PATH

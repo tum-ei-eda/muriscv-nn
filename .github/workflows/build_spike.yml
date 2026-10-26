@@ -69,6 +69,7 @@ jobs:
         run: |
           git clone https://github.com/riscv-software-src/riscv-isa-sim.git
           git -C riscv-isa-sim checkout ${{ matrix.spike_ref }}
+          git -C riscv-isa-sim submodule update --init --recursive
       - name: Build Spike
         working-directory: ./Sim/Spike/riscv-isa-sim
         run: |
