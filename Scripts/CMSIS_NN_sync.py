@@ -611,6 +611,9 @@ def update_include_file(muriscv_filename, muriscv_path, cmsis_filename, cmsis_pa
         define_statements = []
         define_base = "#define"
         for i in range(len(cmsis_functions)):
+            # Unchanged names already come from muriscv_nn_functions.h.
+            if cmsis_functions_original[i][0] == cmsis_functions[i][0]:
+                continue
             define_statements.append(
                 define_base + " " + cmsis_functions_original[i][0] + " " + cmsis_functions[i][0] + "\n"
             )

@@ -11,7 +11,11 @@
 #include "tensorflow/lite/micro/micro_log.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
+#if __has_include("tensorflow/lite/schema/schema_generated.h")
 #include "tensorflow/lite/schema/schema_generated.h"
+#else
+#include "tensorflow/lite/micro/schema/schema_generated.h"
+#endif
 
 constexpr size_t tensor_arena_size = 256 * 1024;
 alignas(16) uint8_t tensor_arena[tensor_arena_size];

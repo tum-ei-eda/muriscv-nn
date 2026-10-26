@@ -78,8 +78,8 @@ extern "C" {
  *        muriscv-nn  to perform the convolution.
  *
  * @param[in, out] ctx            Function context that contains the additional buffer if required by the function.
- *                                muriscv_nn_convolve_wrapper_s4_get_buffer_size will return the buffer_size if
- * required. The caller is expected to clear the buffer ,if applicable, for security reasons.
+ *                                muriscv_nn_convolve_wrapper_s4_get_buffer_size will return the buffer_size if required.
+ *                                The caller is expected to clear the buffer ,if applicable, for security reasons.
  * @param[in]      conv_params    Convolution parameters (e.g. strides, dilations, pads,...).
  *                                Range of conv_params->input_offset  : [-127, 128]
  *                                Range of conv_params->output_offset : [-128, 127]
@@ -163,8 +163,8 @@ int32_t muriscv_nn_convolve_wrapper_s4_get_buffer_size_dsp(const muriscv_nn_conv
  *        muriscv-nn  to perform the convolution.
  *
  * @param[in, out] ctx            Function context that contains the additional buffer if required by the function.
- *                                muriscv_nn_convolve_wrapper_s8_get_buffer_size will return the buffer_size if
- * required. The caller is expected to clear the buffer, if applicable, for security reasons.
+ *                                muriscv_nn_convolve_wrapper_s8_get_buffer_size will return the buffer_size if required.
+ *                                The caller is expected to clear the buffer, if applicable, for security reasons.
  * @param[in]      conv_params    Convolution parameters (e.g. strides, dilations, pads,...).
  *                                Range of conv_params->input_offset  : [-127, 128]
  *                                Range of conv_params->output_offset : [-128, 127]
@@ -479,8 +479,7 @@ int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims
  * @brief Wrapper to select optimal transposed convolution algorithm depending on parameters.
  * @param[in, out] ctx                   Function context that contains the additional buffer if required by the
  *                                       function.
- *                                       muriscv_nn_transpose_conv_s8_get_buffer_size will return the buffer_size if
- required.
+ *                                       muriscv_nn_transpose_conv_s8_get_buffer_size will return the buffer_size if required.
  *                                       The caller is expected to clear the buffer, if applicable, for security
  reasons.
  * @param[in, out] output_ctx            Temporary scratch buffer.
@@ -512,24 +511,23 @@ int32_t muriscv_nn_convolve_s8_get_buffer_size(const muriscv_nn_dims *input_dims
  *
  */
 muriscv_nn_status muriscv_nn_transpose_conv_wrapper_s8(const muriscv_nn_context *ctx,
-                                                       const muriscv_nn_context *output_ctx,
-                                                       const muriscv_nn_transpose_conv_params *transpose_conv_params,
-                                                       const muriscv_nn_per_channel_quant_params *quant_params,
-                                                       const muriscv_nn_dims *input_dims,
-                                                       const int8_t *input_data,
-                                                       const muriscv_nn_dims *filter_dims,
-                                                       const int8_t *filter_data,
-                                                       const muriscv_nn_dims *bias_dims,
-                                                       const int32_t *bias_data,
-                                                       const muriscv_nn_dims *output_dims,
-                                                       int8_t *output_data);
+                                                  const muriscv_nn_context *output_ctx,
+                                                  const muriscv_nn_transpose_conv_params *transpose_conv_params,
+                                                  const muriscv_nn_per_channel_quant_params *quant_params,
+                                                  const muriscv_nn_dims *input_dims,
+                                                  const int8_t *input_data,
+                                                  const muriscv_nn_dims *filter_dims,
+                                                  const int8_t *filter_data,
+                                                  const muriscv_nn_dims *bias_dims,
+                                                  const int32_t *bias_data,
+                                                  const muriscv_nn_dims *output_dims,
+                                                  int8_t *output_data);
 
 /**
  * @brief Basic s8 transpose convolution function
  * @param[in, out] ctx                   Function context that contains the additional buffer if required by the
  *                                       function.
- *                                       muriscv_nn_transpose_conv_s8_get_buffer_size will return the buffer_size if
- required.
+ *                                       muriscv_nn_transpose_conv_s8_get_buffer_size will return the buffer_size if required.
  *                                       The caller is expected to clear the buffer, if applicable, for security
  reasons.
  * @param[in, out] output_ctx            Temporary scratch buffer.
@@ -561,17 +559,17 @@ muriscv_nn_status muriscv_nn_transpose_conv_wrapper_s8(const muriscv_nn_context 
  *
  */
 muriscv_nn_status muriscv_nn_transpose_conv_s8(const muriscv_nn_context *ctx,
-                                               const muriscv_nn_context *output_ctx,
-                                               const muriscv_nn_transpose_conv_params *transpose_conv_params,
-                                               const muriscv_nn_per_channel_quant_params *quant_params,
-                                               const muriscv_nn_dims *input_dims,
-                                               const int8_t *input_data,
-                                               const muriscv_nn_dims *filter_dims,
-                                               const int8_t *filter_data,
-                                               const muriscv_nn_dims *bias_dims,
-                                               const int32_t *bias_data,
-                                               const muriscv_nn_dims *output_dims,
-                                               int8_t *output_data);
+                                          const muriscv_nn_context *output_ctx,
+                                          const muriscv_nn_transpose_conv_params *transpose_conv_params,
+                                          const muriscv_nn_per_channel_quant_params *quant_params,
+                                          const muriscv_nn_dims *input_dims,
+                                          const int8_t *input_data,
+                                          const muriscv_nn_dims *filter_dims,
+                                          const int8_t *filter_data,
+                                          const muriscv_nn_dims *bias_dims,
+                                          const int32_t *bias_data,
+                                          const muriscv_nn_dims *output_dims,
+                                          int8_t *output_data);
 
 /**
  * @brief Get the required buffer size for ctx in s8 transpose conv function
@@ -599,10 +597,9 @@ int32_t muriscv_nn_transpose_conv_s8_get_buffer_size(const muriscv_nn_transpose_
  * @return          The function returns required buffer size(bytes)
  *
  */
-int32_t muriscv_nn_transpose_conv_s8_get_reverse_conv_buffer_size(
-    const muriscv_nn_transpose_conv_params *transposed_conv_params,
-    const muriscv_nn_dims *input_dims,
-    const muriscv_nn_dims *filter_dims);
+int32_t muriscv_nn_transpose_conv_s8_get_reverse_conv_buffer_size(const muriscv_nn_transpose_conv_params *transposed_conv_params,
+                                                           const muriscv_nn_dims *input_dims,
+                                                           const muriscv_nn_dims *filter_dims);
 
 /**
  * @brief Get size of additional buffer required by muriscv_nn_transpose_conv_s8() for Arm(R) Helium Architecture case.
@@ -674,8 +671,8 @@ int32_t muriscv_nn_convolve_s16_get_buffer_size(const muriscv_nn_dims *input_dim
  * @brief Fast s4 version for 1x1 convolution (non-square shape)
  *
  * @param[in, out] ctx           Function context that contains the additional buffer if required by the function.
- *                               muriscv_nn_convolve_1x1_s4_fast_get_buffer_size will return the buffer_size if
- * required. The caller is expected to clear the buffer ,if applicable, for security reasons.
+ *                               muriscv_nn_convolve_1x1_s4_fast_get_buffer_size will return the buffer_size if required.
+ *                               The caller is expected to clear the buffer ,if applicable, for security reasons.
  * @param[in]      conv_params   Convolution parameters (e.g. strides, dilations, pads,...).
  *                               Range of conv_params->input_offset  : [-127, 128]
  *                               Range of conv_params->output_offset : [-128, 127]
@@ -757,8 +754,8 @@ muriscv_nn_status muriscv_nn_convolve_1x1_s4(const muriscv_nn_context *ctx,
  * @brief Fast s8 version for 1x1 convolution (non-square shape)
  *
  * @param[in, out] ctx           Function context that contains the additional buffer if required by the function.
- *                               muriscv_nn_convolve_1x1_s8_fast_get_buffer_size will return the buffer_size if
- * required. The caller is expected to clear the buffer, if applicable, for security reasons.
+ *                               muriscv_nn_convolve_1x1_s8_fast_get_buffer_size will return the buffer_size if required.
+ *                               The caller is expected to clear the buffer, if applicable, for security reasons.
  * @param[in]      conv_params   Convolution parameters (e.g. strides, dilations, pads,...).
  *                               Range of conv_params->input_offset  : [-127, 128]
  *                               Range of conv_params->output_offset : [-128, 127]
@@ -1099,8 +1096,8 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size(const muriscv_nn_dw
                                                              const muriscv_nn_dims *output_dims);
 
 /**
- * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s8() for processors with DSP
- * extension. Refer to muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size() for function argument details.
+ * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s8() for processors with DSP extension.
+ *        Refer to muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size() for function argument details.
  *
  * @note       Intended for compilation on Host. If compiling for an Arm target, use
  *             muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size().
@@ -1112,8 +1109,8 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size_dsp(const muriscv_n
                                                                  const muriscv_nn_dims *output_dims);
 
 /**
- * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s8() for Arm(R) Helium
- * Architecture case. Refer to muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size() for function argument details.
+ * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s8() for Arm(R) Helium Architecture case.
+ *        Refer to muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size() for function argument details.
  *
  * @note       Intended for compilation on Host. If compiling for an Arm target, use
  *             muriscv_nn_depthwise_conv_wrapper_s8_get_buffer_size().
@@ -1143,8 +1140,8 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size(const muriscv_nn_dw
                                                              const muriscv_nn_dims *output_dims);
 
 /**
- * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s4() for processors with DSP
- * extension. Refer to muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size() for function argument details.
+ * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s4() for processors with DSP extension.
+ *        Refer to muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size() for function argument details.
  *
  * @note       Intended for compilation on Host. If compiling for an Arm target, use
  *             muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size().
@@ -1156,8 +1153,8 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size_dsp(const muriscv_n
                                                                  const muriscv_nn_dims *output_dims);
 
 /**
- * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s4() for Arm(R) Helium
- * Architecture case. Refer to muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size() for function argument details.
+ * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s4() for Arm(R) Helium Architecture case.
+ *        Refer to muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size() for function argument details.
  *
  * @note       Intended for compilation on Host. If compiling for an Arm target, use
  *             muriscv_nn_depthwise_conv_wrapper_s4_get_buffer_size().
@@ -1356,8 +1353,8 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size(const muriscv_nn_d
                                                               const muriscv_nn_dims *output_dims);
 
 /**
- * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s16() for processors with DSP
- * extension. Refer to muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size() for function argument details.
+ * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s16() for processors with DSP extension.
+ *        Refer to muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size() for function argument details.
  *
  * @note       Intended for compilation on Host. If compiling for an Arm target, use
  *             muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size().
@@ -1369,8 +1366,8 @@ int32_t muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size_dsp(const muriscv_
                                                                   const muriscv_nn_dims *output_dims);
 
 /**
- * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s16() for Arm(R) Helium
- * Architecture case. Refer to muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size() for function argument details.
+ * @brief Get size of additional buffer required by muriscv_nn_depthwise_conv_wrapper_s16() for Arm(R) Helium Architecture
+ * case. Refer to muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size() for function argument details.
  *
  * @note       Intended for compilation on Host. If compiling for an Arm target, use
  *             muriscv_nn_depthwise_conv_wrapper_s16_get_buffer_size().
@@ -1421,8 +1418,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_fast_s16(const muriscv_nn_context *c
  * @return          The function returns required buffer size in bytes
  *
  */
-int32_t muriscv_nn_depthwise_conv_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims,
-                                                           const muriscv_nn_dims *filter_dims);
+int32_t muriscv_nn_depthwise_conv_fast_s16_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims);
 
 /**
  * @brief Optimized s8 depthwise convolution function for 3x3 kernel size with some constraints on
@@ -1531,8 +1527,7 @@ muriscv_nn_status muriscv_nn_depthwise_conv_s4_opt(const muriscv_nn_context *ctx
  * @return          The function returns required buffer size in bytes
  *
  */
-int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(const muriscv_nn_dims *input_dims,
-                                                         const muriscv_nn_dims *filter_dims);
+int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims);
 
 /**
  * @brief Get the required buffer size for optimized s4 depthwise convolution
@@ -1543,8 +1538,7 @@ int32_t muriscv_nn_depthwise_conv_s8_opt_get_buffer_size(const muriscv_nn_dims *
  * @return          The function returns required buffer size in bytes
  *
  */
-int32_t muriscv_nn_depthwise_conv_s4_opt_get_buffer_size(const muriscv_nn_dims *input_dims,
-                                                         const muriscv_nn_dims *filter_dims);
+int32_t muriscv_nn_depthwise_conv_s4_opt_get_buffer_size(const muriscv_nn_dims *input_dims, const muriscv_nn_dims *filter_dims);
 
 /**
  * @defgroup FC Fully-connected Layer Functions
@@ -1890,8 +1884,8 @@ int32_t muriscv_nn_fully_connected_s16_get_buffer_size(const muriscv_nn_dims *fi
 int32_t muriscv_nn_fully_connected_s16_get_buffer_size_dsp(const muriscv_nn_dims *filter_dims);
 
 /**
- * @brief Get size of additional buffer required by muriscv_nn_fully_connected_s16() for Arm(R) Helium Architecture
- * case. Refer to muriscv_nn_fully_connected_s16_get_buffer_size() for function argument details.
+ * @brief Get size of additional buffer required by muriscv_nn_fully_connected_s16() for Arm(R) Helium Architecture case.
+ *        Refer to muriscv_nn_fully_connected_s16_get_buffer_size() for function argument details.
  *
  * @note       Intended for compilation on Host. If compiling for an Arm target, use
  *             muriscv_nn_fully_connected_s16_get_buffer_size().
@@ -2633,9 +2627,9 @@ void muriscv_nn_concatenation_s8_w(const int8_t *input,
  *
  * @param[in, out] ctx                Function context (e.g. temporary buffer). Check the function
  *                                    definition file to see if an additional buffer is required.
- *                                    Optional function muriscv_nn_fully_connected_s8_get_buffer_size() provides the
- * buffer size if an additional buffer is required. The caller is expected to clear the buffer, if applicable, for
- * security reasons.
+ *                                    Optional function muriscv_nn_fully_connected_s8_get_buffer_size() provides the buffer
+ *                                    size if an additional buffer is required.
+ *                                    The caller is expected to clear the buffer, if applicable, for security reasons.
  * @param[in]   input_ctx             Temporary scratch buffer
  *                                    The caller is expected to clear the buffer, if applicable, for security reasons.
  * @param[in]   output_ctx            Temporary output scratch buffer
@@ -2770,8 +2764,7 @@ int32_t muriscv_nn_svdf_s8_get_buffer_size_mve(const muriscv_nn_dims *filter_dim
  *
  * @param[in]   input                      Pointer to input data
  * @param[out]  output                     Pointer to output data
- * @param[in]   params                     Struct containing all information about the lstm operator, see
- * muriscv_nn_types.
+ * @param[in]   params                     Struct containing all information about the lstm operator, see muriscv_nn_types.
  * @param[in]   buffers                    Struct containing pointers to all temporary scratch buffers needed for the
  * lstm operator, see muriscv_nn_types.
  *
@@ -2783,17 +2776,16 @@ int32_t muriscv_nn_svdf_s8_get_buffer_size_mve(const muriscv_nn_dims *filter_dim
  *
  */
 muriscv_nn_status muriscv_nn_lstm_unidirectional_s8(const int8_t *input,
-                                                    int8_t *output,
-                                                    const muriscv_nn_lstm_params *params,
-                                                    muriscv_nn_lstm_context *buffers);
+                                               int8_t *output,
+                                               const muriscv_nn_lstm_params *params,
+                                               muriscv_nn_lstm_context *buffers);
 
 /**
  * @brief LSTM unidirectional function with 16 bit input and output and 16 bit gate output, 64 bit bias.
  *
  * @param[in]   input                      Pointer to input data
  * @param[out]  output                     Pointer to output data
- * @param[in]   params                     Struct containing all information about the lstm operator, see
- * muriscv_nn_types.
+ * @param[in]   params                     Struct containing all information about the lstm operator, see muriscv_nn_types.
  * @param[in]   buffers                    Struct containing pointers to all temporary scratch buffers needed for the
  * lstm operator, see muriscv_nn_types.
  *
@@ -2805,17 +2797,17 @@ muriscv_nn_status muriscv_nn_lstm_unidirectional_s8(const int8_t *input,
  *
  */
 muriscv_nn_status muriscv_nn_lstm_unidirectional_s16(const int16_t *input,
-                                                     int16_t *output,
-                                                     const muriscv_nn_lstm_params *params,
-                                                     muriscv_nn_lstm_context *buffers);
+                                                int16_t *output,
+                                                const muriscv_nn_lstm_params *params,
+                                                muriscv_nn_lstm_context *buffers);
 
 /**
  * @brief Batch matmul function with 8 bit input and output.
  *
  * @param[in]   ctx                   Temporary scratch buffer
  *                                    The caller is expected to clear the buffer, if applicable, for security reasons.
- *                                    Optional function muriscv_nn_fully_connected_s8_get_buffer_size() provides the
- * buffer size if an additional buffer is required.
+ *                                    Optional function muriscv_nn_fully_connected_s8_get_buffer_size() provides the buffer
+ *                                    size if an additional buffer is required.
  * @param[in]   bmm_params            Batch matmul Parameters
  *                                    Adjoint flags are currently unused.
  * @param[in]   quant_params          Quantization parameters
@@ -2851,8 +2843,8 @@ muriscv_nn_status muriscv_nn_batch_matmul_s8(const muriscv_nn_context *ctx,
  *
  * @param[in]   ctx                   Temporary scratch buffer
  *                                    The caller is expected to clear the buffer, if applicable, for security reasons.
- *                                    Optional function muriscv_nn_fully_connected_s8_get_buffer_size() provides the
- * buffer size if an additional buffer is required.
+ *                                    Optional function muriscv_nn_fully_connected_s8_get_buffer_size() provides the buffer
+ *                                    size if an additional buffer is required.
  * @param[in]   bmm_params            Batch matmul Parameters
  *                                    Adjoint flags are currently unused.
  * @param[in]   quant_params          Quantization parameters

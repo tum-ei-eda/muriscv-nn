@@ -30,6 +30,7 @@ if(${SIMULATOR} STREQUAL "Vicuna")
   target_include_directories(
     ${TEST_NAME}_tvm
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+            # ${CMAKE_CURRENT_SOURCE_DIR}/..
             ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/runtime/include
             ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/include
             ${PROJECT_SOURCE_DIR}/Include
@@ -41,6 +42,7 @@ if(${SIMULATOR} STREQUAL "Vicuna")
   target_sources(
     ${TEST_NAME}_tvm
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/main.c
+            # ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/runtime/src/runtime/crt/common/crt_runtime_api.c
             ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/src/default_lib0.c
             ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/src/default_lib1.c
             ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/src/default_lib2.c
@@ -59,6 +61,7 @@ else()
   target_include_directories(
     ${TEST_NAME}_tvm
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+            # ${CMAKE_CURRENT_SOURCE_DIR}/..
             ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/runtime/include
             ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/include
             ${PROJECT_SOURCE_DIR}/Include
@@ -68,6 +71,7 @@ else()
   target_sources(
     ${TEST_NAME}_tvm
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/main.c
+            # ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/runtime/src/runtime/crt/common/crt_runtime_api.c
             ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/src/default_lib0.c
             ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/src/default_lib1.c
             ${CMAKE_CURRENT_SOURCE_DIR}/${MLF_DIR}/codegen/host/src/default_lib2.c
