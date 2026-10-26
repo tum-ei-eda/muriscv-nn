@@ -8,7 +8,7 @@
 #include "aww_data/aww_model_data.h"
 #include "aww_data/aww_model_settings.h"
 #include "aww_data/aww_output_data_ref.h"
-#include "tensorflow/lite/micro/tflite_bridge/micro_error_reporter.h"
+#include "tensorflow/lite/micro/micro_log.h"
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"
 #include "tensorflow/lite/schema/schema_generated.h"
@@ -20,9 +20,6 @@ alignas(16) uint8_t tensor_arena[tensor_arena_size];
 
 int run_test()
 {
-    tflite::MicroErrorReporter micro_error_reporter;
-    tflite::ErrorReporter *error_reporter = &micro_error_reporter;
-
     const tflite::Model *model = tflite::GetModel(aww_model_data);
 
     static tflite::MicroMutableOpResolver<6> resolver;
@@ -37,7 +34,7 @@ int run_test()
 
     if (interpreter.AllocateTensors() != kTfLiteOk)
     {
-        TF_LITE_REPORT_ERROR(error_reporter, "ERROR: In AllocateTensors().");
+        MicroPrintf("ERROR: In AllocateTensors().");
         return -1;
     }
 
@@ -47,7 +44,7 @@ int run_test()
 
         if (interpreter.Invoke() != kTfLiteOk)
         {
-            TF_LITE_REPORT_ERROR(error_reporter, "ERROR: In Invoke().");
+            MicroPrintf("ERROR: In Invoke().");
             return -1;
         }
 
