@@ -12,7 +12,7 @@
 # AS IS BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
 # language governing permissions and limitations under the License.
 #
-# Modifications copyright (C) 2024 Chair of Electronic Design Automation, TUM
+# Modifications copyright (C) 2026 Chair of Electronic Design Automation, TUM
 #
 
 target_sources(

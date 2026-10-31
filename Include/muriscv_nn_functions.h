@@ -22,8 +22,8 @@
  * Title:        muriscv_nn_functions.h
  * Description:  Public header file for MURISCV NN Library
  *
- * $Date:        27 March 2026
- * $Revision:    V.19.1.0
+ * $Date:        15 October 2026
+ * $Revision:    V.19.2.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
@@ -196,6 +196,68 @@ muriscv_nn_status muriscv_nn_convolve_wrapper_s8(const muriscv_nn_context *ctx,
                                                  const int32_t *bias_data,
                                                  const muriscv_nn_dims *output_dims,
                                                  int8_t *output_data);
+
+#if MURISCV_NN_ENABLE_AOT
+/**
+ * @brief Get the byte size of an AOT-packed s8 convolution filter (host callable).
+ * @param[in] filter_dims Logical [C_out, H, W, C_in_per_group] dimensions, all positive.
+ * @param[in] groups Positive group count that divides C_out.
+ * @return groups * round_up(C_out/groups, 4) * round_up(H*W*C_in_per_group, 16),
+ *         or zero for invalid dimensions, groups, or a size exceeding INT32_MAX.
+ */
+int32_t muriscv_nn_convolve_s8_packed_get_filter_size(const muriscv_nn_dims *filter_dims, const int32_t groups);
+
+/**
+ * @brief Pack logical row-major s8 convolution weights ahead of inference (host callable).
+ *
+ *
+ * BEFORE (ROW-MAJOR)
+ * ──────────────────
+ * Channel 0: [ all K weights ]
+ * Channel 1: [ all K weights ]
+ * Channel 2: [ all K weights ]
+ * ...
+ *
+ * Memory: channel 0 → channel 1 → channel 2 → ...
+ *
+ *
+ * AFTER (PACKED 4×16)
+ * ───────────────────
+ * Split into tiles of 4 output channels × 16 weights:
+ *
+ *                  weights
+ *              0 ... 15       16 ... 31
+ *            ┌─────────────┬─────────────┐
+ * channels   │   Tile A    │   Tile B    │
+ *   0 ... 3  │    4×16     │    4×16     │
+ *            ├─────────────┼─────────────┤
+ *   4 ... 7  │   Tile C    │   Tile D    │
+ *            │    4×16     │    4×16     │
+ *            └─────────────┴─────────────┘
+ *
+ * Memory: Tile A → Tile B → Tile C → Tile D
+ *
+ * Inside each tile:
+ *   [ channel 0: 16 weights ]
+ *   [ channel 1: 16 weights ]
+ *   [ channel 2: 16 weights ]
+ *   [ channel 3: 16 weights ]
+ *   └────── 64 consecutive int8 values ──────┘
+ *
+ * Each group is stored as [ceil(C_out_per_group/4), ceil(K/16), 4, 16],
+ * where K = H*W*C_in_per_group. Padded channels and reduction elements are zero.
+ * @param[in] filter_dims Logical filter dimensions, with n set to C_out.
+ * @param[in] filter_data Original row-major weights.
+ * @param[in] groups Group count; divides C_out, with input C = groups*C_in_per_group.
+ * @param[out] packed_filter Non-overlapping buffer of packed_get_filter_size() bytes.
+ * @return MURISCV_NN_SUCCESS, or MURISCV_NN_ARG_ERROR for invalid arguments,
+ *         overflow, null pointers, or overlapping source and destination buffers.
+ */
+muriscv_nn_status muriscv_nn_convolve_s8_pack_weights(const muriscv_nn_dims *filter_dims,
+                                                 const int8_t *filter_data,
+                                                 const int32_t groups,
+                                                 int8_t *packed_filter);
+#endif
 
 /**
  * @brief Get the required buffer size for muriscv_nn_convolve_wrapper_s8
@@ -854,6 +916,10 @@ muriscv_nn_status muriscv_nn_convolve_1x1_s8(const muriscv_nn_context *ctx,
 /**
  * @brief 1xn convolution
  *
+ * @note With AOT enabled, packed/effective pairs return MURISCV_NN_NO_IMPL_ERROR.
+ *       Use muriscv_nn_convolve_wrapper_s8 or muriscv_nn_convolve_s8 for packed 1xN convolution.
+ *       Mixed/unknown formats or missing effective bias return MURISCV_NN_ARG_ERROR.
+ *
  * @param[in, out] ctx           Function context that contains the additional buffer if required by the function.
  *                               muriscv_nn_convolve_1_x_n_s8_get_buffer_size will return the buffer_size if required
  *                               The caller is expected to clear the buffer, if applicable, for security reasons.
@@ -889,16 +955,16 @@ muriscv_nn_status muriscv_nn_convolve_1x1_s8(const muriscv_nn_context *ctx,
  *
  */
 muriscv_nn_status muriscv_nn_convolve_1_x_n_s8(const muriscv_nn_context *ctx,
-                                               const muriscv_nn_conv_params *conv_params,
-                                               const muriscv_nn_per_channel_quant_params *quant_params,
-                                               const muriscv_nn_dims *input_dims,
-                                               const int8_t *input_data,
-                                               const muriscv_nn_dims *filter_dims,
-                                               const int8_t *filter_data,
-                                               const muriscv_nn_dims *bias_dims,
-                                               const int32_t *bias_data,
-                                               const muriscv_nn_dims *output_dims,
-                                               int8_t *output_data);
+                                          const muriscv_nn_conv_params *conv_params,
+                                          const muriscv_nn_per_channel_quant_params *quant_params,
+                                          const muriscv_nn_dims *input_dims,
+                                          const int8_t *input_data,
+                                          const muriscv_nn_dims *filter_dims,
+                                          const int8_t *filter_data,
+                                          const muriscv_nn_dims *bias_dims,
+                                          const int32_t *bias_data,
+                                          const muriscv_nn_dims *output_dims,
+                                          int8_t *output_data);
 
 /**
  * @brief 1xn convolution for s4 weights
