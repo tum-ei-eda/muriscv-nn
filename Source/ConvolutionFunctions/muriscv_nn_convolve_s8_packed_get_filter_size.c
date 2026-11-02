@@ -30,7 +30,7 @@
 #include <limits.h>
 #include <stdint.h>
 
-#if ARM_NN_ENABLE_AOT
+#if MURISCV_NN_ENABLE_AOT
 
 int32_t muriscv_nn_convolve_s8_packed_get_filter_size(const muriscv_nn_dims *filter_dims, const int32_t groups)
 {
@@ -60,4 +60,4 @@ int32_t muriscv_nn_convolve_s8_packed_get_filter_size(const muriscv_nn_dims *fil
     return (int32_t)(groups * rows * cols);
 }
 
-//#endif /* ARM_NN_ENABLE_AOT */
+#endif /* MURISCV_NN_ENABLE_AOT */

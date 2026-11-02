@@ -30,7 +30,7 @@
 #include <limits.h>
 #include <stdint.h>
 
-#if ARM_NN_ENABLE_AOT
+#if MURISCV_NN_ENABLE_AOT
 
 muriscv_nn_status muriscv_nn_convolve_s8_pack_weights(const muriscv_nn_dims *filter_dims,
                                                  const int8_t *filter_data,
@@ -75,4 +75,4 @@ muriscv_nn_status muriscv_nn_convolve_s8_pack_weights(const muriscv_nn_dims *fil
     return MURISCV_NN_SUCCESS;
 }
 
-//#endif /* ARM_NN_ENABLE_AOT */
+#endif /* MURISCV_NN_ENABLE_AOT */

@@ -28,7 +28,7 @@
 
 #include "muriscv_nn_support_functions.h"
 
-#if ARM_NN_ENABLE_AOT
+#if MURISCV_NN_ENABLE_AOT
 
 muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8_packed(const int8_t *lhs,
                                                    const int8_t *rhs,
@@ -295,4 +295,4 @@ muriscv_nn_status muriscv_nn_mat_mult_nt_t_s8_packed(const int8_t *lhs,
 //    #endif
 }
 
-//#endif /* ARM_NN_ENABLE_AOT */
+#endif /* MURISCV_NN_ENABLE_AOT */
