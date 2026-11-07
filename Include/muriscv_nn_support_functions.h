@@ -22,8 +22,8 @@
  * Title:        muriscv_nn_support_functions.h
  * Description:  Public header file of support functions for MURISCV NN Library
  *
- * $Date:        21 October 2026
- * $Revision:    V.22.13.0
+ * $Date:        02 November 2026
+ * $Revision:    V.22.14.0
  *
  * Target :  Arm(R) M-Profile Architecture
  * -------------------------------------------------------------------- */
@@ -325,6 +325,60 @@ __STATIC_INLINE bool muriscv_nn_is_convolve_1_x_n(const muriscv_nn_conv_params *
 {
     return (input_dims->h == 1) && (conv_params->dilation.w == 1) && (filter_dims->h == 1) &&
         ((conv_params->stride.w * input_dims->c) % 4 == 0) && (input_dims->c == filter_dims->c);
+}
+
+/**
+ * @brief Check if convolution parameters are eligible for muriscv_nn_convolve_1_x_n_s8.
+ * @param[in]   conv_params   Convolution parameters
+ * @param[in]   input_dims    Input dimensions
+ * @param[in]   filter_dims   Filter dimensions
+ * @param[in]   output_dims   Output dimensions
+ * @return      true if parameters are eligible for muriscv_nn_convolve_1_x_n_s8, false otherwise.
+ */
+__STATIC_INLINE bool muriscv_nn_is_convolve_1_x_n_s8(const muriscv_nn_conv_params *conv_params,
+                                                 const muriscv_nn_dims *input_dims,
+                                                 const muriscv_nn_dims *filter_dims,
+                                                 const muriscv_nn_dims *output_dims)
+{
+    if (!muriscv_nn_is_convolve_1_x_n(conv_params, input_dims, filter_dims) || (conv_params->stride.w <= 0) ||
+        !output_dims || (output_dims->h != 1) || (conv_params->padding.h != 0))
+    {
+        return false;
+    }
+
+    const int32_t total_pad = MAX((output_dims->w - 1) * conv_params->stride.w + filter_dims->w - input_dims->w, 0);
+    const int32_t asym_pad = total_pad % 2;
+    return (conv_params->padding.w * 2 + asym_pad == total_pad);
+}
+
+/**
+ * @brief Check if convolution parameters are eligible for muriscv_nn_convolve_1_x_n_s4.
+ * @param[in]   conv_params   Convolution parameters
+ * @param[in]   input_dims    Input dimensions
+ * @param[in]   filter_dims   Filter dimensions
+ * @param[in]   output_dims   Output dimensions
+ * @return      true if parameters are eligible for muriscv_nn_convolve_1_x_n_s4, false otherwise.
+ */
+__STATIC_INLINE bool muriscv_nn_is_convolve_1_x_n_s4(const muriscv_nn_conv_params *conv_params,
+                                                 const muriscv_nn_dims *input_dims,
+                                                 const muriscv_nn_dims *filter_dims,
+                                                 const muriscv_nn_dims *output_dims)
+{
+    if (!muriscv_nn_is_convolve_1_x_n_s8(conv_params, input_dims, filter_dims, output_dims) || ((input_dims->c % 2) != 0))
+    {
+        return false;
+    }
+
+    const int32_t pad_x = conv_params->padding.w;
+    const int32_t stride_x = conv_params->stride.w;
+    const int32_t output_x = output_dims->w;
+    const int32_t total_pad = MAX((output_x - 1) * stride_x + filter_dims->w - input_dims->w, 0);
+    const int32_t asym_pad = total_pad % 2;
+    const int32_t right_pad_num = pad_x + asym_pad != 0 ? MAX(1, (pad_x + asym_pad + stride_x - 1) / stride_x) : 0;
+    const int32_t left_pad_num = pad_x != 0 ? MAX(1, (pad_x + stride_x - 1) / stride_x) : 0;
+    const int32_t no_pad_num = MAX(output_x - (right_pad_num + left_pad_num), 0);
+
+    return (right_pad_num + no_pad_num + left_pad_num == output_x);
 }
 
 /**
@@ -2336,6 +2390,26 @@ __STATIC_FORCEINLINE void muriscv_nn_memcpy_q15(int16_t *dst, const int16_t *src
 }
 
 #if defined(USE_VEXT)
+/**
+ * @brief           vld2q_s8() that also accepts pointers that are not 4-byte aligned.
+ * @param[in]       ptr         Pointer to 32 int8 values
+ * @param[in]       is_aligned  True if ptr is 4-byte aligned, as required by VLD2x
+ * @return          De-interleaved even (val[0]) and odd (val[1]) elements
+ *
+ */
+__STATIC_FORCEINLINE int8x16x2_t muriscv_nn_vld2q_s8(const int8_t *ptr, const bool is_aligned)
+{
+    if (is_aligned)
+    {
+        return vld2q_s8(ptr);
+    }
+    const uint8x16_t even_offsets = vidupq_u8((uint32_t)0, 2);
+    int8x16x2_t res;
+    res.val[0] = vldrbq_gather_offset_s8(ptr, even_offsets);
+    res.val[1] = vldrbq_gather_offset_s8(ptr + 1, even_offsets);
+    return res;
+}
+
 //MURISCV_NN CUSTOM CODE
 /**
  * @brief           Vector saturating doubling high multiply returning high half.
